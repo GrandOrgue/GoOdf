@@ -1,0 +1,699 @@
+/*
+ * OrganPanel.cpp is part of GOODF.
+ * Copyright (C) 2023 Lars Palo
+ *
+ * GOODF is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General wxLicense as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * GOODF is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General wxLicense for more details.
+ *
+ * You should have received a copy of the GNU General wxLicense
+ * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * You can contact the author on larspalo(at)yahoo DOT se
+ */
+
+#include "OrganPanel.h"
+#include <wx/dirdlg.h>
+#include <wx/button.h>
+#include <wx/dir.h>
+#include <wx/stdpaths.h>
+#include <wx/statline.h>
+#include <wx/sizer.h>
+#include <wx/filedlg.h>
+#include <wx/filefn.h>
+#include <wx/radiobut.h>
+#include "GOODFFunctions.h"
+#include "GOODF.h"
+
+// Event table
+BEGIN_EVENT_TABLE(OrganPanel, wxPanel)
+	EVT_BUTTON(ID_BROWSE_FOR_ODF_PATH, OrganPanel::OnBrowseForOrganPath)
+	EVT_TEXT(ID_ORGAN_FILE_NAME, OrganPanel::OnOrganFileNameChange)
+	EVT_TEXT(ID_CHURCH_NAME_TEXT, OrganPanel::OnChurchNameChange)
+	EVT_TEXT(ID_CHURCH_ADDRESS_TEXT, OrganPanel::OnChurchAddressChange)
+	EVT_TEXT(ID_ORGAN_BUILDER_TEXT, OrganPanel::OnOrganBuilderChange)
+	EVT_TEXT(ID_ORGAN_BUILDDATE_TEXT, OrganPanel::OnOrganBuildDateChange)
+	EVT_TEXT(ID_ORGAN_COMMENTS_TEXT ,OrganPanel::OnOrganCommentsChange)
+	EVT_TEXT(ID_RECORDING_DETAILS_TEXT, OrganPanel::OnRecordingDetailsChange)
+	EVT_BUTTON(ID_BROWSE_FOR_INFO_PATH, OrganPanel::OnBrowseForInfoPath)
+	EVT_RADIOBUTTON(ID_INTER_MAN_RB_YES, OrganPanel::OnInterManualRBChange)
+	EVT_RADIOBUTTON(ID_INTER_MAN_RB_NO, OrganPanel::OnInterManualRBChange)
+	EVT_RADIOBUTTON(ID_INTRA_MAN_RB_YES, OrganPanel::OnIntraManualRBChange)
+	EVT_RADIOBUTTON(ID_INTRA_MAN_RB_NO, OrganPanel::OnIntraManualRBChange)
+	EVT_RADIOBUTTON(ID_STORE_TREM_YES, OrganPanel::OnStoreTremulantsChange)
+	EVT_RADIOBUTTON(ID_STORE_TREM_NO, OrganPanel::OnStoreTremulantsChange)
+	EVT_RADIOBUTTON(ID_STORE_DIV_CPLRS_YES, OrganPanel::OnStoreDivCouplersRBChange)
+	EVT_RADIOBUTTON(ID_STORE_DIV_CPLRS_NO, OrganPanel::OnStoreDivCouplersRBChange)
+	EVT_RADIOBUTTON(ID_STORE_NON_DISP_YES, OrganPanel::OnStoreNonDispRBChange)
+	EVT_RADIOBUTTON(ID_STORE_NON_DISP_NO, OrganPanel::OnStoreNonDispRBChange)
+	EVT_SPINCTRLDOUBLE(ID_ORGAN_AMP_LVL_SPIN, OrganPanel::OnAmplitudeLevelSpin)
+	EVT_SPINCTRLDOUBLE(ID_ORGAN_GAIN_SPIN, OrganPanel::OnGainSpin)
+	EVT_SPINCTRLDOUBLE(ID_ORGAN_PITCH_SPIN, OrganPanel::OnPitchTuningSpin)
+	EVT_BUTTON(ID_NEW_ORGAN, OrganPanel::OnNewOrganBtn)
+END_EVENT_TABLE()
+
+OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
+		parent,
+		wxID_ANY,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxTAB_TRAVERSAL|wxNO_BORDER
+	) {
+	m_odfPath = wxEmptyString;
+	m_odfName = wxEmptyString;
+	m_currentOrgan = organ;
+
+	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+
+	wxBoxSizer *topRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *odfPathText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Location of the .organ file: ")
+	);
+	topRow->Add(odfPathText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_odfPathField = new wxTextCtrl(
+		this,
+		wxID_ANY,
+		m_odfPath,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxTE_READONLY
+	);
+	topRow->Add(m_odfPathField, 1, wxEXPAND|wxALL, 5);
+	wxButton *selectPath = new wxButton(
+		this,
+		ID_BROWSE_FOR_ODF_PATH,
+		wxT("Browse..."),
+		wxDefaultPosition,
+		wxDefaultSize,
+		0
+	);
+	topRow->Add(selectPath, 0, wxALL, 5);
+	mainSizer->Add(topRow, 0, wxGROW|wxALL, 5);
+
+	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *organNameText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Name of .organ file (without the extension): ")
+	);
+	secondRow->Add(organNameText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_organNameField = new wxTextCtrl(
+		this,
+		ID_ORGAN_FILE_NAME,
+		m_odfName,
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_organNameField, 1, wxEXPAND|wxALL, 5);
+	mainSizer->Add(secondRow, 0, wxGROW|wxALL, 5);
+
+	wxStaticLine *topDivider = new wxStaticLine(this);
+	mainSizer->Add(topDivider, 0, wxEXPAND);
+
+	wxStaticBoxSizer *organProperties = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Organ properties"));
+
+	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *churchNameText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Church name: ")
+	);
+	thirdRow->Add(churchNameText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_churchNameField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_CHURCH_NAME_TEXT,
+		m_currentOrgan->getChurchName(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	thirdRow->Add(m_churchNameField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(thirdRow, 0, wxGROW);
+
+	wxBoxSizer *fourthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *churchAddressText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Church address: ")
+	);
+	fourthRow->Add(churchAddressText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_churchAddressField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_CHURCH_ADDRESS_TEXT,
+		m_currentOrgan->getChurchAddress(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fourthRow->Add(m_churchAddressField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(fourthRow, 0, wxGROW);
+
+	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *organBuilderText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Organ builder: ")
+	);
+	fifthRow->Add(organBuilderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_organBuilderField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_BUILDER_TEXT,
+		m_currentOrgan->getOrganBuilder(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fifthRow->Add(m_organBuilderField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(fifthRow, 0, wxGROW);
+
+	wxBoxSizer *sixthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *organBuildDateText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Organ build date: ")
+	);
+	sixthRow->Add(organBuildDateText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_organBuildDateField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_BUILDDATE_TEXT,
+		m_currentOrgan->getOrganBuildDate(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	sixthRow->Add(m_organBuildDateField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(sixthRow, 0, wxGROW);
+
+	wxBoxSizer *seventhRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *organCommentsText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Organ comments: ")
+	);
+	seventhRow->Add(organCommentsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_organCommentsField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_COMMENTS_TEXT,
+		m_currentOrgan->getOrganComments(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	seventhRow->Add(m_organCommentsField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(seventhRow, 0, wxGROW);
+
+	wxBoxSizer *eighthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *recordingDetailsText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Recording details: ")
+	);
+	eighthRow->Add(recordingDetailsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_recordingDetailsField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		ID_RECORDING_DETAILS_TEXT,
+		m_currentOrgan->getRecordingDetails(),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	eighthRow->Add(m_recordingDetailsField, 1, wxEXPAND|wxALL, 5);
+	organProperties->Add(eighthRow, 0, wxGROW);
+
+	wxBoxSizer *ninthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *infoPathText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Organinfo file: ")
+	);
+	ninthRow->Add(infoPathText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_infoPathField = new wxTextCtrl(
+		organProperties->GetStaticBox(),
+		wxID_ANY,
+		m_currentOrgan->getInfoFilename(),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxTE_READONLY
+	);
+	ninthRow->Add(m_infoPathField, 1, wxEXPAND|wxALL, 5);
+	wxButton *infoPath = new wxButton(
+		organProperties->GetStaticBox(),
+		ID_BROWSE_FOR_INFO_PATH,
+		wxT("Browse..."),
+		wxDefaultPosition,
+		wxDefaultSize,
+		0
+	);
+	ninthRow->Add(infoPath, 0, wxALL, 5);
+	organProperties->Add(ninthRow, 0, wxGROW);
+
+	wxBoxSizer *tenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *interManualText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Divisionals store intermanual couplers: ")
+	);
+	tenthRow->Add(interManualText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_interManualYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_INTER_MAN_RB_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_interManualYes->SetValue(true);
+	tenthRow->Add(m_interManualYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_interManualNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_INTER_MAN_RB_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	tenthRow->Add(m_interManualNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(tenthRow, 0, wxGROW);
+
+	wxBoxSizer *eleventhRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *intraManualText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Divisionals store intramanual couplers: ")
+	);
+	eleventhRow->Add(intraManualText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_intraManualYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_INTRA_MAN_RB_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_intraManualYes->SetValue(true);
+	eleventhRow->Add(m_intraManualYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_intraManualNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_INTRA_MAN_RB_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	eleventhRow->Add(m_intraManualNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(eleventhRow, 0, wxGROW);
+
+	wxBoxSizer *twelfthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *storeTremulantsText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Divisionals store tremulants: ")
+	);
+	twelfthRow->Add(storeTremulantsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeTremulantsYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_TREM_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_storeTremulantsYes->SetValue(true);
+	twelfthRow->Add(m_storeTremulantsYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeTremulantsNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_TREM_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	twelfthRow->Add(m_storeTremulantsNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(twelfthRow, 0, wxGROW);
+
+	wxBoxSizer *thirteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *storeDivCouplersText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Generals store divisional couplers: ")
+	);
+	thirteenthRow->Add(storeDivCouplersText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeDivCouplersYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_DIV_CPLRS_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_storeDivCouplersYes->SetValue(true);
+	thirteenthRow->Add(m_storeDivCouplersYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeDivCouplersNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_DIV_CPLRS_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	thirteenthRow->Add(m_storeDivCouplersNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(thirteenthRow, 0, wxGROW);
+
+	wxBoxSizer *fourteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *storeNonDisplayedText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Combinations store non displayed drawstops: ")
+	);
+	fourteenthRow->Add(storeNonDisplayedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeNonDisplayedYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_NON_DISP_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_storeNonDisplayedYes->SetValue(true);
+	fourteenthRow->Add(m_storeNonDisplayedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_storeNonDisplayedNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_STORE_NON_DISP_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fourteenthRow->Add(m_storeNonDisplayedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(fourteenthRow, 0, wxGROW);
+
+	wxBoxSizer *fifteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *ampLvlText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("AmplitudeLevel: ")
+	);
+	fifteenthRow->Add(ampLvlText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_amplitudeLevelSpin = new wxSpinCtrlDouble(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_AMP_LVL_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		1000,
+		100,
+		0.000001
+	);
+	fifteenthRow->Add(m_amplitudeLevelSpin, 0, wxEXPAND|wxALL, 5);
+	wxStaticText *gainText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Gain: ")
+	);
+	fifteenthRow->Add(gainText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_gainSpin = new wxSpinCtrlDouble(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_GAIN_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		-120,
+		40,
+		0,
+		0.000001
+	);
+	fifteenthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
+	wxStaticText *pitchText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("PitchTuning: ")
+	);
+	fifteenthRow->Add(pitchText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_pitchTuningSpin = new wxSpinCtrlDouble(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_PITCH_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		-1800,
+		1000,
+		0,
+		0.000001
+	);
+	fifteenthRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
+	organProperties->Add(fifteenthRow, 0, wxGROW);
+
+	mainSizer->Add(organProperties, 1, wxEXPAND|wxALL, 5);
+
+	wxStaticLine *bottomDivider = new wxStaticLine(this);
+	mainSizer->Add(bottomDivider, 0, wxEXPAND);
+
+	wxBoxSizer *bottomRow = new wxBoxSizer(wxHORIZONTAL);
+	bottomRow->AddStretchSpacer();
+	m_newOrganBtn = new wxButton(
+		this,
+		ID_NEW_ORGAN,
+		wxT("New organ (reset everything)")
+	);
+	bottomRow->Add(m_newOrganBtn, 0, wxALIGN_CENTER|wxALL, 10);
+	bottomRow->AddStretchSpacer();
+	mainSizer->Add(bottomRow, 0, wxEXPAND);
+
+	SetSizerAndFit(mainSizer);
+}
+
+OrganPanel::~OrganPanel() {
+
+}
+
+void OrganPanel::setCurrentOrgan(Organ *organ) {
+	m_currentOrgan = organ;
+	getDataFromOrgan();
+}
+
+wxString OrganPanel::getOdfPath() {
+	return m_odfPath;
+}
+
+wxString OrganPanel::getOdfName() {
+	return m_odfName;
+}
+
+void OrganPanel::setOdfPath(wxString path) {
+	m_odfPath = path;
+	m_odfPathField->SetValue(m_odfPath);
+}
+
+void OrganPanel::setOdfName(wxString name) {
+	m_odfName = name;
+	m_organNameField->SetValue(m_odfName);
+}
+
+void OrganPanel::getDataFromOrgan() {
+	m_churchNameField->SetValue(m_currentOrgan->getChurchName());
+	m_churchAddressField->SetValue(m_currentOrgan->getChurchAddress());
+	m_organBuilderField->SetValue(m_currentOrgan->getOrganBuilder());
+	m_organBuildDateField->SetValue(m_currentOrgan->getOrganBuildDate());
+	m_organCommentsField->SetValue(m_currentOrgan->getOrganComments());
+	m_recordingDetailsField->SetValue(m_currentOrgan->getRecordingDetails());
+	m_infoPathField->SetValue(m_currentOrgan->getInfoFilename());
+	if (m_currentOrgan->doesDivisionalsStoreIntermanualCouplers())
+		m_interManualYes->SetValue(true);
+	else
+		m_interManualNo->SetValue(true);
+	if (m_currentOrgan->doesDivisionalsStoreIntramanualCouplers())
+		m_intraManualYes->SetValue(true);
+	else
+		m_intraManualNo->SetValue(true);
+	if (m_currentOrgan->doesDivisionalsStoreTremulants())
+		m_storeTremulantsYes->SetValue(true);
+	else
+		m_storeTremulantsNo->SetValue(true);
+	if (m_currentOrgan->doesGeneralsStoreDivisionalCouplers())
+		m_storeDivCouplersYes->SetValue(true);
+	else
+		m_storeDivCouplersNo->SetValue(true);
+	if (m_currentOrgan->doesCombinationsStoreNonDisplayedDrawstops())
+		m_storeNonDisplayedYes->SetValue(true);
+	else
+		m_storeNonDisplayedNo->SetValue(true);
+	m_amplitudeLevelSpin->SetValue(m_currentOrgan->getAmplitudeLevel());
+	m_gainSpin->SetValue(m_currentOrgan->getGain());
+	m_pitchTuningSpin->SetValue(m_currentOrgan->getPitchTuning());
+}
+
+void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
+	m_odfPath = GetDirectoryPath();
+	m_odfPathField->SetValue(m_odfPath);
+	::wxGetApp().m_frame->m_organ->setOdfRoot(m_odfPath);
+	if (!m_infoPathField->IsEmpty()) {
+		if (!wxFileExists(m_odfPath + wxFILE_SEP_PATH + m_infoPathField->GetValue())) {
+			m_infoPathField->SetValue(wxEmptyString);
+			m_currentOrgan->setInfoFilename(wxEmptyString);
+		}
+	}
+}
+
+wxString OrganPanel::GetDirectoryPath() {
+	wxString pathToReturn;
+	wxString defaultPath;
+	if (m_odfPath != wxEmptyString)
+		defaultPath = m_odfPath;
+	else
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+
+	wxDirDialog dirDialog(
+		this,
+		wxT("Pick a directory"),
+		defaultPath,
+		wxDD_DIR_MUST_EXIST
+	);
+
+	if (dirDialog.ShowModal() == wxID_OK) {
+		pathToReturn = dirDialog.GetPath();
+		return pathToReturn;
+	} else {
+		return wxEmptyString;
+	}
+}
+
+void OrganPanel::OnOrganFileNameChange(wxCommandEvent& WXUNUSED(event)) {
+	m_odfName = m_organNameField->GetValue();
+	if (m_odfName.Contains(wxT(" "))) {
+		m_odfName.Replace(wxT(" "), wxT(""));
+		m_organNameField->SetValue(m_odfName);
+	}
+}
+
+void OrganPanel::OnChurchNameChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_churchNameField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_churchNameField);
+	m_currentOrgan->setChurchName(m_churchNameField->GetValue());
+}
+
+void OrganPanel::OnChurchAddressChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_churchAddressField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_churchAddressField);
+	m_currentOrgan->setChurchAddress(m_churchAddressField->GetValue());
+}
+
+void OrganPanel::OnOrganBuilderChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_organBuilderField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_organBuilderField);
+	m_currentOrgan->setOrganBuilder(m_organBuilderField->GetValue());
+}
+
+void OrganPanel::OnOrganBuildDateChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_organBuildDateField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_organBuildDateField);
+	m_currentOrgan->setOrganBuildDate(m_organBuildDateField->GetValue());
+}
+
+void OrganPanel::OnOrganCommentsChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_organCommentsField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_organCommentsField);
+	m_currentOrgan->setOrganComments(m_organCommentsField->GetValue());
+}
+
+void OrganPanel::OnRecordingDetailsChange(wxCommandEvent& WXUNUSED(event)) {
+	wxString content = m_recordingDetailsField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_recordingDetailsField);
+	m_currentOrgan->setRecordingDetails(m_recordingDetailsField->GetValue());
+}
+
+void OrganPanel::OnBrowseForInfoPath(wxCommandEvent& WXUNUSED(event)) {
+	wxString infoFilePath;
+	wxString defaultPath;
+	if (m_odfPath != wxEmptyString)
+		defaultPath = m_odfPath;
+	else
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+
+	wxFileDialog fileDialog(
+		this,
+		wxT("Select organinfo file"),
+		defaultPath,
+		"",
+		"HTML files (*.html;*.htm)|*.html;*.htm",
+		wxFD_OPEN|wxFD_FILE_MUST_EXIST
+	);
+
+	if (fileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	infoFilePath = fileDialog.GetPath();
+	if (infoFilePath.StartsWith(m_odfPath)) {
+		infoFilePath.Replace(m_odfPath, wxT(""));
+		infoFilePath = infoFilePath.Mid(1);
+	}
+	m_infoPathField->SetValue(infoFilePath);
+	m_currentOrgan->setInfoFilename(infoFilePath);
+}
+
+void OrganPanel::OnInterManualRBChange(wxCommandEvent& event) {
+	if (event.GetId() == ID_INTER_MAN_RB_YES) {
+		m_interManualYes->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreIntermanualCouplers(true);
+	} else {
+		m_interManualNo->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreIntermanualCouplers(false);
+	}
+}
+
+void OrganPanel::OnIntraManualRBChange(wxCommandEvent& event) {
+	if (event.GetId() == ID_INTRA_MAN_RB_YES) {
+		m_intraManualYes->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreIntramanualCouplers(true);
+	} else {
+		m_intraManualNo->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreIntramanualCouplers(false);
+	}
+}
+
+void OrganPanel::OnStoreTremulantsChange(wxCommandEvent& event) {
+	if (event.GetId() == ID_STORE_TREM_YES) {
+		m_storeTremulantsYes->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreTremulants(true);
+	} else {
+		m_storeTremulantsNo->SetValue(true);
+		m_currentOrgan->setDivisionalsStoreTremulants(false);
+	}
+}
+
+void OrganPanel::OnStoreDivCouplersRBChange(wxCommandEvent& event) {
+	if (event.GetId() == ID_STORE_DIV_CPLRS_YES) {
+		m_storeDivCouplersYes->SetValue(true);
+		m_currentOrgan->setGeneralsStoreDivisionalCouplers(true);
+	} else {
+		m_storeDivCouplersNo->SetValue(true);
+		m_currentOrgan->setGeneralsStoreDivisionalCouplers(false);
+	}
+}
+
+void OrganPanel::OnStoreNonDispRBChange(wxCommandEvent& event) {
+	if (event.GetId() == ID_STORE_NON_DISP_YES) {
+		m_storeNonDisplayedYes->SetValue(true);
+		m_currentOrgan->setCombinationsStoreNonDisplayedDrawstops(true);
+	} else {
+		m_storeNonDisplayedNo->SetValue(true);
+		m_currentOrgan->setCombinationsStoreNonDisplayedDrawstops(false);
+	}
+}
+
+void OrganPanel::OnNewOrganBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxCommandEvent evt(wxEVT_MENU, ID_NEW_ORGAN);
+	wxPostEvent(this, evt);
+}
+
+void OrganPanel::OnAmplitudeLevelSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
+	m_currentOrgan->setAmplitudeLevel(m_amplitudeLevelSpin->GetValue());
+}
+
+void OrganPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
+	m_currentOrgan->setGain(m_gainSpin->GetValue());
+}
+
+void OrganPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
+	m_currentOrgan->setPitchTuning(m_pitchTuningSpin->GetValue());
+}

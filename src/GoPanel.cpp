@@ -1,0 +1,166 @@
+/*
+ * GoPanel.cpp is part of GOODF.
+ * Copyright (C) 2023 Lars Palo
+ *
+ * GOODF is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * GOODF is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * You can contact the author on larspalo(at)yahoo.se
+ */
+
+#include "GoPanel.h"
+#include "GOODFFunctions.h"
+
+GoPanel::GoPanel() {
+	m_name = wxT("New Panel");
+	m_group = wxEmptyString;
+	m_hasPedals = false;
+}
+
+GoPanel::~GoPanel() {
+	m_guiElements.remove_if([](GUIElement *element){delete element; return true;});
+}
+
+void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
+	if (panelNbr > 0) {
+		outFile->AddLine(wxT("Name=") + m_name);
+		if (m_group != wxEmptyString)
+			outFile->AddLine(wxT("Group=") + m_group);
+	}
+	if (m_hasPedals)
+		outFile->AddLine(wxT("HasPedals=Y"));
+	else
+		outFile->AddLine(wxT("HasPedals=N"));
+	unsigned nbImages = getNumberOfImages();
+	outFile->AddLine(wxT("NumberOfImages=") + wxString::Format(wxT("%u"), nbImages));
+
+	unsigned nbGUIElements = m_guiElements.size();
+	outFile->AddLine(wxT("NumberOfGUIElements=") + wxString::Format(wxT("%u"), nbGUIElements));
+
+	m_displayMetrics.write(outFile);
+	outFile->AddLine(wxT(""));
+
+	unsigned i = 1;
+	// images
+	for (auto& img :  m_images) {
+		wxString imgId = wxT("[Panel") + GOODF_functions::number_format(panelNbr) + wxT("Image") + GOODF_functions::number_format(i) + wxT("]");
+		outFile->AddLine(imgId);
+		img.write(outFile);
+		outFile->AddLine(wxT(""));
+		i++;
+	}
+
+	i = 1;
+	// GUI Elements
+	for (GUIElement* gui : m_guiElements) {
+		wxString guiId = wxT("[Panel") + GOODF_functions::number_format(panelNbr) + wxT("Element") + GOODF_functions::number_format(i) + wxT("]");
+		outFile->AddLine(guiId);
+		gui->write(outFile);
+		outFile->AddLine(wxT(""));
+		i++;
+	}
+}
+
+wxString GoPanel::getName() {
+	return m_name;
+}
+
+void GoPanel::setName(wxString name) {
+	m_name = name;
+}
+
+wxString GoPanel::getGroup() {
+	return m_group;
+}
+
+void GoPanel::setGroup(wxString group) {
+	m_group = group;
+}
+
+bool GoPanel::getHasPedals() {
+	return m_hasPedals;
+}
+
+void GoPanel::setHasPedals(bool hasPedals) {
+	m_hasPedals = hasPedals;
+}
+
+unsigned GoPanel::getNumberOfImages() {
+	return m_images.size();
+}
+
+unsigned GoPanel::getIndexOfImage(GoImage *image) {
+	unsigned i = 0;
+	bool found = false;
+	for (auto& img : m_images) {
+		i++;
+		if (&img == image) {
+			found = true;
+	    	break;
+	    }
+	}
+	if (found)
+		return i;
+	else
+		return 0;
+}
+
+GoImage* GoPanel::getImageAt(unsigned index) {
+	auto iterator = std::next(m_images.begin(), index);
+	return &(*iterator);
+}
+
+void GoPanel::addImage(GoImage image) {
+	m_images.push_back(image);
+}
+
+void GoPanel::removeImageAt(unsigned index) {
+	std::list<GoImage>::iterator it = m_images.begin();
+	std::advance(it, index);
+	m_images.erase(it);
+}
+
+void GoPanel::removeImage(GoImage *image) {
+	unsigned index = 0;
+	for (GoImage& i : m_images) {
+		if (&i == image) {
+			removeImageAt(index);
+			break;
+		}
+		index++;
+	}
+}
+
+DisplayMetrics* GoPanel::getDisplayMetrics() {
+	return &m_displayMetrics;
+}
+
+void GoPanel::addGuiElement(GUIElement *element) {
+	m_guiElements.push_back(element);
+}
+
+void GoPanel::removeGuiElementAt(unsigned index) {
+	std::list<GUIElement*>::iterator it = m_guiElements.begin();
+	std::advance(it, index);
+	delete *it;
+	m_guiElements.erase(it);
+}
+
+int GoPanel::getNumberOfGuiElements() {
+	return m_guiElements.size();
+}
+
+GUIElement* GoPanel::getGuiElementAt(unsigned index) {
+	auto iterator = std::next(m_guiElements.begin(), index);
+	return *iterator;
+}

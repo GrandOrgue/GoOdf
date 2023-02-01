@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=GOODF
+GenericName=GrandOrgue ODF editor
+Comment=GOODF - Software for creating and editing GO ODFs
+Exec=GOODF
+Icon=GOODF
+Terminal=false
+Type=Application
+Categories=Audio;AudioVideo;Music;
+MimeType=audio/x-wav;audio/wav;
