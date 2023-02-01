@@ -17,7 +17,12 @@ The first step will be to fix the obvious bugs and issues that affect normal usa
 ## Building from sources
 Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.
 
-The build process on Linux is simple. Just cd into the build directory and issue the command
+The build process on Linux is simple. In the GOODF base directory, just create and cd into a separate build directory
+
+mkdir build
+cd build
+
+and issue the command
 
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 
