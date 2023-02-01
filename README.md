@@ -20,13 +20,14 @@ Normal development tools for c++ is needed as well as cmake, imagemagic and wxWi
 The build process on Linux is simple. In the GOODF base directory, just create and cd into a separate build directory
 
 mkdir build
+
 cd build
 
-and issue the command
+and issue the command:
 
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 
-and when that's finished enter
+and when that's finished enter:
 
 make
 
