@@ -43,15 +43,18 @@ bool GOODF::OnInit() {
 
 	// Load icons
 	wxImage::AddHandler(new wxPNGHandler);
-	m_icons = wxIconBundle(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/16x16/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/24x24/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/32x32/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/48x48/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/64x64/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/128x128/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/256x256/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/512x512/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
-	m_icons.AddIcon(wxIcon(ResourceDir + wxFILE_SEP_PATH + wxT("icons/hicolor/1024x1024/apps/GOODF.png"), wxBITMAP_TYPE_PNG));
+	wxString iconPath = ResourceDir + wxFILE_SEP_PATH + wxT("icons") + wxFILE_SEP_PATH + wxT("hicolor");
+	wxString appsPath = wxT("apps");
+	wxString imgPath = appsPath + wxFILE_SEP_PATH + wxT("GOODF.png");
+	m_icons = wxIconBundle(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("16x16") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("24x24") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("32x32") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("48x48") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("64x64") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("128x128") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("256x256") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("512x512") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
+	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("1024x1024") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
 
 	m_frame->SetIcons(m_icons);
 

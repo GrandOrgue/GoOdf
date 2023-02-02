@@ -77,18 +77,21 @@ if(CMAKE_CROSSCOMPILING AND WIN32)
     message(STATUS "Creating ${CMAKE_PROJECT_NAME}.ico")
     execute_process(COMMAND ${ImageMagick_convert_EXECUTABLE} -background none -resize 256x256 "${CMAKE_SOURCE_DIR}/resources/icons/${CMAKE_PROJECT_NAME}.svg" "${CMAKE_PROJECT_NAME}.ico" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/share)
   endif()
-else()
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps/${CMAKE_PROJECT_NAME}.png")
-    set(ICON_SIZES 16 24 32 48 64 128 256 512 1024)
-    foreach(ICON_SIZE IN ITEMS ${ICON_SIZES})
-      message(STATUS "Creating ${CMAKE_PROJECT_NAME}.png in size ${ICON_SIZE}x${ICON_SIZE}")
-      execute_process(COMMAND mkdir -p share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-      execute_process(COMMAND ${ImageMagick_convert_EXECUTABLE} -background none -resize ${ICON_SIZE}x${ICON_SIZE} "${CMAKE_SOURCE_DIR}/resources/icons/${CMAKE_PROJECT_NAME}.svg" "${CMAKE_PROJECT_NAME}.png" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps)
-    endforeach()
-    # Copy desktop file for linux
-    message(STATUS "Creating ${CMAKE_PROJECT_NAME}.desktop")
-    configure_file(${CMAKE_SOURCE_DIR}/resources/${CMAKE_PROJECT_NAME}.desktop.in ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/applications/${CMAKE_PROJECT_NAME}.desktop COPYONLY)
-  endif()
+endif()
+
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps/${CMAKE_PROJECT_NAME}.png")
+  set(ICON_SIZES 16 24 32 48 64 128 256 512 1024)
+  foreach(ICON_SIZE IN ITEMS ${ICON_SIZES})
+    message(STATUS "Creating ${CMAKE_PROJECT_NAME}.png in size ${ICON_SIZE}x${ICON_SIZE}")
+    execute_process(COMMAND mkdir -p share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    execute_process(COMMAND ${ImageMagick_convert_EXECUTABLE} -background none -resize ${ICON_SIZE}x${ICON_SIZE} "${CMAKE_SOURCE_DIR}/resources/icons/${CMAKE_PROJECT_NAME}.svg" "${CMAKE_PROJECT_NAME}.png" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/hicolor/${ICON_SIZE}x${ICON_SIZE}/apps)
+  endforeach()
+endif()
+
+# Copy desktop file for linux
+if(UNIX AND NOT APPLE)
+  message(STATUS "Creating ${CMAKE_PROJECT_NAME}.desktop")
+  configure_file(${CMAKE_SOURCE_DIR}/resources/${CMAKE_PROJECT_NAME}.desktop.in ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/applications/${CMAKE_PROJECT_NAME}.desktop COPYONLY)
 endif()
 
 set(APP_SRC
@@ -196,8 +199,8 @@ endif()
 
 # installation rules
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/ DESTINATION share/icons FILES_MATCHING PATTERN "*.png")
 if(UNIX AND NOT APPLE)
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/ DESTINATION share/icons FILES_MATCHING PATTERN "*.png")
   install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/applications/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/${CMAKE_PROJECT_NAME}/applications)
 endif()
 
