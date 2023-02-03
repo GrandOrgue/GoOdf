@@ -63,6 +63,7 @@ public:
 	void AddDivisionalItemToTree();
 	void AddImageItemToTree();
 	void AddGuiElementToTree(wxString title);
+	void RebuildPanelGuiElementsInTree(int panelIndex);
 
 	Organ *m_organ;
 

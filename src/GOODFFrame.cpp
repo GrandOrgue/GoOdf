@@ -1229,3 +1229,24 @@ void GOODFFrame::AddGuiElementToTree(wxString title) {
 	m_organTreeCtrl->SelectItem(newGuiElement);
 	m_organTreeCtrl->SelectItem(selectedPanel);
 }
+
+void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
+	int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+	wxTreeItemIdValue cookie;
+	wxTreeItemId panelId;
+	for (int i = 0; i < numChildrens; i++) {
+
+		if (i == 0)
+			panelId = m_organTreeCtrl->GetFirstChild(tree_panels, cookie);
+		else
+			panelId = m_organTreeCtrl->GetNextChild(tree_panels, cookie);
+		if (i == panelIndex)
+			break;
+	}
+	wxTreeItemId guiElements = m_organTreeCtrl->GetLastChild(panelId);
+	m_organTreeCtrl->DeleteChildren(guiElements);
+	int nbrElements = m_organ->getOrganPanelAt(panelIndex)->getNumberOfGuiElements();
+	for (int i = 0; i < nbrElements; i++) {
+		m_organTreeCtrl->AppendItem(guiElements, m_organ->getOrganPanelAt(panelIndex)->getGuiElementAt(i)->getDisplayName());
+	}
+}

@@ -25,6 +25,7 @@ GUIElement::GUIElement() {
 	m_type = wxEmptyString;
 	m_positionX = -1;
 	m_positionY = -1;
+	m_displayName = wxEmptyString;
 }
 
 GUIElement::~GUIElement() {
@@ -33,12 +34,6 @@ GUIElement::~GUIElement() {
 
 void GUIElement::write(wxTextFile *outFile) {
 	outFile->AddLine(wxT("Type=") + m_type);
-/*
-	if (m_positionX != -1)
-		outFile->AddLine(wxT("PositionX=") + wxString::Format(wxT("%i"), m_positionX));
-	if (m_positionY != -1)
-		outFile->AddLine(wxT("PositionY=") + wxString::Format(wxT("%i"), m_positionY));
-*/
 }
 
 wxString GUIElement::getType() {
@@ -71,4 +66,12 @@ void GUIElement::setOwningPanel(GoPanel *panel) {
 
 GoPanel* GUIElement::getOwningPanel() {
 	return m_owningPanel;
+}
+
+void GUIElement::setDisplayName(wxString name) {
+	m_displayName = name;
+}
+
+wxString GUIElement::getDisplayName() {
+	return m_displayName;
 }

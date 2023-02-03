@@ -20,6 +20,7 @@
 
 #include "GoPanel.h"
 #include "GOODFFunctions.h"
+#include "GUITremulant.h"
 
 GoPanel::GoPanel() {
 	m_name = wxT("New Panel");
@@ -163,4 +164,43 @@ int GoPanel::getNumberOfGuiElements() {
 GUIElement* GoPanel::getGuiElementAt(unsigned index) {
 	auto iterator = std::next(m_guiElements.begin(), index);
 	return *iterator;
+}
+
+bool GoPanel::hasTremulantAsGuiElement(Tremulant* trem) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Tremulant")) {
+			GUITremulant *tr = dynamic_cast<GUITremulant*>(e);
+			if (tr) {
+				if (tr->isReferencing(trem))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeTremulantFromPanel(Tremulant* trem) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Tremulant")) {
+			GUITremulant *tr = dynamic_cast<GUITremulant*>(*it);
+			if (tr) {
+				if (tr->isReferencing(trem)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+
+		} else{
+			// go to next
+			++it;
+		}
+	}
+
 }

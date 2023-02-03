@@ -528,6 +528,21 @@ void TremulantPanel::OnRemoveTremulantBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->hasTremulantReference(m_tremulant))
 				::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeTremulantReference(m_tremulant);
 		}
+		// also remove any references from the manuals
+		unsigned numberOfManuals = ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
+		for (unsigned i = 0; i < numberOfManuals; i++) {
+			if (::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->hasTremulantReference(m_tremulant)) {
+				::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->removeTremulant(m_tremulant);
+			}
+		}
+		// if any panel has a GUI element for this tremulant it should be removed too
+		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+		for (unsigned i = 0; i < numberOfPanels; i++) {
+			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasTremulantAsGuiElement(m_tremulant)) {
+				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeTremulantFromPanel(m_tremulant);
+				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+			}
+		}
 		// then remove this tremulant
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}

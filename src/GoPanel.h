@@ -27,6 +27,7 @@
 #include "GoImage.h"
 #include "DisplayMetrics.h"
 #include "GUIElements.h"
+#include "Tremulant.h"
 
 class GoPanel {
 public:
@@ -52,6 +53,8 @@ public:
 	void removeGuiElementAt(unsigned index);
 	int getNumberOfGuiElements();
 	GUIElement* getGuiElementAt(unsigned index);
+	bool hasTremulantAsGuiElement(Tremulant* trem);
+	void removeTremulantFromPanel(Tremulant* trem);
 
 private:
 	wxString m_name;

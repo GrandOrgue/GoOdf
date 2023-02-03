@@ -363,51 +363,61 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (organElement.first == wxT("Manual")) {
 				GUIElement *choice = new GUIManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Stop")) {
 				GUIElement *choice = new GUIStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Coupler")) {
 				GUIElement *choice = new GUICoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Divisional")) {
 				GUIElement *choice = new GUIDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Enclosure")) {
 				GUIElement *choice = new GUIEnclosure(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Tremulant")) {
 				GUIElement *choice = new GUITremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("Switch")) {
 				GUIElement *choice = new GUISwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("ReversiblePiston")) {
 				GUIElement *choice = new GUIReversiblePiston(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("DivisionalCoupler")) {
 				GUIElement *choice = new GUIDivisionalCoupler(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
 			} else if (organElement.first == wxT("General")) {
 				GUIElement *choice = new GUIGeneral(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second));
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
 			}
@@ -426,6 +436,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUILabel();
 				choice->setType(setterType);
 				choice->setOwningPanel(m_panel);
+				choice->setDisplayName(setterType);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			} else if (setterType == wxT("SetterXXXDivisionalBank")) {
@@ -440,12 +451,14 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUILabel();
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
+				choice->setDisplayName(typeName);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else if (setterType == wxT("Swell")) {
 				GUIElement *choice = new GUIEnclosure(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(setterType);
+				choice->setDisplayName(setterType);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			} else if (setterType == wxT("GeneralXX")) {
@@ -455,6 +468,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUIGeneral(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(generalName);
+				choice->setDisplayName(generalName);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(generalName);
 			} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
@@ -470,6 +484,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUIDivisional(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(divisionalName);
+				choice->setDisplayName(divisionalName);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(divisionalName);
 			} else if (setterType == wxT("SetterXXXDivisionalPrevBank")) {
@@ -484,6 +499,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUIDivisional(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
+				choice->setDisplayName(typeName);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else if (setterType == wxT("SetterXXXDivisionalNextBank")) {
@@ -498,6 +514,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUIDivisional(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
+				choice->setDisplayName(typeName);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else {
@@ -505,6 +522,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				GUIElement *choice = new GUISwitch(NULL);
 				choice->setOwningPanel(m_panel);
 				choice->setType(setterType);
+				choice->setDisplayName(setterType);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			}
