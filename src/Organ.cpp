@@ -508,6 +508,27 @@ void Organ::addWindchestgroup(Windchestgroup windchest) {
 void Organ::removeWindchestgroupAt(unsigned index) {
 	std::list<Windchestgroup>::iterator it = m_Windchestgroups.begin();
 	std::advance(it, index);
+	// now we're at the windchest to remove but first we should remove it from any stop/rank/pipe that have it set
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			if (s.getInternalRank()->getWindchest() == &(*it)) {
+				s.getInternalRank()->setOnlyRankWindchest(NULL);
+			}
+			for (Pipe &p : s.getInternalRank()->m_pipes) {
+				if (p.windchest == &(*it))
+					p.windchest = NULL;
+			}
+		}
+	}
+	for (Rank& r : m_Ranks) {
+		if (r.getWindchest() == &(*it)) {
+			r.setOnlyRankWindchest(NULL);
+		}
+		for (Pipe &p : r.m_pipes) {
+			if (p.windchest == &(*it))
+				p.windchest = NULL;
+		}
+	}
 	m_Windchestgroups.erase(it);
 }
 

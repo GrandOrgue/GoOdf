@@ -63,6 +63,7 @@ public:
 	void setTrackerDelay(int trackerDelay);
 	Windchestgroup* getWindchest();
 	void setWindchest(Windchestgroup *windchest);
+	void setOnlyRankWindchest(Windchestgroup *windchest);
 	wxString getPipesRootPath();
 	void setPipesRootPath(wxString path);
 	void readPipes(

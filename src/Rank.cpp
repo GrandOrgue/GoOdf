@@ -262,6 +262,10 @@ void Rank::setWindchest(Windchestgroup *windchest) {
 	}
 }
 
+void Rank::setOnlyRankWindchest(Windchestgroup *windchest) {
+	this->windchest = windchest;
+}
+
 wxString Rank::getPipesRootPath() {
 	return m_latestPipesRootPath;
 }
