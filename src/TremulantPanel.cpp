@@ -543,6 +543,13 @@ void TremulantPanel::OnRemoveTremulantBtn(wxCommandEvent& WXUNUSED(event)) {
 				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 			}
 		}
+		// the tremulant can also exist in generals
+		unsigned numberOfGenerals = ::wxGetApp().m_frame->m_organ->getNumberOfGenerals();
+		for (unsigned i = 0; i < numberOfGenerals; i++) {
+			if (::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->hasTremulant(m_tremulant)) {
+				::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->removeTremulant(m_tremulant);
+			}
+		}
 		// then remove this tremulant
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}

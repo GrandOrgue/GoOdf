@@ -288,6 +288,12 @@ void Manual::addTremulant(Tremulant* tremulant) {
 
 void Manual::removeTremulant(Tremulant* tremulant) {
 	m_tremulants.remove(tremulant);
+	// if tremulant is removed from manual it should also be removed from its divisionals
+	for (auto& d : m_divisionals) {
+		if (d->hasTremulant(tremulant)) {
+			d->removeTremulant(tremulant);
+		}
+	}
 }
 
 void Manual::removeTremulantAt(unsigned index) {

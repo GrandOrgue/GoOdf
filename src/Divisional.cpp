@@ -158,6 +158,17 @@ void Divisional::removeTremulantAt(unsigned index) {
 	m_tremulants.erase(it);
 }
 
+void Divisional::removeTremulant(Tremulant *trem) {
+	auto it = m_tremulants.begin();
+	while (it != m_tremulants.end()){
+	    if((*it).first == trem){
+	        it = m_tremulants.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
+}
+
 void Divisional::removeAllTremulants() {
 	m_tremulants.clear();
 }

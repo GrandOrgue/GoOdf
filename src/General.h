@@ -53,6 +53,7 @@ public:
 	unsigned getNumberOfTremulants();
 	void addTremulant(Tremulant *trem, bool isOn);
 	void removeTremulantAt(unsigned index);
+	void removeTremulant(Tremulant *trem);
 	void removeAllTremulants();
 	std::pair<Tremulant*, bool>* getTremulantPairAt(unsigned index);
 	unsigned getNumberOfSwitches();
