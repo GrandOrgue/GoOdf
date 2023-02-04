@@ -30,6 +30,7 @@
 #include "ReleaseDialog.h"
 #include "AttackDialog.h"
 #include "StopPanel.h"
+#include "PipeBorrowingDialog.h"
 
 // Event table
 BEGIN_EVENT_TABLE(RankPanel, wxPanel)
@@ -995,7 +996,25 @@ void RankPanel::OnEditPipe() {
 }
 
 void RankPanel::OnCreateReference() {
+	int pipeIndex = GetSelectedItemIndexRelativeParent();
+	PipeBorrowingDialog dlg(this);
 
+	if (dlg.ShowModal() == wxID_OK) {
+		if(dlg.IsSelectionOk()) {
+			int manId = dlg.GetSelectedManual();
+			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+				manId += 1;
+			int stopId = dlg.GetSelectedStop() + 1;
+			int pipeId = dlg.GetSelectedPipe();
+			wxString refString = wxT("REF:") + GOODF_functions::number_format(manId) + wxT(":") + GOODF_functions::number_format(stopId) + wxT(":") + GOODF_functions::number_format(pipeId);
+			m_rank->clearPipeAt(pipeIndex);
+			m_rank->getPipeAt(pipeIndex)->m_attacks.front().fileName = refString;
+			m_rank->getPipeAt(pipeIndex)->m_attacks.front().fullPath = refString;
+
+			RebuildPipeTree();
+			UpdatePipeTree();
+		}
+	}
 }
 
 void RankPanel::OnEditAttack() {
