@@ -62,12 +62,14 @@ public:
 	int GetSelectedManual();
 	int GetSelectedStop();
 	int GetSelectedPipe();
+	int GetFollowingPipes();
 	bool IsSelectionOk();
 
 private:
 	int m_selectedManualIndex;
 	int m_selectedStopIndex;
-	int m_selectedPipeIndex;
+	int m_selectedPipeNbr;
+	int m_followingPipes;
 	wxArrayString m_manualList;
 	bool m_manIsOk;
 	bool m_stopIsOk;
@@ -75,15 +77,18 @@ private:
 	wxChoice *m_manualChoice;
 	wxChoice *m_stopChoice; // the first rank of this stop will be referenced
 	wxSpinCtrl *m_pipeSpin;
+	wxSpinCtrl *m_followingPipesToRefSpin;
 	wxStaticText *m_infoText;
 
 	// Event methods
 	void OnManualChoice(wxCommandEvent& event);
 	void OnStopChoice(wxCommandEvent& event);
 	void OnPipeSpin(wxSpinEvent& event);
+	void OnFollowingPipesSpin(wxSpinEvent& event);
 
 	void UpdateStopChoice();
 	void UpdatePipeSpin();
+	void UpdateFollowingPipesSpin();
 };
 
 #endif

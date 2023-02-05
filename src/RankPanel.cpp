@@ -997,6 +997,8 @@ void RankPanel::OnEditPipe() {
 
 void RankPanel::OnCreateReference() {
 	int pipeIndex = GetSelectedItemIndexRelativeParent();
+	int highestPipeIdx = m_rank->m_pipes.size() - 1;
+	int pipesAboveThis = highestPipeIdx - pipeIndex;
 	PipeBorrowingDialog dlg(this);
 
 	if (dlg.ShowModal() == wxID_OK) {
@@ -1006,10 +1008,19 @@ void RankPanel::OnCreateReference() {
 				manId += 1;
 			int stopId = dlg.GetSelectedStop() + 1;
 			int pipeId = dlg.GetSelectedPipe();
-			wxString refString = wxT("REF:") + GOODF_functions::number_format(manId) + wxT(":") + GOODF_functions::number_format(stopId) + wxT(":") + GOODF_functions::number_format(pipeId);
-			m_rank->clearPipeAt(pipeIndex);
-			m_rank->getPipeAt(pipeIndex)->m_attacks.front().fileName = refString;
-			m_rank->getPipeAt(pipeIndex)->m_attacks.front().fullPath = refString;
+			int pipesToRef = 1; // At least one REF should be made
+			int followingPipesFromDialog = dlg.GetFollowingPipes();
+			if (followingPipesFromDialog > 0) {
+				// limit of max pipes to reference can be either from how many were available in source
+				// or how many pipes we actually have in this target rank
+				pipesToRef += pipesAboveThis > followingPipesFromDialog ? followingPipesFromDialog : pipesAboveThis;
+			}
+			for (int i = 0; i < pipesToRef; i++) {
+				wxString refString = wxT("REF:") + GOODF_functions::number_format(manId) + wxT(":") + GOODF_functions::number_format(stopId) + wxT(":") + GOODF_functions::number_format(pipeId + i);
+				m_rank->clearPipeAt(pipeIndex + i);
+				m_rank->getPipeAt(pipeIndex + i)->m_attacks.front().fileName = refString;
+				m_rank->getPipeAt(pipeIndex + i)->m_attacks.front().fullPath = refString;
+			}
 
 			RebuildPipeTree();
 			UpdatePipeTree();

@@ -29,6 +29,7 @@ BEGIN_EVENT_TABLE(PipeBorrowingDialog, wxDialog)
 	EVT_CHOICE(ID_BORROWING_DIALOG_MANUAL_CHOICE, PipeBorrowingDialog::OnManualChoice)
 	EVT_CHOICE(ID_BORROWING_DIALOG_STOP_CHOICE, PipeBorrowingDialog::OnStopChoice)
 	EVT_SPINCTRL(ID_BORROWING_DIALOG_PIPE_SPIN, PipeBorrowingDialog::OnPipeSpin)
+	EVT_SPINCTRL(ID_BORROWING_DIALOG_FOLLOWING_PIPES_SPIN, PipeBorrowingDialog::OnFollowingPipesSpin)
 END_EVENT_TABLE()
 
 PipeBorrowingDialog::PipeBorrowingDialog() {
@@ -53,7 +54,8 @@ PipeBorrowingDialog::~PipeBorrowingDialog() {
 void PipeBorrowingDialog::Init() {
 	m_selectedManualIndex = 0;
 	m_selectedStopIndex = 0;
-	m_selectedPipeIndex = -1;
+	m_selectedPipeNbr = -1;
+	m_followingPipes = 0;
 
 	unsigned nbrManuals = ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
 	if (nbrManuals > 0) {
@@ -66,6 +68,7 @@ void PipeBorrowingDialog::Init() {
 		m_manIsOk = true;
 	} else {
 		m_manualList.Add(wxT("No manuals exist in organ!"));
+		m_infoText->SetLabelText(wxT("No manuals exist!"));
 		m_manIsOk = false;
 	}
 }
@@ -150,6 +153,33 @@ void PipeBorrowingDialog::CreateControls() {
 	thirdRow->Add(m_pipeSpin, 1, wxGROW|wxALL, 5);
 	mainSizer->Add(thirdRow, 0, wxGROW);
 
+	wxBoxSizer *morePipesRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *morePipesText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Also borrow next ")
+	);
+	morePipesRow->Add(morePipesText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_followingPipesToRefSpin = new wxSpinCtrl(
+		this,
+		ID_BORROWING_DIALOG_FOLLOWING_PIPES_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		0,
+		0
+	);
+	morePipesRow->Add(m_followingPipesToRefSpin, 1, wxGROW|wxALL, 5);
+	wxStaticText *lastText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT(" pipes.")
+	);
+	morePipesRow->Add(lastText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	mainSizer->Add(morePipesRow, 0, wxGROW);
+
 	wxBoxSizer *fourthRow = new wxBoxSizer(wxHORIZONTAL);
 	fourthRow->AddStretchSpacer();
 	m_infoText = new wxStaticText (
@@ -194,7 +224,11 @@ int PipeBorrowingDialog::GetSelectedStop() {
 }
 
 int PipeBorrowingDialog::GetSelectedPipe() {
-	return m_selectedPipeIndex;
+	return m_selectedPipeNbr;
+}
+
+int PipeBorrowingDialog::GetFollowingPipes() {
+	return m_followingPipes;
 }
 
 bool PipeBorrowingDialog::IsSelectionOk() {
@@ -212,7 +246,11 @@ void PipeBorrowingDialog::OnStopChoice(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void PipeBorrowingDialog::OnPipeSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_selectedPipeIndex = m_pipeSpin->GetValue();
+	m_selectedPipeNbr = m_pipeSpin->GetValue();
+}
+
+void PipeBorrowingDialog::OnFollowingPipesSpin(wxSpinEvent& WXUNUSED(event)) {
+	m_followingPipes = m_followingPipesToRefSpin->GetValue();
 }
 
 void PipeBorrowingDialog::UpdateStopChoice() {
@@ -225,9 +263,11 @@ void PipeBorrowingDialog::UpdateStopChoice() {
 		for (unsigned i = 0; i < nbrStops; i++) {
 			stops.Add(::wxGetApp().m_frame->m_organ->getOrganManualAt(m_selectedManualIndex)->getStopAt(i)->getName());
 		}
+		m_infoText->SetLabelText(wxEmptyString);
 		m_stopIsOk = true;
 	} else {
 		stops.Add(wxT("No stops to choose from!"));
+		m_infoText->SetLabelText(m_manualChoice->GetString(m_manualChoice->GetSelection()) + wxT(" has no stops!"));
 		m_stopIsOk = false;
 	}
 
@@ -240,11 +280,27 @@ void PipeBorrowingDialog::UpdateStopChoice() {
 void PipeBorrowingDialog::UpdatePipeSpin() {
 	if (m_manIsOk && m_stopIsOk) {
 		m_pipeSpin->SetRange(1, ::wxGetApp().m_frame->m_organ->getOrganManualAt(m_selectedManualIndex)->getStopAt(m_selectedStopIndex)->getNumberOfAccessiblePipes());
-		m_selectedPipeIndex = 1;
+		m_selectedPipeNbr = 1;
 		m_pipeSpin->SetValue(1);
 	} else {
 		m_pipeSpin->SetRange(-1, -1);
-		m_selectedPipeIndex = -1;
-		m_pipeSpin->SetValue(m_selectedPipeIndex);
+		m_selectedPipeNbr = -1;
+		m_pipeSpin->SetValue(m_selectedPipeNbr);
+	}
+	UpdateFollowingPipesSpin();
+}
+
+void PipeBorrowingDialog::UpdateFollowingPipesSpin() {
+	if (m_manIsOk && m_stopIsOk) {
+		int maxPipes = ::wxGetApp().m_frame->m_organ->getOrganManualAt(m_selectedManualIndex)->getStopAt(m_selectedStopIndex)->getNumberOfAccessiblePipes();
+		int maxPossibleRefPipes = maxPipes - m_selectedPipeNbr;
+		if (m_followingPipes > maxPossibleRefPipes)
+			m_followingPipes = maxPossibleRefPipes;
+		m_followingPipesToRefSpin->SetRange(0, maxPossibleRefPipes);
+		m_followingPipesToRefSpin->SetValue(m_followingPipes);
+	} else {
+		m_followingPipes = 0;
+		m_followingPipesToRefSpin->SetRange(0, 0);
+		m_followingPipesToRefSpin->SetValue(0);
 	}
 }
