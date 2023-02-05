@@ -61,6 +61,7 @@ public:
 	unsigned getNumberOfSwitches();
 	void addSwitch(GoSwitch *sw, bool isOn);
 	void removeSwitchAt(unsigned index);
+	void removeSwitch(GoSwitch *sw);
 	void removeAllSwitches();
 	std::pair<GoSwitch*, bool>* getSwitchPairAt(unsigned index);
 	unsigned getNumberOfDivisionalCouplers();

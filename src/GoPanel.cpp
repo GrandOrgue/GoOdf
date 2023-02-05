@@ -24,6 +24,7 @@
 #include "GUIStop.h"
 #include "GUICoupler.h"
 #include "GUIDivisional.h"
+#include "GUISwitch.h"
 
 GoPanel::GoPanel() {
 	m_name = wxT("New Panel");
@@ -374,6 +375,43 @@ void GoPanel::removeItemFromPanel(Divisional *divisional) {
 			GUIDivisional *div = dynamic_cast<GUIDivisional*>(*it);
 			if (div) {
 				if (div->isReferencing(divisional)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(GoSwitch *sw) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Switch")) {
+			GUISwitch *s = dynamic_cast<GUISwitch*>(e);
+			if (s) {
+				if (s->isReferencing(sw))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(GoSwitch *sw) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Switch")) {
+			GUISwitch *s = dynamic_cast<GUISwitch*>(*it);
+			if (s) {
+				if (s->isReferencing(sw)) {
 					// erase and go to next
 					it = m_guiElements.erase(it);
 				} else {

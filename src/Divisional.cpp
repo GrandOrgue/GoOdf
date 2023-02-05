@@ -112,6 +112,17 @@ void Divisional::removeStopAt(unsigned index) {
 	m_stops.erase(it);
 }
 
+void Divisional::removeStop(Stop *stop) {
+	auto it = m_stops.begin();
+	while (it != m_stops.end()){
+	    if((*it).first == stop){
+	        it = m_stops.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
+}
+
 void Divisional::removeAllStops() {
 	m_stops.clear();
 }
@@ -133,6 +144,17 @@ void Divisional::removeCouplerAt(unsigned index) {
 	std::list<std::pair<Coupler*, bool>>::iterator it = m_couplers.begin();
 	std::advance(it, index);
 	m_couplers.erase(it);
+}
+
+void Divisional::removeCoupler(Coupler *coupler) {
+	auto it = m_couplers.begin();
+	while (it != m_couplers.end()){
+	    if((*it).first == coupler){
+	        it = m_couplers.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
 }
 
 void Divisional::removeAllCouplers() {
@@ -190,6 +212,17 @@ void Divisional::removeSwitchAt(unsigned index) {
 	std::list<std::pair<GoSwitch*, bool>>::iterator it = m_switches.begin();
 	std::advance(it, index);
 	m_switches.erase(it);
+}
+
+void Divisional::removeSwitch(GoSwitch *sw) {
+	auto it = m_switches.begin();
+	while (it != m_switches.end()){
+	    if((*it).first == sw){
+	        it = m_switches.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
 }
 
 void Divisional::removeAllSwitches() {

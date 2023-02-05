@@ -65,6 +65,8 @@ public:
 	void removeItemFromPanel(Coupler *coupler);
 	bool hasItemAsGuiElement(Divisional *divisional);
 	void removeItemFromPanel(Divisional *divisional);
+	bool hasItemAsGuiElement(GoSwitch *sw);
+	void removeItemFromPanel(GoSwitch *sw);
 
 private:
 	wxString m_name;

@@ -385,15 +385,15 @@ void ManualPanel::setManual(Manual *manual) {
 
 	// Update/populate available tremulants
 	wxArrayString organTremulants;
+	if (!m_availableTremulants->IsEmpty())
+		m_availableTremulants->Clear();
 	unsigned nbTrems = ::wxGetApp().m_frame->m_organ->getNumberOfTremulants();
 	if (nbTrems > 0) {
 		for (unsigned i = 0; i < nbTrems; i++) {
 			organTremulants.Add(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(i)->getName());
 		}
-		m_availableTremulants->Clear();
+
 		m_availableTremulants->InsertItems(organTremulants, 0);
-	} else {
-		m_availableTremulants->Clear();
 	}
 
 	UpdateReferencedTremulants();
@@ -403,12 +403,13 @@ void ManualPanel::setManual(Manual *manual) {
 
 	// update/populate available switches
 	wxArrayString organSwitches;
+	if (!m_availableSwitches->IsEmpty())
+		m_availableSwitches->Clear();
 	unsigned nbSwitches = ::wxGetApp().m_frame->m_organ->getNumberOfSwitches();
 	if (nbSwitches > 0) {
 		for (unsigned i = 0; i < nbSwitches; i++) {
 			organSwitches.Add(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(i)->getName());
 		}
-		m_availableSwitches->Clear();
 		m_availableSwitches->InsertItems(organSwitches, 0);
 	}
 

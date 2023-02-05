@@ -565,6 +565,23 @@ unsigned Organ::getIndexOfOrganSwitch(GoSwitch *switchToFind) {
 void Organ::removeSwitchAt(unsigned index) {
 	std::list<GoSwitch>::iterator it = m_Switches.begin();
 	std::advance(it, index);
+	// now that we are at the switch to remove we should make sure to remove it from any manual that have it
+	// also remove from any gui element on any panel and any general that reference it
+	for (unsigned i = 0; i < m_Manuals.size(); i++) {
+		if (getOrganManualAt(i)->hasGoSwitchReference(&(*it)))
+			getOrganManualAt(i)->removeGoSwitch(&(*it));
+	}
+	for (unsigned i = 0; i < m_Panels.size(); i++) {
+		if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+			getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
+	for (General& g : m_Generals) {
+		if (g.hasSwitch(&(*it))) {
+			g.removeSwitch(&(*it));
+		}
+	}
 	m_Switches.erase(it);
 	updateOrganElements();
 }

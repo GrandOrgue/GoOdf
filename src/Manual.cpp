@@ -185,6 +185,11 @@ void Manual::addStop(Stop* stop) {
 }
 
 void Manual::removeStop(Stop* stop) {
+	// also remove stop from any divisional
+	for (auto& d : m_divisionals) {
+		if (d->hasStop(stop))
+			d->removeStop(stop);
+	}
 	m_stops.remove(stop);
 }
 
@@ -219,12 +224,22 @@ void Manual::addCoupler(Coupler* coupler) {
 }
 
 void Manual::removeCoupler(Coupler* coupler) {
+	// also remove coupler from any divisional
+	for (auto& d : m_divisionals) {
+		if (d->hasCoupler(coupler))
+			d->removeCoupler(coupler);
+	}
 	m_couplers.remove(coupler);
 }
 
 void Manual::removeCouplerAt(unsigned index) {
 	std::list<Coupler *>::iterator it = m_couplers.begin();
 	std::advance(it, index);
+	// also remove coupler from any divisional
+	for (auto& d : m_divisionals) {
+		if (d->hasCoupler(*it))
+			d->removeCoupler(*it);
+	}
 	m_couplers.erase(it);
 }
 
@@ -299,6 +314,12 @@ void Manual::removeTremulant(Tremulant* tremulant) {
 void Manual::removeTremulantAt(unsigned index) {
 	std::list<Tremulant *>::iterator it = m_tremulants.begin();
 	std::advance(it, index);
+	// if tremulant is removed from manual it should also be removed from its divisionals
+	for (auto& d : m_divisionals) {
+		if (d->hasTremulant(*it)) {
+			d->removeTremulant(*it);
+		}
+	}
 	m_tremulants.erase(it);
 }
 
@@ -338,12 +359,22 @@ void Manual::addGoSwitch(GoSwitch* sw) {
 }
 
 void Manual::removeGoSwitch(GoSwitch* sw) {
+	// also remove switch from any divisional
+	for (auto& d : m_divisionals) {
+		if (d->hasSwitch(sw))
+			d->removeSwitch(sw);
+	}
 	m_switches.remove(sw);
 }
 
 void Manual::removeGoSwitchAt(unsigned index) {
-	std::list<GoSwitch *>::iterator it = m_switches.begin();
+	std::list<GoSwitch*>::iterator it = m_switches.begin();
 	std::advance(it, index);
+	// also remove switch from any divisional
+	for (auto& d : m_divisionals) {
+		if (d->hasSwitch(*it))
+			d->removeSwitch(*it);
+	}
 	m_switches.erase(it);
 }
 

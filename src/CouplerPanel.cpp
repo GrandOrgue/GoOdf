@@ -537,16 +537,21 @@ void CouplerPanel::setCoupler(Coupler *coupler) {
 	if (!availableManuals.IsEmpty())
 		availableManuals.Empty();
 	unsigned nbManuals = ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
+	if (!m_destinationManualChoice->IsEmpty())
+		m_destinationManualChoice->Clear();
 	if (nbManuals > 0) {
 		for (unsigned i = 0; i < nbManuals; i++)
 			availableManuals.Add(::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->getName());
 
-		m_destinationManualChoice->Clear();
 		m_destinationManualChoice->Insert(availableManuals, 0);
 	}
 
-	if (m_coupler->getDestinationManual())
-		m_destinationManualChoice->SetSelection(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_coupler->getDestinationManual()));
+	if (m_coupler->getDestinationManual()) {
+		if (::wxGetApp().m_frame->m_organ->doesHavePedals())
+			m_destinationManualChoice->SetSelection(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_coupler->getDestinationManual()));
+		else
+			m_destinationManualChoice->SetSelection(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_coupler->getDestinationManual()) - 1);
+	}
 
 	m_destinationKeyShiftSpin->SetValue(m_coupler->getDestinationKeyshift());
 	m_couplerTypeChoice->SetSelection(m_couplerTypeChoice->FindString(m_coupler->getCouplerType()));

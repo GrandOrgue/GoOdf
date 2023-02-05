@@ -241,6 +241,17 @@ void General::removeSwitchAt(unsigned index) {
 	m_switches.erase(it);
 }
 
+void General::removeSwitch(GoSwitch *sw) {
+	auto it = m_switches.begin();
+	while (it != m_switches.end()){
+	    if((*it).first == sw){
+	        it = m_switches.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
+}
+
 void General::removeAllSwitches() {
 	m_switches.clear();
 }
