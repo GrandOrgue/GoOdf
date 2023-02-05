@@ -25,6 +25,9 @@
 #include "GUICoupler.h"
 #include "GUIDivisional.h"
 #include "GUISwitch.h"
+#include "GUIDivisionalCoupler.h"
+#include "GUIReversiblePiston.h"
+#include "GUIGeneral.h"
 
 GoPanel::GoPanel() {
 	m_name = wxT("New Panel");
@@ -412,6 +415,117 @@ void GoPanel::removeItemFromPanel(GoSwitch *sw) {
 			GUISwitch *s = dynamic_cast<GUISwitch*>(*it);
 			if (s) {
 				if (s->isReferencing(sw)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(DivisionalCoupler *divCplr) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("DivisionalCoupler")) {
+			GUIDivisionalCoupler *div = dynamic_cast<GUIDivisionalCoupler*>(e);
+			if (div) {
+				if (div->isReferencing(divCplr))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(DivisionalCoupler *divCplr) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("DivisionalCoupler")) {
+			GUIDivisionalCoupler *div = dynamic_cast<GUIDivisionalCoupler*>(*it);
+			if (div) {
+				if (div->isReferencing(divCplr)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(ReversiblePiston *revPist) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("ReversiblePiston")) {
+			GUIReversiblePiston *p = dynamic_cast<GUIReversiblePiston*>(e);
+			if (p) {
+				if (p->isReferencing(revPist))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(ReversiblePiston *revPist) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("ReversiblePiston")) {
+			GUIReversiblePiston *p = dynamic_cast<GUIReversiblePiston*>(*it);
+			if (p) {
+				if (p->isReferencing(revPist)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(General *general) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("General")) {
+			GUIGeneral *g = dynamic_cast<GUIGeneral*>(e);
+			if (g) {
+				if (g->isReferencing(general))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(General *general) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("General")) {
+			GUIGeneral *g = dynamic_cast<GUIGeneral*>(*it);
+			if (g) {
+				if (g->isReferencing(general)) {
 					// erase and go to next
 					it = m_guiElements.erase(it);
 				} else {

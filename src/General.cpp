@@ -275,6 +275,17 @@ void General::removeDivisionalCouplerAt(unsigned index) {
 	m_divisionalCouplers.erase(it);
 }
 
+void General::removeDivisionalCoupler(DivisionalCoupler *divCplr) {
+	auto it = m_divisionalCouplers.begin();
+	while (it != m_divisionalCouplers.end()){
+	    if((*it).first == divCplr){
+	        it = m_divisionalCouplers.erase(it);// erase and go to next
+	    } else{
+	        ++it;  // go to next
+	    }
+	}
+}
+
 void General::removeAllDivisionalCouplers() {
 	m_divisionalCouplers.clear();
 }

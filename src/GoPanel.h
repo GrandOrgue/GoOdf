@@ -28,6 +28,9 @@
 #include "DisplayMetrics.h"
 #include "GUIElements.h"
 #include "Tremulant.h"
+#include "DivisionalCoupler.h"
+#include "ReversiblePiston.h"
+#include "General.h"
 
 class GoPanel {
 public:
@@ -67,6 +70,12 @@ public:
 	void removeItemFromPanel(Divisional *divisional);
 	bool hasItemAsGuiElement(GoSwitch *sw);
 	void removeItemFromPanel(GoSwitch *sw);
+	bool hasItemAsGuiElement(DivisionalCoupler *divCplr);
+	void removeItemFromPanel(DivisionalCoupler *divCplr);
+	bool hasItemAsGuiElement(ReversiblePiston *revPist);
+	void removeItemFromPanel(ReversiblePiston *revPist);
+	bool hasItemAsGuiElement(General *general);
+	void removeItemFromPanel(General *general);
 
 private:
 	wxString m_name;

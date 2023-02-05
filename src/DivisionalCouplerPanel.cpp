@@ -445,9 +445,8 @@ void DivisionalCouplerPanel::OnRemoveReferencedManual(wxCommandEvent& WXUNUSED(e
 void DivisionalCouplerPanel::OnRemoveDivisionalCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this divisional coupler?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references to this divisional coupler in any general first
-
-		// then remove this divisional coupler
+		// references to this divisional coupler in generals and gui elements are removed from organ
+		// when this divisional coupler itself is removed
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

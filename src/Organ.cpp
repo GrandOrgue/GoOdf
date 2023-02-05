@@ -890,16 +890,37 @@ void Organ::addDivisionalCoupler(DivisionalCoupler divCplr) {
 void Organ::removeDivisionalCouplerAt(unsigned index) {
 	std::list<DivisionalCoupler>::iterator it = m_DivisionalCouplers.begin();
 	std::advance(it, index);
+	// if any gui element exist for this divisional coupler in any panel it should be removed
+	for (unsigned i = 0; i < m_Panels.size(); i++) {
+		if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+			getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
+	// this divisonal coupler should also be removed from any general
+	for (General& g : m_Generals) {
+		if (g.hasDivisionalCoupler(&(*it))) {
+			g.removeDivisionalCoupler(&(*it));
+		}
+	}
 	m_DivisionalCouplers.erase(it);
 	updateOrganElements();
 }
 
 void Organ::removeDivisionalCoupler(DivisionalCoupler *divCplr) {
 	for (auto it = m_DivisionalCouplers.begin(); it != m_DivisionalCouplers.end();) {
-		if (&(*it) == divCplr)
+		if (&(*it) == divCplr) {
+			// remove any gui representations first
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+					getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
 			it == m_DivisionalCouplers.erase(it);
-		else
+		} else {
 			++it;
+		}
 	}
 	updateOrganElements();
 }
@@ -937,16 +958,31 @@ void Organ::addGeneral(General general) {
 void Organ::removeGeneralAt(unsigned index) {
 	std::list<General>::iterator it = m_Generals.begin();
 	std::advance(it, index);
+	// remove any gui representations first
+	for (unsigned i = 0; i < m_Panels.size(); i++) {
+		if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+			getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
 	m_Generals.erase(it);
 	updateOrganElements();
 }
 
 void Organ::removeGeneral(General *general) {
 	for (auto it = m_Generals.begin(); it != m_Generals.end();) {
-		if (&(*it) == general)
+		if (&(*it) == general) {
+			// remove any gui representations first
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+					getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
 			it == m_Generals.erase(it);
-		else
+		} else {
 			++it;
+		}
 	}
 	updateOrganElements();
 }
@@ -984,16 +1020,31 @@ void Organ::addReversiblePiston(ReversiblePiston piston) {
 void Organ::removeReversiblePistonAt(unsigned index) {
 	std::list<ReversiblePiston>::iterator it = m_ReversiblePistons.begin();
 	std::advance(it, index);
+	// if any gui element exist for this piston in any panel it should be removed
+	for (unsigned i = 0; i < m_Panels.size(); i++) {
+		if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+			getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
 	m_ReversiblePistons.erase(it);
 	updateOrganElements();
 }
 
 void Organ::removeReversiblePiston(ReversiblePiston *piston) {
 	for (auto it = m_ReversiblePistons.begin(); it != m_ReversiblePistons.end();) {
-		if (&(*it) == piston)
+		if (&(*it) == piston) {
+			// if any gui element exist for this piston in any panel it should be removed
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
+					getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
 			it == m_ReversiblePistons.erase(it);
-		else
+		} else {
 			++it;
+		}
 	}
 	updateOrganElements();
 }

@@ -67,6 +67,7 @@ public:
 	unsigned getNumberOfDivisionalCouplers();
 	void addDivisionalCoupler(DivisionalCoupler *divCoupler, bool isOn);
 	void removeDivisionalCouplerAt(unsigned index);
+	void removeDivisionalCoupler(DivisionalCoupler *divCplr);
 	void removeAllDivisionalCouplers();
 	std::pair<DivisionalCoupler*, bool>* getDivisionalCouplerPairAt(unsigned index);
 
