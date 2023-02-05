@@ -708,9 +708,8 @@ void CouplerPanel::OnNumberOfKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 void CouplerPanel::OnRemoveCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this coupler?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		// remove reference to this coupler in the manual first
-
-		// then remove this coupler
+		// reference to this coupler are removed from the manual and any generals
+		// and when the organ remove this coupler any gui representations will be removed too
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

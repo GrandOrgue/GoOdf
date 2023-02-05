@@ -53,8 +53,18 @@ public:
 	void removeGuiElementAt(unsigned index);
 	int getNumberOfGuiElements();
 	GUIElement* getGuiElementAt(unsigned index);
-	bool hasTremulantAsGuiElement(Tremulant* trem);
-	void removeTremulantFromPanel(Tremulant* trem);
+	bool hasItemAsGuiElement(Tremulant *trem);
+	void removeItemFromPanel(Tremulant *trem);
+	bool hasItemAsGuiElement(Enclosure *enclosure);
+	void removeItemFromPanel(Enclosure *enclosure);
+	bool hasItemAsGuiElement(Manual *manual);
+	void removeItemFromPanel(Manual *manual);
+	bool hasItemAsGuiElement(Stop *stop);
+	void removeItemFromPanel(Stop *stop);
+	bool hasItemAsGuiElement(Coupler *coupler);
+	void removeItemFromPanel(Coupler *coupler);
+	bool hasItemAsGuiElement(Divisional *divisional);
+	void removeItemFromPanel(Divisional *divisional);
 
 private:
 	wxString m_name;

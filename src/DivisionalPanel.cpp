@@ -901,9 +901,7 @@ void DivisionalPanel::UpdateReferencedSwitches() {
 void DivisionalPanel::OnRemoveDivisionalBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this divisional?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		// remove reference to this divisional in the manual first
-
-		// then remove this divisional
+		// the divisional is removed from manual and organ and any gui representation is removed from any panel
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

@@ -43,11 +43,13 @@ public:
 	unsigned getNumberOfStops();
 	void addStop(Stop *stop, bool isOn);
 	void removeStopAt(unsigned index);
+	void removeStop(Stop *stop);
 	void removeAllStops();
 	std::pair<Stop*, bool>* getStopPairAt(unsigned index);
 	unsigned getNumberOfCouplers();
 	void addCoupler(Coupler *coupler, bool isOn);
 	void removeCouplerAt(unsigned index);
+	void removeCoupler(Coupler *coupler);
 	void removeAllCouplers();
 	std::pair<Coupler*, bool>* getCouplerPairAt(unsigned index);
 	unsigned getNumberOfTremulants();

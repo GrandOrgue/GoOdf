@@ -127,6 +127,14 @@ void EnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {
 				::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeEnclosureReference(m_enclosure);
 			}
 		}
+		// remove any gui element that reference this enclosure
+		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+		for (unsigned i = 0; i < numberOfPanels; i++) {
+			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_enclosure)) {
+				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_enclosure);
+				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+			}
+		}
 		// then remove this item from the organ
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}

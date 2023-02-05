@@ -21,6 +21,9 @@
 #include "GoPanel.h"
 #include "GOODFFunctions.h"
 #include "GUITremulant.h"
+#include "GUIStop.h"
+#include "GUICoupler.h"
+#include "GUIDivisional.h"
 
 GoPanel::GoPanel() {
 	m_name = wxT("New Panel");
@@ -166,7 +169,7 @@ GUIElement* GoPanel::getGuiElementAt(unsigned index) {
 	return *iterator;
 }
 
-bool GoPanel::hasTremulantAsGuiElement(Tremulant* trem) {
+bool GoPanel::hasItemAsGuiElement(Tremulant* trem) {
 	for (GUIElement* e : m_guiElements) {
 		if (e->getType() == wxT("Tremulant")) {
 			GUITremulant *tr = dynamic_cast<GUITremulant*>(e);
@@ -179,7 +182,7 @@ bool GoPanel::hasTremulantAsGuiElement(Tremulant* trem) {
 	return false;
 }
 
-void GoPanel::removeTremulantFromPanel(Tremulant* trem) {
+void GoPanel::removeItemFromPanel(Tremulant* trem) {
 	auto it = m_guiElements.begin();
 	while (it != m_guiElements.end()) {
 		if((*it)->getType() == wxT("Tremulant")) {
@@ -196,11 +199,194 @@ void GoPanel::removeTremulantFromPanel(Tremulant* trem) {
 				// go to next
 				++it;
 			}
-
 		} else{
 			// go to next
 			++it;
 		}
 	}
+}
 
+bool GoPanel::hasItemAsGuiElement(Enclosure* enclosure) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Enclosure")) {
+			GUIEnclosure *enc = dynamic_cast<GUIEnclosure*>(e);
+			if (enc) {
+				if (enc->isReferencing(enclosure))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(Enclosure* enclosure) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Enclosure")) {
+			GUIEnclosure *enc = dynamic_cast<GUIEnclosure*>(*it);
+			if (enc) {
+				if (enc->isReferencing(enclosure)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(Manual *manual) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Manual")) {
+			GUIManual *man = dynamic_cast<GUIManual*>(e);
+			if (man) {
+				if (man->isReferencing(manual))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(Manual *manual) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Manual")) {
+			GUIManual *man = dynamic_cast<GUIManual*>(*it);
+			if (man) {
+				if (man->isReferencing(manual)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(Stop *stop) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Stop")) {
+			GUIStop *st = dynamic_cast<GUIStop*>(e);
+			if (st) {
+				if (st->isReferencing(stop))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(Stop *stop) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Stop")) {
+			GUIStop *st = dynamic_cast<GUIStop*>(*it);
+			if (st) {
+				if (st->isReferencing(stop)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(Coupler *coupler) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Coupler")) {
+			GUICoupler *cplr = dynamic_cast<GUICoupler*>(e);
+			if (cplr) {
+				if (cplr->isReferencing(coupler))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(Coupler *coupler) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Coupler")) {
+			GUICoupler *cplr = dynamic_cast<GUICoupler*>(*it);
+			if (cplr) {
+				if (cplr->isReferencing(coupler)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
+}
+
+bool GoPanel::hasItemAsGuiElement(Divisional *divisional) {
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Divisional")) {
+			GUIDivisional *div = dynamic_cast<GUIDivisional*>(e);
+			if (div) {
+				if (div->isReferencing(divisional))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
+void GoPanel::removeItemFromPanel(Divisional *divisional) {
+	auto it = m_guiElements.begin();
+	while (it != m_guiElements.end()) {
+		if((*it)->getType() == wxT("Divisional")) {
+			GUIDivisional *div = dynamic_cast<GUIDivisional*>(*it);
+			if (div) {
+				if (div->isReferencing(divisional)) {
+					// erase and go to next
+					it = m_guiElements.erase(it);
+				} else {
+					// go to next
+					++it;
+				}
+			} else {
+				// go to next
+				++it;
+			}
+		} else{
+			// go to next
+			++it;
+		}
+	}
 }

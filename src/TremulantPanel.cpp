@@ -538,8 +538,8 @@ void TremulantPanel::OnRemoveTremulantBtn(wxCommandEvent& WXUNUSED(event)) {
 		// if any panel has a GUI element for this tremulant it should be removed too
 		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
 		for (unsigned i = 0; i < numberOfPanels; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasTremulantAsGuiElement(m_tremulant)) {
-				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeTremulantFromPanel(m_tremulant);
+			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_tremulant)) {
+				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_tremulant);
 				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 			}
 		}

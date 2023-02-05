@@ -666,9 +666,8 @@ void StopPanel::OnUseInternalRankSelection(wxCommandEvent& event) {
 void StopPanel::OnRemoveStopBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this stop?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references to this stop in any manual first
-
-		// then remove this stop
+		// references to this stop are removed in manual and in any generals
+		// and when the organ removes this stop any gui representations are removed too from panels
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

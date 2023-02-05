@@ -645,6 +645,19 @@ void Organ::removeStop(Stop *stop) {
 	unsigned index = 0;
 	for (Stop& s : m_Stops) {
 		if (&s == stop) {
+			// if any gui element exist for this stop in any panel it should be removed
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(stop)) {
+					getOrganPanelAt(i)->removeItemFromPanel(stop);
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
+			// this stop should also be removed from any general
+			for (General& g : m_Generals) {
+				if (g.hasStop(stop)) {
+					g.removeStop(stop);
+				}
+			}
 			removeStopAt(index);
 			break;
 		}
@@ -750,6 +763,19 @@ void Organ::removeCoupler(Coupler *coupler) {
 	unsigned index = 0;
 	for (Coupler& c : m_Couplers) {
 		if (&c == coupler) {
+			// if any gui element exist for this coupler in any panel it should be removed
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(coupler)) {
+					getOrganPanelAt(i)->removeItemFromPanel(coupler);
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
+			// this coupler should also be removed from any general
+			for (General& g : m_Generals) {
+				if (g.hasCoupler(coupler)) {
+					g.removeCoupler(coupler);
+				}
+			}
 			removeCouplerAt(index);
 			break;
 		}
@@ -799,6 +825,13 @@ void Organ::removeDivisional(Divisional *divisional) {
 	unsigned index = 0;
 	for (Divisional& d : m_Divisionals) {
 		if (&d == divisional) {
+			// if any gui element exist for this divisional in any panel it should be removed
+			for (unsigned i = 0; i < m_Panels.size(); i++) {
+				if (getOrganPanelAt(i)->hasItemAsGuiElement(divisional)) {
+					getOrganPanelAt(i)->removeItemFromPanel(divisional);
+					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+				}
+			}
 			removeDivisionalAt(index);
 			break;
 		}

@@ -591,10 +591,24 @@ void ManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this manual?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
 		// remove all stops, couplers and divisionals that this manual "own" from the organ first
+		// the remove methods for stops, couplers and divisionals will also remove any existing gui representations of them
 		for (unsigned i = 0; i < m_manual->getNumberOfStops(); i++) {
 			::wxGetApp().m_frame->m_organ->removeStop(m_manual->getStopAt(i));
 		}
-
+		for (unsigned i = 0; i < m_manual->getNumberOfCouplers(); i++) {
+			::wxGetApp().m_frame->m_organ->removeCoupler(m_manual->getCouplerAt(i));
+		}
+		for (unsigned i = 0; i < m_manual->getNumberOfDivisionals(); i++) {
+			::wxGetApp().m_frame->m_organ->removeDivisional(m_manual->getDivisionalAt(i));
+		}
+		// if any gui element is referencing this manual it should be removed too
+		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+		for (unsigned i = 0; i < numberOfPanels; i++) {
+			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_manual)) {
+				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_manual);
+				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+			}
+		}
 		// check if this manual was the pedal
 		if (m_manual->isThePedal())
 			::wxGetApp().m_frame->m_organ->setHasPedals(false);
