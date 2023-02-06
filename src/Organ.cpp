@@ -472,6 +472,13 @@ void Organ::addTremulant(Tremulant tremulant) {
 void Organ::removeTremulantAt(unsigned index) {
 	std::list<Tremulant>::iterator it = m_Tremulants.begin();
 	std::advance(it, index);
+	// the tremulant can be referenced in a reversible piston so we just reset it
+	for (ReversiblePiston& rp : m_ReversiblePistons) {
+		if (rp.getTremulant() == &(*it)) {
+			rp.setTremulant(NULL);
+			rp.setName(wxT("Empty reversible piston"));
+		}
+	}
 	m_Tremulants.erase(it);
 	updateOrganElements();
 }
@@ -582,6 +589,13 @@ void Organ::removeSwitchAt(unsigned index) {
 			g.removeSwitch(&(*it));
 		}
 	}
+	// the switch can be referenced in a reversible piston so we just reset it
+	for (ReversiblePiston& rp : m_ReversiblePistons) {
+		if (rp.getSwitch() == &(*it)) {
+			rp.setSwitch(NULL);
+			rp.setName(wxT("Empty reversible piston"));
+		}
+	}
 	m_Switches.erase(it);
 	updateOrganElements();
 }
@@ -654,6 +668,13 @@ void Organ::addStop(Stop stop) {
 void Organ::removeStopAt(unsigned index) {
 	std::list<Stop>::iterator it = m_Stops.begin();
 	std::advance(it, index);
+	// the stop can be referenced in a reversible piston so we just reset it
+	for (ReversiblePiston& rp : m_ReversiblePistons) {
+		if (rp.getStop() == &(*it)) {
+			rp.setStop(NULL);
+			rp.setName(wxT("Empty reversible piston"));
+		}
+	}
 	m_Stops.erase(it);
 	updateOrganElements();
 }
@@ -772,6 +793,13 @@ void Organ::addCoupler(Coupler coupler) {
 void Organ::removeCouplerAt(unsigned index) {
 	std::list<Coupler>::iterator it = m_Couplers.begin();
 	std::advance(it, index);
+	// the coupler can be referenced in a reversible piston so we just reset it
+	for (ReversiblePiston& rp : m_ReversiblePistons) {
+		if (rp.getCoupler() == &(*it)) {
+			rp.setCoupler(NULL);
+			rp.setName(wxT("Empty reversible piston"));
+		}
+	}
 	m_Couplers.erase(it);
 	updateOrganElements();
 }
