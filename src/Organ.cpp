@@ -596,6 +596,17 @@ void Organ::removeSwitchAt(unsigned index) {
 			rp.setName(wxT("Empty reversible piston"));
 		}
 	}
+	// a switch can be referenced in any drawstop related item, including other switches, so they must be removed from them too
+	for (GoSwitch& sw : m_Switches) {
+		if (sw.hasSwitchReference(&(*it))) {
+			sw.removeSwitchReference(&(*it));
+		}
+	}
+	for (DivisionalCoupler& cplr : m_DivisionalCouplers) {
+		if (cplr.hasSwitchReference(&(*it))) {
+			cplr.removeSwitchReference(&(*it));
+		}
+	}
 	m_Switches.erase(it);
 	updateOrganElements();
 }
@@ -753,9 +764,14 @@ void Organ::addManual(Manual manual) {
 }
 
 void Organ::removeManualAt(unsigned index) {
-	// TODO: couplers, divisional couplers might reference this manual!
 	std::list<Manual>::iterator it = m_Manuals.begin();
 	std::advance(it, index);
+	// remove the manual from any divisional coupler too
+	for (DivisionalCoupler& cplr : m_DivisionalCouplers) {
+		if (cplr.hasManualReference(&(*it))) {
+			cplr.removeManualReference(&(*it));
+		}
+	}
 	m_Manuals.erase(it);
 	updateOrganElements();
 }

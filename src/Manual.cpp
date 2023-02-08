@@ -364,6 +364,18 @@ void Manual::removeGoSwitch(GoSwitch* sw) {
 		if (d->hasSwitch(sw))
 			d->removeSwitch(sw);
 	}
+	// and any couplers
+	for (auto& c : m_couplers) {
+		if (c->hasSwitchReference(sw)) {
+			c->removeSwitchReference(sw);
+		}
+	}
+	// as well as any stop
+	for (auto& s : m_stops) {
+		if (s->hasSwitchReference(sw)) {
+			s->removeSwitchReference(sw);
+		}
+	}
 	m_switches.remove(sw);
 }
 
@@ -374,6 +386,18 @@ void Manual::removeGoSwitchAt(unsigned index) {
 	for (auto& d : m_divisionals) {
 		if (d->hasSwitch(*it))
 			d->removeSwitch(*it);
+	}
+	// and any couplers
+	for (auto& c : m_couplers) {
+		if (c->hasSwitchReference(*it)) {
+			c->removeSwitchReference(*it);
+		}
+	}
+	// as well as any stop
+	for (auto& s : m_stops) {
+		if (s->hasSwitchReference(*it)) {
+			s->removeSwitchReference(*it);
+		}
 	}
 	m_switches.erase(it);
 }
