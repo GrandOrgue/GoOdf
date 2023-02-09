@@ -79,6 +79,8 @@ public:
 	void setRecordingDetails(wxString recordingDetails);
 	unsigned getTrackerDelay();
 	void setTrackerDelay(unsigned trackerDelay);
+	float getPitchCorrection();
+	void setPitchCorrection(float pitchCorrection);
 
 	Enclosure* getOrganEnclosureAt(unsigned index);
 	unsigned getNumberOfEnclosures();
@@ -180,6 +182,7 @@ private:
 	float m_amplitudeLevel;
 	float m_gain;
 	float m_pitchTuning;
+	float m_pitchCorrection;
 	unsigned m_trackerDelay;
 
 	// The stuff the organ has

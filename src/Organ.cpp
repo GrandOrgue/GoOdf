@@ -40,6 +40,7 @@ Organ::Organ() {
 	m_amplitudeLevel = 100.0f;
 	m_gain = 0.0f;
 	m_pitchTuning = 0.0f;
+	m_pitchCorrection = 0.0f;
 	m_trackerDelay = 0;
 	populateSetterElements();
 	updateOrganElements();
@@ -123,6 +124,10 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 		outFile->AddLine(wxT("Gain=") + wxString::Format(wxT("%f"), m_gain));
 	if (m_pitchTuning != 0)
 		outFile->AddLine(wxT("PitchTuning=") + wxString::Format(wxT("%f"), m_pitchTuning));
+	if (m_pitchCorrection != 0)
+		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), m_pitchCorrection));
+	if (m_trackerDelay != 0)
+		outFile->AddLine(wxT("TrackerDelay=") + wxString::Format(wxT("%u"), m_trackerDelay));
 	outFile->AddLine(wxT(""));
 
 	// counter used in all the ranged loops below
@@ -384,6 +389,14 @@ float Organ::getPitchTuning() {
 
 void Organ::setPitchTuning(float pitchTuning) {
 	m_pitchTuning = pitchTuning;
+}
+
+float Organ::getPitchCorrection() {
+	return m_pitchCorrection;
+}
+
+void Organ::setPitchCorrection(float pitchCorrection) {
+	m_pitchCorrection = pitchCorrection;
 }
 
 wxString Organ::getRecordingDetails() {

@@ -55,6 +55,8 @@ BEGIN_EVENT_TABLE(OrganPanel, wxPanel)
 	EVT_SPINCTRLDOUBLE(ID_ORGAN_AMP_LVL_SPIN, OrganPanel::OnAmplitudeLevelSpin)
 	EVT_SPINCTRLDOUBLE(ID_ORGAN_GAIN_SPIN, OrganPanel::OnGainSpin)
 	EVT_SPINCTRLDOUBLE(ID_ORGAN_PITCH_SPIN, OrganPanel::OnPitchTuningSpin)
+	EVT_SPINCTRL(ID_ORGAN_TRACKER_DELAY_SPIN, OrganPanel::OnTrackerDelaySpin)
+	EVT_SPINCTRLDOUBLE(ID_ORGAN_PITCH_CORRECTION_SPIN, OrganPanel::OnPitchCorrectionSpin)
 	EVT_BUTTON(ID_NEW_ORGAN, OrganPanel::OnNewOrganBtn)
 END_EVENT_TABLE()
 
@@ -96,7 +98,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		0
 	);
 	topRow->Add(selectPath, 0, wxALL, 5);
-	mainSizer->Add(topRow, 0, wxGROW|wxALL, 5);
+	mainSizer->Add(topRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *organNameText = new wxStaticText (
@@ -423,6 +425,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		0.000001
 	);
 	fifteenthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
+	fifteenthRow->AddStretchSpacer();
 	wxStaticText *pitchText = new wxStaticText (
 		organProperties->GetStaticBox(),
 		wxID_STATIC,
@@ -437,12 +440,53 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		-1800,
-		1000,
+		1800,
 		0,
 		0.000001
 	);
 	fifteenthRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
 	organProperties->Add(fifteenthRow, 0, wxGROW);
+
+	wxBoxSizer *sixteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *trackerDelayText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("TrackerDelay: ")
+	);
+	sixteenthRow->Add(trackerDelayText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_trackerDelaySpin = new wxSpinCtrl(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_TRACKER_DELAY_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		10000,
+		0
+	);
+	sixteenthRow->Add(m_trackerDelaySpin, 0, wxGROW|wxALL, 5);
+	sixteenthRow->AddStretchSpacer();
+	wxStaticText *pitchCorrText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("PitchCorrection: ")
+	);
+	sixteenthRow->Add(pitchCorrText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_pitchCorrectionSpin = new wxSpinCtrlDouble(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_PITCH_CORRECTION_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		-1800,
+		1800,
+		0,
+		0.000001
+	);
+	sixteenthRow->Add(m_pitchCorrectionSpin, 0, wxGROW|wxALL, 5);
+	organProperties->Add(sixteenthRow, 0, wxGROW);
 
 	mainSizer->Add(organProperties, 1, wxEXPAND|wxALL, 5);
 
@@ -696,4 +740,12 @@ void OrganPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 
 void OrganPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setPitchTuning(m_pitchTuningSpin->GetValue());
+}
+
+void OrganPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
+	m_currentOrgan->setTrackerDelay(m_trackerDelaySpin->GetValue());
+}
+
+void OrganPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
+	m_currentOrgan->setPitchCorrection(m_pitchCorrectionSpin->GetValue());
 }

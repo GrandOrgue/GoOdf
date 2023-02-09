@@ -66,6 +66,8 @@ private:
 	wxSpinCtrlDouble *m_amplitudeLevelSpin;
 	wxSpinCtrlDouble *m_gainSpin;
 	wxSpinCtrlDouble *m_pitchTuningSpin;
+	wxSpinCtrl *m_trackerDelaySpin;
+	wxSpinCtrlDouble *m_pitchCorrectionSpin;
 	wxButton *m_newOrganBtn;
 
 	void getDataFromOrgan();
@@ -87,6 +89,8 @@ private:
 	void OnAmplitudeLevelSpin(wxSpinDoubleEvent& event);
 	void OnGainSpin(wxSpinDoubleEvent& event);
 	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
+	void OnTrackerDelaySpin(wxSpinEvent& event);
+	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
 	void OnNewOrganBtn(wxCommandEvent& event);
 };
 
