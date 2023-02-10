@@ -565,6 +565,7 @@ void OrganPanel::getDataFromOrgan() {
 	m_amplitudeLevelSpin->SetValue(m_currentOrgan->getAmplitudeLevel());
 	m_gainSpin->SetValue(m_currentOrgan->getGain());
 	m_pitchTuningSpin->SetValue(m_currentOrgan->getPitchTuning());
+	m_trackerDelaySpin->SetValue(m_currentOrgan->getTrackerDelay());
 }
 
 void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {

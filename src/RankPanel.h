@@ -55,6 +55,7 @@ private:
 	wxSpinCtrlDouble *m_amplitudeLevelSpin;
 	wxSpinCtrlDouble *m_gainSpin;
 	wxSpinCtrlDouble *m_pitchTuningSpin;
+	wxSpinCtrl *m_trackerDelaySpin;
 
 	wxTreeCtrl *m_pipeTreeCtrl;
 	wxButton *readPipesFromFolderBtn;
@@ -89,6 +90,7 @@ private:
 	void OnAmplitudeLevelSpin(wxSpinDoubleEvent& event);
 	void OnGainSpin(wxSpinDoubleEvent& event);
 	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
+	void OnTrackerDelaySpin(wxSpinEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();

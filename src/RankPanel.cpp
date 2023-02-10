@@ -53,6 +53,7 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_SPINCTRLDOUBLE(ID_RANK_AMP_LVL_SPIN, RankPanel::OnAmplitudeLevelSpin)
 	EVT_SPINCTRLDOUBLE(ID_RANK_GAIN_SPIN, RankPanel::OnGainSpin)
 	EVT_SPINCTRLDOUBLE(ID_RANK_PITCH_SPIN, RankPanel::OnPitchTuningSpin)
+	EVT_SPINCTRL(ID_RANK_TRACKER_DELAY_SPIN, RankPanel::OnTrackerDelaySpin)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -110,6 +111,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		36
 	);
 	secondRow->Add(m_firstMidiNoteNumberSpin, 0, wxEXPAND|wxALL, 5);
+	secondRow->AddStretchSpacer();
 	wxStaticText *logicalPipeNbrText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -149,12 +151,54 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		8
 	);
 	thirdRow->Add(m_harmonicNumberSpin, 0, wxEXPAND|wxALL, 5);
+	thirdRow->AddStretchSpacer();
+	wxStaticText *trackerDelayText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("TrackerDelay: ")
+	);
+	thirdRow->Add(trackerDelayText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_trackerDelaySpin = new wxSpinCtrl(
+		this,
+		ID_RANK_TRACKER_DELAY_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		10000,
+		0
+	);
+	thirdRow->Add(m_trackerDelaySpin, 0, wxGROW|wxALL, 5);
+	panelSizer->Add(thirdRow, 0, wxGROW);
+
+	wxBoxSizer *pitchRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *pitchText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("PitchTuning: ")
+	);
+	pitchRow->Add(pitchText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_pitchTuningSpin = new wxSpinCtrlDouble(
+		this,
+		ID_RANK_PITCH_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		-1800,
+		1000,
+		0,
+		0.000001
+	);
+	pitchRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
+	pitchRow->AddStretchSpacer();
 	wxStaticText *pitchCorrectionText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("Pitch correction: ")
 	);
-	thirdRow->Add(pitchCorrectionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	pitchRow->Add(pitchCorrectionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_pitchCorrectionSpin = new wxSpinCtrlDouble(
 		this,
 		ID_RANK_PITCH_CORR_SPIN,
@@ -167,8 +211,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0,
 		0.000001
 	);
-	thirdRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
-	panelSizer->Add(thirdRow, 0, wxGROW);
+	pitchRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
+	panelSizer->Add(pitchRow, 0, wxGROW);
 
 	wxBoxSizer *fourthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *ampLvlText = new wxStaticText (
@@ -190,6 +234,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0.000001
 	);
 	fourthRow->Add(m_amplitudeLevelSpin, 0, wxEXPAND|wxALL, 5);
+	fourthRow->AddStretchSpacer();
 	wxStaticText *gainText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -209,25 +254,6 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0.000001
 	);
 	fourthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
-	wxStaticText *pitchText = new wxStaticText (
-		this,
-		wxID_STATIC,
-		wxT("PitchTuning: ")
-	);
-	fourthRow->Add(pitchText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_pitchTuningSpin = new wxSpinCtrlDouble(
-		this,
-		ID_RANK_PITCH_SPIN,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxSP_ARROW_KEYS,
-		-1800,
-		1000,
-		0,
-		0.000001
-	);
-	fourthRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(fourthRow, 0, wxGROW);
 
 	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -250,6 +276,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0.000001
 	);
 	fifthRow->Add(m_minVelocityVolumeSpin, 0, wxEXPAND|wxALL, 5);
+	fifthRow->AddStretchSpacer();
 	wxStaticText *maxVelocityVolText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -297,6 +324,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	sixthRow->Add(m_isPercussiveNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_isPercussiveNo->SetValue(true);
+	sixthRow->AddStretchSpacer();
 	wxStaticText *acceptsRetuningText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -502,6 +530,7 @@ void RankPanel::setRank(Rank *rank) {
 	m_amplitudeLevelSpin->SetValue(m_rank->getAmplitudeLevel());
 	m_gainSpin->SetValue(m_rank->getGain());
 	m_pitchTuningSpin->SetValue(m_rank->getPitchTuning());
+	m_trackerDelaySpin->SetValue(m_rank->getTrackerDelay());
 }
 
 void RankPanel::setNameFieldValue(wxString name) {
@@ -1170,4 +1199,8 @@ void RankPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 
 void RankPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setPitchTuning(m_pitchTuningSpin->GetValue());
+}
+
+void RankPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
+	m_rank->setTrackerDelay(m_trackerDelaySpin->GetValue());
 }
