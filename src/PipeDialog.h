@@ -94,6 +94,7 @@ private:
 	wxSpinCtrlDouble *m_amplitudeLevelSpin;
 	wxSpinCtrlDouble *m_gainSpin;
 	wxSpinCtrlDouble *m_pitchTuningSpin;
+	wxSpinCtrl *m_trackerDelaySpin;
 
 	// Event methods
 	void OnPrevPipeBtn(wxCommandEvent& event);
@@ -114,6 +115,7 @@ private:
 	void OnAmplitudeLevelSpin(wxSpinDoubleEvent& event);
 	void OnGainSpin(wxSpinDoubleEvent& event);
 	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
+	void OnTrackerDelaySpin(wxSpinEvent& event);
 
 	Pipe* GetPipePointer(unsigned index);
 	void SetButtonState();

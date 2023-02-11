@@ -46,6 +46,7 @@ BEGIN_EVENT_TABLE(PipeDialog, wxDialog)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_AMP_LVL_SPIN, PipeDialog::OnAmplitudeLevelSpin)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_GAIN_SPIN, PipeDialog::OnGainSpin)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_PITCH_SPIN, PipeDialog::OnPitchTuningSpin)
+	EVT_SPINCTRL(ID_PIPE_TRACKER_DELAY_SPIN, PipeDialog::OnTrackerDelaySpin)
 END_EVENT_TABLE()
 
 PipeDialog::PipeDialog(std::list<Pipe>& pipe_list, unsigned selected_pipe) : m_rank_pipelist(pipe_list) {
@@ -162,6 +163,7 @@ void PipeDialog::CreateControls() {
 	);
 	secondRow->Add(m_isPercussiveNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_isPercussiveNo->SetValue(true);
+	secondRow->AddStretchSpacer();
 	wxStaticText *acceptRetuningText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -229,6 +231,7 @@ void PipeDialog::CreateControls() {
 		-1
 	);
 	fourthRow->Add(m_midiKeyNbrSpin, 0, wxEXPAND|wxALL, 5);
+	fourthRow->AddStretchSpacer();
 	wxStaticText *pitchCorrectionText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -325,6 +328,25 @@ void PipeDialog::CreateControls() {
 		windchestChoices
 	);
 	sixthRow->Add(m_windchestChoice, 0, wxALL, 5);
+	sixthRow->AddStretchSpacer();
+	wxStaticText *trackerDelayText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("TrackerDelay: ")
+	);
+	sixthRow->Add(trackerDelayText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_trackerDelaySpin = new wxSpinCtrl(
+		this,
+		ID_PIPE_TRACKER_DELAY_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		10000,
+		0
+	);
+	sixthRow->Add(m_trackerDelaySpin, 0, wxGROW|wxALL, 5);
 	mainSizer->Add(sixthRow, 0, wxGROW);
 
 	wxBoxSizer *seventhRow = new wxBoxSizer(wxHORIZONTAL);
@@ -347,6 +369,7 @@ void PipeDialog::CreateControls() {
 		0.000001
 	);
 	seventhRow->Add(m_minVelocitySpin, 0, wxEXPAND|wxALL, 5);
+	seventhRow->AddStretchSpacer();
 	wxStaticText *maxVelocityVolText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -590,6 +613,7 @@ void PipeDialog::TransferPipeValuesToWindow() {
 	m_amplitudeLevelSpin->SetValue(m_currentPipe->amplitudeLevel);
 	m_gainSpin->SetValue(m_currentPipe->gain);
 	m_pitchTuningSpin->SetValue(m_currentPipe->pitchTuning);
+	m_trackerDelaySpin->SetValue(m_currentPipe->trackerDelay);
 }
 
 void PipeDialog::OnCopyPipesSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -630,6 +654,7 @@ void PipeDialog::OnCopyPropertiesBtn(wxCommandEvent& WXUNUSED(event)) {
 		pipe->amplitudeLevel = m_currentPipe->amplitudeLevel;
 		pipe->gain = m_currentPipe->gain;
 		pipe->pitchTuning = m_currentPipe->pitchTuning;
+		pipe->trackerDelay = m_currentPipe->trackerDelay;
 	}
 	m_copyInfo->SetLabel(wxString::Format(wxT("Done!"), numberOfPipes));
 	m_copyToNbrPipesSpin->SetValue(0);
@@ -672,4 +697,8 @@ void PipeDialog::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 
 void PipeDialog::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->pitchTuning = m_pitchTuningSpin->GetValue();
+}
+
+void PipeDialog::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
+	m_currentPipe->trackerDelay = m_trackerDelaySpin->GetValue();
 }
