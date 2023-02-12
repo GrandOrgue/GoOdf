@@ -692,6 +692,29 @@ void Organ::addStop(Stop stop) {
 void Organ::removeStopAt(unsigned index) {
 	std::list<Stop>::iterator it = m_Stops.begin();
 	std::advance(it, index);
+	// any other stop or rank can reference this stops' internal rank pipes, and if they do we should reset them to DUMMIES
+	int manualRef = getIndexOfOrganManual((*it).getOwningManual());
+	int stopRef = (*it).getOwningManual()->getIndexOfStop(&(*it)) + 1;
+	wxString refStr = wxT("REF:") + GOODF_functions::number_format(manualRef) + wxT(":") + GOODF_functions::number_format(stopRef);
+	wxString rest;
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			for (Pipe& p : s.getInternalRank()->m_pipes) {
+				if (p.m_attacks.front().fileName.StartsWith(refStr, &rest)) {
+					p.m_attacks.front().fileName = wxT("DUMMY");
+					p.m_attacks.front().fullPath = wxT("DUMMY");
+				}
+			}
+		}
+	}
+	for (Rank& r : m_Ranks) {
+		for (Pipe& p : r.m_pipes) {
+			if (p.m_attacks.front().fileName.StartsWith(refStr, &rest)) {
+				p.m_attacks.front().fileName = wxT("DUMMY");
+				p.m_attacks.front().fullPath = wxT("DUMMY");
+			}
+		}
+	}
 	// the stop can be referenced in a reversible piston so we just reset it
 	for (ReversiblePiston& rp : m_ReversiblePistons) {
 		if (rp.getStop() == &(*it)) {
