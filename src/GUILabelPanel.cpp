@@ -816,11 +816,35 @@ void GUILabelPanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUILabelPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_label->setWidth(m_widthSpin->GetValue());
+	int value = m_widthSpin->GetValue();
+	m_label->setWidth(value);
+
+	// if width is changed TextRectWidth and TextBreakWidth spinctrls should update their max values
+	int textRectValue = m_textRectWidthSpin->GetValue();
+	m_textRectWidthSpin->SetRange(0, value);
+	if (textRectValue > value) {
+		m_label->setTextRectWidth(value);
+		m_textRectWidthSpin->SetValue(value);
+	}
+	int textBreakValue = m_textBreakWidthSpin->GetValue();
+	m_textBreakWidthSpin->SetRange(0, value);
+	if (textBreakValue > value) {
+		m_label->setTextBreakWidth(value);
+		m_textBreakWidthSpin->SetValue(value);
+	}
 }
 
 void GUILabelPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_label->setHeight(m_heightSpin->GetValue());
+	int value = m_heightSpin->GetValue();
+	m_label->setHeight(value);
+
+	// if height is changed TextRectHeight spin should update max values
+	int textHeightValue = m_textRectHeightSpin->GetValue();
+	m_textRectHeightSpin->SetRange(0, value);
+	if (textHeightValue > value) {
+		m_label->setTextRectHeight(value);
+		m_textRectHeightSpin->SetValue(value);
+	}
 }
 
 void GUILabelPanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -892,6 +916,8 @@ void GUILabelPanel::OnRemoveLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUILabelPanel::UpdateSpinRanges() {
+	m_dispXposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_label->getWidth());
+	m_dispYposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_label->getHeight());
 	m_elementPosXSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_label->getWidth());
 	m_elementPosYSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_label->getHeight());
 	m_widthSpin->SetRange(0, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
