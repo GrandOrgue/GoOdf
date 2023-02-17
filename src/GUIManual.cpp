@@ -113,6 +113,10 @@ bool GUIManual::isReferencing(Manual *man) {
 	return m_manual == man ? true : false;
 }
 
+void GUIManual::updateDisplayName() {
+	setDisplayName(m_manual->getName());
+}
+
 Manual* GUIManual::getManual() {
 	return m_manual;
 }

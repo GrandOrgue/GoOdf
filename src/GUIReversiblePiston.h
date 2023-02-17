@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(ReversiblePiston *reversiblePiston);
+	void updateDisplayName();
 
 private:
 	ReversiblePiston *m_reversiblePiston;

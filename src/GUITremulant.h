@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Tremulant *tremulant);
+	void updateDisplayName();
 
 private:
 	Tremulant *m_tremulant;

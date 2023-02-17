@@ -45,3 +45,7 @@ void GUIDivisionalCoupler::write(wxTextFile *outFile) {
 bool GUIDivisionalCoupler::isReferencing(DivisionalCoupler *divCplr) {
 	return m_divCoupler == divCplr ? true : false;
 }
+
+void GUIDivisionalCoupler::updateDisplayName() {
+	setDisplayName(m_divCoupler->getName());
+}

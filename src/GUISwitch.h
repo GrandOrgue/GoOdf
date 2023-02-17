@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(GoSwitch *sw);
+	void updateDisplayName();
 
 private:
 	GoSwitch *m_switch;

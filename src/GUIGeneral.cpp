@@ -48,3 +48,7 @@ void GUIGeneral::write(wxTextFile *outFile) {
 bool GUIGeneral::isReferencing(General *general) {
 	return m_general == general ? true : false;
 }
+
+void GUIGeneral::updateDisplayName() {
+	setDisplayName(m_general->getName());
+}

@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(DivisionalCoupler *divisional);
+	void updateDisplayName();
 
 private:
 	DivisionalCoupler *m_divCoupler;

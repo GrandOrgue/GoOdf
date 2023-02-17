@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Coupler *cplr);
+	void updateDisplayName();
 
 private:
 	Coupler *m_coupler;

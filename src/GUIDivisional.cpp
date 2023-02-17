@@ -47,3 +47,7 @@ void GUIDivisional::write(wxTextFile *outFile) {
 bool GUIDivisional::isReferencing(Divisional *divisional) {
 	return m_divisional == divisional ? true : false;
 }
+
+void GUIDivisional::updateDisplayName() {
+	setDisplayName(m_divisional->getName());
+}

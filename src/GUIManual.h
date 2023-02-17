@@ -50,6 +50,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Manual *man);
+	void updateDisplayName();
 
 	Manual* getManual();
 	void addKeytype(wxString identifier);

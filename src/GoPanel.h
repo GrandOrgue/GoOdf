@@ -76,6 +76,7 @@ public:
 	void removeItemFromPanel(ReversiblePiston *revPist);
 	bool hasItemAsGuiElement(General *general);
 	void removeItemFromPanel(General *general);
+	void updateGuiElementsDisplayNames();
 
 private:
 	wxString m_name;

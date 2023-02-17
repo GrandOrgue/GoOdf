@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Stop *stop);
+	void updateDisplayName();
 
 private:
 	Stop *m_stop;

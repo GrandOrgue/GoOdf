@@ -37,6 +37,7 @@ public:
 
 	virtual void write(wxTextFile *outFile);
 
+	virtual void updateDisplayName();
 	wxString getType();
 	void setType(wxString type);
 	int getPosX();

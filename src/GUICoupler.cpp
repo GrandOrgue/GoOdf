@@ -48,3 +48,7 @@ void GUICoupler::write(wxTextFile *outFile) {
 bool GUICoupler::isReferencing(Coupler *cplr) {
 	return m_coupler == cplr ? true : false;
 }
+
+void GUICoupler::updateDisplayName() {
+	setDisplayName(m_coupler->getName());
+}

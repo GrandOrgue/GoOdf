@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(General *general);
+	void updateDisplayName();
 
 private:
 	General *m_general;

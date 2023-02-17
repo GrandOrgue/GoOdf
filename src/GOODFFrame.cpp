@@ -1114,7 +1114,9 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 		m_organTreeCtrl->DeleteChildren(tree_tremulants);
 		m_organTreeCtrl->DeleteChildren(tree_ranks);
 		m_organTreeCtrl->DeleteChildren(tree_switches);
+		m_organTreeCtrl->DeleteChildren(tree_reversiblePistons);
 		m_organTreeCtrl->DeleteChildren(tree_divisionalCouplers);
+		m_organTreeCtrl->DeleteChildren(tree_generals);
 		m_organTreeCtrl->DeleteChildren(tree_panels);
 		SetupOrganMainPanel();
 		m_organTreeCtrl->SelectItem(tree_organ);

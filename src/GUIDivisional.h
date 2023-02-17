@@ -33,6 +33,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Divisional *divisional);
+	void updateDisplayName();
 
 private:
 	Divisional *m_divisional;

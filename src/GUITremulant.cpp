@@ -45,3 +45,7 @@ void GUITremulant::write(wxTextFile *outFile) {
 bool GUITremulant::isReferencing(Tremulant *tremulant) {
 	return m_tremulant == tremulant ? true : false;
 }
+
+void GUITremulant::updateDisplayName() {
+	setDisplayName(m_tremulant->getName());
+}

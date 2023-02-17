@@ -542,3 +542,9 @@ void GoPanel::removeItemFromPanel(General *general) {
 		}
 	}
 }
+
+void GoPanel::updateGuiElementsDisplayNames() {
+	for (GUIElement* e : m_guiElements) {
+		e->updateDisplayName();
+	}
+}

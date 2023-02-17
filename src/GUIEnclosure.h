@@ -37,6 +37,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	bool isReferencing(Enclosure *enclosure);
+	void updateDisplayName();
 
 	const GoColor& getDispLabelColour() const;
 	void setDispLabelColour(const GoColor &dispLabelColour);

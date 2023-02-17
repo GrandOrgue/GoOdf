@@ -48,3 +48,7 @@ void GUIStop::write(wxTextFile *outFile) {
 bool GUIStop::isReferencing(Stop *stop) {
 	return m_stop == stop ? true : false;
 }
+
+void GUIStop::updateDisplayName() {
+	setDisplayName(m_stop->getName());
+}

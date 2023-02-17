@@ -36,6 +36,10 @@ void GUIElement::write(wxTextFile *outFile) {
 	outFile->AddLine(wxT("Type=") + m_type);
 }
 
+void GUIElement::updateDisplayName() {
+
+}
+
 wxString GUIElement::getType() {
 	return m_type;
 }

@@ -47,3 +47,7 @@ void GUISwitch::write(wxTextFile *outFile) {
 bool GUISwitch::isReferencing(GoSwitch *sw) {
 	return m_switch == sw ? true : false;
 }
+
+void GUISwitch::updateDisplayName() {
+	setDisplayName(m_switch->getName());
+}

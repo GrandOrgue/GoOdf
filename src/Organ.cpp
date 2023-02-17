@@ -1302,6 +1302,13 @@ void Organ::updateOrganElements() {
 	for (General g : m_Generals) {
 		m_organElements.Add(g.getName() + wxT(" (General)"));
 	}
+
+	// Since this method is called whenever the name of an element changes it makes sense to update
+	// the GUI elements display names from here too.
+	for (unsigned i = 0; i < m_Panels.size(); i++) {
+		getOrganPanelAt(i)->updateGuiElementsDisplayNames();
+		::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+	}
 }
 
 std::pair<wxString, int> Organ::getTypeAndIndexOfElement(int index) {

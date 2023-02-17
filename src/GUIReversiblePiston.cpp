@@ -46,3 +46,7 @@ void GUIReversiblePiston::write(wxTextFile *outFile) {
 bool GUIReversiblePiston::isReferencing(ReversiblePiston *reversiblePiston) {
 	return m_reversiblePiston == reversiblePiston ? true : false;
 }
+
+void GUIReversiblePiston::updateDisplayName() {
+	setDisplayName(m_reversiblePiston->getName());
+}

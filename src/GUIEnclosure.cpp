@@ -136,6 +136,10 @@ bool GUIEnclosure::isReferencing(Enclosure *enclosure) {
 	return m_enclosure == enclosure ? true : false;
 }
 
+void GUIEnclosure::updateDisplayName() {
+	setDisplayName(m_enclosure->getName());
+}
+
 const GoColor& GUIEnclosure::getDispLabelColour() const {
 	return m_dispLabelColour;
 }
