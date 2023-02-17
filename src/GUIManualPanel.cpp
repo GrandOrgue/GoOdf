@@ -61,6 +61,7 @@ END_EVENT_TABLE()
 
 GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 	m_manual = NULL;
+	m_lastUsedPath = wxEmptyString;
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
@@ -167,7 +168,10 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_GUIMANUALPANEL_KEY_TYPES_BOX,
 		wxDefaultPosition,
-		wxDefaultSize
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRowFirstCol->Add(m_availableKeyTypes, 1, wxGROW|wxALL, 5);
 	thirdRow->Add(thirdRowFirstCol, 1, wxGROW);
@@ -182,7 +186,10 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_GUIMANUALPANEL_KEY_NUMBERS_BOX,
 		wxDefaultPosition,
-		wxDefaultSize
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRowSecondCol->Add(m_availableKeyNumbers, 1, wxGROW|wxALL, 5);
 	thirdRow->Add(thirdRowSecondCol, 1, wxGROW);
@@ -672,42 +679,55 @@ void GUIManualPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUIManualPanel::OnAvailableKeyTypesChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_addKey->Enable();
-	if (m_availableKeyNumbers->GetSelection() != wxNOT_FOUND)
-		m_availableKeyNumbers->SetSelection(wxNOT_FOUND);
+	wxArrayInt selections;
+	int count = m_availableKeyNumbers->GetSelections(selections);
+	if (count > 0) {
+		for (int i = 0; i < count; i++)
+			m_availableKeyNumbers->Deselect(selections[i]);
+	}
 }
 
 void GUIManualPanel::OnAvailableKeyNumbersChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_addKey->Enable();
-	if (m_availableKeyTypes->GetSelection() != wxNOT_FOUND)
-		m_availableKeyTypes->SetSelection(wxNOT_FOUND);
+	wxArrayInt selections;
+	int count = m_availableKeyTypes->GetSelections(selections);
+	if (count > 0) {
+		for (int i = 0; i < count; i++)
+			m_availableKeyTypes->Deselect(selections[i]);
+	}
 }
 
 void GUIManualPanel::OnAddKeyBtn(wxCommandEvent& WXUNUSED(event)) {
-	int selectedIndex = wxNOT_FOUND;
-	if (m_availableKeyTypes->GetSelection() != wxNOT_FOUND) {
-		selectedIndex = m_availableKeyTypes->GetSelection();
-		wxString selectedKeyType = m_manual->getAvailableKeytypes().Item(selectedIndex);
-		if (m_addedKeyTypes->FindString(selectedKeyType) == wxNOT_FOUND) {
-			m_manual->addKeytype(selectedKeyType);
-			m_addedKeyTypes->Append(selectedKeyType);
-			unsigned existingKeys = m_manual->getNumberOfKeytypes();
-			m_addedKeyTypes->SetSelection(existingKeys - 1);
-			// we need to notify the listBox that selection has changed
-			wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
-			wxPostEvent(this, evt);
+	wxArrayInt selectedKeyTypes;
+	int nbrSelectedKeyTypes = m_availableKeyTypes->GetSelections(selectedKeyTypes);
+	wxArrayInt selectedKeyNbrs;
+	int nbrSelectedKeyNbrs = m_availableKeyNumbers->GetSelections(selectedKeyNbrs);
+	if (nbrSelectedKeyTypes > 0) {
+		for (int i = 0; i < nbrSelectedKeyTypes; i++) {
+			wxString selectedKeyType = m_manual->getAvailableKeytypes().Item(selectedKeyTypes[i]);
+			if (m_addedKeyTypes->FindString(selectedKeyType) == wxNOT_FOUND) {
+				m_manual->addKeytype(selectedKeyType);
+				m_addedKeyTypes->Append(selectedKeyType);
+			}
 		}
-	} else if (m_availableKeyNumbers->GetSelection() != wxNOT_FOUND) {
-		selectedIndex = m_availableKeyNumbers->GetSelection();
-		wxString selectedKeyType = m_manual->getAvailableKeynumbers().Item(selectedIndex);
-		if (m_addedKeyTypes->FindString(selectedKeyType) == wxNOT_FOUND) {
-			m_manual->addKeytype(selectedKeyType);
-			m_addedKeyTypes->Append(selectedKeyType);
-			unsigned existingKeys = m_manual->getNumberOfKeytypes();
-			m_addedKeyTypes->SetSelection(existingKeys - 1);
-			// we need to notify the listBox that selection has changed
-			wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
-			wxPostEvent(this, evt);
+		unsigned existingKeys = m_manual->getNumberOfKeytypes();
+		m_addedKeyTypes->SetSelection(existingKeys - 1);
+		// we need to notify the listBox that selection has changed
+		wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
+		wxPostEvent(this, evt);
+	} else if (nbrSelectedKeyNbrs > 0) {
+		for (int i = 0; i < nbrSelectedKeyNbrs; i++) {
+			wxString selectedKeyType = m_manual->getAvailableKeynumbers().Item(selectedKeyNbrs[i]);
+			if (m_addedKeyTypes->FindString(selectedKeyType) == wxNOT_FOUND) {
+				m_manual->addKeytype(selectedKeyType);
+				m_addedKeyTypes->Append(selectedKeyType);
+			}
 		}
+		unsigned existingKeys = m_manual->getNumberOfKeytypes();
+		m_addedKeyTypes->SetSelection(existingKeys - 1);
+		// we need to notify the listBox that selection has changed
+		wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
+		wxPostEvent(this, evt);
 	}
 }
 
@@ -948,7 +968,7 @@ void GUIManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {
 wxString GUIManualPanel::GetPathForImageFile() {
 	wxString imageFilePath;
 	wxString defaultPath = wxEmptyString;
-	if (m_manual->getNumberOfKeytypes() != 0) {
+	if (m_manual->getNumberOfKeytypes() != 0 && m_lastUsedPath == wxEmptyString) {
 		if (m_manual->getKeytypeAt(0)->ImageOn.getImage() != wxEmptyString) {
 			wxFileName filePath = wxFileName(m_manual->getKeytypeAt(0)->ImageOn.getImage());
 			if (filePath.FileExists())
@@ -957,7 +977,12 @@ wxString GUIManualPanel::GetPathForImageFile() {
 			defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
 		}
 	} else {
-		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		wxFileName filePath = wxFileName(m_lastUsedPath);
+		if (filePath.FileExists()) {
+			defaultPath = filePath.GetPath();
+		} else {
+			defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		}
 	}
 
 	if (defaultPath == wxEmptyString)
@@ -968,7 +993,7 @@ wxString GUIManualPanel::GetPathForImageFile() {
 		wxT("Select image file (all image pixel sizes for this element must match)"),
 		defaultPath,
 		"",
-		"PNG files (*.png)|*.png|BMP and GIF files (*.bmp;*.gif)|*.bmp;*.gif|JPG files (*.jpg)|*.jpg|ICO files (*.ico)|*.ico",
+		"Image files (*.png;*.bmp;*.gif;*.jpg;*.ico)|*.png;*.bmp;*.gif;*.jpg;*.ico;*.PNG;*.BMP;*.GIF;*.JPG;*.ICO;*.Png;*.Bmp;*.Gif;*.Jpg;*.Ico",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
@@ -976,6 +1001,7 @@ wxString GUIManualPanel::GetPathForImageFile() {
 		return wxEmptyString;
 
 	imageFilePath = fileDialog.GetPath();
+	m_lastUsedPath = imageFilePath;
 	return imageFilePath;
 }
 

@@ -77,6 +77,8 @@ private:
 
 	GUIManual *m_manual;
 
+	wxString m_lastUsedPath;
+
 	void OnKeyColorInvertedRadio(wxCommandEvent& event);
 	void OnKeyColorWoodRadio(wxCommandEvent& event);
 	void OnPositionXSpin(wxSpinEvent& event);
