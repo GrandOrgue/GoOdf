@@ -162,6 +162,7 @@ public:
 	const wxArrayString& getOrganElements() const;
 	std::pair<wxString, int> getTypeAndIndexOfElement(int index);
 	void organElementHasChanged();
+	void updateRelativePipePaths();
 
 private:
 	wxString m_odfRoot;

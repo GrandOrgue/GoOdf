@@ -396,7 +396,7 @@ void Rank::readPipes(
 
 				// remove any file that's not ending with .wav or .wv
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
-					
+
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
 
@@ -572,6 +572,462 @@ void Rank::readPipes(
 		}
 
 		m_pipes.push_back(p);
+	}
+}
+
+void Rank::addToPipes(
+	wxString extraAttackFolder,
+	bool loadOnlyOneAttack,
+	bool loadRelease,
+	wxString releaseFolderPrefix,
+	bool extractKeyPressTime,
+	wxString tremulantFolderPrefix
+) {
+	bool organRootPathIsSet = false;
+
+	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
+		organRootPathIsSet = true;
+
+	wxDir pipeRoot(m_latestPipesRootPath);
+
+	if (!pipeRoot.IsOpened())
+		return;
+
+	for (int i = 0; i < numberOfLogicalPipes; i++) {
+		Pipe *p = getPipeAt(i);
+
+		wxArrayString pipeAttacks;
+		wxArrayString pipeAttacksToAdd;
+		wxArrayString pipeReleases;
+		wxArrayString pipeReleasesToAdd;
+		wxArrayString releaseFolders;
+		wxArrayString tremulantFolders;
+		wxArrayString allFolders;
+
+		bool hasTremulantFolders = false;
+
+		// first store all folders existing in root
+		wxString folder;
+		bool cont = pipeRoot.GetFirst(&folder, wxT("*"), wxDIR_DIRS);
+		while (cont) {
+			allFolders.Add(folder);
+		    cont = pipeRoot.GetNext(&folder);
+		}
+
+		if (!allFolders.IsEmpty()) {
+			// separate release and tremulant folders
+			for (unsigned j = 0; j < allFolders.GetCount(); j++) {
+
+				if (allFolders.Item(j).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString) {
+					releaseFolders.Add(allFolders.Item(j));
+				} else if (allFolders.Item(j).Lower().Find(tremulantFolderPrefix.Lower()) != wxNOT_FOUND && tremulantFolderPrefix != wxEmptyString) {
+					tremulantFolders.Add(allFolders.Item(j));
+					hasTremulantFolders = true;
+				}
+			}
+		}
+
+		// get attacks from root folder
+		pipeRoot.GetAllFiles(
+			m_latestPipesRootPath,
+			&pipeAttacks,
+			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxDIR_FILES
+		);
+
+		// then from possible extra attack folder
+		if (extraAttackFolder != wxEmptyString) {
+			pipeRoot.GetAllFiles(
+				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
+				&pipeAttacks,
+				wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+				wxDIR_FILES
+			);
+		}
+
+		pipeAttacks.Sort();
+
+		// remove any file that's not ending with .wav or .wv
+		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
+
+		// if there are any matching attacks we add them
+		if (!pipeAttacksToAdd.IsEmpty()) {
+			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
+				wxString relativeFileName;
+				if (organRootPathIsSet)
+					relativeFileName = getOnlyFileName(pipeAttacksToAdd.Item(j));
+				else
+					relativeFileName = pipeAttacksToAdd.Item(j);
+
+				// create and add the attack to the pipe
+				Attack a;
+				a.fileName = relativeFileName;
+				a.fullPath = pipeAttacksToAdd.Item(j);
+				a.loadRelease = loadRelease;
+				if (hasTremulantFolders)
+					a.isTremulant = 0;
+
+				p->m_attacks.push_back(a);
+
+				if (loadOnlyOneAttack)
+					break;
+			}
+		}
+
+		pipeAttacks.Empty();
+		pipeAttacksToAdd.Empty();
+
+		// add extra releases if they can be found
+		if (!releaseFolders.IsEmpty()) {
+
+			releaseFolders.Sort();
+
+			for (unsigned j = 0; j < releaseFolders.GetCount(); j++) {
+				pipeRoot.GetAllFiles(
+					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
+					&pipeReleases,
+					wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+					wxDIR_FILES
+				);
+
+				pipeReleases.Sort();
+
+				// remove any file that's not ending with .wav or .wv
+				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+				// if there are any matching releases we add them
+				if (!pipeReleasesToAdd.IsEmpty()) {
+
+					for (unsigned k = 0; k < pipeReleasesToAdd.GetCount(); k++) {
+						wxString relativeFileName;
+						if (organRootPathIsSet)
+							relativeFileName = getOnlyFileName(pipeReleasesToAdd.Item(k));
+						else
+							relativeFileName = pipeReleasesToAdd.Item(k);
+
+						// create and add the release to the pipe
+						Release rel;
+						rel.fileName = relativeFileName;
+						rel.fullPath = pipeReleasesToAdd.Item(k);
+						if (hasTremulantFolders)
+							rel.isTremulant = 0;
+
+						if (extractKeyPressTime) {
+							// we try to get a number that have at least 2 digits from the folder name
+							wxString relFolderName = releaseFolders.Item(j).AfterLast(wxFILE_SEP_PATH);
+							int firstNumberIndex = -1;
+							long keyPressTime = -1;
+
+							for (unsigned l = 0; l < relFolderName.Length(); l++) {
+								if (wxIsdigit(relFolderName.GetChar(l))) {
+									firstNumberIndex = l;
+									break;
+								}
+							}
+
+							if (firstNumberIndex > -1) {
+								wxString numberPart = relFolderName.Mid(firstNumberIndex);
+
+								if (!numberPart.ToLong(&keyPressTime)) {
+									// the number part didn't contain only numbers!
+								}
+
+								if (keyPressTime > 9 && keyPressTime < 99999)
+									rel.maxKeyPressTime = keyPressTime;
+							}
+						}
+
+						p->m_releases.push_back(rel);
+
+					}
+				}
+
+				pipeReleases.Empty();
+				pipeReleasesToAdd.Empty();
+			}
+		}
+
+		// also scan possible tremulant folders
+		if (!tremulantFolders.IsEmpty() && !loadOnlyOneAttack) {
+			for (unsigned j = 0; j < tremulantFolders.GetCount(); j++) {
+				fillArrayStringWithFiles(
+					pipeRoot,
+					m_latestPipesRootPath + wxFILE_SEP_PATH + tremulantFolders.Item(j),
+					pipeAttacks,
+					i
+				);
+
+				onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
+
+				// if there are any matching attacks we add them
+				if (!pipeAttacksToAdd.IsEmpty()) {
+					for (unsigned k = 0; k < pipeAttacksToAdd.GetCount(); k++) {
+						wxString relativeFileName;
+						if (organRootPathIsSet)
+							relativeFileName = getOnlyFileName(pipeAttacksToAdd.Item(k));
+						else
+							relativeFileName = pipeAttacksToAdd.Item(k);
+
+						// create and add the attack to the pipe
+						Attack a;
+						a.fileName = relativeFileName;
+						a.fullPath = pipeAttacksToAdd.Item(k);
+						a.loadRelease = loadRelease;
+						a.isTremulant = 1;
+
+						p->m_attacks.push_back(a);
+
+					}
+				}
+
+				// also take care of possible tremulant releases
+				wxArrayString foldersInTremulantFolder;
+				wxArrayString tremReleaseFolders;
+				wxString currentTremRootPath = m_latestPipesRootPath + wxFILE_SEP_PATH + tremulantFolders.Item(j);
+				wxDir tremRoot(currentTremRootPath);
+
+				if (tremRoot.IsOpened()) {
+					// first store all folders existing in root
+					wxString folderName;
+					bool keepLooking = tremRoot.GetFirst(&folderName, wxT("*"), wxDIR_DIRS);
+					while (keepLooking) {
+						foldersInTremulantFolder.Add(folderName);
+					    keepLooking = tremRoot.GetNext(&folderName);
+					}
+
+					// then get only those with release prefix in them
+					if (!foldersInTremulantFolder.IsEmpty()) {
+						for (unsigned k = 0; k < foldersInTremulantFolder.GetCount(); k++) {
+							if (allFolders.Item(k).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString)
+								tremReleaseFolders.Add(allFolders.Item(k));
+						}
+					}
+
+					if (!tremReleaseFolders.IsEmpty()) {
+						for (unsigned k = 0; k < tremReleaseFolders.GetCount(); k++) {
+							fillArrayStringWithFiles(
+								tremRoot,
+								currentTremRootPath + wxFILE_SEP_PATH + tremReleaseFolders.Item(k),
+								pipeReleases,
+								i
+							);
+						}
+					}
+
+					pipeReleases.Sort();
+					onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+					// if there are any matching releases we add them
+					if (!pipeReleasesToAdd.IsEmpty()) {
+						for (unsigned k = 0; k < pipeReleasesToAdd.GetCount(); k++) {
+							wxString relativeFileName;
+							if (organRootPathIsSet)
+								relativeFileName = getOnlyFileName(pipeReleasesToAdd.Item(k));
+							else
+								relativeFileName = pipeReleasesToAdd.Item(k);
+
+							// create and add the release to the pipe
+							Release rel;
+							rel.fileName = relativeFileName;
+							rel.fullPath = pipeReleasesToAdd.Item(k);
+							rel.isTremulant = 1;
+
+							if (extractKeyPressTime) {
+								// we try to get a number that have at least 2 digits from the folder name
+								wxString relFolderName = tremulantFolders.Item(j).AfterLast(wxFILE_SEP_PATH);
+								int firstNumberIndex = -1;
+								long keyPressTime = -1;
+								for (unsigned l = 0; l < relFolderName.Length(); l++) {
+									if (wxIsdigit(relFolderName.GetChar(l))) {
+										firstNumberIndex = l;
+										break;
+									}
+								}
+
+								if (firstNumberIndex > -1) {
+									wxString numberPart = relFolderName.Mid(firstNumberIndex);
+									if (!numberPart.ToLong(&keyPressTime)) {
+										// the number part didn't contain only numbers!
+									}
+
+									if (keyPressTime > 9 && keyPressTime < 99999)
+										rel.maxKeyPressTime = keyPressTime;
+								}
+							}
+
+							p->m_releases.push_back(rel);
+						}
+					}
+
+				}
+			}
+		}
+	}
+}
+
+void Rank::addTremulantToPipes(
+	wxString extraAttackFolder,
+	bool loadOnlyOneAttack,
+	bool loadRelease,
+	wxString releaseFolderPrefix,
+	bool extractKeyPressTime
+) {
+	// This method is for adding additional attacks/releases as (wave) tremulants only
+	bool organRootPathIsSet = false;
+
+	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
+		organRootPathIsSet = true;
+
+	wxDir pipeRoot(m_latestPipesRootPath);
+
+	if (!pipeRoot.IsOpened())
+		return;
+
+	for (int i = 0; i < numberOfLogicalPipes; i++) {
+		Pipe *p = getPipeAt(i);
+
+		wxArrayString pipeAttacks;
+		wxArrayString pipeAttacksToAdd;
+		wxArrayString pipeReleases;
+		wxArrayString pipeReleasesToAdd;
+		wxArrayString releaseFolders;
+		wxArrayString allFolders;
+
+		// first store all folders existing in root
+		wxString folder;
+		bool cont = pipeRoot.GetFirst(&folder, wxT("*"), wxDIR_DIRS);
+		while (cont) {
+			allFolders.Add(folder);
+		    cont = pipeRoot.GetNext(&folder);
+		}
+
+		if (!allFolders.IsEmpty()) {
+			// separate release and tremulant folders
+			for (unsigned j = 0; j < allFolders.GetCount(); j++) {
+
+				if (allFolders.Item(j).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString) {
+					releaseFolders.Add(allFolders.Item(j));
+				}
+			}
+		}
+
+		// get attacks from root folder
+		pipeRoot.GetAllFiles(
+			m_latestPipesRootPath,
+			&pipeAttacks,
+			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxDIR_FILES
+		);
+
+		// then from possible extra attack folder
+		if (extraAttackFolder != wxEmptyString) {
+			pipeRoot.GetAllFiles(
+				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
+				&pipeAttacks,
+				wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+				wxDIR_FILES
+			);
+		}
+
+		pipeAttacks.Sort();
+
+		// remove any file that's not ending with .wav or .wv
+		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
+
+		// if there are any matching attacks we add them
+		if (!pipeAttacksToAdd.IsEmpty()) {
+			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
+				wxString relativeFileName;
+				if (organRootPathIsSet)
+					relativeFileName = getOnlyFileName(pipeAttacksToAdd.Item(j));
+				else
+					relativeFileName = pipeAttacksToAdd.Item(j);
+
+				// create and add the attack to the pipe
+				Attack a;
+				a.fileName = relativeFileName;
+				a.fullPath = pipeAttacksToAdd.Item(j);
+				a.loadRelease = loadRelease;
+				a.isTremulant = 1;
+
+				p->m_attacks.push_back(a);
+
+				if (loadOnlyOneAttack)
+					break;
+			}
+		}
+
+		pipeAttacks.Empty();
+		pipeAttacksToAdd.Empty();
+
+		// add extra releases if they can be found
+		if (!releaseFolders.IsEmpty()) {
+
+			releaseFolders.Sort();
+
+			for (unsigned j = 0; j < releaseFolders.GetCount(); j++) {
+				pipeRoot.GetAllFiles(
+					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
+					&pipeReleases,
+					wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+					wxDIR_FILES
+				);
+
+				pipeReleases.Sort();
+
+				// remove any file that's not ending with .wav or .wv
+				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+				// if there are any matching releases we add them
+				if (!pipeReleasesToAdd.IsEmpty()) {
+
+					for (unsigned k = 0; k < pipeReleasesToAdd.GetCount(); k++) {
+						wxString relativeFileName;
+						if (organRootPathIsSet)
+							relativeFileName = getOnlyFileName(pipeReleasesToAdd.Item(k));
+						else
+							relativeFileName = pipeReleasesToAdd.Item(k);
+
+						// create and add the release to the pipe
+						Release rel;
+						rel.fileName = relativeFileName;
+						rel.fullPath = pipeReleasesToAdd.Item(k);
+						rel.isTremulant = 1;
+
+						if (extractKeyPressTime) {
+							// we try to get a number that have at least 2 digits from the folder name
+							wxString relFolderName = releaseFolders.Item(j).AfterLast(wxFILE_SEP_PATH);
+							int firstNumberIndex = -1;
+							long keyPressTime = -1;
+
+							for (unsigned l = 0; l < relFolderName.Length(); l++) {
+								if (wxIsdigit(relFolderName.GetChar(l))) {
+									firstNumberIndex = l;
+									break;
+								}
+							}
+
+							if (firstNumberIndex > -1) {
+								wxString numberPart = relFolderName.Mid(firstNumberIndex);
+
+								if (!numberPart.ToLong(&keyPressTime)) {
+									// the number part didn't contain only numbers!
+								}
+
+								if (keyPressTime > 9 && keyPressTime < 99999)
+									rel.maxKeyPressTime = keyPressTime;
+							}
+						}
+
+						p->m_releases.push_back(rel);
+
+					}
+				}
+
+				pipeReleases.Empty();
+				pipeReleasesToAdd.Empty();
+			}
+		}
 	}
 }
 
@@ -776,4 +1232,10 @@ void Rank::setupPipeProperties(Pipe &pipe) {
 	pipe.windchest = this->windchest;
 	pipe.minVelocityVolume = this->minVelocityVolume;
 	pipe.maxVelocityVolume = this->maxVelocityVolume;
+}
+
+void Rank::updatePipeRelativePaths() {
+	for (Pipe& p : m_pipes) {
+		p.updateRelativePaths();
+	}
 }

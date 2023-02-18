@@ -50,6 +50,7 @@ public:
 	void writeCuePoint(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeReleaseEnd(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk);
+	void updateRelativePaths();
 
 	bool isPercussive;
 	float amplitudeLevel;

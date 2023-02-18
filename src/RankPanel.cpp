@@ -54,6 +54,8 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_SPINCTRLDOUBLE(ID_RANK_GAIN_SPIN, RankPanel::OnGainSpin)
 	EVT_SPINCTRLDOUBLE(ID_RANK_PITCH_SPIN, RankPanel::OnPitchTuningSpin)
 	EVT_SPINCTRL(ID_RANK_TRACKER_DELAY_SPIN, RankPanel::OnTrackerDelaySpin)
+	EVT_BUTTON(ID_RANK_ADD_PIPES_BTN, RankPanel::OnAddPipesBtn)
+	EVT_BUTTON(ID_RANK_ADD_TREMULANT_PIPES_BTN, RankPanel::OnAddTremulantPipesBtn)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -366,14 +368,14 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	readPipesFromFolderBtn = new wxButton(
 		this,
 		ID_RANK_READ_PIPES_BTN,
-		wxT("Load pipes by MIDI nr from...")
+		wxT("Create new pipes by MIDI nbr from...")
 	);
 	actionButtons->Add(readPipesFromFolderBtn, 0, wxALL, 5);
 	actionButtons->AddStretchSpacer();
 	wxButton *clearPipesBtn = new wxButton(
 		this,
 		ID_RANK_CLEAR_PIPES,
-		wxT("Reset all pipes")
+		wxT("Reset/Clear all pipes")
 	);
 	actionButtons->Add(clearPipesBtn, 0, wxALL, 5);
 	pipeReadingOptions->Add(actionButtons, 0, wxGROW);
@@ -459,6 +461,22 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	optionsRow4->Add(m_optionsTremulantField, 1, wxEXPAND|wxALL, 5);
 	readingOptions->Add(optionsRow4, 0, wxGROW);
+	wxBoxSizer *optionsRow5 = new wxBoxSizer(wxHORIZONTAL);
+	optionsRow5->AddStretchSpacer();
+	m_addPipesFromFolderBtn = new wxButton(
+		readingOptions->GetStaticBox(),
+		ID_RANK_ADD_PIPES_BTN,
+		wxT("Add more samples from...")
+	);
+	optionsRow5->Add(m_addPipesFromFolderBtn, 0, wxALL, 5);
+	optionsRow5->AddStretchSpacer();
+	m_addTremulantPipesBtn = new wxButton(
+		readingOptions->GetStaticBox(),
+		ID_RANK_ADD_TREMULANT_PIPES_BTN,
+		wxT("Add tremulant samples from...")
+	);
+	optionsRow5->Add(m_addTremulantPipesBtn, 0, wxALL, 5);
+	readingOptions->Add(optionsRow5, 0, wxGROW);
 	pipeReadingOptions->Add(readingOptions, 1, wxEXPAND);
 	seventhRow->Add(pipeReadingOptions, 1, wxEXPAND);
 	panelSizer->Add(seventhRow, 1, wxEXPAND|wxALL, 5);
@@ -679,7 +697,7 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 	wxDirDialog rankPipesPathDialog(
 		this,
-		wxT("Pick a root directory to read from"),
+		wxT("Pick a root directory to read new pipes from"),
 		defaultPath,
 		wxDD_DIR_MUST_EXIST
 	);
@@ -1203,4 +1221,76 @@ void RankPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 
 void RankPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_rank->setTrackerDelay(m_trackerDelaySpin->GetValue());
+}
+
+void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxString defaultPath;
+	if (m_rank->getPipesRootPath() != wxEmptyString)
+		defaultPath = m_rank->getPipesRootPath();
+	else
+		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+
+	wxDirDialog rankPipesPathDialog(
+		this,
+		wxT("Pick a directory to add pipe attack/releases from"),
+		defaultPath,
+		wxDD_DIR_MUST_EXIST
+	);
+
+	if (rankPipesPathDialog.ShowModal() == wxID_OK) {
+		m_rank->setPipesRootPath(rankPipesPathDialog.GetPath());
+		wxString extraAttackFolderPrefix = m_optionsAttackField->GetValue();
+		bool loadOnlyOneAttack = m_optionsOnlyOneAttack->GetValue();
+		bool loadRelease = m_optionsLoadReleaseInAttack->GetValue();
+		wxString releaseFolderPrefix = m_optionsReleaseField->GetValue();
+		bool extractKeyPressTime = m_optionsKeyPressTime->GetValue();
+		wxString tremulantFolderPrefix = m_optionsTremulantField->GetValue();
+
+		m_rank->addToPipes(
+			extraAttackFolderPrefix,
+			loadOnlyOneAttack,
+			loadRelease,
+			releaseFolderPrefix,
+			extractKeyPressTime,
+			tremulantFolderPrefix
+		);
+
+		RebuildPipeTree();
+		UpdatePipeTree();
+	}
+}
+
+void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxString defaultPath;
+	if (m_rank->getPipesRootPath() != wxEmptyString)
+		defaultPath = m_rank->getPipesRootPath();
+	else
+		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+
+	wxDirDialog rankPipesPathDialog(
+		this,
+		wxT("Pick a directory to add (wave) tremulant attack/releases from"),
+		defaultPath,
+		wxDD_DIR_MUST_EXIST
+	);
+
+	if (rankPipesPathDialog.ShowModal() == wxID_OK) {
+		m_rank->setPipesRootPath(rankPipesPathDialog.GetPath());
+		wxString extraAttackFolderPrefix = m_optionsAttackField->GetValue();
+		bool loadOnlyOneAttack = m_optionsOnlyOneAttack->GetValue();
+		bool loadRelease = m_optionsLoadReleaseInAttack->GetValue();
+		wxString releaseFolderPrefix = m_optionsReleaseField->GetValue();
+		bool extractKeyPressTime = m_optionsKeyPressTime->GetValue();
+
+		m_rank->addTremulantToPipes(
+			extraAttackFolderPrefix,
+			loadOnlyOneAttack,
+			loadRelease,
+			releaseFolderPrefix,
+			extractKeyPressTime
+		);
+
+		RebuildPipeTree();
+		UpdatePipeTree();
+	}
 }

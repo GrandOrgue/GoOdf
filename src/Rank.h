@@ -74,6 +74,21 @@ public:
 		bool extractKeyPressTime,
 		wxString tremulantFolderPrefix
 	);
+	void addToPipes(
+		wxString extraAttackFolder,
+		bool loadOnlyOneAttack,
+		bool loadRelease,
+		wxString releaseFolderPrefix,
+		bool extractKeyPressTime,
+		wxString tremulantFolderPrefix
+	);
+	void addTremulantToPipes(
+		wxString extraAttackFolder,
+		bool loadOnlyOneAttack,
+		bool loadRelease,
+		wxString releaseFolderPrefix,
+		bool extractKeyPressTime
+	);
 	void clearAllPipes();
 	void createDummyPipes();
 	void addDummyPipeFront();
@@ -87,6 +102,7 @@ public:
 	bool deleteAttackInPipe(unsigned pipeIndex, unsigned attackIndex);
 	void deleteReleaseInPipe(unsigned pipeIndex, unsigned releaseIndex);
 	Pipe* getPipeAt(unsigned index);
+	void updatePipeRelativePaths();
 
 	std::list<Pipe> m_pipes;
 

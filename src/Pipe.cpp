@@ -264,3 +264,12 @@ void Pipe::writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
 		}
 	}
 }
+
+void Pipe::updateRelativePaths() {
+	for (Attack& a : m_attacks) {
+		a.fileName = GOODF_functions::removeBaseOdfPath(a.fullPath);
+	}
+	for (Release& r : m_releases) {
+		r.fileName = GOODF_functions::removeBaseOdfPath(r.fullPath);
+	}
+}

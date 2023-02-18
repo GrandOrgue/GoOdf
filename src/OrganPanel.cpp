@@ -571,7 +571,8 @@ void OrganPanel::getDataFromOrgan() {
 void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
 	m_odfPath = GetDirectoryPath();
 	m_odfPathField->SetValue(m_odfPath);
-	::wxGetApp().m_frame->m_organ->setOdfRoot(m_odfPath);
+	m_currentOrgan->setOdfRoot(m_odfPath);
+	m_currentOrgan->updateRelativePipePaths();
 	if (!m_infoPathField->IsEmpty()) {
 		if (!wxFileExists(m_odfPath + wxFILE_SEP_PATH + m_infoPathField->GetValue())) {
 			m_infoPathField->SetValue(wxEmptyString);

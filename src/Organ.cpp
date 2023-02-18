@@ -1388,3 +1388,12 @@ const wxArrayString& Organ::getOrganElements() const {
 void Organ::organElementHasChanged() {
 	updateOrganElements();
 }
+
+void Organ::updateRelativePipePaths() {
+	for (Stop& s : m_Stops) {
+		s.getInternalRank()->updatePipeRelativePaths();
+	}
+	for (Rank& r : m_Ranks) {
+		r.updatePipeRelativePaths();
+	}
+}

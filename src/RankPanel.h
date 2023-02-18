@@ -65,6 +65,8 @@ private:
 	wxTextCtrl *m_optionsReleaseField;
 	wxCheckBox *m_optionsKeyPressTime;
 	wxTextCtrl *m_optionsTremulantField;
+	wxButton *m_addPipesFromFolderBtn;
+	wxButton *m_addTremulantPipesBtn;
 
 	wxButton *removeRankBtn;
 
@@ -91,6 +93,8 @@ private:
 	void OnGainSpin(wxSpinDoubleEvent& event);
 	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
 	void OnTrackerDelaySpin(wxSpinEvent& event);
+	void OnAddPipesBtn(wxCommandEvent& event);
+	void OnAddTremulantPipesBtn(wxCommandEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();
