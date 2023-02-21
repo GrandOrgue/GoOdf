@@ -541,7 +541,7 @@ void OrganPanel::getDataFromOrgan() {
 	m_organBuildDateField->SetValue(m_currentOrgan->getOrganBuildDate());
 	m_organCommentsField->SetValue(m_currentOrgan->getOrganComments());
 	m_recordingDetailsField->SetValue(m_currentOrgan->getRecordingDetails());
-	m_infoPathField->SetValue(m_currentOrgan->getInfoFilename());
+	m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
 	if (m_currentOrgan->doesDivisionalsStoreIntermanualCouplers())
 		m_interManualYes->SetValue(true);
 	else
@@ -574,10 +574,7 @@ void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
 	m_currentOrgan->setOdfRoot(m_odfPath);
 	m_currentOrgan->updateRelativePipePaths();
 	if (!m_infoPathField->IsEmpty()) {
-		if (!wxFileExists(m_odfPath + wxFILE_SEP_PATH + m_infoPathField->GetValue())) {
-			m_infoPathField->SetValue(wxEmptyString);
-			m_currentOrgan->setInfoFilename(wxEmptyString);
-		}
+		m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
 	}
 }
 
@@ -669,12 +666,9 @@ void OrganPanel::OnBrowseForInfoPath(wxCommandEvent& WXUNUSED(event)) {
 		return;
 
 	infoFilePath = fileDialog.GetPath();
-	if (infoFilePath.StartsWith(m_odfPath)) {
-		infoFilePath.Replace(m_odfPath, wxT(""));
-		infoFilePath = infoFilePath.Mid(1);
-	}
-	m_infoPathField->SetValue(infoFilePath);
 	m_currentOrgan->setInfoFilename(infoFilePath);
+	m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(infoFilePath));
+
 }
 
 void OrganPanel::OnInterManualRBChange(wxCommandEvent& event) {

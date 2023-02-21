@@ -68,8 +68,10 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 	outFile->AddLine(wxT("OrganBuildDate=") + m_organBuildDate);
 	outFile->AddLine(wxT("OrganComments=") + m_organComments);
 	outFile->AddLine(wxT("RecordingDetails=") + m_recordingDetails);
-	if (m_infoFilename != wxEmptyString)
-		outFile->AddLine(wxT("InfoFileName=") + m_infoFilename);
+	if (m_infoFilename != wxEmptyString) {
+		wxString infoFile = GOODF_functions::fixSeparator(GOODF_functions::removeBaseOdfPath(m_infoFilename));
+		outFile->AddLine(wxT("InfoFilename=") + infoFile);
+	}
 	unsigned nbMan = m_Manuals.size();
 	if (m_hasPedals) {
 		nbMan--;
