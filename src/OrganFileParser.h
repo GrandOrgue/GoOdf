@@ -1,5 +1,5 @@
 /*
- * OrganParser.h is part of GOODF.
+ * OrganFileParser.h is part of GOODF.
  * Copyright (C) 2023 Lars Palo
  *
  * GOODF is free software: you can redistribute it and/or modify
@@ -18,3 +18,38 @@
  * You can contact the author on larspalo(at)yahoo.se
  */
 
+#ifndef ORGANFILEPARSER_H
+#define ORGANFILEPARSER_H
+
+#include <wx/wx.h>
+#include <wx/fileconf.h>
+#include "Organ.h"
+
+class OrganFileParser {
+public:
+	OrganFileParser(wxString filePath, Organ *organ);
+	~OrganFileParser();
+
+	bool isOrganReady();
+
+private:
+
+	Organ *m_organ;
+	wxString m_filePath;
+	wxFileConfig m_organFile;
+	bool m_fileIsOk;
+	bool m_organIsReady;
+	bool m_isUsingOldPanelFormat;
+	wxString m_errorMessage;
+
+	void readIniFile();
+	void parseOrgan();
+
+	bool parseBoolean(wxString key, bool defaultValue = true);
+
+	void parseOrganSection();
+	void parseDisplayMetrics(wxString sourcePanel, GoPanel *targetPanel);
+
+};
+
+#endif
