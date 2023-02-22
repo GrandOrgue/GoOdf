@@ -20,6 +20,8 @@
 
 #include "OrganFileParser.h"
 #include <wx/filename.h>
+#include <wx/image.h>
+#include "GOODFFunctions.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -72,6 +74,19 @@ bool OrganFileParser::parseBoolean(wxString key, bool defaultValue) {
 	return defaultValue;
 }
 
+wxString OrganFileParser::checkIfFileExist(wxString relativePath) {
+	// checks if a file actually exist relative the organ path and if so return the full path, or else an empty string
+	wxString returnPath = wxEmptyString;
+	if (relativePath != wxEmptyString) {
+		wxString fullFilePath = m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
+		wxFileName theFile = wxFileName(fullFilePath);
+		if (theFile.FileExists()) {
+			returnPath = theFile.GetFullPath();
+		}
+	}
+	return returnPath;
+}
+
 void OrganFileParser::parseOrganSection() {
 	m_organFile.SetPath("/Organ");
 
@@ -82,12 +97,9 @@ void OrganFileParser::parseOrganSection() {
 	m_organ->setOrganComments(m_organFile.Read("OrganComments", wxEmptyString));
 	m_organ->setRecordingDetails(m_organFile.Read("RecordingDetails", wxEmptyString));
 	wxString infoFilename = m_organFile.Read("InfoFilename", wxEmptyString);
-	if (infoFilename != wxEmptyString) {
-		wxString infoFilePath = m_organ->getOdfRoot() + wxFILE_SEP_PATH + infoFilename;
-		wxFileName infoFile = wxFileName(infoFilePath);
-		if (infoFile.FileExists()) {
-			m_organ->setInfoFilename(infoFile.GetFullPath());
-		}
+	wxString infoFile = checkIfFileExist(infoFilename);
+	if (infoFile != wxEmptyString) {
+		m_organ->setInfoFilename(infoFile);
 	}
 	m_organ->setDivisionalsStoreIntermanualCouplers(parseBoolean(wxT("DivisionalsStoreIntermanualCouplers"), true));
 	m_organ->setDivisionalsStoreIntramanualCouplers(parseBoolean(wxT("DivisionalsStoreIntramanualCouplers"), true));
@@ -113,7 +125,21 @@ void OrganFileParser::parseOrganSection() {
 	m_organ->setHasPedals(parseBoolean(wxT("HasPedals"), false));
 
 	if (m_isUsingOldPanelFormat) {
+		// the display metrics must be read from the organ section
 		parseDisplayMetrics(wxT("/Organ"), m_organ->getOrganPanelAt(0));
+
+		// images can also exist that must be transferred to the main panel
+		int nbrImages = static_cast<int>(m_organFile.ReadLong("NumberOfImages", 0));
+		if (nbrImages > 0 && nbrImages < 1000) {
+			for (int i = 0; i < nbrImages; i++) {
+				wxString imgGroupName = wxT("Image") + GOODF_functions::number_format(i);
+				if (m_organFile.HasGroup(imgGroupName)) {
+					parseImageSection(wxT("/") + imgGroupName, m_organ->getOrganPanelAt(0));
+				}
+			}
+		}
+
+		// setter elements can exist that should be re created as GUI elements
 	}
 }
 
@@ -243,4 +269,69 @@ void OrganFileParser::parseDisplayMetrics(wxString sourcePanel, GoPanel *targetP
 	int manualKeyWidth = static_cast<int>(m_organFile.ReadLong("DispManualKeyWidth", 12));
 	if (manualKeyWidth > 0 && manualKeyWidth < 501)
 		targetPanel->getDisplayMetrics()->m_dispManualKeyWidth = manualKeyWidth;
+}
+
+void OrganFileParser::parseImageSection(wxString source, GoPanel *targetPanel) {
+	bool imageIsValid = false;
+	m_organFile.SetPath(source);
+	GoImage image;
+	image.setOwningPanelWidth(targetPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	image.setOwningPanelHeight(targetPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	wxString relImgPath = m_organFile.Read("Image", wxEmptyString);
+	wxString imgPath = checkIfFileExist(relImgPath);
+	if (imgPath != wxEmptyString) {
+		wxImage img = wxImage(imgPath);
+		if (img.IsOk()) {
+			imageIsValid = true;
+			image.setImage(imgPath);
+			int width = img.GetWidth();
+			int height = img.GetHeight();
+			image.setOriginalWidth(width);
+			image.setOriginalHeight(height);
+			int imgWidth = static_cast<int>(m_organFile.ReadLong("Width", width));
+			if (imgWidth > -1 && imgWidth < targetPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+				// the width value read is in valid range
+				image.setWidth(imgWidth);
+			} else {
+				image.setWidth(width);
+			}
+			int imgHeight = static_cast<int>(m_organFile.ReadLong("Height", height));
+			if (imgHeight > -1 && imgHeight < targetPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+				image.setHeight(imgHeight);
+			} else {
+				image.setHeight(height);
+			}
+		}
+		wxString relMaskPath = m_organFile.Read("Mask", wxEmptyString);
+		wxString maskPath = checkIfFileExist(relMaskPath);
+		if (maskPath != wxEmptyString) {
+			wxImage mask = wxImage(maskPath);
+			if (mask.IsOk()) {
+				int width = mask.GetWidth();
+				int height = mask.GetHeight();
+				if (width == image.getOriginalWidth() && height == image.getOriginalHeight()) {
+					image.setMask(maskPath);
+				}
+			}
+		}
+		int posX = static_cast<int>(m_organFile.ReadLong("PositionX", 0));
+		if (posX > -1 && posX < targetPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+			image.setPositionX(posX);
+		}
+		int posY = static_cast<int>(m_organFile.ReadLong("PositionY", 0));
+		if (posY > -1 && posY < targetPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+			image.setPositionY(posY);
+		}
+		int tileOffsetX = static_cast<int>(m_organFile.ReadLong("TileOffsetX", 0));
+		if (tileOffsetX > -1 && tileOffsetX < image.getOriginalWidth()) {
+			image.setTileOffsetX(tileOffsetX);
+		}
+		int tileOffsetY = static_cast<int>(m_organFile.ReadLong("TileOffsetY", 0));
+		if (tileOffsetY > -1 && tileOffsetY < image.getOriginalHeight()) {
+			image.setTileOffsetY(tileOffsetY);
+		}
+	}
+
+	if (imageIsValid)
+		targetPanel->addImage(image);
 }

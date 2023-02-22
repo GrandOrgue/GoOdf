@@ -46,9 +46,11 @@ private:
 	void parseOrgan();
 
 	bool parseBoolean(wxString key, bool defaultValue = true);
+	wxString checkIfFileExist(wxString relativePath);
 
 	void parseOrganSection();
 	void parseDisplayMetrics(wxString sourcePanel, GoPanel *targetPanel);
+	void parseImageSection(wxString source, GoPanel *targetPanel);
 
 };
 
