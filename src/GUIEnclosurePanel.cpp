@@ -32,6 +32,8 @@
 BEGIN_EVENT_TABLE(GUIEnclosurePanel, wxPanel)
 	EVT_TEXT(ID_GUIENCLOSUREPANEL_LABEL_TEXT, GUIEnclosurePanel::OnLabelTextChange)
 	EVT_FONTPICKER_CHANGED(ID_GUIENCLOSUREPANEL_FONT_PICKER, GUIEnclosurePanel::OnLabelFontChange)
+	EVT_CHOICE(ID_GUIENCLOSUREPANEL_COLOR_CHOICE, GUIEnclosurePanel::OnLabelColourChoice)
+	EVT_COLOURPICKER_CHANGED(ID_GUIENCLOSUREPANEL_COLOR_PICKER, GUIEnclosurePanel::OnLabelColourPick)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_X_SPIN, GUIEnclosurePanel::OnPositionXSpin)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_Y_SPIN, GUIEnclosurePanel::OnPositionYSpin)
 	EVT_COMBOBOX(ID_GUIENCLOSUREPANEL_STYLE_CHOICE, GUIEnclosurePanel::OnEnclosureStyleChoice)
@@ -60,6 +62,8 @@ END_EVENT_TABLE()
 
 GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 	m_enclosure = NULL;
+	GoColor col;
+	m_colors = col.getColorNames();
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *labelText = new wxStaticText (
@@ -88,6 +92,28 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	firstRow->Add(m_labelFont, 1, wxEXPAND|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
+
+	wxBoxSizer *colorRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *labelColourText = new wxStaticText(
+		this,
+		wxID_STATIC,
+		wxT("DispLabelColour: ")
+	);
+	colorRow->Add(labelColourText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_labelColourChoice = new wxChoice(
+		this,
+		ID_GUIENCLOSUREPANEL_COLOR_CHOICE,
+		wxDefaultPosition,
+		wxDefaultSize,
+		m_colors
+	);
+	colorRow->Add(m_labelColourChoice, 1, wxEXPAND, 0);
+	m_labelColourPick = new wxColourPickerCtrl(
+		this,
+		ID_GUIENCLOSUREPANEL_COLOR_PICKER
+	);
+	colorRow->Add(m_labelColourPick, 1, wxEXPAND, 0);
+	panelSizer->Add(colorRow, 0, wxGROW);
 
 	wxBoxSizer *positionRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *posXText = new wxStaticText (
@@ -559,6 +585,17 @@ void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure)
 	m_enclosure = enclosure;
 	m_labelTextField->SetValue(m_enclosure->getDispLabelText());
 	m_labelFont->SetSelectedFont(m_enclosure->getDispLabelFont());
+	if (m_enclosure->getDispLabelColour()->getSelectedColorIndex() == 0) {
+		// it's a custom color
+		m_labelColourChoice->SetSelection(0);
+		m_labelColourPick->Enable();
+		m_labelColourPick->SetColour(m_enclosure->getDispLabelColour()->getColor());
+	} else {
+		// the color is text specified from the available ones in GO
+		m_labelColourChoice->SetSelection(m_enclosure->getDispLabelColour()->getSelectedColorIndex());
+		m_labelColourPick->SetColour(m_enclosure->getDispLabelColour()->getColor());
+		m_labelColourPick->Disable();
+	}
 	m_enclosureStyleBox->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_enclosureStyleBitmaps.size(); i++) {
 		wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
@@ -602,6 +639,24 @@ void GUIEnclosurePanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 void GUIEnclosurePanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_enclosure->setDispLabelFont(m_labelFont->GetSelectedFont());
 	m_enclosure->setDispLabelFontSize(m_labelFont->GetFont().GetPointSize());
+}
+
+void GUIEnclosurePanel::OnLabelColourChoice(wxCommandEvent& event) {
+	if (event.GetId() == ID_GUIENCLOSUREPANEL_COLOR_CHOICE) {
+		if (m_labelColourChoice->GetSelection() == 0) {
+			m_labelColourPick->Enable();
+		} else {
+			m_enclosure->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
+			m_labelColourPick->SetColour(m_enclosure->getDispLabelColour()->getColor());
+			m_labelColourPick->Disable();
+		}
+	}
+}
+
+void GUIEnclosurePanel::OnLabelColourPick(wxColourPickerEvent& event) {
+	if (event.GetId() == ID_GUIENCLOSUREPANEL_COLOR_PICKER) {
+		m_enclosure->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+	}
 }
 
 void GUIEnclosurePanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {

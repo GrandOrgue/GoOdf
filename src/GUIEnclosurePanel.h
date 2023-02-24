@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #include <wx/fontpicker.h>
+#include <wx/clrpicker.h>
 #include <wx/bmpcbox.h>
 #include "GUIEnclosure.h"
 
@@ -39,6 +40,8 @@ private:
 
 	wxTextCtrl *m_labelTextField;
 	wxFontPickerCtrl *m_labelFont; // this control will handle both font size and font name
+	wxChoice *m_labelColourChoice;
+	wxColourPickerCtrl *m_labelColourPick;
 	wxSpinCtrl *m_elementPosXSpin;
 	wxSpinCtrl *m_elementPosYSpin;
 	wxBitmapComboBox *m_enclosureStyleBox; // this should be filled with built in enclosure images, default 1
@@ -69,8 +72,12 @@ private:
 
 	GUIEnclosure *m_enclosure;
 
+	wxArrayString m_colors;
+
 	void OnLabelTextChange(wxCommandEvent& event);
 	void OnLabelFontChange(wxFontPickerEvent& event);
+	void OnLabelColourChoice(wxCommandEvent& event);
+	void OnLabelColourPick(wxColourPickerEvent& event);
 	void OnPositionXSpin(wxSpinEvent& event);
 	void OnPositionYSpin(wxSpinEvent& event);
 	void OnEnclosureStyleChoice(wxCommandEvent& event);

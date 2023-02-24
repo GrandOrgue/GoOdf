@@ -140,7 +140,39 @@ void OrganFileParser::parseOrganSection() {
 		}
 
 		// setter elements can exist that should be re created as GUI elements
+
+		// labels can exist that also should be re created as GUI elements
 	}
+
+	// parse enclosures
+	int nbrEnclosures = static_cast<int>(m_organFile.ReadLong("NumberOfEnclosures", 0));
+	if (nbrEnclosures > - 1 && nbrEnclosures < 51) {
+		for (int i = 0; i < nbrEnclosures; i++) {
+			wxString enclosureGroupName = wxT("Enclosure") + GOODF_functions::number_format(i);
+			if (m_organFile.HasGroup(enclosureGroupName)) {
+				parseEnclosureSection(wxT("/") + enclosureGroupName, m_organ->getOrganPanelAt(0));
+			}
+		}
+	}
+
+	// parse windchests
+
+	// parse switches
+
+	// parse tremulants
+
+	// parse ranks
+
+	// parse manuals which contain the stops, couplers and divisionals
+	// also they have tremulants and switches even if they are globally managed
+
+	// parse reversible pistons
+
+	// parse divisional couplers
+
+	// parse generals
+
+	// parse panels
 }
 
 void OrganFileParser::parseDisplayMetrics(wxString sourcePanel, GoPanel *targetPanel) {
@@ -289,14 +321,14 @@ void OrganFileParser::parseImageSection(wxString source, GoPanel *targetPanel) {
 			image.setOriginalWidth(width);
 			image.setOriginalHeight(height);
 			int imgWidth = static_cast<int>(m_organFile.ReadLong("Width", width));
-			if (imgWidth > -1 && imgWidth < targetPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+			if (imgWidth > -1 && imgWidth < image.getOwningPanelWidth()) {
 				// the width value read is in valid range
 				image.setWidth(imgWidth);
 			} else {
 				image.setWidth(width);
 			}
 			int imgHeight = static_cast<int>(m_organFile.ReadLong("Height", height));
-			if (imgHeight > -1 && imgHeight < targetPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+			if (imgHeight > -1 && imgHeight < image.getOwningPanelHeight()) {
 				image.setHeight(imgHeight);
 			} else {
 				image.setHeight(height);
@@ -334,4 +366,177 @@ void OrganFileParser::parseImageSection(wxString source, GoPanel *targetPanel) {
 
 	if (imageIsValid)
 		targetPanel->addImage(image);
+}
+
+void OrganFileParser::parseEnclosureSection(wxString source, GoPanel *targetPanel) {
+	m_organFile.SetPath(source);
+	Enclosure enc;
+	enc.setName(m_organFile.Read("Name", wxEmptyString));
+	int ampMinLvl = static_cast<int>(m_organFile.ReadLong("AmpMinimumLevel", 1));
+	if (ampMinLvl > -1 && ampMinLvl < 101)
+		enc.setAmpMinimumLevel(ampMinLvl);
+	int midiInput = static_cast<int>(m_organFile.ReadLong("MIDIInputNumber", 0));
+	if (midiInput > -1 && midiInput < 201)
+		enc.setMidiInputNumber(midiInput);
+
+	m_organ->addEnclosure(enc);
+
+	// the enclosure section can also contain GUI element data that must be taken into account
+	bool defaultDisplayed = false;
+	if (m_isUsingOldPanelFormat) {
+		defaultDisplayed = true;
+	}
+
+	bool encIsDisplayed = parseBoolean(wxT("Displayed"), defaultDisplayed);
+	if (encIsDisplayed) {
+		int lastEnclosureIdx = m_organ->getNumberOfEnclosures() - 1;
+		createGUIEnclosure(source, targetPanel, m_organ->getOrganEnclosureAt(lastEnclosureIdx));
+	}
+}
+
+void OrganFileParser::createGUIEnclosure(wxString source, GoPanel *targetPanel, Enclosure *enclosure) {
+	m_organFile.SetPath(source);
+	GUIElement *guiEnc = new GUIEnclosure(enclosure);
+	guiEnc->setOwningPanel(targetPanel);
+	guiEnc->setDisplayName(enclosure->getName());
+	targetPanel->addGuiElement(guiEnc);
+
+	// convert gui element back to enclosure type
+	GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(guiEnc);
+	if (encElement) {
+		wxString colorStr = m_organFile.Read("DispLabelColour", wxT("WHITE"));
+		int colorIdx = encElement->getDispLabelColour()->getColorNames().Index(colorStr, false);
+		if (colorIdx != wxNOT_FOUND) {
+			encElement->getDispLabelColour()->setSelectedColorIndex(colorIdx);
+		} else {
+			// is it possible that it's a html format color code instead
+			wxColour color;
+			color.Set(colorStr);
+			if (color.IsOk()) {
+				encElement->getDispLabelColour()->setColorValue(color);
+			}
+		}
+		wxString sizeStr = m_organFile.Read("DispLabelFontSize", wxT("7"));
+		int sizeIdx = encElement->getDispLabelFontSize()->getSizeNames().Index(sizeStr, false);
+		if (sizeIdx != wxNOT_FOUND) {
+			encElement->getDispLabelFontSize()->setSelectedSizeIndex(sizeIdx);
+		} else {
+			// it's possible that it can be a numerical value instead
+			long value;
+			if (sizeStr.ToLong(&value)) {
+				if (value > 0 && value < 51)
+					encElement->setDispLabelFontSize(value);
+			}
+		}
+		wxFont labelFont(wxFontInfo(encElement->getDispLabelFontSize()->getSizeValue()).FaceName(m_organFile.Read("DispLabelFontName", wxEmptyString)));
+		if (labelFont.IsOk())
+			encElement->setDispLabelFont(labelFont);
+		encElement->setDispLabelText(m_organFile.Read("DispLabelText", wxEmptyString));
+		int encStyle = static_cast<int>(m_organFile.ReadLong("EnclosureStyle", 1));
+		if (encStyle > 0 && encStyle < 5) {
+			encElement->setEnclosureStyle(encStyle);
+		}
+		int bitmapCount = static_cast<int>(m_organFile.ReadLong("BitmapCount", 0));
+		if (bitmapCount > 0 && bitmapCount < 129) {
+			for (int i = 0; i < bitmapCount; i++) {
+				GoImage tmpBmp;
+				wxString bmpStr = wxT("Bitmap") + GOODF_functions::number_format(i + 1);
+				wxString maskStr = wxT("Mask") + GOODF_functions::number_format(i + 1);
+				wxString relBmpPath = m_organFile.Read(bmpStr, wxEmptyString);
+				wxString fullBmpPath = checkIfFileExist(relBmpPath);
+				wxString relMaskPath = m_organFile.Read(maskStr, wxEmptyString);
+				wxString fullMaskPath = checkIfFileExist(relMaskPath);
+				if (fullBmpPath != wxEmptyString) {
+					wxImage img = wxImage(fullBmpPath);
+					if (img.IsOk()) {
+						tmpBmp.setImage(fullBmpPath);
+						if (fullMaskPath != wxEmptyString) {
+							wxImage mask = wxImage(fullMaskPath);
+							if (mask.IsOk()) {
+								tmpBmp.setMask(fullMaskPath);
+							}
+						}
+						if (encElement->getNumberOfBitmaps() == 0) {
+							// from the first bitmap we can store the original size values
+							int width = img.GetWidth();
+							int height = img.GetHeight();
+							tmpBmp.setOriginalWidth(width);
+							tmpBmp.setOriginalHeight(height);
+							encElement->setBitmapWidth(width);
+							encElement->setBitmapHeight(height);
+						}
+						encElement->addBitmap(tmpBmp);
+					}
+				}
+			}
+		}
+		int thePanelWidth = targetPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+		int thePanelHeight = targetPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+		int posX = static_cast<int>(m_organFile.ReadLong("PositionX", 0));
+		if (posX > -1 && posX < thePanelWidth)
+			encElement->setPosX(posX);
+		int posY = static_cast<int>(m_organFile.ReadLong("PositionY", 0));
+		if (posY > -1 && posY < thePanelHeight)
+			encElement->setPosY(posY);
+		int encWidth = static_cast<int>(m_organFile.ReadLong("Width", 0));
+		if (encWidth > -1 && encWidth < thePanelWidth) {
+			encElement->setWidth(encWidth);
+		}
+		int encHeight = static_cast<int>(m_organFile.ReadLong("Height", 0));
+		if (encHeight > -1 && encHeight < thePanelHeight) {
+			encElement->setHeight(encHeight);
+		}
+		int tileX = static_cast<int>(m_organFile.ReadLong("TileOffsetX", 0));
+		if (tileX > -1 && tileX < encElement->getBitmapWidth() + 1) {
+			encElement->setTileOffsetX(tileX);
+		}
+		int tileY = static_cast<int>(m_organFile.ReadLong("TileOffsetY", 0));
+		if (tileY > -1 && tileY < encElement->getBitmapHeight() + 1) {
+			encElement->setTileOffsetY(tileY);
+		}
+		int mouseRectLeft = static_cast<int>(m_organFile.ReadLong("MouseRectLeft", 0));
+		if (mouseRectLeft > -1 && mouseRectLeft < encElement->getWidth() + 1) {
+			encElement->setMouseRectLeft(mouseRectLeft);
+		}
+		int mouseRectTop = static_cast<int>(m_organFile.ReadLong("MouseRectTop", 0));
+		if (mouseRectTop > -1 && mouseRectTop < encElement->getHeight() + 1) {
+			encElement->setMouseRectTop(mouseRectTop);
+		}
+		int mouseRectWidth = static_cast<int>(m_organFile.ReadLong("MouseRectWidth", 0));
+		if (mouseRectWidth > -1 && mouseRectWidth < encElement->getWidth() + 1) {
+			encElement->setMouseRectWidth(mouseRectWidth);
+		}
+		int mouseRectHeight = static_cast<int>(m_organFile.ReadLong("MouseRectHeight", 0));
+		if (mouseRectHeight > -1 && mouseRectHeight < encElement->getHeight() + 1) {
+			encElement->setMouseRectHeight(mouseRectHeight);
+		}
+		int mouseAxisStart = static_cast<int>(m_organFile.ReadLong("MouseAxisStart", 0));
+		if (mouseAxisStart > - 1 && mouseAxisStart < encElement->getMouseRectHeight() + 1) {
+			encElement->setMouseAxisStart(mouseAxisStart);
+		}
+		int mouseAxisEnd = static_cast<int>(m_organFile.ReadLong("MouseAxisEnd", 0));
+		if (mouseAxisEnd > -1 && mouseAxisEnd < encElement->getMouseRectHeight() + 1) {
+			encElement->setMouseAxisEnd(mouseAxisEnd);
+		}
+		int textRectLeft = static_cast<int>(m_organFile.ReadLong("TextRectLeft", 0));
+		if (textRectLeft > -1 && textRectLeft < encElement->getWidth() + 1) {
+			encElement->setTextRectLeft(textRectLeft);
+		}
+		int textRectTop = static_cast<int>(m_organFile.ReadLong("TextRectTop", 0));
+		if (textRectTop > -1 && textRectTop < encElement->getHeight() + 1) {
+			encElement->setTextRectTop(textRectTop);
+		}
+		int textRectWidth = static_cast<int>(m_organFile.ReadLong("TextRectWidth", 0));
+		if (textRectWidth > -1 && textRectWidth < encElement->getWidth() + 1) {
+			encElement->setTextRectWidth(textRectWidth);
+		}
+		int textRectHeight = static_cast<int>(m_organFile.ReadLong("TextRectHeight", 0));
+		if (textRectHeight > -1 && textRectHeight < encElement->getHeight() + 1) {
+			encElement->setTextRectHeight(textRectHeight);
+		}
+		int textBreakWidth = static_cast<int>(m_organFile.ReadLong("TextBreakWidth", encElement->getTextRectWidth()));
+		if (textBreakWidth > -1 && textBreakWidth < encElement->getTextRectWidth() + 1) {
+			encElement->setTextBreakWidth(textBreakWidth);
+		}
+	}
 }

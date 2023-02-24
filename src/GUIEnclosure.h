@@ -39,12 +39,12 @@ public:
 	bool isReferencing(Enclosure *enclosure);
 	void updateDisplayName();
 
-	const GoColor& getDispLabelColour() const;
+	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);
-	const GoFontSize& getDispLabelFontSize() const;
+	GoFontSize* getDispLabelFontSize();
 	void setDispLabelFontSize(int fontSize);
 	const wxString& getDispLabelText() const;
-	void setDispLabelText(const wxString &dispLabelText);
+	void setDispLabelText(wxString dispLabelText);
 	void setDispLabelFont(wxFont font);
 	wxFont getDispLabelFont();
 	int getEnclosureStyle() const;

@@ -51,6 +51,9 @@ private:
 	void parseOrganSection();
 	void parseDisplayMetrics(wxString sourcePanel, GoPanel *targetPanel);
 	void parseImageSection(wxString source, GoPanel *targetPanel);
+	void parseEnclosureSection(wxString source, GoPanel *targetPanel);
+
+	void createGUIEnclosure(wxString source, GoPanel *targetPanel, Enclosure *enclosure);
 
 };
 

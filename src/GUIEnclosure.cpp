@@ -140,16 +140,16 @@ void GUIEnclosure::updateDisplayName() {
 	setDisplayName(m_enclosure->getName());
 }
 
-const GoColor& GUIEnclosure::getDispLabelColour() const {
-	return m_dispLabelColour;
+GoColor* GUIEnclosure::getDispLabelColour() {
+	return &m_dispLabelColour;
 }
 
 void GUIEnclosure::setDispLabelColour(const GoColor &dispLabelColour) {
 	m_dispLabelColour = dispLabelColour;
 }
 
-const GoFontSize& GUIEnclosure::getDispLabelFontSize() const {
-	return m_dispLabelFontSize;
+GoFontSize* GUIEnclosure::getDispLabelFontSize() {
+	return &m_dispLabelFontSize;
 }
 
 void GUIEnclosure::setDispLabelFontSize(int fontSize) {
@@ -160,7 +160,7 @@ const wxString& GUIEnclosure::getDispLabelText() const {
 	return m_dispLabelText;
 }
 
-void GUIEnclosure::setDispLabelText(const wxString &dispLabelText) {
+void GUIEnclosure::setDispLabelText(wxString dispLabelText) {
 	m_dispLabelText = dispLabelText;
 }
 
