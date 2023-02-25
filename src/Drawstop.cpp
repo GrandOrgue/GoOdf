@@ -53,7 +53,8 @@ void Drawstop::write(wxTextFile *outFile) {
 				k++;
 				unsigned refIndex = ::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(sw);
 				wxString formattedNumber = GOODF_functions::number_format(k);
-				outFile->AddLine(wxT("Switch") + formattedNumber + wxT("=") +  wxString::Format(wxT("%u"), refIndex));
+				wxString formattedSwitch = GOODF_functions::number_format(refIndex);
+				outFile->AddLine(wxT("Switch") + formattedNumber + wxT("=") + formattedSwitch);
 			}
 		}
 	} else {
@@ -63,7 +64,7 @@ void Drawstop::write(wxTextFile *outFile) {
 		else
 			outFile->AddLine(wxT("DefaultToEngaged=N"));
 	}
-	if (gcState)
+	if (gcState && function.IsSameAs(wxT("Input")))
 		outFile->AddLine(wxT("GCState=") + wxString::Format(wxT("%i"), gcState));
 	if (!storeInDivisional)
 		outFile->AddLine(wxT("StoreInDivisional=N"));
