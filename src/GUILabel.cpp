@@ -146,8 +146,8 @@ void GUILabel::setDispImageNum(int dispImageNum) {
 	m_dispImageNum = dispImageNum;
 }
 
-const GoColor& GUILabel::getDispLabelColour() const {
-	return m_dispLabelColour;
+GoColor* GUILabel::getDispLabelColour() {
+	return &m_dispLabelColour;
 }
 
 void GUILabel::setDispLabelColour(const GoColor &dispLabelColour) {

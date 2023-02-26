@@ -32,6 +32,8 @@
 BEGIN_EVENT_TABLE(GUIButtonPanel, wxPanel)
 	EVT_TEXT(ID_GUIBUTTONPANEL_LABEL_TEXT, GUIButtonPanel::OnLabelTextChange)
 	EVT_FONTPICKER_CHANGED(ID_GUIBUTTONPANEL_FONT_PICKER, GUIButtonPanel::OnLabelFontChange)
+	EVT_CHOICE(ID_GUIBUTTONPANEL_COLOR_CHOICE, GUIButtonPanel::OnLabelColourChoice)
+	EVT_COLOURPICKER_CHANGED(ID_GUIBUTTONPANEL_COLOR_PICKER, GUIButtonPanel::OnLabelColourPick)
 	EVT_RADIOBUTTON(ID_GUIBUTTONPANEL_DISP_AS_PISTON_YES, GUIButtonPanel::OnDisplayAsPistonRadio)
 	EVT_RADIOBUTTON(ID_GUIBUTTONPANEL_DISP_AS_PISTON_NO, GUIButtonPanel::OnDisplayAsPistonRadio)
 	EVT_RADIOBUTTON(ID_GUIBUTTONPANEL_DISP_LABEL_LEFT_YES, GUIButtonPanel::OnDisplayKeyLabelLeftRadio)
@@ -66,6 +68,8 @@ END_EVENT_TABLE()
 
 GUIButtonPanel::GUIButtonPanel(wxWindow *parent) : wxPanel(parent) {
 	m_button = NULL;
+	GoColor col;
+	m_colors = col.getColorNames();
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *labelText = new wxStaticText (
@@ -94,6 +98,28 @@ GUIButtonPanel::GUIButtonPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	firstRow->Add(m_labelFont, 1, wxEXPAND|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
+
+	wxBoxSizer *colorRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *labelColourText = new wxStaticText(
+		this,
+		wxID_STATIC,
+		wxT("DispLabelColour: ")
+	);
+	colorRow->Add(labelColourText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_labelColourChoice = new wxChoice(
+		this,
+		ID_GUIBUTTONPANEL_COLOR_CHOICE,
+		wxDefaultPosition,
+		wxDefaultSize,
+		m_colors
+	);
+	colorRow->Add(m_labelColourChoice, 1, wxEXPAND, 0);
+	m_labelColourPick = new wxColourPickerCtrl(
+		this,
+		ID_GUIBUTTONPANEL_COLOR_PICKER
+	);
+	colorRow->Add(m_labelColourPick, 1, wxEXPAND, 0);
+	panelSizer->Add(colorRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *pistonText = new wxStaticText (
@@ -688,6 +714,17 @@ void GUIButtonPanel::setButton(GUIButton *button) {
 	m_button = button;
 	m_labelTextField->SetValue(m_button->getDispLabelText());
 	m_labelFont->SetSelectedFont(m_button->getDispLabelFont());
+	if (m_button->getDispLabelColour()->getSelectedColorIndex() == 0) {
+		// it's a custom color
+		m_labelColourChoice->SetSelection(0);
+		m_labelColourPick->Enable();
+		m_labelColourPick->SetColour(m_button->getDispLabelColour()->getColor());
+	} else {
+		// the color is text specified from the available ones in GO
+		m_labelColourChoice->SetSelection(m_button->getDispLabelColour()->getSelectedColorIndex());
+		m_labelColourPick->SetColour(m_button->getDispLabelColour()->getColor());
+		m_labelColourPick->Disable();
+	}
 	if (m_button->isDisplayAsPiston()) {
 		m_displayAsPistonYes->SetValue(true);
 		m_displayAsPistonNo->SetValue(false);
@@ -760,6 +797,24 @@ void GUIButtonPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 void GUIButtonPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_button->setDispLabelFont(m_labelFont->GetSelectedFont());
 	m_button->setDispLabelFontSize(m_labelFont->GetFont().GetPointSize());
+}
+
+void GUIButtonPanel::OnLabelColourChoice(wxCommandEvent& event) {
+	if (event.GetId() == ID_GUIBUTTONPANEL_COLOR_CHOICE) {
+		if (m_labelColourChoice->GetSelection() == 0) {
+			m_labelColourPick->Enable();
+		} else {
+			m_button->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
+			m_labelColourPick->SetColour(m_button->getDispLabelColour()->getColor());
+			m_labelColourPick->Disable();
+		}
+	}
+}
+
+void GUIButtonPanel::OnLabelColourPick(wxColourPickerEvent& event) {
+	if (event.GetId() == ID_GUIBUTTONPANEL_COLOR_PICKER) {
+		m_button->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+	}
 }
 
 void GUIButtonPanel::OnDisplayAsPistonRadio(wxCommandEvent& event) {

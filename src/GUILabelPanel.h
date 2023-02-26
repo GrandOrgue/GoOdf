@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #include <wx/fontpicker.h>
+#include <wx/clrpicker.h>
 #include <wx/bmpcbox.h>
 #include "GUILabel.h"
 
@@ -39,6 +40,8 @@ private:
 
 	wxTextCtrl *m_labelTextField; // name of label == text that it will display
 	wxFontPickerCtrl *m_labelFont; // this control will handle both font size and font name
+	wxChoice *m_labelColourChoice;
+	wxColourPickerCtrl *m_labelColourPick;
 	wxRadioButton *m_freeXposYes;
 	wxRadioButton *m_freeXposNo;
 	wxRadioButton *m_freeYposYes;
@@ -70,8 +73,12 @@ private:
 
 	GUILabel *m_label;
 
+	wxArrayString m_colors;
+
 	void OnLabelTextChange(wxCommandEvent& event);
 	void OnLabelFontChange(wxFontPickerEvent& event);
+	void OnLabelColourChoice(wxCommandEvent& event);
+	void OnLabelColourPick(wxColourPickerEvent& event);
 	void OnFreeXposRadio(wxCommandEvent& event);
 	void OnFreeYposRadio(wxCommandEvent& event);
 	void OnPositionXSpin(wxSpinEvent& event);

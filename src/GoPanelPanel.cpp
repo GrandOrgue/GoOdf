@@ -537,9 +537,10 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 	if (m_panel->getNumberOfGuiElements() < 999) {
 		GUIElement *label = new GUILabel();
 		label->setOwningPanel(m_panel);
+		label->setDisplayName(wxT("GUI Label"));
 		m_panel->addGuiElement(label);
 
-		::wxGetApp().m_frame->AddGuiElementToTree(wxT("New Label"));
+		::wxGetApp().m_frame->AddGuiElementToTree(wxT("GUI Label"));
 
 	} else {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);

@@ -117,6 +117,7 @@ bool GOODF::OnInit() {
 	wxBitmap label10 = wxBITMAP_PNG_FROM_DATA(label10);
 	// wxBitmap label11 = wxBITMAP_PNG_FROM_DATA(label11); Same style as 10 but 160x25
 	// wxBitmap label12 = wxBITMAP_PNG_FROM_DATA(label12); Same style as 10 but 200x50
+	m_labelBitmaps.push_back(wxNullBitmap);
 	m_labelBitmaps.push_back(label1);
 	m_labelBitmaps.push_back(label3);
 	m_labelBitmaps.push_back(label3);

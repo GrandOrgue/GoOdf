@@ -40,7 +40,7 @@ public:
 	void setDispDrawstopCol(int dispDrawstopCol);
 	int getDispImageNum() const;
 	void setDispImageNum(int dispImageNum);
-	const GoColor& getDispLabelColour() const;
+	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);
 	const GoFontSize& getDispLabelFontSize() const;
 	void setDispLabelFontSize(int size);
@@ -94,7 +94,7 @@ protected:
 	GoFontSize m_dispLabelFontSize; // (font size, default: normal)
 	wxFont m_dispLabelFont; // (string, default: empty) - replace with wxFont
 	wxString m_name; // (string)
-	int m_dispImageNum; // (integer 1 - 12 default 1
+	int m_dispImageNum; // (integer 0 - 12 default 1, 0 is a transparent background
 	GoImage m_image; // (default: use internal bitmap according to DispImageNum) - GoImage takes care of both image and mask
 	int m_width; // (integer 0 - panel width, default: bitmap width)
 	int m_height; // (integer 0 - panel height, default: bitmap height)

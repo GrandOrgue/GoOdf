@@ -46,7 +46,7 @@ public:
 	void setDispImageNum(int dispImageNum);
 	bool isDispKeyLabelOnLeft() const;
 	void setDispKeyLabelOnLeft(bool dispKeyLabelOnLeft);
-	const GoColor& getDispLabelColour() const;
+	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);
 	const GoFontSize& getDispLabelFontSize() const;
 	void setDispLabelFontSize(int size);

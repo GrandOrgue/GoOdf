@@ -24,7 +24,7 @@
 
 GUIButton::GUIButton() : GUIElement() {
 	m_displayAsPiston = false;
-	m_dispLabelColour.setSelectedColorIndex(8); // (GoColor, default: Dark Red)
+	m_dispLabelColour.setSelectedColorIndex(9); // (GoColor, default: Dark Red)
 	m_dispLabelFontSize = GoFontSize();
 	m_dispLabelFont = wxFont(wxFontInfo(7).FaceName(wxT("Arial")));
 	// m_displLabelFontName = wxEmptyString; // (string, default: empty)
@@ -70,8 +70,8 @@ void GUIButton::write(wxTextFile *outFile) {
 		if (m_displayAsPiston)
 			outFile->AddLine(wxT("DisplayAsPiston=Y"));
 	}
-	if (m_dispLabelColour.getSelectedColorIndex() != 8) {
-		if (m_dispLabelColour.getSelectedColorIndex() > -1) {
+	if (m_dispLabelColour.getSelectedColorIndex() != 9) {
+		if (m_dispLabelColour.getSelectedColorIndex() > 0) {
 			outFile->AddLine(wxT("DispLabelColour=") + m_dispLabelColour.getColorName());
 		} else {
 			outFile->AddLine(wxT("DispLabelColour=") + m_dispLabelColour.getHtmlValue());
@@ -198,8 +198,8 @@ void GUIButton::setDispKeyLabelOnLeft(bool dispKeyLabelOnLeft) {
 	m_dispKeyLabelOnLeft = dispKeyLabelOnLeft;
 }
 
-const GoColor& GUIButton::getDispLabelColour() const {
-	return m_dispLabelColour;
+GoColor* GUIButton::getDispLabelColour() {
+	return &m_dispLabelColour;
 }
 
 void GUIButton::setDispLabelColour(const GoColor &dispLabelColour) {

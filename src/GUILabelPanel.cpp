@@ -32,6 +32,8 @@
 BEGIN_EVENT_TABLE(GUILabelPanel, wxPanel)
 	EVT_TEXT(ID_GUILABELPANEL_LABEL_TEXT, GUILabelPanel::OnLabelTextChange)
 	EVT_FONTPICKER_CHANGED(ID_GUILABELPANEL_FONT_PICKER, GUILabelPanel::OnLabelFontChange)
+	EVT_CHOICE(ID_GUILABELPANEL_COLOR_CHOICE, GUILabelPanel::OnLabelColourChoice)
+	EVT_COLOURPICKER_CHANGED(ID_GUILABELPANEL_COLOR_PICKER, GUILabelPanel::OnLabelColourPick)
 	EVT_RADIOBUTTON(ID_GUILABELPANEL_FREE_X_POS_YES, GUILabelPanel::OnFreeXposRadio)
 	EVT_RADIOBUTTON(ID_GUILABELPANEL_FREE_X_POS_NO, GUILabelPanel::OnFreeXposRadio)
 	EVT_RADIOBUTTON(ID_GUILABELPANEL_FREE_Y_POS_YES, GUILabelPanel::OnFreeYposRadio)
@@ -62,6 +64,8 @@ END_EVENT_TABLE()
 
 GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 	m_label = NULL;
+	GoColor col;
+	m_colors = col.getColorNames();
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *labelText = new wxStaticText (
@@ -90,6 +94,28 @@ GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	firstRow->Add(m_labelFont, 1, wxEXPAND|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
+
+	wxBoxSizer *colorRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *labelColourText = new wxStaticText(
+		this,
+		wxID_STATIC,
+		wxT("DispLabelColour: ")
+	);
+	colorRow->Add(labelColourText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_labelColourChoice = new wxChoice(
+		this,
+		ID_GUILABELPANEL_COLOR_CHOICE,
+		wxDefaultPosition,
+		wxDefaultSize,
+		m_colors
+	);
+	colorRow->Add(m_labelColourChoice, 1, wxEXPAND, 0);
+	m_labelColourPick = new wxColourPickerCtrl(
+		this,
+		ID_GUILABELPANEL_COLOR_PICKER
+	);
+	colorRow->Add(m_labelColourPick, 1, wxEXPAND, 0);
+	panelSizer->Add(colorRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *freeXText = new wxStaticText (
@@ -235,7 +261,7 @@ GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_GUILABELPANEL_IMAGE_NBR_BOX
 	);
 	for (unsigned i = 0; i < ::wxGetApp().m_labelBitmaps.size(); i++) {
-		wxString imgNumber = wxString::Format(wxT("Label %d"), i + 1);
+		wxString imgNumber = wxString::Format(wxT("Label %d"), i);
 		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_labelBitmaps[i]);
 	}
 	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5);
@@ -574,6 +600,17 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 	m_label = label;
 	m_labelTextField->SetValue(m_label->getName());
 	m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
+	if (m_label->getDispLabelColour()->getSelectedColorIndex() == 0) {
+		// it's a custom color
+		m_labelColourChoice->SetSelection(0);
+		m_labelColourPick->Enable();
+		m_labelColourPick->SetColour(m_label->getDispLabelColour()->getColor());
+	} else {
+		// the color is text specified from the available ones in GO
+		m_labelColourChoice->SetSelection(m_label->getDispLabelColour()->getSelectedColorIndex());
+		m_labelColourPick->SetColour(m_label->getDispLabelColour()->getColor());
+		m_labelColourPick->Disable();
+	}
 	if (m_label->isFreeXPlacement()) {
 		m_dispXposSpin->Enable();
 		m_elementPosXSpin->Enable();
@@ -601,10 +638,10 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 	}
 	m_dispImageNbrBox->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_labelBitmaps.size(); i++) {
-		wxString imgNumber = wxString::Format(wxT(" %d "), i + 1);
+		wxString imgNumber = wxString::Format(wxT(" %d "), i);
 		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_labelBitmaps[i]);
 	}
-	m_dispImageNbrBox->SetSelection(m_label->getDispImageNum() - 1);
+	m_dispImageNbrBox->SetSelection(m_label->getDispImageNum());
 	if (m_label->isDispAtTopOfDrawstopCol()) {
 		m_atTopOfDrawstopColYes->SetValue(true);
 	} else {
@@ -647,6 +684,24 @@ void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_label->setDispLabelFontSize(m_labelFont->GetFont().GetPointSize());
 }
 
+void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {
+	if (event.GetId() == ID_GUILABELPANEL_COLOR_CHOICE) {
+		if (m_labelColourChoice->GetSelection() == 0) {
+			m_labelColourPick->Enable();
+		} else {
+			m_label->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
+			m_labelColourPick->SetColour(m_label->getDispLabelColour()->getColor());
+			m_labelColourPick->Disable();
+		}
+	}
+}
+
+void GUILabelPanel::OnLabelColourPick(wxColourPickerEvent& event) {
+	if (event.GetId() == ID_GUILABELPANEL_COLOR_PICKER) {
+		m_label->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+	}
+}
+
 void GUILabelPanel::OnFreeXposRadio(wxCommandEvent& event) {
 	if (event.GetId() == ID_GUILABELPANEL_FREE_X_POS_YES) {
 		m_freeXposYes->SetValue(true);
@@ -687,32 +742,44 @@ void GUILabelPanel::OnFreeYposRadio(wxCommandEvent& event) {
 
 void GUILabelPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 	int selected = m_dispImageNbrBox->GetSelection();
-	m_label->setDispImageNum(selected + 1);
+	m_label->setDispImageNum(selected);
 	// we also update sizes depending on the selection
-	// index 0, 2, 6, 9 size is 80 x 25
-	// index 1, 5, 8 size is 80 x 50
-	// index 3, 7, 10 size is 160 x 25
-	// index 4, 11 size is 200 x 50
-	if (selected == 0 || selected == 2 || selected == 6 || selected == 9) {
+	// index 0, 1, 3, 7, 10 size is 80 x 25
+	// index 2, 6, 9 size is 80 x 50
+	// index 4, 8, 11 size is 160 x 25
+	// index 5, 12 size is 200 x 50
+	if (selected == 0 || selected == 1 || selected == 3 || selected == 7 || selected == 10) {
 		m_label->setBitmapWidth(80);
 		m_label->setBitmapHeight(25);
 		m_label->setWidth(80);
 		m_label->setHeight(25);
-	} else if (selected == 1 || selected == 5 || selected == 8) {
+		m_label->setTextRectWidth(80);
+		m_label->setTextRectHeight(25);
+		m_label->setTextBreakWidth(80);
+	} else if (selected == 2 || selected == 6 || selected == 9) {
 		m_label->setBitmapWidth(80);
 		m_label->setBitmapHeight(50);
 		m_label->setWidth(80);
 		m_label->setHeight(50);
-	} else if (selected == 3 || selected == 7 || selected == 10) {
+		m_label->setTextRectWidth(80);
+		m_label->setTextRectHeight(50);
+		m_label->setTextBreakWidth(80);
+	} else if (selected == 4 || selected == 8 || selected == 11) {
 		m_label->setBitmapWidth(160);
 		m_label->setBitmapHeight(25);
 		m_label->setWidth(160);
 		m_label->setHeight(25);
-	} else if (selected == 4 || selected == 11) {
+		m_label->setTextRectWidth(160);
+		m_label->setTextRectHeight(25);
+		m_label->setTextBreakWidth(160);
+	} else if (selected == 5 || selected == 12) {
 		m_label->setBitmapWidth(200);
 		m_label->setBitmapHeight(50);
 		m_label->setWidth(200);
 		m_label->setHeight(50);
+		m_label->setTextRectWidth(200);
+		m_label->setTextRectHeight(50);
+		m_label->setTextBreakWidth(200);
 	}
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
