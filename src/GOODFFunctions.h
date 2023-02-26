@@ -65,7 +65,7 @@ namespace GOODF_functions {
 		return stringToReturn;
 	}
 
-	wxString checkIfFileExist(wxString relativePath) {
+	inline wxString checkIfFileExist(wxString relativePath) {
 		if (relativePath != wxEmptyString) {
 			wxString fullFilePath = ::wxGetApp().m_frame->m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
 			wxFileName theFile = wxFileName(fullFilePath);
@@ -76,7 +76,7 @@ namespace GOODF_functions {
 		return wxEmptyString;
 	}
 
-	bool parseBoolean(wxString value, bool defaultValue = true) {
+	inline bool parseBoolean(wxString value, bool defaultValue = true) {
 		if (value.IsSameAs(wxT("Y"), false))
 			return true;
 		if (value.IsSameAs(wxT("N"), false))

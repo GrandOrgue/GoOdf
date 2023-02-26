@@ -47,7 +47,7 @@ void Enclosure::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	int midiInput = static_cast<int>(cfg->ReadLong("MIDIInputNumber", 0));
 	if (midiInput > -1 && midiInput < 201)
 		setMidiInputNumber(midiInput);
-	bool cfgBoolValue = cfg->Read("Displayed", wxEmptyString);
+	wxString cfgBoolValue = cfg->Read("Displayed", wxEmptyString);
 	displayed = GOODF_functions::parseBoolean(cfgBoolValue, usingOldPanelFormat);
 }
 

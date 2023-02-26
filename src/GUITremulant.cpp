@@ -42,7 +42,7 @@ void GUITremulant::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
-void GUIElement::read(wxFileConfig *cfg) {
+void GUITremulant::read(wxFileConfig *cfg) {
 
 }
 

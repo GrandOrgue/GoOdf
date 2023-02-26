@@ -77,7 +77,7 @@ void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	function = cfg->Read("Function", wxT("Input"));
 	int nbrReferencedSwitches = static_cast<int>(cfg->ReadLong("SwitchCount", 0));
 	// TODO: handle switch references
-	bool cfgBoolValue = cfg->Read("DefaultToEngaged", wxEmptyString);
+	wxString cfgBoolValue = cfg->Read("DefaultToEngaged", wxEmptyString);
 	defaultToEngaged = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int gc_state = static_cast<int>(cfg->ReadLong("GCState", 0));
 	if (gc_state > -2 && gc_state < 2)
