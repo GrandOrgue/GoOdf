@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include <wx/font.h>
 #include "GoPanelSize.h"
 #include "GoColor.h"
@@ -33,6 +34,7 @@ public:
 	~DisplayMetrics();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
 
 	GoPanelSize m_dispScreenSizeHoriz; // 100 - 4000, SMALL = 800, MEDIUM = 1007, MEDIUM LARGE = 1263, LARGE = 1583
 	GoPanelSize m_dispScreenSizeVert; // 100 - 4000, SMALL = 500, MEDIUM = 663, MEDIUM LARGE = 855, LARGE = 1095

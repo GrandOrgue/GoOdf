@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "GoColor.h"
 #include "GoFontSize.h"
 #include "GoImage.h"
@@ -36,6 +37,7 @@ public:
 	virtual ~GUIElement();
 
 	virtual void write(wxTextFile *outFile);
+	virtual void read(wxFileConfig *cfg);
 
 	virtual void updateDisplayName();
 	wxString getType();

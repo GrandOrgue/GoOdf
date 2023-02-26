@@ -42,7 +42,7 @@ class Organ {
 public:
 	Organ();
 	~Organ();
-	void readOrgan();
+
 	void writeOrgan(wxTextFile *outFile);
 
 	float getAmplitudeLevel();

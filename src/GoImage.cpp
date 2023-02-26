@@ -65,6 +65,67 @@ void GoImage::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TileOffsetY=") + wxString::Format(wxT("%i"), m_tileOffsetY));
 }
 
+bool GoImage::read(wxFileConfig *cfg) {
+	bool imageIsValid = false;
+
+	wxString relImgPath = cfg->Read("Image", wxEmptyString);
+	wxString imgPath = GOODF_functions::checkIfFileExist(relImgPath);
+	if (imgPath != wxEmptyString) {
+		wxImage img = wxImage(imgPath);
+		if (img.IsOk()) {
+			imageIsValid = true;
+			setImage(imgPath);
+			int width = img.GetWidth();
+			int height = img.GetHeight();
+			setOriginalWidth(width);
+			setOriginalHeight(height);
+			int imgWidth = static_cast<int>(cfg->ReadLong("Width", width));
+			if (imgWidth > -1 && imgWidth < getOwningPanelWidth()) {
+				// the width value read is in valid range
+				setWidth(imgWidth);
+			} else {
+				setWidth(width);
+			}
+			int imgHeight = static_cast<int>(cfg->ReadLong("Height", height));
+			if (imgHeight > -1 && imgHeight < getOwningPanelHeight()) {
+				setHeight(imgHeight);
+			} else {
+				setHeight(height);
+			}
+		}
+		wxString relMaskPath = cfg->Read("Mask", wxEmptyString);
+		wxString maskPath = GOODF_functions::checkIfFileExist(relMaskPath);
+		if (maskPath != wxEmptyString) {
+			wxImage mask = wxImage(maskPath);
+			if (mask.IsOk()) {
+				int width = mask.GetWidth();
+				int height = mask.GetHeight();
+				if (width == getOriginalWidth() && height == getOriginalHeight()) {
+					setMask(maskPath);
+				}
+			}
+		}
+		int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+		if (posX > -1 && posX < m_owningPanelWidth) {
+			setPositionX(posX);
+		}
+		int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+		if (posY > -1 && posY < m_owningPanelHeight) {
+			setPositionY(posY);
+		}
+		int tileOffsetX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
+		if (tileOffsetX > -1 && tileOffsetX < getOriginalWidth()) {
+			setTileOffsetX(tileOffsetX);
+		}
+		int tileOffsetY = static_cast<int>(cfg->ReadLong("TileOffsetY", 0));
+		if (tileOffsetY > -1 && tileOffsetY < getOriginalHeight()) {
+			setTileOffsetY(tileOffsetY);
+		}
+	}
+
+	return imageIsValid;
+}
+
 int GoImage::getHeight() const {
 	return m_height;
 }

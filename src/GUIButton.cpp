@@ -146,6 +146,10 @@ void GUIButton::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
+void GUIButton::read(wxFileConfig *cfg) {
+
+}
+
 void GUIButton::updateDisplayName() {
 
 }

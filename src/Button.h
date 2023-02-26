@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 
 class Button {
 public:
@@ -30,11 +31,10 @@ public:
 	~Button();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	wxString getName();
 	bool isDisplayed();
-	void setDisplayed(bool displayed);
-	bool isDisplayedInInvertedState();
-	void setDisplayedInInvertedState(bool displayedInInvertedState);
 	void setName(wxString name);
 	int getShortCutKey();
 	void setShortCutKey(int shortCutKey);
@@ -42,7 +42,6 @@ public:
 protected:
 	wxString name;
 	bool displayed;
-	bool displayedInInvertedState;
 	int shortCutKey;
 };
 

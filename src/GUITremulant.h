@@ -32,6 +32,8 @@ public:
 	~GUITremulant();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	bool isReferencing(Tremulant *tremulant);
 	void updateDisplayName();
 

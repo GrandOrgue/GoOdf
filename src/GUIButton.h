@@ -33,6 +33,8 @@ public:
 	virtual ~GUIButton();
 
 	virtual void write(wxTextFile *outFile);
+	virtual void read(wxFileConfig *cfg);
+
 	virtual void updateDisplayName();
 	int getDispButtonCol() const;
 	void setDispButtonCol(int dispButtonCol);

@@ -34,6 +34,8 @@ public:
 	~Drawstop();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	bool isDefaultToEngaged();
 	void setDefaultToEngaged(bool defaultToEngaged);
 	wxString getFunction();

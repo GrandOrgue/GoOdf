@@ -72,6 +72,22 @@ void Drawstop::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("StoreInGeneral=N"));
 }
 
+void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Button::read(cfg, usingOldPanelFormat);
+	function = cfg->Read("Function", wxT("Input"));
+	int nbrReferencedSwitches = static_cast<int>(cfg->ReadLong("SwitchCount", 0));
+	// TODO: handle switch references
+	bool cfgBoolValue = cfg->Read("DefaultToEngaged", wxEmptyString);
+	defaultToEngaged = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int gc_state = static_cast<int>(cfg->ReadLong("GCState", 0));
+	if (gc_state > -2 && gc_state < 2)
+		gcState = gc_state;
+	cfgBoolValue = cfg->Read("StoreInDivisional", wxEmptyString);
+	storeInDivisional = GOODF_functions::parseBoolean(cfgBoolValue, true);
+	cfgBoolValue = cfg->Read("StoreInGeneral", wxEmptyString);
+	storeInGeneral = GOODF_functions::parseBoolean(cfgBoolValue, true);
+}
+
 bool Drawstop::isDefaultToEngaged() {
 	return defaultToEngaged;
 }

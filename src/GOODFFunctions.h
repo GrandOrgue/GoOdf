@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/filename.h>
 #include <vector>
 #include "GOODF.h"
 
@@ -62,6 +63,25 @@ namespace GOODF_functions {
 		if (stringToReturn.StartsWith(wxFILE_SEP_PATH))
 			stringToReturn.erase(0, 1);
 		return stringToReturn;
+	}
+
+	wxString checkIfFileExist(wxString relativePath) {
+		if (relativePath != wxEmptyString) {
+			wxString fullFilePath = ::wxGetApp().m_frame->m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
+			wxFileName theFile = wxFileName(fullFilePath);
+			if (theFile.FileExists()) {
+				return theFile.GetFullPath();
+			}
+		}
+		return wxEmptyString;
+	}
+
+	bool parseBoolean(wxString value, bool defaultValue = true) {
+		if (value.IsSameAs(wxT("Y"), false))
+			return true;
+		if (value.IsSameAs(wxT("N"), false))
+			return false;
+		return defaultValue;
 	}
 }
 

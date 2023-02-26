@@ -55,10 +55,6 @@ Organ::~Organ() {
 
 }
 
-void Organ::readOrgan() {
-
-}
-
 void Organ::writeOrgan(wxTextFile *outFile) {
 	// Header of odf file
 	outFile->AddLine(wxT("[Organ]"));

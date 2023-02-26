@@ -42,6 +42,10 @@ void GUITremulant::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+void GUIElement::read(wxFileConfig *cfg) {
+
+}
+
 bool GUITremulant::isReferencing(Tremulant *tremulant) {
 	return m_tremulant == tremulant ? true : false;
 }

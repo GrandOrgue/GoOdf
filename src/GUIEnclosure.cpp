@@ -132,6 +132,143 @@ void GUIEnclosure::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
+void GUIEnclosure::read(wxFileConfig *cfg) {
+	wxString colorStr = cfg->Read("DispLabelColour", wxT("WHITE"));
+	int colorIdx = getDispLabelColour()->getColorNames().Index(colorStr, false);
+	if (colorIdx != wxNOT_FOUND) {
+		getDispLabelColour()->setSelectedColorIndex(colorIdx);
+	} else {
+		// is it possible that it's a html format color code instead
+		wxColour color;
+		color.Set(colorStr);
+		if (color.IsOk()) {
+			getDispLabelColour()->setColorValue(color);
+		}
+	}
+	wxString sizeStr = cfg->Read("DispLabelFontSize", wxT("7"));
+	int sizeIdx = getDispLabelFontSize()->getSizeNames().Index(sizeStr, false);
+	if (sizeIdx != wxNOT_FOUND) {
+		getDispLabelFontSize()->setSelectedSizeIndex(sizeIdx);
+	} else {
+		// it's possible that it can be a numerical value instead
+		long value;
+		if (sizeStr.ToLong(&value)) {
+			if (value > 0 && value < 51)
+				setDispLabelFontSize(value);
+		}
+	}
+	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(cfg->Read("DispLabelFontName", wxEmptyString)));
+	if (labelFont.IsOk())
+		setDispLabelFont(labelFont);
+	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
+	int encStyle = static_cast<int>(cfg->ReadLong("EnclosureStyle", 1));
+	if (encStyle > 0 && encStyle < 5) {
+		setEnclosureStyle(encStyle);
+	}
+	int bitmapCount = static_cast<int>(cfg->ReadLong("BitmapCount", 0));
+	if (bitmapCount > 0 && bitmapCount < 129) {
+		for (int i = 0; i < bitmapCount; i++) {
+			GoImage tmpBmp;
+			wxString bmpStr = wxT("Bitmap") + GOODF_functions::number_format(i + 1);
+			wxString maskStr = wxT("Mask") + GOODF_functions::number_format(i + 1);
+			wxString relBmpPath = cfg->Read(bmpStr, wxEmptyString);
+			wxString fullBmpPath = GOODF_functions::checkIfFileExist(relBmpPath);
+			wxString relMaskPath = cfg->Read(maskStr, wxEmptyString);
+			wxString fullMaskPath = GOODF_functions::checkIfFileExist(relMaskPath);
+			if (fullBmpPath != wxEmptyString) {
+				wxImage img = wxImage(fullBmpPath);
+				if (img.IsOk()) {
+					tmpBmp.setImage(fullBmpPath);
+					if (fullMaskPath != wxEmptyString) {
+						wxImage mask = wxImage(fullMaskPath);
+						if (mask.IsOk()) {
+							tmpBmp.setMask(fullMaskPath);
+						}
+					}
+					if (getNumberOfBitmaps() == 0) {
+						// from the first bitmap we can store the original size values
+						int width = img.GetWidth();
+						int height = img.GetHeight();
+						tmpBmp.setOriginalWidth(width);
+						tmpBmp.setOriginalHeight(height);
+						setBitmapWidth(width);
+						setBitmapHeight(height);
+					}
+					addBitmap(tmpBmp);
+				}
+			}
+		}
+	}
+	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+	int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	if (posX > -1 && posX < thePanelWidth)
+		setPosX(posX);
+	int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	if (posY > -1 && posY < thePanelHeight)
+		setPosY(posY);
+	int encWidth = static_cast<int>(cfg->ReadLong("Width", 0));
+	if (encWidth > -1 && encWidth < thePanelWidth) {
+		setWidth(encWidth);
+	}
+	int encHeight = static_cast<int>(cfg->ReadLong("Height", 0));
+	if (encHeight > -1 && encHeight < thePanelHeight) {
+		setHeight(encHeight);
+	}
+	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
+	if (tileX > -1 && tileX < getBitmapWidth() + 1) {
+		setTileOffsetX(tileX);
+	}
+	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", 0));
+	if (tileY > -1 && tileY < getBitmapHeight() + 1) {
+		setTileOffsetY(tileY);
+	}
+	int mouseRectLeft = static_cast<int>(cfg->ReadLong("MouseRectLeft", 0));
+	if (mouseRectLeft > -1 && mouseRectLeft < getWidth() + 1) {
+		setMouseRectLeft(mouseRectLeft);
+	}
+	int mouseRectTop = static_cast<int>(cfg->ReadLong("MouseRectTop", 0));
+	if (mouseRectTop > -1 && mouseRectTop < getHeight() + 1) {
+		setMouseRectTop(mouseRectTop);
+	}
+	int mouseRectWidth = static_cast<int>(cfg->ReadLong("MouseRectWidth", 0));
+	if (mouseRectWidth > -1 && mouseRectWidth < getWidth() + 1) {
+		setMouseRectWidth(mouseRectWidth);
+	}
+	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", 0));
+	if (mouseRectHeight > -1 && mouseRectHeight < getHeight() + 1) {
+		setMouseRectHeight(mouseRectHeight);
+	}
+	int mouseAxisStart = static_cast<int>(cfg->ReadLong("MouseAxisStart", 0));
+	if (mouseAxisStart > - 1 && mouseAxisStart < getMouseRectHeight() + 1) {
+		setMouseAxisStart(mouseAxisStart);
+	}
+	int mouseAxisEnd = static_cast<int>(cfg->ReadLong("MouseAxisEnd", 0));
+	if (mouseAxisEnd > -1 && mouseAxisEnd < getMouseRectHeight() + 1) {
+		setMouseAxisEnd(mouseAxisEnd);
+	}
+	int textRectLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 0));
+	if (textRectLeft > -1 && textRectLeft < getWidth() + 1) {
+		setTextRectLeft(textRectLeft);
+	}
+	int textRectTop = static_cast<int>(cfg->ReadLong("TextRectTop", 0));
+	if (textRectTop > -1 && textRectTop < getHeight() + 1) {
+		setTextRectTop(textRectTop);
+	}
+	int textRectWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", 0));
+	if (textRectWidth > -1 && textRectWidth < getWidth() + 1) {
+		setTextRectWidth(textRectWidth);
+	}
+	int textRectHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", 0));
+	if (textRectHeight > -1 && textRectHeight < getHeight() + 1) {
+		setTextRectHeight(textRectHeight);
+	}
+	int textBreakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", getTextRectWidth()));
+	if (textBreakWidth > -1 && textBreakWidth < getTextRectWidth() + 1) {
+		setTextBreakWidth(textBreakWidth);
+	}
+}
+
 bool GUIEnclosure::isReferencing(Enclosure *enclosure) {
 	return m_enclosure == enclosure ? true : false;
 }

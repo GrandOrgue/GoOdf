@@ -19,6 +19,7 @@
  */
 
 #include "DisplayMetrics.h"
+#include "GOODFFunctions.h"
 
 DisplayMetrics::DisplayMetrics() {
 	m_dispScreenSizeHoriz.setSelectedNameIndex(0, true);
@@ -171,4 +172,141 @@ void DisplayMetrics::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("DispManualHeight=") + wxString::Format(wxT("%i"), m_dispManualHeight));
 	if (m_dispManualKeyWidth != 12)
 		outFile->AddLine(wxT("DispManualKeyWidth=") + wxString::Format(wxT("%i"), m_dispManualKeyWidth));
+}
+
+void DisplayMetrics::read(wxFileConfig *cfg) {
+	wxString horizSize = cfg->Read("DispScreenSizeHoriz", wxEmptyString);
+	if (horizSize != wxEmptyString) {
+		if (horizSize.IsSameAs(wxT("SMALL"), false)) {
+			m_dispScreenSizeHoriz.setSelectedNameIndex(0, true);
+		} else if (horizSize.IsSameAs(wxT("MEDIUM"), false)) {
+			m_dispScreenSizeHoriz.setSelectedNameIndex(1, true);
+		} else if (horizSize.IsSameAs(wxT("MEDIUM LARGE"), false)) {
+			m_dispScreenSizeHoriz.setSelectedNameIndex(2, true);
+		} else if (horizSize.IsSameAs(wxT("LARGE"), false)) {
+			m_dispScreenSizeHoriz.setSelectedNameIndex(3, true);
+		} else {
+			// The value is not a matching string so we try to convert it into a number
+			long value = -1;
+			if (horizSize.ToLong(&value)) {
+				if (value > 99 && value < 4001) {
+					m_dispScreenSizeHoriz.setNumericalValue(value);
+				}
+			}
+		}
+	}
+	wxString vertSize = cfg->Read("DispScreenSizeVert", wxEmptyString);
+	if (vertSize != wxEmptyString) {
+		if (vertSize.IsSameAs(wxT("SMALL"), false)) {
+			m_dispScreenSizeVert.setSelectedNameIndex(0, true);
+		} else if (vertSize.IsSameAs(wxT("MEDIUM"), false)) {
+			m_dispScreenSizeVert.setSelectedNameIndex(1, true);
+		} else if (vertSize.IsSameAs(wxT("MEDIUM LARGE"), false)) {
+			m_dispScreenSizeVert.setSelectedNameIndex(2, true);
+		} else if (vertSize.IsSameAs(wxT("LARGE"), false)) {
+			m_dispScreenSizeVert.setSelectedNameIndex(3, true);
+		} else {
+			// The value is not a matching string so we try to convert it into a number
+			long value = -1;
+			if (vertSize.ToLong(&value)) {
+				if (value > 99 && value < 4001) {
+					m_dispScreenSizeVert.setNumericalValue(value);
+				}
+			}
+		}
+	}
+	int drawstopBgNum = static_cast<int>(cfg->ReadLong("DispDrawstopBackgroundImageNum", 1));
+	if (drawstopBgNum > 0 && drawstopBgNum < 65)
+		m_dispDrawstopBackgroundImageNum = drawstopBgNum;
+	int consoleBgNum = static_cast<int>(cfg->ReadLong("DispConsoleBackgroundImageNum", 1));
+	if (consoleBgNum > 0 && consoleBgNum < 65)
+		m_dispConsoleBackgroundImageNum = consoleBgNum;
+	int keyHorizBgNum = static_cast<int>(cfg->ReadLong("DispKeyHorizBackgroundImageNum", 1));
+	if (keyHorizBgNum > 0 && keyHorizBgNum < 65)
+		m_dispKeyHorizBackgroundImageNum = keyHorizBgNum;
+	int keyVertBgNum = static_cast<int>(cfg->ReadLong("DispKeyVertBackgroundImageNum", 1));
+	if (keyVertBgNum > 0 && keyVertBgNum < 65)
+		m_dispKeyVertBackgroundImageNum = keyVertBgNum;
+	int insetBgNum = static_cast<int>(cfg->ReadLong("DispDrawstopInsetBackgroundImageNum", 1));
+	if (insetBgNum > 0 && insetBgNum < 65)
+		m_dispDrawstopInsetBackgroundImageNum = insetBgNum;
+	wxString fontName = cfg->Read("DispControlLabelFont", wxEmptyString);
+	if (fontName != wxEmptyString)
+		m_dispControlLabelFont = wxFont(wxFontInfo(7).FaceName(fontName));
+	fontName = cfg->Read("DispShortcutKeyLabelFont", wxEmptyString);
+	if (fontName != wxEmptyString)
+		m_dispShortcutKeyLabelFont = wxFont(wxFontInfo(7).FaceName(fontName));
+	fontName = cfg->Read("DispGroupLabelFont", wxEmptyString);
+	if (fontName != wxEmptyString)
+		m_dispGroupLabelFont = wxFont(wxFontInfo(7).FaceName(fontName));
+	int drawstopCols = static_cast<int>(cfg->ReadLong("DispDrawstopCols", 2));
+	if (drawstopCols > 1 && drawstopCols < 13 && drawstopCols % 2 == 0)
+		m_dispDrawstopCols = drawstopCols;
+	int drawstopRows = static_cast<int>(cfg->ReadLong("DispDrawstopRows", 1));
+	if (drawstopRows > 0 && drawstopRows < 21)
+		m_dispDrawstopRows = drawstopRows;
+	wxString booleanCfgValue = cfg->Read("DispDrawstopColsOffset", wxEmptyString);
+	m_dispDrawstopColsOffset = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispDrawstopOuterColOffsetUp", wxEmptyString);
+	m_dispDrawstopOuterColOffsetUp = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispPairDrawstopCols", wxEmptyString);
+	m_dispPairDrawstopCols = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	int extraDrawstopRows = static_cast<int>(cfg->ReadLong("DispExtraDrawstopRows", 0));
+	if (extraDrawstopRows > -1 && extraDrawstopRows < 100)
+		m_dispExtraDrawstopRows = extraDrawstopRows;
+	int extraDrawstopCols = static_cast<int>(cfg->ReadLong("DispExtraDrawstopCols", 0));
+	if (extraDrawstopCols > -1 && extraDrawstopCols < 41)
+		m_dispExtraDrawstopCols = extraDrawstopCols;
+	int btnCols = static_cast<int>(cfg->ReadLong("DispButtonCols", 1));
+	if (btnCols > 0 && btnCols < 33)
+		m_dispButtonCols = btnCols;
+	int extraBtnRows = static_cast<int>(cfg->ReadLong("DispExtraButtonRows", 0));
+	if (extraBtnRows > -1 && extraBtnRows < 100)
+		m_dispExtraButtonRows = extraBtnRows;
+	booleanCfgValue = cfg->Read("DispExtraPedalButtonRow", wxEmptyString);
+	m_dispExtraPedalButtonRow = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispExtraPedalButtonRowOffset", wxEmptyString);
+	m_dispExtraPedalButtonRowOffset = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispExtraPedalButtonRowOffsetRight", wxEmptyString);
+	m_dispExtraPedalButtonRowOffsetRight = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispButtonsAboveManuals", wxEmptyString);
+	m_dispButtonsAboveManuals = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispTrimAboveManuals", wxEmptyString);
+	m_dispTrimAboveManuals = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispTrimBelowManuals", wxEmptyString);
+	m_dispTrimBelowManuals = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispTrimAboveExtraRows", wxEmptyString);
+	m_dispTrimAboveExtraRows = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	booleanCfgValue = cfg->Read("DispExtraDrawstopRowsAboveExtraButtonRows", wxEmptyString);
+	m_dispExtraDrawstopRowsAboveExtraButtonRows = GOODF_functions::parseBoolean(booleanCfgValue, false);
+	int drawstopWidth = static_cast<int>(cfg->ReadLong("DispDrawstopWidth", 78));
+	if (drawstopWidth > 0 && drawstopWidth < 151)
+		m_dispDrawstopWidth = drawstopWidth;
+	int drawstopHeight = static_cast<int>(cfg->ReadLong("DispDrawstopHeight", 69));
+	if (drawstopHeight > 0 && drawstopHeight < 151)
+		m_dispDrawstopHeight = drawstopHeight;
+	int pistonWidth = static_cast<int>(cfg->ReadLong("DispPistonWidth", 44));
+	if (pistonWidth > 0 && pistonWidth < 151)
+		m_dispPistonWidth = pistonWidth;
+	int pistonHeight = static_cast<int>(cfg->ReadLong("DispPistonHeight", 40));
+	if (pistonHeight > 0 && pistonHeight < 151)
+		m_dispPistonHeight = pistonHeight;
+	int enclosureWidth = static_cast<int>(cfg->ReadLong("DispEnclosureWidth", 52));
+	if (enclosureWidth > 0 && enclosureWidth < 151)
+		m_dispEnclosureWidth = enclosureWidth;
+	int enclosureHeight = static_cast<int>(cfg->ReadLong("DispEnclosureHeight", 63));
+	if (enclosureHeight > 0 && enclosureHeight < 151)
+		m_dispEnclosureHeight = enclosureHeight;
+	int pedalHeight = static_cast<int>(cfg->ReadLong("DispPedalHeight", 40));
+	if (pedalHeight > 0 && pedalHeight < 501)
+		m_dispPedalHeight = pedalHeight;
+	int pedalKeyWidth = static_cast<int>(cfg->ReadLong("DispPedalKeyWidth", 7));
+	if (pedalKeyWidth > 0 && pedalKeyWidth < 501)
+		m_dispPedalKeyWidth = pedalKeyWidth;
+	int manualHeight = static_cast<int>(cfg->ReadLong("DispManualHeight", 32));
+	if (manualHeight > 0 && manualHeight < 501)
+		m_dispManualHeight = manualHeight;
+	int manualKeyWidth = static_cast<int>(cfg->ReadLong("DispManualKeyWidth", 12));
+	if (manualKeyWidth > 0 && manualKeyWidth < 501)
+		m_dispManualKeyWidth = manualKeyWidth;
 }

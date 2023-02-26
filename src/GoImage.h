@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 
 class GoImage {
 public:
@@ -30,6 +31,7 @@ public:
 	~GoImage();
 
 	void write(wxTextFile *outFile);
+	bool read(wxFileConfig *cfg);
 
 	int getHeight() const;
 	void setHeight(int height);

@@ -31,6 +31,8 @@ public:
 	~Tremulant();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	int getAmpModDepth();
 	void setAmpModDepth(int ampModDepth);
 	int getPeriod();

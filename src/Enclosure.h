@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 
 class Enclosure {
 public:
@@ -30,17 +31,21 @@ public:
 	~Enclosure();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	int getAmpMinimumLevel();
 	void setAmpMinimumLevel(int ampMinimumLevel);
 	int getMidiInputNumber();
 	void setMidiInputNumber(int midiInputNumber);
 	wxString getName();
 	void setName(wxString name);
+	bool isDisplayed();
 
 private:
 	wxString name;
 	int ampMinimumLevel;
 	int MIDIInputNumber;
+	bool displayed;
 };
 
 #endif

@@ -36,6 +36,8 @@ public:
 	~GUIEnclosure();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	bool isReferencing(Enclosure *enclosure);
 	void updateDisplayName();
 

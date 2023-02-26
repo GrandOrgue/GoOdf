@@ -45,6 +45,32 @@ void Tremulant::write(wxTextFile *outFile) {
 	}
 }
 
+void Tremulant::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Drawstop::read(cfg, usingOldPanelFormat);
+	wxString typeValue = cfg->Read("TremulantType", wxT("Synth"));
+	if (typeValue.IsSameAs(wxT("Synth"), false)) {
+		tremType = typeValue;
+		int cfgPeriod = static_cast<int>(cfg->ReadLong("Period", 160));
+		if (cfgPeriod > 31 && cfgPeriod < 44101) {
+			period = cfgPeriod;
+		}
+		int cfgStart = static_cast<int>(cfg->ReadLong("StartRate", 8));
+		if (cfgStart > 0 && cfgStart < 101) {
+			startRate = cfgStart;
+		}
+		int cfgStop = static_cast<int>(cfg->ReadLong("StopRate", 8));
+		if (cfgStop > 0 && cfgStop < 101) {
+			stopRate = cfgStop;
+		}
+		int cfgAmpMod = static_cast<int>(cfg->ReadLong("AmpModDepth", 18));
+		if (cfgAmpMod > 0 && cfgAmpMod < 101) {
+			ampModDepth = cfgAmpMod;
+		}
+	} else if (typeValue.IsSameAs(wxT("Wave"), false)) {
+		tremType = typeValue;
+	}
+}
+
 int Tremulant::getAmpModDepth() {
 	return ampModDepth;
 }

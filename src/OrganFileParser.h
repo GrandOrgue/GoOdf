@@ -42,18 +42,29 @@ private:
 	bool m_isUsingOldPanelFormat;
 	wxString m_errorMessage;
 
+	int m_enclosuresToParse;
+	int m_tremulantsToParse;
+	int m_windchestgroupsToParse;
+	int m_switchesToParse;
+	int m_ranksToParse;
+	int m_stopsToParse;
+	int m_manualsToParse;
+	int m_couplersToParse;
+	int m_divisionalsToParse;
+	int m_divisionalCouplersToParse;
+	int m_generalsToParse;
+	int m_reversiblePistonsToParse;
+	int m_panelsToParse;
+	int m_imagesToParse;
+	int m_setterElementsToParse;
+
 	void readIniFile();
 	void parseOrgan();
 
-	bool parseBoolean(wxString key, bool defaultValue = true);
-	wxString checkIfFileExist(wxString relativePath);
-
 	void parseOrganSection();
-	void parseDisplayMetrics(wxString sourcePanel, GoPanel *targetPanel);
-	void parseImageSection(wxString source, GoPanel *targetPanel);
-	void parseEnclosureSection(wxString source, GoPanel *targetPanel);
 
-	void createGUIEnclosure(wxString source, GoPanel *targetPanel, Enclosure *enclosure);
+	void createGUIEnclosure(GoPanel *targetPanel, Enclosure *enclosure);
+	void createGUITremulant(GoPanel *targetPanel, Tremulant *tremulant);
 
 };
 
