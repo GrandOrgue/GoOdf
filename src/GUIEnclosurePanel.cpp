@@ -625,6 +625,7 @@ void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure)
 		m_addImagePathBtn->Disable();
 		m_addMaskPathBtn->Disable();
 		m_removeBitmapBtn->Disable();
+		UpdateBuiltinBitmapValues();
 	}
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
@@ -801,6 +802,9 @@ void GUIEnclosurePanel::OnRemoveBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_removeBitmapBtn->Disable();
 			m_addImagePathBtn->Disable();
 			m_addMaskPathBtn->Disable();
+			UpdateBuiltinBitmapValues();
+			UpdateSpinRanges();
+			UpdateDefaultSpinValues();
 		}
 	}
 }
@@ -942,4 +946,20 @@ wxString GUIEnclosurePanel::GetPathForImageFile() {
 
 	imageFilePath = fileDialog.GetPath();
 	return imageFilePath;
+}
+
+void GUIEnclosurePanel::UpdateBuiltinBitmapValues() {
+	int width = 46;
+	int height = 61;
+	m_enclosure->setBitmapWidth(width);
+	m_enclosure->setBitmapHeight(height);
+	m_enclosure->setWidth(width);
+	m_enclosure->setHeight(height);
+	m_enclosure->setMouseRectWidth(width);
+	m_enclosure->setMouseRectHeight(height);
+	m_enclosure->setMouseAxisStart(height);
+	m_enclosure->setMouseAxisEnd(0);
+	m_enclosure->setTextRectWidth(width);
+	m_enclosure->setTextRectHeight(height);
+	m_enclosure->setTextBreakWidth(width);
 }

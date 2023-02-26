@@ -106,6 +106,7 @@ private:
 	void UpdateSpinRanges();
 	void UpdateDefaultSpinValues();
 	wxString GetPathForImageFile();
+	void UpdateBuiltinBitmapValues();
 };
 
 #endif
