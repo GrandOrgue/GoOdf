@@ -29,6 +29,7 @@ Pipe::Pipe() {
 	trackerDelay = 0;
 	harmonicNumber = 8;
 	midiKeyNumber = -1;
+	midiPitchFraction = -1.0f;
 	pitchCorrection = 0;
 	acceptsRetuning = true;
 	windchest = NULL;
@@ -46,6 +47,7 @@ Pipe::Pipe(const Pipe& p) {
 	trackerDelay = p.trackerDelay;
 	harmonicNumber = p.harmonicNumber;
 	midiKeyNumber = p.midiKeyNumber;
+	midiPitchFraction = p.midiPitchFraction;
 	pitchCorrection = p.pitchCorrection;
 	acceptsRetuning = p.acceptsRetuning;
 	windchest = p.windchest;
@@ -106,6 +108,8 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 			outFile->AddLine(pipeNr + wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 		if (midiKeyNumber > -1)
 			outFile->AddLine(pipeNr + wxT("MIDIKeyNumber=") + wxString::Format(wxT("%i"), midiKeyNumber));
+		if (midiPitchFraction > -0.1f)
+			outFile->AddLine(pipeNr + wxT("MIDIPitchFraction=") + wxString::Format(wxT("%f"), midiPitchFraction));
 		if (pitchCorrection != 0 && pitchCorrection != parent->getPitchCorrection())
 			outFile->AddLine(pipeNr + wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
 		if (acceptsRetuning != parent->doesAcceptsRetuning()) {

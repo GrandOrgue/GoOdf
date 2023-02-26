@@ -59,6 +59,7 @@ public:
 	int trackerDelay;
 	int harmonicNumber;
 	int midiKeyNumber;
+	float midiPitchFraction;
 	float pitchCorrection;
 	bool acceptsRetuning;
 	Windchestgroup *windchest;

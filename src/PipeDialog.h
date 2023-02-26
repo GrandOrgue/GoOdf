@@ -79,6 +79,7 @@ private:
 	wxRadioButton *m_isPercussiveNo;
 	wxSpinCtrl *m_harmonicNbrSpin;
 	wxSpinCtrl *m_midiKeyNbrSpin; // -1 - 127
+	wxSpinCtrlDouble *m_midiPitchFractionSpin; // -1 as default (use value from sample), 0 - 100 as specified value in cents
 	wxSpinCtrlDouble *m_pitchCorrectionSpin;
 	wxRadioButton *m_acceptsRetuningYes;
 	wxRadioButton *m_acceptsRetuningNo;
@@ -102,6 +103,7 @@ private:
 	void OnPercussiveSelection(wxCommandEvent& event);
 	void OnHarmonicNbrSpin(wxSpinEvent& event);
 	void OnMidiNoteSpin(wxSpinEvent& event);
+	void OnMidiPitchFractionSpin(wxSpinDoubleEvent& event);
 	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
 	void OnAcceptsRetuningSelection(wxCommandEvent& event);
 	void OnWindchestChoice(wxCommandEvent& event);

@@ -32,6 +32,7 @@ BEGIN_EVENT_TABLE(PipeDialog, wxDialog)
 	EVT_RADIOBUTTON(ID_PIPE_DIALOG_PERCUSSIVE_NO, PipeDialog::OnPercussiveSelection)
 	EVT_SPINCTRL(ID_PIPE_DIALOG_HARMONIC_SPIN, PipeDialog::OnHarmonicNbrSpin)
 	EVT_SPINCTRL(ID_PIPE_DIALOG_MIDI_NOTE_SPIN, PipeDialog::OnMidiNoteSpin)
+	EVT_SPINCTRLDOUBLE(ID_PIPE_DIALOG_PITCH_FRACTION_SPIN, PipeDialog::OnMidiPitchFractionSpin)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_DIALOG_PITCH_CORR_SPIN, PipeDialog::OnPitchCorrectionSpin)
 	EVT_RADIOBUTTON(ID_PIPE_DIALOG_ACCEPTS_RETUNING_YES, PipeDialog::OnAcceptsRetuningSelection)
 	EVT_RADIOBUTTON(ID_PIPE_DIALOG_ACCEPTS_RETUNING_NO, PipeDialog::OnAcceptsRetuningSelection)
@@ -210,6 +211,21 @@ void PipeDialog::CreateControls() {
 		8
 	);
 	thirdRow->Add(m_harmonicNbrSpin, 0, wxEXPAND|wxALL, 5);
+	thirdRow->AddStretchSpacer();
+	wxStaticText *windchestText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Windchestgroup: ")
+	);
+	thirdRow->Add(windchestText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_windchestChoice = new wxChoice(
+		this,
+		ID_PIPE_DIALOG_WINDCHEST_CHOICE,
+		wxDefaultPosition,
+		wxDefaultSize,
+		windchestChoices
+	);
+	thirdRow->Add(m_windchestChoice, 0, wxALL, 5);
 	mainSizer->Add(thirdRow, 0, wxGROW);
 
 	wxBoxSizer *fourthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -232,25 +248,25 @@ void PipeDialog::CreateControls() {
 	);
 	fourthRow->Add(m_midiKeyNbrSpin, 0, wxEXPAND|wxALL, 5);
 	fourthRow->AddStretchSpacer();
-	wxStaticText *pitchCorrectionText = new wxStaticText (
+	wxStaticText *pitchFractionText = new wxStaticText (
 		this,
 		wxID_STATIC,
-		wxT("Pitch correction: ")
+		wxT("MIDI Pitch fraction: ")
 	);
-	fourthRow->Add(pitchCorrectionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_pitchCorrectionSpin = new wxSpinCtrlDouble(
+	fourthRow->Add(pitchFractionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_midiPitchFractionSpin = new wxSpinCtrlDouble(
 		this,
-		ID_PIPE_DIALOG_PITCH_CORR_SPIN,
+		ID_PIPE_DIALOG_PITCH_FRACTION_SPIN,
 		wxEmptyString,
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
-		-1800,
-		1800,
-		0,
+		-1,
+		100,
+		-1,
 		0.000001
 	);
-	fourthRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
+	fourthRow->Add(m_midiPitchFractionSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(fourthRow, 0, wxGROW);
 
 	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -314,21 +330,6 @@ void PipeDialog::CreateControls() {
 	mainSizer->Add(fifthRow, 0, wxGROW);
 
 	wxBoxSizer *sixthRow = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *windchestText = new wxStaticText (
-		this,
-		wxID_STATIC,
-		wxT("Windchestgroup: ")
-	);
-	sixthRow->Add(windchestText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_windchestChoice = new wxChoice(
-		this,
-		ID_PIPE_DIALOG_WINDCHEST_CHOICE,
-		wxDefaultPosition,
-		wxDefaultSize,
-		windchestChoices
-	);
-	sixthRow->Add(m_windchestChoice, 0, wxALL, 5);
-	sixthRow->AddStretchSpacer();
 	wxStaticText *trackerDelayText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -347,6 +348,26 @@ void PipeDialog::CreateControls() {
 		0
 	);
 	sixthRow->Add(m_trackerDelaySpin, 0, wxGROW|wxALL, 5);
+	sixthRow->AddStretchSpacer();
+	wxStaticText *pitchCorrectionText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Pitch correction: ")
+	);
+	sixthRow->Add(pitchCorrectionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_pitchCorrectionSpin = new wxSpinCtrlDouble(
+		this,
+		ID_PIPE_DIALOG_PITCH_CORR_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		-1800,
+		1800,
+		0,
+		0.000001
+	);
+	sixthRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(sixthRow, 0, wxGROW);
 
 	wxBoxSizer *seventhRow = new wxBoxSizer(wxHORIZONTAL);
@@ -528,6 +549,17 @@ void PipeDialog::OnMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->midiKeyNumber = m_midiKeyNbrSpin->GetValue();
 }
 
+void PipeDialog::OnMidiPitchFractionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
+	float value = m_midiPitchFractionSpin->GetValue();
+	if (value < 0 && m_currentPipe->midiPitchFraction > value) {
+		value = -1.0f;
+	} else if (value > m_currentPipe->midiPitchFraction && value < 0 && m_currentPipe->midiPitchFraction < 0){
+		value = 0.0f;
+	}
+	m_midiPitchFractionSpin->SetValue(value);
+	m_currentPipe->midiPitchFraction = value;
+}
+
 void PipeDialog::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->pitchCorrection = m_pitchCorrectionSpin->GetValue();
 }
@@ -597,6 +629,12 @@ void PipeDialog::TransferPipeValuesToWindow() {
 	}
 	m_harmonicNbrSpin->SetValue(m_currentPipe->harmonicNumber);
 	m_midiKeyNbrSpin->SetValue(m_currentPipe->midiKeyNumber);
+	float pitchFractionValue = m_currentPipe->midiPitchFraction;
+	if (pitchFractionValue < 0) {
+		pitchFractionValue = -1.0f;
+		m_currentPipe->midiPitchFraction = pitchFractionValue;
+	}
+	m_midiPitchFractionSpin->SetValue(pitchFractionValue);
 	m_pitchCorrectionSpin->SetValue(m_currentPipe->pitchCorrection);
 	if (m_currentPipe->acceptsRetuning) {
 		m_acceptsRetuningYes->SetValue(true);
@@ -647,6 +685,7 @@ void PipeDialog::OnCopyPropertiesBtn(wxCommandEvent& WXUNUSED(event)) {
 		pipe->loopCrossfadeLength = m_currentPipe->loopCrossfadeLength;
 		pipe->maxVelocityVolume = m_currentPipe->maxVelocityVolume;
 		pipe->midiKeyNumber = m_currentPipe->midiKeyNumber;
+		pipe->midiPitchFraction = m_currentPipe->midiPitchFraction;
 		pipe->minVelocityVolume = m_currentPipe->minVelocityVolume;
 		pipe->pitchCorrection = m_currentPipe->pitchCorrection;
 		pipe->releaseCrossfadeLength = m_currentPipe->releaseCrossfadeLength;
