@@ -75,8 +75,18 @@ void Drawstop::write(wxTextFile *outFile) {
 void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	Button::read(cfg, usingOldPanelFormat);
 	function = cfg->Read("Function", wxT("Input"));
+	// TODO: the switches should really only be available if the function is something else than "Input"
 	int nbrReferencedSwitches = static_cast<int>(cfg->ReadLong("SwitchCount", 0));
-	// TODO: handle switch references
+	// handle switch references
+	for (int i = 0; i < nbrReferencedSwitches; i++) {
+		wxString swNbrId = wxT("Switch") + GOODF_functions::number_format(i + 1);
+		int swRefNbr = static_cast<int>(cfg->ReadLong(swNbrId, 0));
+		// if the number of the referenced switch is lower than the number of switches in the organ it's ok
+		if (swRefNbr > 0 && swRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+			// but the index of the switch is actually one lower than in the organ file
+			addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+		}
+	}
 	wxString cfgBoolValue = cfg->Read("DefaultToEngaged", wxEmptyString);
 	defaultToEngaged = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int gc_state = static_cast<int>(cfg->ReadLong("GCState", 0));

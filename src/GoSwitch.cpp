@@ -32,3 +32,6 @@ void GoSwitch::write(wxTextFile *outFile) {
 	Drawstop::write(outFile);
 }
 
+void GoSwitch::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Drawstop::read(cfg, usingOldPanelFormat);
+}

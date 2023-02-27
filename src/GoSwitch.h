@@ -29,6 +29,7 @@ public:
 	~GoSwitch();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
 
 protected:
 

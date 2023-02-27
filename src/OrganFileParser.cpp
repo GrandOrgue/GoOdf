@@ -23,6 +23,7 @@
 #include <wx/image.h>
 #include "GOODFFunctions.h"
 #include "GUITremulant.h"
+#include "GUISwitch.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -156,9 +157,24 @@ void OrganFileParser::parseOrganSection() {
 		m_organFile.SetPath("/Organ");
 	}
 
-	// parse windchests
-
 	// parse switches
+	int nbrSwitches = static_cast<int>(m_organFile.ReadLong("NumberOfSwitches", 0));
+	if (nbrSwitches > 0 && nbrSwitches < 1000) {
+		for (int i = 0; i < nbrSwitches; i++) {
+			wxString switchGroupName = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(switchGroupName)) {
+				m_organFile.SetPath(wxT("/") + switchGroupName);
+				GoSwitch sw;
+				sw.read(&m_organFile, m_isUsingOldPanelFormat);
+				m_organ->addSwitch(sw);
+				if (sw.isDisplayed()) {
+					int lastSwitchIdx = m_organ->getNumberOfSwitches() - 1;
+					createGUISwitch(m_organ->getOrganPanelAt(0), m_organ->getOrganSwitchAt(lastSwitchIdx));
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse tremulants
 	int nbrTrems = static_cast<int>(m_organFile.ReadLong("NumberOfTremulants", 0));
@@ -179,10 +195,12 @@ void OrganFileParser::parseOrganSection() {
 		m_organFile.SetPath("/Organ");
 	}
 
+	// parse windchests
+
 	// parse ranks
 
 	// parse manuals which contain the stops, couplers and divisionals
-	// also they have tremulants and switches even if they are globally managed
+	// also they can have tremulant and switch references
 
 	// parse reversible pistons
 
@@ -215,5 +233,17 @@ void OrganFileParser::createGUITremulant(GoPanel *targetPanel, Tremulant *tremul
 	GUITremulant *tremElement = dynamic_cast<GUITremulant*>(guiTrem);
 	if (tremElement) {
 		tremElement->read(&m_organFile);
+	}
+}
+
+void OrganFileParser::createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch) {
+	GUIElement *guiSwitch = new GUISwitch(theSwitch);
+	guiSwitch->setOwningPanel(targetPanel);
+	guiSwitch->setDisplayName(theSwitch->getName());
+	targetPanel->addGuiElement(guiSwitch);
+
+	GUISwitch *switchElement = dynamic_cast<GUISwitch*>(guiSwitch);
+	if (switchElement) {
+		switchElement->read(&m_organFile);
 	}
 }

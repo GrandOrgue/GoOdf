@@ -32,6 +32,8 @@ public:
 	virtual ~GUISwitch();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	bool isReferencing(GoSwitch *sw);
 	void updateDisplayName();
 
