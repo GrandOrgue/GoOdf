@@ -146,8 +146,131 @@ void GUIButton::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
-void GUIButton::read(wxFileConfig *cfg) {
-
+void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
+	wxString cfgBoolValue = cfg->Read("DisplayAsPiston", wxEmptyString);
+	m_displayAsPiston = GOODF_functions::parseBoolean(cfgBoolValue, isPiston);
+	wxString colorStr = cfg->Read("DispLabelColour", wxT("DARK RED"));
+	int colorIdx = getDispLabelColour()->getColorNames().Index(colorStr, false);
+	if (colorIdx != wxNOT_FOUND) {
+		getDispLabelColour()->setSelectedColorIndex(colorIdx);
+	} else {
+		// is it possible that it's a html format color code instead
+		wxColour color;
+		color.Set(colorStr);
+		if (color.IsOk()) {
+			getDispLabelColour()->setColorValue(color);
+		}
+	}
+	wxString sizeStr = cfg->Read("DispLabelFontSize", wxT("7"));
+	int sizeIdx = getDispLabelFontSize()->getSizeNames().Index(sizeStr, false);
+	if (sizeIdx != wxNOT_FOUND) {
+		getDispLabelFontSize()->setSelectedSizeIndex(sizeIdx);
+	} else {
+		// it's possible that it can be a numerical value instead
+		long value;
+		if (sizeStr.ToLong(&value)) {
+			if (value > 0 && value < 51)
+				setDispLabelFontSize(value);
+		}
+	}
+	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(cfg->Read("DispLabelFontName", wxEmptyString)));
+	if (labelFont.IsOk())
+		setDispLabelFont(labelFont);
+	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
+	cfgBoolValue = cfg->Read("DisplayKeyLabelOnLeft", wxEmptyString);
+	m_dispKeyLabelOnLeft = GOODF_functions::parseBoolean(cfgBoolValue, true);
+	int imageNbr = static_cast<int>(cfg->ReadLong("DispImageNum", 0));
+	if (isPiston) {
+		if (imageNbr > 0 && imageNbr < 6)
+			m_dispImageNum = imageNbr;
+	} else {
+		if (imageNbr > 0 && imageNbr < 7)
+			m_dispImageNum = imageNbr;
+	}
+	int btnRow = static_cast<int>(cfg->ReadLong("DispButtonRow", 1));
+	if (btnRow > -1 && btnRow < 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraButtonRows)
+		m_dispButtonRow = btnRow;
+	int btnCol = static_cast<int>(cfg->ReadLong("DispButtonCol", 1));
+	if (btnCol > 0 && btnCol < getOwningPanel()->getDisplayMetrics()->m_dispButtonCols)
+		m_dispButtonCol = btnCol;
+	int stopRow = static_cast<int>(cfg->ReadLong("DispDrawstopRow", 1));
+	if (stopRow > 0 && stopRow < 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopRows)
+		m_dispDrawstopRow = stopRow;
+	int stopCol = static_cast<int>(cfg->ReadLong("DispDrawstopCol", 1));
+	if (stopCol > 0 && stopCol < (stopRow > 99 ? getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols : getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols))
+		m_dispDrawstopCol = stopCol;
+	wxString image_on = cfg->Read("ImageOn", wxEmptyString);
+	m_imageOn = GOODF_functions::checkIfFileExist(image_on);
+	wxString image_off = cfg->Read("ImageOff", wxEmptyString);
+	m_imageOff = GOODF_functions::checkIfFileExist(image_off);
+	wxString mask_on = cfg->Read("MaskOn", wxEmptyString);
+	m_maskOn = GOODF_functions::checkIfFileExist(mask_on);
+	wxString mask_off = cfg->Read("MaskOff", wxEmptyString);
+	m_maskOff = GOODF_functions::checkIfFileExist(mask_off);
+	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+	int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	if (posX > -1 && posX < thePanelWidth)
+		setPosX(posX);
+	int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	if (posY > -1 && posY < thePanelHeight)
+		setPosY(posY);
+	int encWidth = static_cast<int>(cfg->ReadLong("Width", 0));
+	if (encWidth > -1 && encWidth < thePanelWidth) {
+		setWidth(encWidth);
+	}
+	int encHeight = static_cast<int>(cfg->ReadLong("Height", 0));
+	if (encHeight > -1 && encHeight < thePanelHeight) {
+		setHeight(encHeight);
+	}
+	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
+	if (tileX > -1 && tileX < getBitmapWidth() + 1) {
+		setTileOffsetX(tileX);
+	}
+	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", 0));
+	if (tileY > -1 && tileY < getBitmapHeight() + 1) {
+		setTileOffsetY(tileY);
+	}
+	int mouseRectLeft = static_cast<int>(cfg->ReadLong("MouseRectLeft", 0));
+	if (mouseRectLeft > -1 && mouseRectLeft < getWidth() + 1) {
+		setMouseRectLeft(mouseRectLeft);
+	}
+	int mouseRectTop = static_cast<int>(cfg->ReadLong("MouseRectTop", 0));
+	if (mouseRectTop > -1 && mouseRectTop < getHeight() + 1) {
+		setMouseRectTop(mouseRectTop);
+	}
+	int mouseRectWidth = static_cast<int>(cfg->ReadLong("MouseRectWidth", 0));
+	if (mouseRectWidth > -1 && mouseRectWidth < getWidth() + 1) {
+		setMouseRectWidth(mouseRectWidth);
+	}
+	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", 0));
+	if (mouseRectHeight > -1 && mouseRectHeight < getHeight() + 1) {
+		setMouseRectHeight(mouseRectHeight);
+	}
+	int mouseRadius = static_cast<int>(cfg->ReadLong("MouseRadius", 0));
+	if (mouseRadius > -1 && mouseRadius < std::max(m_mouseRectWidth, m_mouseRectHeight)) {
+		setMouseRadius(mouseRadius);
+	}
+	int textRectLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 0));
+	if (textRectLeft > -1 && textRectLeft < getWidth() + 1) {
+		setTextRectLeft(textRectLeft);
+	}
+	int textRectTop = static_cast<int>(cfg->ReadLong("TextRectTop", 0));
+	if (textRectTop > -1 && textRectTop < getHeight() + 1) {
+		setTextRectTop(textRectTop);
+	}
+	int textRectWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", 0));
+	if (textRectWidth > -1 && textRectWidth < getWidth() + 1) {
+		setTextRectWidth(textRectWidth);
+	}
+	int textRectHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", 0));
+	if (textRectHeight > -1 && textRectHeight < getHeight() + 1) {
+		setTextRectHeight(textRectHeight);
+	}
+	int textBreakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", getTextRectWidth()));
+	if (textBreakWidth > -1 && textBreakWidth < getTextRectWidth() + 1) {
+		setTextBreakWidth(textBreakWidth);
+	}
 }
 
 void GUIButton::updateDisplayName() {
@@ -210,8 +333,8 @@ void GUIButton::setDispLabelColour(const GoColor &dispLabelColour) {
 	m_dispLabelColour = dispLabelColour;
 }
 
-const GoFontSize& GUIButton::getDispLabelFontSize() const {
-	return m_dispLabelFontSize;
+GoFontSize* GUIButton::getDispLabelFontSize() {
+	return &m_dispLabelFontSize;
 }
 
 void GUIButton::setDispLabelFontSize(int size) {
@@ -241,15 +364,7 @@ bool GUIButton::isDisplayAsPiston() const {
 void GUIButton::setDisplayAsPiston(bool displayAsPiston) {
 	m_displayAsPiston = displayAsPiston;
 }
-/*
-const wxString& GUIButton::getDisplLabelFontName() const {
-	return m_displLabelFontName;
-}
 
-void GUIButton::setDisplLabelFontName(const wxString &displLabelFontName) {
-	m_displLabelFontName = displLabelFontName;
-}
-*/
 int GUIButton::getHeight() const {
 	return m_height;
 }

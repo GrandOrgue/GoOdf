@@ -37,7 +37,7 @@ void GUIElement::write(wxTextFile *outFile) {
 }
 
 void GUIElement::read(wxFileConfig *cfg) {
-
+	m_type = cfg->Read("Type", wxEmptyString);
 }
 
 void GUIElement::updateDisplayName() {

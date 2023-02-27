@@ -24,6 +24,7 @@
 Button::Button() {
 	name = wxEmptyString;
 	displayed = false;
+	m_displayInInvertedState = false;
 	shortCutKey = 0;
 }
 
@@ -35,12 +36,16 @@ void Button::write(wxTextFile *outFile) {
 	outFile->AddLine(wxT("Name=") + name);
 	if (shortCutKey > 0)
 		outFile->AddLine(wxT("ShortcutKey=") + wxString::Format(wxT("%i"), shortCutKey));
+	if (m_displayInInvertedState)
+		outFile->AddLine(wxT("DisplayInInvertedState=Y"));
 }
 
 void Button::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	name = cfg->Read("Name", wxEmptyString);
 	wxString cfgBoolValue = cfg->Read("Displayed", wxEmptyString);
 	displayed = GOODF_functions::parseBoolean(cfgBoolValue, usingOldPanelFormat);
+	cfgBoolValue = cfg->Read("DisplayInInvertedState", wxEmptyString);
+	m_displayInInvertedState = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int theShortCutKey = static_cast<int>(cfg->ReadLong("ShortcutKey", 0));
 	if (theShortCutKey > -1 && theShortCutKey < 256)
 		shortCutKey = theShortCutKey;
@@ -64,4 +69,12 @@ int Button::getShortCutKey() {
 
 void Button::setShortCutKey(int shortCutKey) {
 	this->shortCutKey = shortCutKey;
+}
+
+bool Button::isDisplayedInverted() {
+	return m_displayInInvertedState;
+}
+
+void Button::setDisplayInverted(bool displayInverted) {
+	m_displayInInvertedState = displayInverted;
 }

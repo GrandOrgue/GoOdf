@@ -38,10 +38,13 @@ public:
 	void setName(wxString name);
 	int getShortCutKey();
 	void setShortCutKey(int shortCutKey);
+	bool isDisplayedInverted();
+	void setDisplayInverted(bool displayInverted);
 
 protected:
 	wxString name;
 	bool displayed;
+	bool m_displayInInvertedState;
 	int shortCutKey;
 };
 

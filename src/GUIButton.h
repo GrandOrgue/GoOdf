@@ -33,7 +33,7 @@ public:
 	virtual ~GUIButton();
 
 	virtual void write(wxTextFile *outFile);
-	virtual void read(wxFileConfig *cfg);
+	virtual void read(wxFileConfig *cfg, bool isPiston);
 
 	virtual void updateDisplayName();
 	int getDispButtonCol() const;
@@ -50,7 +50,7 @@ public:
 	void setDispKeyLabelOnLeft(bool dispKeyLabelOnLeft);
 	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);
-	const GoFontSize& getDispLabelFontSize() const;
+	GoFontSize* getDispLabelFontSize();
 	void setDispLabelFontSize(int size);
 	void setDispLabelFont(wxFont font);
 	wxFont getDispLabelFont();
@@ -58,10 +58,7 @@ public:
 	void setDispLabelText(wxString dispLabelText);
 	bool isDisplayAsPiston() const;
 	void setDisplayAsPiston(bool displayAsPiston);
-/*
-	const wxString& getDisplLabelFontName() const;
-	void setDisplLabelFontName(const wxString &displLabelFontName);
-*/
+
 	int getHeight() const;
 	void setHeight(int height);
 	const wxString& getImageOff() const;

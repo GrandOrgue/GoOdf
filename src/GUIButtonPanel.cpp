@@ -762,6 +762,7 @@ void GUIButtonPanel::setButton(GUIButton *button) {
 		m_addImageOffBtn->Disable();
 		m_addMaskOnBtn->Disable();
 		m_addMaskOffBtn->Disable();
+		UpdateBuiltinBitmapValues();
 	}
 	if (m_button->getImageOff() != wxEmptyString) {
 		wxString relativeImageOff = GOODF_functions::removeBaseOdfPath(m_button->getImageOff());
@@ -903,18 +904,7 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (msg.ShowModal() == wxID_YES) {
 				// then we empty the value in button and panel
 				m_button->setImageOn(wxEmptyString);
-				int width = 0;
-				int height = 0;
-				m_button->setBitmapWidth(width);
-				m_button->setBitmapHeight(height);
-				m_button->setWidth(width);
-				m_button->setHeight(height);
-				m_button->setMouseRectWidth(width);
-				m_button->setMouseRectHeight(height);
-				m_button->setMouseRadius(std::min(width, height) / 2);
-				m_button->setTextRectWidth(width);
-				m_button->setTextRectHeight(height);
-				m_button->setTextBreakWidth(width);
+				UpdateBuiltinBitmapValues();
 				UpdateSpinRanges();
 				UpdateDefaultSpinValues();
 				m_imageOnPathField->SetValue(wxEmptyString);
@@ -1237,4 +1227,19 @@ wxString GUIButtonPanel::GetPathForImageFile() {
 
 	imageFilePath = fileDialog.GetPath();
 	return imageFilePath;
+}
+
+void GUIButtonPanel::UpdateBuiltinBitmapValues() {
+	int width = 65;
+	int height = 65;
+	m_button->setBitmapWidth(width);
+	m_button->setBitmapHeight(height);
+	m_button->setWidth(width);
+	m_button->setHeight(height);
+	m_button->setMouseRectWidth(width);
+	m_button->setMouseRectHeight(height);
+	m_button->setMouseRadius(32);
+	m_button->setTextRectWidth(width);
+	m_button->setTextRectHeight(height);
+	m_button->setTextBreakWidth(width);
 }
