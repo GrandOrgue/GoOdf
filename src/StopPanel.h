@@ -39,6 +39,8 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxTextCtrl *m_nameField;
+	wxRadioButton *m_displayInvertedYes;
+	wxRadioButton *m_displayInvertedNo;
 	wxChoice *m_functionChoice;
 	wxRadioButton *m_defaultToEngagedYes;
 	wxRadioButton *m_defaultToEngagedNo;
@@ -75,6 +77,7 @@ private:
 	wxPanel *m_referencedRanksPanel;
 
 	void OnNameChange(wxCommandEvent& event);
+	void OnDisplayInvertedRadio(wxCommandEvent& event);
 	void OnFunctionChange(wxCommandEvent& event);
 	void OnDefaultToEngagedChange(wxCommandEvent& event);
 	void OnGcStateChange(wxCommandEvent& event);

@@ -30,6 +30,8 @@
 BEGIN_EVENT_TABLE(StopPanel, wxPanel)
 	EVT_TEXT(ID_STOP_NAME_TEXT, StopPanel::OnNameChange)
 	EVT_CHOICE(ID_STOP_FUNCTION_CHOICE, StopPanel::OnFunctionChange)
+	EVT_RADIOBUTTON(ID_STOP_INVERTED_STATE_YES, StopPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_STOP_INVERTED_STATE_NO, StopPanel::OnDisplayInvertedRadio)
 	EVT_CHOICE(ID_STOP_GC_STATE_CHOICE, StopPanel::OnGcStateChange)
 	EVT_RADIOBUTTON(ID_STOP_STORE_IN_DIV_YES, StopPanel::OnStoreInDivisionalChange)
 	EVT_RADIOBUTTON(ID_STOP_STORE_IN_DIV_NO, StopPanel::OnStoreInDivisionalChange)
@@ -111,6 +113,31 @@ StopPanel::StopPanel(wxWindow *parent) : wxPanel(parent) {
 		functionChoices
 	);
 	secondRow->Add(m_functionChoice, 0, wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		m_stopPanel,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		m_stopPanel,
+		ID_STOP_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		m_stopPanel,
+		ID_STOP_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -500,6 +527,10 @@ void StopPanel::setStop(Stop *stop) {
 	m_internalRankPanel->setNameFieldValue(m_stop->getName());
 	m_internalRankPanel->disableNameFieldInput();
 	m_nameField->SetValue(m_stop->getName());
+	if (m_stop->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	m_functionChoice->SetSelection(m_functionChoice->FindString(m_stop->getFunction()));
 	if (m_stop->getFunction().IsSameAs(wxT("Input"))) {
 		m_availableSwitches->Enable(false);
@@ -590,6 +621,16 @@ void StopPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void StopPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_STOP_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_stop->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_stop->setDisplayInverted(false);
+	}
 }
 
 void StopPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {

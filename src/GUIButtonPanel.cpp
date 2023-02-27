@@ -840,6 +840,11 @@ void GUIButtonPanel::OnDisplayAsPistonRadio(wxCommandEvent& event) {
 	}
 	SetupImageNbrBoxContent();
 	m_dispImageNbrBox->SetSelection(m_button->getDispImageNum() - 1);
+	if (m_button->getImageOn() == wxEmptyString) {
+		UpdateBuiltinBitmapValues();
+		UpdateSpinRanges();
+		UpdateDefaultSpinValues();
+	}
 }
 
 void GUIButtonPanel::OnDisplayKeyLabelLeftRadio(wxCommandEvent& event) {
@@ -1230,15 +1235,21 @@ wxString GUIButtonPanel::GetPathForImageFile() {
 }
 
 void GUIButtonPanel::UpdateBuiltinBitmapValues() {
-	int width = 65;
-	int height = 65;
+	int width, height;
+	if (m_button->isDisplayAsPiston()) {
+		width = 32;
+		height = 32;
+	} else {
+		width = 65;
+		height = 65;
+	}
 	m_button->setBitmapWidth(width);
 	m_button->setBitmapHeight(height);
 	m_button->setWidth(width);
 	m_button->setHeight(height);
 	m_button->setMouseRectWidth(width);
 	m_button->setMouseRectHeight(height);
-	m_button->setMouseRadius(32);
+	m_button->setMouseRadius(width / 2);
 	m_button->setTextRectWidth(width);
 	m_button->setTextRectHeight(height);
 	m_button->setTextBreakWidth(width);

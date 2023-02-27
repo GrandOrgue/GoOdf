@@ -30,6 +30,8 @@
 BEGIN_EVENT_TABLE(CouplerPanel, wxPanel)
 	EVT_TEXT(ID_COUPLER_NAME_TEXT, CouplerPanel::OnNameChange)
 	EVT_CHOICE(ID_COUPLER_FUNCTION_CHOICE, CouplerPanel::OnFunctionChange)
+	EVT_RADIOBUTTON(ID_COUPLER_INVERTED_STATE_YES, CouplerPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_COUPLER_INVERTED_STATE_NO, CouplerPanel::OnDisplayInvertedRadio)
 	EVT_CHOICE(ID_COUPLER_GC_STATE_CHOICE, CouplerPanel::OnGcStateChange)
 	EVT_RADIOBUTTON(ID_COUPLER_STORE_IN_DIV_YES, CouplerPanel::OnStoreInDivisionalChange)
 	EVT_RADIOBUTTON(ID_COUPLER_STORE_IN_DIV_NO, CouplerPanel::OnStoreInDivisionalChange)
@@ -91,12 +93,15 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize
 	);
 	firstRow->Add(m_nameField, 1, wxEXPAND|wxALL, 5);
+	panelSizer->Add(firstRow, 0, wxGROW);
+
+	wxBoxSizer *dispChoiceRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *functionText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("Function: ")
 	);
-	firstRow->Add(functionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	dispChoiceRow->Add(functionText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_functionChoice = new wxChoice(
 		this,
 		ID_COUPLER_FUNCTION_CHOICE,
@@ -104,8 +109,33 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		functionChoices
 	);
-	firstRow->Add(m_functionChoice, 0, wxALL, 5);
-	panelSizer->Add(firstRow, 0, wxGROW);
+	dispChoiceRow->Add(m_functionChoice, 0, wxALL, 5);
+	dispChoiceRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	dispChoiceRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_COUPLER_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	dispChoiceRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_COUPLER_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	dispChoiceRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
+	panelSizer->Add(dispChoiceRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *secondRow1stCol = new wxBoxSizer(wxVERTICAL);
@@ -177,6 +207,7 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize
 	);
 	thirdRow->Add(m_defaultToEngagedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirdRow->AddStretchSpacer();
 	wxStaticText *gcStateText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -218,6 +249,7 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize
 	);
 	fourthRow->Add(m_storeInDivisionalNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	fourthRow->AddStretchSpacer();
 	wxStaticText *storeInGeneralText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -259,6 +291,7 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		availableManuals
 	);
 	fifthRow->Add(m_destinationManualChoice, 0, wxALL, 5);
+	fifthRow->AddStretchSpacer();
 	wxStaticText *destKeyshiftText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -277,6 +310,7 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		0
 	);
 	fifthRow->Add(m_destinationKeyShiftSpin, 0, wxEXPAND|wxALL, 5);
+	fifthRow->AddStretchSpacer();
 	wxStaticText *couplerTypeText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -447,6 +481,7 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		0
 	);
 	eleventhRow->Add(m_firstMIDINoteNumberSpin, 0, wxEXPAND|wxALL, 5);
+	eleventhRow->AddStretchSpacer();
 	wxStaticText *numberOfKeysText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -491,6 +526,10 @@ CouplerPanel::~CouplerPanel() {
 void CouplerPanel::setCoupler(Coupler *coupler) {
 	m_coupler = coupler;
 	m_nameField->SetValue(m_coupler->getName());
+	if (m_coupler->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	m_functionChoice->SetSelection(m_functionChoice->FindString(m_coupler->getFunction()));
 	if (m_coupler->getFunction().IsSameAs(wxT("Input"))) {
 		m_availableSwitches->Enable(false);
@@ -587,6 +626,16 @@ void CouplerPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void CouplerPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_COUPLER_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_coupler->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_coupler->setDisplayInverted(false);
+	}
 }
 
 void CouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
