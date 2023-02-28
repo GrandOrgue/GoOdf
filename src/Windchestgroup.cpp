@@ -58,6 +58,30 @@ void Windchestgroup::write(wxTextFile *outFile) {
 	}
 }
 
+void Windchestgroup::read(wxFileConfig *cfg) {
+	name = cfg->Read("Name", wxEmptyString);
+	int nbrEnclosures = static_cast<int>(cfg->ReadLong("NumberOfEnclosures", 0));
+	if (nbrEnclosures > 50)
+		nbrEnclosures = 50;
+	for (int i = 0; i < nbrEnclosures; i++) {
+		wxString encNbrStr = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
+		int encRefNbr = static_cast<int>(cfg->ReadLong(encNbrStr, 0));
+		if (encRefNbr > 0 && encRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfEnclosures()) {
+			addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(encRefNbr - 1));
+		}
+	}
+	int nbrTremulants = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
+	if (nbrTremulants > 10)
+		nbrTremulants = 10;
+	for (int i = 0; i < nbrTremulants; i++) {
+		wxString tremNbrStr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
+		int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbrStr, 0));
+		if (tremRefNbr > 0 && tremRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+			addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremRefNbr - 1));
+		}
+	}
+}
+
 Enclosure* Windchestgroup::getEnclosureAt(unsigned index) {
 	auto iterator = std::next(m_Enclosures.begin(), index);
 	return (*iterator);

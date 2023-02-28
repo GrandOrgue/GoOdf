@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include <list>
 #include "Enclosure.h"
 #include "Tremulant.h"
@@ -33,6 +34,8 @@ public:
 	~Windchestgroup();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	Enclosure* getEnclosureAt(unsigned index);
 	unsigned getNumberOfEnclosures();
 	void addEnclosureReference(Enclosure *enclosure);

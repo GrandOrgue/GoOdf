@@ -196,6 +196,18 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse windchests
+	int nbrWindchests = static_cast<int>(m_organFile.ReadLong("NumberOfWindchestGroups", 0));
+	if (nbrWindchests > 0 && nbrWindchests < 51) {
+		for (int i = 0; i < nbrWindchests; i++) {
+			wxString windchestGroupName = wxT("WindchestGroup") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(windchestGroupName)) {
+				m_organFile.SetPath(wxT("/") + windchestGroupName);
+				Windchestgroup windchest;
+				windchest.read(&m_organFile);
+				m_organ->addWindchestgroup(windchest);
+			}
+		}
+	}
 
 	// parse ranks
 
