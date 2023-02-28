@@ -30,6 +30,8 @@
 BEGIN_EVENT_TABLE(SwitchPanel, wxPanel)
 	EVT_TEXT(ID_SWITCH_NAME_TEXT, SwitchPanel::OnNameChange)
 	EVT_CHOICE(ID_SWITCH_FUNCTION_CHOICE, SwitchPanel::OnFunctionChange)
+	EVT_RADIOBUTTON(ID_SWITCH_INVERTED_STATE_YES, SwitchPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_SWITCH_INVERTED_STATE_NO, SwitchPanel::OnDisplayInvertedRadio)
 	EVT_CHOICE(ID_SWITCH_GC_STATE_CHOICE, SwitchPanel::OnGcStateChange)
 	EVT_RADIOBUTTON(ID_SWITCH_STORE_IN_DIV_YES, SwitchPanel::OnStoreInDivisionalChange)
 	EVT_RADIOBUTTON(ID_SWITCH_STORE_IN_DIV_NO, SwitchPanel::OnStoreInDivisionalChange)
@@ -91,6 +93,31 @@ SwitchPanel::SwitchPanel(wxWindow *parent) : wxPanel(parent) {
 		functionChoices
 	);
 	secondRow->Add(m_functionChoice, 0, wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_SWITCH_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_SWITCH_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -261,6 +288,10 @@ SwitchPanel::~SwitchPanel() {
 void SwitchPanel::setSwitch(GoSwitch *sw) {
 	m_switch = sw;
 	m_nameField->SetValue(m_switch->getName());
+	if (m_switch->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	m_functionChoice->SetSelection(m_functionChoice->FindString(m_switch->getFunction()));
 	if (m_switch->getFunction().IsSameAs(wxT("Input"))) {
 		m_availableSwitches->Enable(false);
@@ -315,6 +346,16 @@ void SwitchPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void SwitchPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_SWITCH_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_switch->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_switch->setDisplayInverted(false);
+	}
 }
 
 void SwitchPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {

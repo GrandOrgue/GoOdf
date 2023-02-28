@@ -27,6 +27,8 @@
 // Event table
 BEGIN_EVENT_TABLE(ReversiblePistonPanel, wxPanel)
 	EVT_TEXT(ID_PISTON_NAME_TEXT, ReversiblePistonPanel::OnNameChange)
+	EVT_RADIOBUTTON(ID_PISTON_INVERTED_STATE_YES, ReversiblePistonPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_PISTON_INVERTED_STATE_NO, ReversiblePistonPanel::OnDisplayInvertedRadio)
 	EVT_LISTBOX(ID_PISTON_AVAILABLE_STOPS, ReversiblePistonPanel::OnStopListboxSelection)
 	EVT_LISTBOX(ID_PISTON_AVAILABLE_COUPLERS, ReversiblePistonPanel::OnCouplerListboxSelection)
 	EVT_LISTBOX(ID_PISTON_AVAILABLE_TREMS, ReversiblePistonPanel::OnTremulantListboxSelection)
@@ -56,6 +58,33 @@ ReversiblePistonPanel::ReversiblePistonPanel(wxWindow *parent) : wxPanel(parent)
 	);
 	firstRow->Add(m_nameField, 1, wxEXPAND|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
+
+	wxBoxSizer *invertedRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	invertedRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_PISTON_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	invertedRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_PISTON_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	invertedRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
+	panelSizer->Add(invertedRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *secondRow1stCol = new wxBoxSizer(wxVERTICAL);
@@ -184,7 +213,10 @@ ReversiblePistonPanel::~ReversiblePistonPanel() {
 void ReversiblePistonPanel::setReversiblePiston(ReversiblePiston *piston) {
 	m_piston = piston;
 	m_nameField->SetValue(m_piston->getName());
-
+	if (m_piston->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	// update/populate available stops
 	wxArrayString organStops;
 	unsigned nbStops = ::wxGetApp().m_frame->m_organ->getNumberOfStops();
@@ -268,6 +300,16 @@ void ReversiblePistonPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void ReversiblePistonPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_PISTON_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_piston->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_piston->setDisplayInverted(false);
+	}
 }
 
 void ReversiblePistonPanel::OnStopListboxSelection(wxCommandEvent& WXUNUSED(event)) {

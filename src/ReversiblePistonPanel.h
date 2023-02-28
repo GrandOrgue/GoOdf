@@ -35,6 +35,8 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxTextCtrl *m_nameField;
+	wxRadioButton *m_displayInvertedYes;
+	wxRadioButton *m_displayInvertedNo;
 	wxListBox *m_availableStops;
 	wxListBox *m_availableCouplers;
 	wxListBox *m_availableSwitches;
@@ -47,6 +49,7 @@ private:
 	ReversiblePiston *m_piston;
 
 	void OnNameChange(wxCommandEvent& event);
+	void OnDisplayInvertedRadio(wxCommandEvent& event);
 	void OnStopListboxSelection(wxCommandEvent& event);
 	void OnCouplerListboxSelection(wxCommandEvent& event);
 	void OnSwitchListboxSelection(wxCommandEvent& event);

@@ -35,6 +35,8 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxTextCtrl *m_nameField;
+	wxRadioButton *m_displayInvertedYes;
+	wxRadioButton *m_displayInvertedNo;
 	wxChoice *m_functionChoice;
 	wxRadioButton *m_defaultToEngagedYes;
 	wxRadioButton *m_defaultToEngagedNo;
@@ -43,8 +45,8 @@ private:
 	wxButton *m_addReferencedSwitch;
 	wxButton *m_removeReferencedSwitch;
 	wxChoice *m_gcStateChoice;
-	wxRadioButton *m_storeInGeneralYes; // maybe not needed?
-	wxRadioButton *m_storeInGeneralNo; // maybe not needed?
+	wxRadioButton *m_storeInGeneralYes;
+	wxRadioButton *m_storeInGeneralNo;
 	wxRadioButton *m_isBiDirectionalYes;
 	wxRadioButton *m_isBiDirectionalNo;
 	wxListBox *m_availableManuals;
@@ -58,6 +60,7 @@ private:
 	wxArrayString gcStateChoices;
 
 	void OnNameChange(wxCommandEvent& event);
+	void OnDisplayInvertedRadio(wxCommandEvent& event);
 	void OnFunctionChange(wxCommandEvent& event);
 	void OnDefaultToEngagedChange(wxCommandEvent& event);
 	void OnGcStateChange(wxCommandEvent& event);

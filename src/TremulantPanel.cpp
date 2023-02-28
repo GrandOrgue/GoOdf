@@ -29,6 +29,8 @@
 // Event table
 BEGIN_EVENT_TABLE(TremulantPanel, wxPanel)
 	EVT_TEXT(ID_TREMULANT_NAME_TEXT, TremulantPanel::OnNameChange)
+	EVT_RADIOBUTTON(ID_TREMULANT_INVERTED_STATE_YES, TremulantPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_TREMULANT_INVERTED_STATE_NO, TremulantPanel::OnDisplayInvertedRadio)
 	EVT_CHOICE(ID_TREMULANT_FUNCTION_CHOICE, TremulantPanel::OnFunctionChange)
 	EVT_CHOICE(ID_TREM_GC_STATE_CHOICE, TremulantPanel::OnGcStateChange)
 	EVT_RADIOBUTTON(ID_TREM_STORE_IN_DIV_YES, TremulantPanel::OnStoreInDivisionalChange)
@@ -97,6 +99,31 @@ TremulantPanel::TremulantPanel(wxWindow *parent) : wxPanel(parent) {
 		functionChoices
 	);
 	secondRow->Add(m_functionChoice, 0, wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_TREMULANT_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_TREMULANT_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -368,6 +395,10 @@ TremulantPanel::~TremulantPanel() {
 void TremulantPanel::setTremulant(Tremulant *tremulant) {
 	m_tremulant = tremulant;
 	m_nameField->SetValue(m_tremulant->getName());
+	if (m_tremulant->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	m_functionChoice->SetSelection(m_functionChoice->FindString(m_tremulant->getFunction()));
 	if (m_tremulant->getFunction().IsSameAs(wxT("Input"))) {
 		m_availableSwitches->Enable(false);
@@ -434,6 +465,16 @@ void TremulantPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void TremulantPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_TREMULANT_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_tremulant->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_tremulant->setDisplayInverted(false);
+	}
 }
 
 void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {

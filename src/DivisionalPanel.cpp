@@ -29,6 +29,8 @@
 // Event table
 BEGIN_EVENT_TABLE(DivisionalPanel, wxPanel)
 	EVT_TEXT(ID_DIVISIONAL_NAME_TEXT, DivisionalPanel::OnNameChange)
+	EVT_RADIOBUTTON(ID_DIVISIONAL_INVERTED_STATE_YES, DivisionalPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_DIVISIONAL_INVERTED_STATE_NO, DivisionalPanel::OnDisplayInvertedRadio)
 	EVT_RADIOBUTTON(ID_DIVISIONAL_PROTECTED_YES, DivisionalPanel::OnProtectedSelection)
 	EVT_RADIOBUTTON(ID_DIVISIONAL_PROTECTED_NO, DivisionalPanel::OnProtectedSelection)
 	EVT_BUTTON(ID_DIVISIONAL_ADD_STOP_BTN, DivisionalPanel::OnAddStopReferenceBtn)
@@ -109,6 +111,31 @@ DivisionalPanel::DivisionalPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	m_isProtectedNo->SetValue(true);
 	secondRow->Add(m_isProtectedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_DIVISIONAL_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_DIVISIONAL_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -460,6 +487,10 @@ DivisionalPanel::~DivisionalPanel() {
 void DivisionalPanel::setDivisional(Divisional *divisional) {
 	m_divisional = divisional;
 	m_nameField->SetValue(m_divisional->getName());
+	if (m_divisional->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	if (m_divisional->isProtected())
 		m_isProtectedYes->SetValue(true);
 	else
@@ -562,6 +593,16 @@ void DivisionalPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void DivisionalPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_DIVISIONAL_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_divisional->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_divisional->setDisplayInverted(false);
+	}
 }
 
 void DivisionalPanel::OnProtectedSelection(wxCommandEvent& event) {

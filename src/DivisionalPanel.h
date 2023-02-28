@@ -36,7 +36,8 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxTextCtrl *m_nameField;
-	// shortcut key ?
+	wxRadioButton *m_displayInvertedYes;
+	wxRadioButton *m_displayInvertedNo;
 	wxRadioButton *m_isProtectedYes;
 	wxRadioButton *m_isProtectedNo;
 	
@@ -77,6 +78,7 @@ private:
 	Divisional *m_divisional;
 	
 	void OnNameChange(wxCommandEvent& event);
+	void OnDisplayInvertedRadio(wxCommandEvent& event);
 	void OnProtectedSelection(wxCommandEvent& event);
 	void OnAddStopReferenceBtn(wxCommandEvent& event);
 	void OnAddAllAvailableStopsBtn(wxCommandEvent& event);

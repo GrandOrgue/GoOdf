@@ -29,6 +29,8 @@
 // Event table
 BEGIN_EVENT_TABLE(GeneralPanel, wxScrolledWindow)
 	EVT_TEXT(ID_GENERAL_NAME_TEXT, GeneralPanel::OnNameChange)
+	EVT_RADIOBUTTON(ID_GENERAL_INVERTED_STATE_YES, GeneralPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_GENERAL_INVERTED_STATE_NO, GeneralPanel::OnDisplayInvertedRadio)
 	EVT_RADIOBUTTON(ID_GENERAL_PROTECTED_YES, GeneralPanel::OnProtectedSelection)
 	EVT_RADIOBUTTON(ID_GENERAL_PROTECTED_NO, GeneralPanel::OnProtectedSelection)
 	EVT_BUTTON(ID_GENERAL_ADD_STOP_BTN, GeneralPanel::OnAddStopReferenceBtn)
@@ -116,6 +118,31 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 	);
 	m_isProtectedNo->SetValue(true);
 	secondRow->Add(m_isProtectedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_GENERAL_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_GENERAL_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -551,6 +578,10 @@ GeneralPanel::~GeneralPanel() {
 void GeneralPanel::setGeneral(General *general) {
 	m_general = general;
 	m_nameField->SetValue(m_general->getName());
+	if (m_general->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	if (m_general->isProtected())
 		m_isProtectedYes->SetValue(true);
 	else
@@ -675,6 +706,16 @@ void GeneralPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void GeneralPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_GENERAL_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_general->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_general->setDisplayInverted(false);
+	}
 }
 
 void GeneralPanel::OnProtectedSelection(wxCommandEvent& event) {

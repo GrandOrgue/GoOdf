@@ -28,6 +28,8 @@
 // Event table
 BEGIN_EVENT_TABLE(DivisionalCouplerPanel, wxPanel)
 	EVT_TEXT(ID_DIV_CPLR_NAME_TEXT, DivisionalCouplerPanel::OnNameChange)
+	EVT_RADIOBUTTON(ID_DIV_CPLR_INVERTED_STATE_YES, DivisionalCouplerPanel::OnDisplayInvertedRadio)
+	EVT_RADIOBUTTON(ID_DIV_CPLR_INVERTED_STATE_NO, DivisionalCouplerPanel::OnDisplayInvertedRadio)
 	EVT_CHOICE(ID_DIV_CPLR_FUNCTION_CHOICE, DivisionalCouplerPanel::OnFunctionChange)
 	EVT_CHOICE(ID_DIV_CPLR_GC_STATE_CHOICE, DivisionalCouplerPanel::OnGcStateChange)
 	EVT_RADIOBUTTON(ID_DIV_CPLR_BIDIRECTIONAL_YES, DivisionalCouplerPanel::OnBidirectionalChange)
@@ -93,6 +95,31 @@ DivisionalCouplerPanel::DivisionalCouplerPanel(wxWindow *parent) : wxPanel(paren
 		functionChoices
 	);
 	secondRow->Add(m_functionChoice, 0, wxALL, 5);
+	secondRow->AddStretchSpacer();
+	wxStaticText *dispInvertedText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Display in inverted state: ")
+	);
+	secondRow->Add(dispInvertedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedYes = new wxRadioButton(
+		this,
+		ID_DIV_CPLR_INVERTED_STATE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	secondRow->Add(m_displayInvertedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo = new wxRadioButton(
+		this,
+		ID_DIV_CPLR_INVERTED_STATE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_displayInvertedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_displayInvertedNo->SetValue(true);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
@@ -309,6 +336,10 @@ DivisionalCouplerPanel::~DivisionalCouplerPanel() {
 void DivisionalCouplerPanel::setDivisionalCoupler(DivisionalCoupler *divCplr) {
 	m_divCplr = divCplr;
 	m_nameField->SetValue(m_divCplr->getName());
+	if (m_divCplr->isDisplayedInverted())
+		m_displayInvertedYes->SetValue(true);
+	else
+		m_displayInvertedNo->SetValue(true);
 	m_functionChoice->SetSelection(m_functionChoice->FindString(m_divCplr->getFunction()));
 	if (m_divCplr->getFunction().IsSameAs(wxT("Input"))) {
 		m_availableSwitches->Enable(false);
@@ -371,6 +402,16 @@ void DivisionalCouplerPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
 	::wxGetApp().m_frame->m_organ->organElementHasChanged();
+}
+
+void DivisionalCouplerPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_DIV_CPLR_INVERTED_STATE_YES) {
+		m_displayInvertedYes->SetValue(true);
+		m_divCplr->setDisplayInverted(true);
+	} else {
+		m_displayInvertedNo->SetValue(true);
+		m_divCplr->setDisplayInverted(false);
+	}
 }
 
 void DivisionalCouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {

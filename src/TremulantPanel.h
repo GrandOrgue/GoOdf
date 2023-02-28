@@ -37,6 +37,8 @@ private:
 
 	wxTextCtrl *m_nameField;
 	wxChoice *m_functionChoice;
+	wxRadioButton *m_displayInvertedYes;
+	wxRadioButton *m_displayInvertedNo;
 	wxRadioButton *m_defaultToEngagedYes;
 	wxRadioButton *m_defaultToEngagedNo;
 	wxListBox *m_availableSwitches;
@@ -61,6 +63,7 @@ private:
 	wxArrayString tremTypeChoices;
 
 	void OnNameChange(wxCommandEvent& event);
+	void OnDisplayInvertedRadio(wxCommandEvent& event);
 	void OnFunctionChange(wxCommandEvent& event);
 	void OnDefaultToEngagedChange(wxCommandEvent& event);
 	void OnGcStateChange(wxCommandEvent& event);
