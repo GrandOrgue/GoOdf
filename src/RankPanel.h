@@ -67,6 +67,8 @@ private:
 	wxTextCtrl *m_optionsTremulantField;
 	wxButton *m_addPipesFromFolderBtn;
 	wxButton *m_addTremulantPipesBtn;
+	wxButton *m_expandTreeBtn;
+	wxButton *m_addReleaseSamplesBtn;
 
 	wxButton *removeRankBtn;
 
@@ -95,6 +97,8 @@ private:
 	void OnTrackerDelaySpin(wxSpinEvent& event);
 	void OnAddPipesBtn(wxCommandEvent& event);
 	void OnAddTremulantPipesBtn(wxCommandEvent& event);
+	void OnExpandTreeBtn(wxCommandEvent& event);
+	void OnAddReleaseSamplesBtn(wxCommandEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();

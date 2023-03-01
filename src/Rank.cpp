@@ -1031,6 +1031,62 @@ void Rank::addTremulantToPipes(
 	}
 }
 
+void Rank::addReleasesToPipes() {
+	// This method is for adding releases only from a single folder
+	bool organRootPathIsSet = false;
+
+	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
+		organRootPathIsSet = true;
+
+	wxDir pipeRoot(m_latestPipesRootPath);
+
+	if (!pipeRoot.IsOpened())
+		return;
+
+	for (int i = 0; i < numberOfLogicalPipes; i++) {
+		Pipe *p = getPipeAt(i);
+
+		wxArrayString pipeReleases;
+		wxArrayString pipeReleasesToAdd;
+
+		// get files from root folder
+		pipeRoot.GetAllFiles(
+			m_latestPipesRootPath,
+			&pipeReleases,
+			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxDIR_FILES
+		);
+
+		pipeReleases.Sort();
+
+		// remove any file that's not ending with .wav or .wv
+		onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+		// if there are any matching attacks we add them
+		if (!pipeReleasesToAdd.IsEmpty()) {
+			for (unsigned j = 0; j < pipeReleasesToAdd.GetCount(); j++) {
+				wxString relativeFileName;
+				if (organRootPathIsSet)
+					relativeFileName = getOnlyFileName(pipeReleasesToAdd.Item(j));
+				else
+					relativeFileName = pipeReleasesToAdd.Item(j);
+
+				// create and add the release to the pipe
+				Release r;
+				r.fileName = relativeFileName;
+				r.fullPath = pipeReleasesToAdd.Item(j);
+
+				p->m_releases.push_back(r);
+
+			}
+		}
+
+		pipeReleases.Empty();
+		pipeReleasesToAdd.Empty();
+
+	}
+}
+
 void Rank::clearAllPipes() {
 	for (Pipe p : m_pipes) {
 		p.m_attacks.clear();

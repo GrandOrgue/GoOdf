@@ -792,8 +792,16 @@ void StopPanel::OnAddRankReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			// set pipe count from the rank logical pipes
 			unsigned rankRefIdx = m_stop->getIndexOfRankReference(::wxGetApp().m_frame->m_organ->getOrganRankAt(selected));
 			m_stop->getRankReferenceAt(rankRefIdx)->m_pipeCount = ::wxGetApp().m_frame->m_organ->getOrganRankAt(selected)->getNumberOfLogicalPipes();
+			// also update accessible pipes if it's the first rank added
+			if (m_stop->getNumberOfRanks() == 1) {
+				m_stop->setNumberOfAccessiblePipes(m_stop->getRankReferenceAt(rankRefIdx)->m_pipeCount);
+				m_numberOfAccessiblePipesSpin->SetValue(m_stop->getNumberOfAccessiblePipes());
+			}
 
 			UpdateReferencedRanks();
+			m_referencedRanks->SetSelection(m_stop->getNumberOfRanks() - 1);
+			wxCommandEvent evt(wxEVT_LISTBOX, ID_STOP_REFERENCED_RANKS);
+			wxPostEvent(this, evt);
 		}
 	}
 }

@@ -89,6 +89,7 @@ public:
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime
 	);
+	void addReleasesToPipes();
 	void clearAllPipes();
 	void createDummyPipes();
 	void addDummyPipeFront();

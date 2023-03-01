@@ -56,6 +56,8 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_SPINCTRL(ID_RANK_TRACKER_DELAY_SPIN, RankPanel::OnTrackerDelaySpin)
 	EVT_BUTTON(ID_RANK_ADD_PIPES_BTN, RankPanel::OnAddPipesBtn)
 	EVT_BUTTON(ID_RANK_ADD_TREMULANT_PIPES_BTN, RankPanel::OnAddTremulantPipesBtn)
+	EVT_BUTTON(ID_RANK_EXPAND_TREE_BTN, RankPanel::OnExpandTreeBtn)
+	EVT_BUTTON(ID_RANK_ADD_RELEASES_BTN, RankPanel::OnAddReleaseSamplesBtn)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -301,6 +303,13 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	panelSizer->Add(fifthRow, 0, wxGROW);
 
 	wxBoxSizer *sixthRow = new wxBoxSizer(wxHORIZONTAL);
+	m_expandTreeBtn = new wxButton(
+		this,
+		ID_RANK_EXPAND_TREE_BTN,
+		wxT("Expand the pipe tree")
+	);
+	sixthRow->Add(m_expandTreeBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	sixthRow->AddStretchSpacer();
 	wxStaticText *isPercussiveText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -386,7 +395,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("Attack subfolder prefix: ")
 	);
-	optionsRow1->Add(extraAttackText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	optionsRow1->Add(extraAttackText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsAttackField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ATTACK_SUBFOLDER_TEXT,
@@ -394,37 +403,36 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	optionsRow1->Add(m_optionsAttackField, 1, wxEXPAND|wxALL, 5);
+	optionsRow1->Add(m_optionsAttackField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow1, 0, wxGROW);
 	wxBoxSizer *optionsRowOnlyOne = new wxBoxSizer(wxHORIZONTAL);
 	m_optionsOnlyOneAttack = new wxCheckBox(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ONLY_ONE_ATK_OPTION,
-		wxT("Load only one attack sample"),
+		wxT("Load only one attack"),
 		wxDefaultPosition,
 		wxDefaultSize
 	);
 	m_optionsOnlyOneAttack->SetValue(false);
-	optionsRowOnlyOne->Add(m_optionsOnlyOneAttack, 0, wxALL, 5);
-	readingOptions->Add(optionsRowOnlyOne,0, wxGROW);
-	wxBoxSizer *optionsRowLoadRelease = new wxBoxSizer(wxHORIZONTAL);
+	optionsRowOnlyOne->Add(m_optionsOnlyOneAttack, 0, wxALL, 2);
+	optionsRowOnlyOne->AddStretchSpacer();
 	m_optionsLoadReleaseInAttack = new wxCheckBox(
 		readingOptions->GetStaticBox(),
 		ID_RANK_LOAD_RELEASE_OPTION,
-		wxT("Load release in attack sample"),
+		wxT("Load release in attack"),
 		wxDefaultPosition,
 		wxDefaultSize
 	);
 	m_optionsLoadReleaseInAttack->SetValue(true);
-	optionsRowLoadRelease->Add(m_optionsLoadReleaseInAttack, 0, wxALL, 5);
-	readingOptions->Add(optionsRowLoadRelease,0, wxGROW);
+	optionsRowOnlyOne->Add(m_optionsLoadReleaseInAttack, 0, wxALL, 2);
+	readingOptions->Add(optionsRowOnlyOne,0, wxGROW);
 	wxBoxSizer *optionsRow2 = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *releaseFolderText = new wxStaticText (
 		readingOptions->GetStaticBox(),
 		wxID_STATIC,
 		wxT("Release subfolder prefix: ")
 	);
-	optionsRow2->Add(releaseFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	optionsRow2->Add(releaseFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsReleaseField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
 		ID_RANK_RELEASE_SUBFOLDER_TEXT,
@@ -432,7 +440,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	optionsRow2->Add(m_optionsReleaseField, 1, wxEXPAND|wxALL, 5);
+	optionsRow2->Add(m_optionsReleaseField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow2, 0, wxGROW);
 	wxBoxSizer *optionsRow3 = new wxBoxSizer(wxHORIZONTAL);
 	m_optionsKeyPressTime = new wxCheckBox(
@@ -443,7 +451,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize
 	);
 	m_optionsKeyPressTime->SetValue(true);
-	optionsRow3->Add(m_optionsKeyPressTime, 0, wxALL, 5);
+	optionsRow3->Add(m_optionsKeyPressTime, 0, wxALL, 2);
 	readingOptions->Add(optionsRow3, 0, wxGROW);
 	wxBoxSizer *optionsRow4 = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *tremulantFolderText = new wxStaticText (
@@ -451,7 +459,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("Tremulant folder prefix: ")
 	);
-	optionsRow4->Add(tremulantFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	optionsRow4->Add(tremulantFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsTremulantField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
 		ID_RANK_TREMULANT_SUBFOLDER_TEXT,
@@ -459,24 +467,34 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	optionsRow4->Add(m_optionsTremulantField, 1, wxEXPAND|wxALL, 5);
+	optionsRow4->Add(m_optionsTremulantField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow4, 0, wxGROW);
 	wxBoxSizer *optionsRow5 = new wxBoxSizer(wxHORIZONTAL);
-	optionsRow5->AddStretchSpacer();
 	m_addPipesFromFolderBtn = new wxButton(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ADD_PIPES_BTN,
 		wxT("Add more samples from...")
 	);
-	optionsRow5->Add(m_addPipesFromFolderBtn, 0, wxALL, 5);
+	optionsRow5->Add(m_addPipesFromFolderBtn, 0, wxALL, 2);
 	optionsRow5->AddStretchSpacer();
 	m_addTremulantPipesBtn = new wxButton(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ADD_TREMULANT_PIPES_BTN,
 		wxT("Add tremulant samples from...")
 	);
-	optionsRow5->Add(m_addTremulantPipesBtn, 0, wxALL, 5);
+	optionsRow5->Add(m_addTremulantPipesBtn, 0, wxALL, 2);
+	optionsRow5->AddStretchSpacer();
 	readingOptions->Add(optionsRow5, 0, wxGROW);
+	wxBoxSizer *optionsRow6 = new wxBoxSizer(wxHORIZONTAL);
+	optionsRow6->AddStretchSpacer();
+	m_addReleaseSamplesBtn = new wxButton(
+		readingOptions->GetStaticBox(),
+		ID_RANK_ADD_RELEASES_BTN,
+		wxT("Add (only) releases from...")
+	);
+	optionsRow6->Add(m_addReleaseSamplesBtn, 0, wxALL, 2);
+	optionsRow6->AddStretchSpacer();
+	readingOptions->Add(optionsRow6, 0, wxGROW);
 	pipeReadingOptions->Add(readingOptions, 1, wxEXPAND);
 	seventhRow->Add(pipeReadingOptions, 1, wxEXPAND);
 	panelSizer->Add(seventhRow, 1, wxEXPAND|wxALL, 5);
@@ -1289,6 +1307,34 @@ void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			releaseFolderPrefix,
 			extractKeyPressTime
 		);
+
+		RebuildPipeTree();
+		UpdatePipeTree();
+	}
+}
+
+void RankPanel::OnExpandTreeBtn(wxCommandEvent& WXUNUSED(event)) {
+	m_pipeTreeCtrl->ExpandAll();
+}
+
+void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxString defaultPath;
+	if (m_rank->getPipesRootPath() != wxEmptyString)
+		defaultPath = m_rank->getPipesRootPath();
+	else
+		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+
+	wxDirDialog rankPipesPathDialog(
+		this,
+		wxT("Pick a directory to add release samples from"),
+		defaultPath,
+		wxDD_DIR_MUST_EXIST
+	);
+
+	if (rankPipesPathDialog.ShowModal() == wxID_OK) {
+		m_rank->setPipesRootPath(rankPipesPathDialog.GetPath());
+
+		m_rank->addReleasesToPipes();
 
 		RebuildPipeTree();
 		UpdatePipeTree();
