@@ -132,7 +132,10 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_PANEL_ORGAN_ELEMENTS_CHOICE,
 		wxDefaultPosition,
-		wxDefaultSize
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	organElementsCol->Add(m_organElementsChoice, 1, wxALL, 5);
 	choiceRow->Add(organElementsCol, 1, wxGROW);
@@ -346,80 +349,92 @@ void GoPanelPanel::OnOrganElementChoice(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GoPanelPanel::OnSetterElementChoice(wxCommandEvent& WXUNUSED(event)) {
+	wxArrayInt selections;
+	int count = m_organElementsChoice->GetSelections(selections);
+	if (count > 0) {
+		for (int i = 0; i < count; i++)
+			m_organElementsChoice->Deselect(selections[i]);
+	}
+/*
 	if (m_organElementsChoice->GetSelection() != wxNOT_FOUND)
 		m_organElementsChoice->SetSelection(wxNOT_FOUND);
-
+*/
 	m_elementChoiceBtn->Enable();
 	ShouldCombinationControlsBeEnabled();
 }
 
 void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 	if (m_panel->getNumberOfGuiElements() < 999) {
-		if (m_organElementsChoice->GetSelection() != wxNOT_FOUND) {
-			// An organ element was selected
-			int selectedIndex = m_organElementsChoice->GetSelection();
-			std::pair<wxString, int> organElement = ::wxGetApp().m_frame->m_organ->getTypeAndIndexOfElement(selectedIndex);
+		wxArrayInt selections;
+		int count = m_organElementsChoice->GetSelections(selections);
+		if (count > 0) {
+			// At least one organ element was selected
+			for (int i = 0; i < selections.size(); i++) {
 
-			if (organElement.first == wxT("Manual")) {
-				GUIElement *choice = new GUIManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Stop")) {
-				GUIElement *choice = new GUIStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Coupler")) {
-				GUIElement *choice = new GUICoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Divisional")) {
-				GUIElement *choice = new GUIDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Enclosure")) {
-				GUIElement *choice = new GUIEnclosure(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Tremulant")) {
-				GUIElement *choice = new GUITremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("Switch")) {
-				GUIElement *choice = new GUISwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("ReversiblePiston")) {
-				GUIElement *choice = new GUIReversiblePiston(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("DivisionalCoupler")) {
-				GUIElement *choice = new GUIDivisionalCoupler(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
-			} else if (organElement.first == wxT("General")) {
-				GUIElement *choice = new GUIGeneral(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second));
-				choice->setOwningPanel(m_panel);
-				choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
-				m_panel->addGuiElement(choice);
-				::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+				// int selectedIndex = m_organElementsChoice->GetSelection();
+				std::pair<wxString, int> organElement = ::wxGetApp().m_frame->m_organ->getTypeAndIndexOfElement(selections[i]);
+
+				if (organElement.first == wxT("Manual")) {
+					GUIElement *choice = new GUIManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Stop")) {
+					GUIElement *choice = new GUIStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Coupler")) {
+					GUIElement *choice = new GUICoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Divisional")) {
+					GUIElement *choice = new GUIDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Enclosure")) {
+					GUIElement *choice = new GUIEnclosure(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Tremulant")) {
+					GUIElement *choice = new GUITremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("Switch")) {
+					GUIElement *choice = new GUISwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("ReversiblePiston")) {
+					GUIElement *choice = new GUIReversiblePiston(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("DivisionalCoupler")) {
+					GUIElement *choice = new GUIDivisionalCoupler(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
+				} else if (organElement.first == wxT("General")) {
+					GUIElement *choice = new GUIGeneral(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second));
+					choice->setOwningPanel(m_panel);
+					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+					m_panel->addGuiElement(choice);
+					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+				}
 			}
 		} else if (m_setterElementsChoice->GetSelection() != wxNOT_FOUND) {
 			// A setter element was selected
