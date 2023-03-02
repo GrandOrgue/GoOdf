@@ -53,6 +53,7 @@ public:
 
 	void OnQuit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
+	void OnHelp(wxCommandEvent& event);
 	void OnWriteODF(wxCommandEvent& event);
 
 	void OrganTreeChildItemLabelChanged(wxString label);

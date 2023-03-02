@@ -20,6 +20,7 @@
 
 #include "GOODFFrame.h"
 #include <wx/aboutdlg.h>
+#include "GOODF.h"
 #include "GOODFDef.h"
 #include <wx/textfile.h>
 #include <wx/stdpaths.h>
@@ -31,6 +32,7 @@
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(wxID_ABOUT, GOODFFrame::OnAbout)
+	EVT_MENU(wxID_HELP, GOODFFrame::OnHelp)
 	EVT_MENU(wxID_EXIT, GOODFFrame::OnQuit)
 	EVT_MENU(ID_WRITE_ODF, GOODFFrame::OnWriteODF)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
@@ -63,7 +65,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_helpMenu = new wxMenu();
 
 	// Add help menu items
-	m_helpMenu->Append(wxID_ABOUT, wxT("&About...\tF1"), wxT("Show about dialog"));
+	m_helpMenu->Append(wxID_ABOUT, wxT("&About..."), wxT("Show about dialog"));
+	m_helpMenu->Append(wxID_HELP, wxT("&GOODF Help \tF1"), wxT("Show application help"));
 
 	// Create a menu bar and append the menus to it
 	m_menuBar = new wxMenuBar();
@@ -268,6 +271,10 @@ void GOODFFrame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	info.SetWebSite(wxT("https://github.com/larspalo/GOODF"));
 
 	wxAboutBox(info);
+}
+
+void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
+	::wxGetApp().m_helpController->DisplayContents();
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+	<head>
+	</head>
+	<body>
+		<ul>
+			<li>
+				<object type="text/sitemap">
+					<param name="Name" value="GOODF Help">
+					<param name="ID" value=1>
+					<param name="Local" value="GOODFHelp.htm">
+				</object>
+			<li>
+				<object type="text/sitemap">
+					<param name="Name" value="Getting started">
+					<param name="ID" value=2>
+					<param name="Local" value="GettingStarted.htm">
+				</object>
+				<ul>
+					<li>
+						<object type="text/sitemap">
+							<param name="Name" value="Introduction">
+							<param name="ID" value=3>
+							<param name="Local" value="Introduction.htm">
+						</object>
+					<li>
+						<object type="text/sitemap">
+							<param name="Name" value="Features">
+							<param name="ID" value=4>
+							<param name="Local" value="Features.htm">
+						</object>
+				</ul>
+		</ul>
+	</body>
+</html>

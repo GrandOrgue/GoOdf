@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+</head>
+<body>
+<ul>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="LoopAuditioneerHelp.htm">
+		<param name="Name" value="LoopAuditioneer Help">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="GettingStarted.htm">
+		<param name="Name" value="Getting started">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="Introduction.htm">
+		<param name="Name" value="Introduction">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="Features.htm">
+		<param name="Name" value="Features">
+	</object>
+<li>
+</ul>
+</body>
+</html>

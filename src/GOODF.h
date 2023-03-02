@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include "GOODFFrame.h"
 #include <vector>
+#include <wx/html/helpctrl.h>
 
 class GOODF : public wxApp {
 public:
@@ -35,6 +36,7 @@ public:
 	std::vector<wxBitmap> m_drawstopBitmaps;
 	std::vector<wxBitmap> m_enclosureStyleBitmaps;
 	std::vector<wxBitmap> m_labelBitmaps;
+	wxHtmlHelpController *m_helpController;
 };
 
 DECLARE_APP(GOODF)

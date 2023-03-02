@@ -198,9 +198,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   endif()
 endif()
 
+# Zip help files to the build
+if(NOT EXISTS "${RESOURCE_DIR}/help")
+  file(MAKE_DIRECTORY ${RESOURCE_DIR}/help)
+endif()
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND zip -r ${RESOURCE_DIR}/help/help.zip . WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/help)
+
 # installation rules
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/ DESTINATION share/icons FILES_MATCHING PATTERN "*.png")
+install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/help/help.zip DESTINATION share/${CMAKE_PROJECT_NAME}/help)
 if(UNIX AND NOT APPLE)
   install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/applications/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/${CMAKE_PROJECT_NAME}/applications)
 endif()

@@ -24,6 +24,7 @@
 #include <wx/image.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include "wx/fs_zip.h"
 
 IMPLEMENT_APP(GOODF)
 
@@ -40,6 +41,12 @@ bool GOODF::OnInit() {
 	fn = fn.GetPath();
 	wxString BaseDir = fn.GetPath();
 	wxString ResourceDir = BaseDir + wxFILE_SEP_PATH + wxT("share");
+
+	// the help controller
+	wxFileSystem::AddHandler(new wxZipFSHandler);
+	m_helpController = new wxHtmlHelpController();
+	m_helpController->AddBook(wxFileName(ResourceDir + wxFILE_SEP_PATH + wxT("GOODF/help/help.zip")));
+	m_helpController->SetFrameParameters(wxT("%s"), wxDefaultSize, wxDefaultPosition);
 
 	// Load icons
 	wxImage::AddHandler(new wxPNGHandler);
