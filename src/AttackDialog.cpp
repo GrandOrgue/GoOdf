@@ -472,10 +472,12 @@ void AttackDialog::OnLoadReleaseSelection(wxCommandEvent& event) {
 	} else {
 		m_currentAttack->loadRelease = false;
 	}
+	m_copyPropertiesBtn->Enable();
 }
 
 void AttackDialog::OnAttackVelocitySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->attackVelocity = m_attackVelocitySpin->GetValue();
+	m_copyPropertiesBtn->Enable();
 }
 
 void AttackDialog::OnMaxTimeSinceLastSpin(wxSpinEvent& WXUNUSED(event)) {
