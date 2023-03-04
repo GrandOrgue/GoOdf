@@ -207,9 +207,23 @@ void OrganFileParser::parseOrganSection() {
 				m_organ->addWindchestgroup(windchest);
 			}
 		}
+		m_organFile.SetPath("/Organ");
 	}
 
 	// parse ranks
+	int nbrRanks = static_cast<int>(m_organFile.ReadLong("NumberOfRanks", 0));
+	if (nbrRanks > 0 && nbrRanks < 1000) {
+		for (int i = 0; i < nbrRanks; i++) {
+			wxString rankGroupName = wxT("Rank") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(rankGroupName)) {
+				m_organFile.SetPath(wxT("/") + rankGroupName);
+				Rank r;
+				r.read(&m_organFile);
+				m_organ->addRank(r);
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse manuals which contain the stops, couplers and divisionals
 	// also they can have tremulant and switch references

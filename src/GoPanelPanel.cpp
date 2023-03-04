@@ -355,10 +355,7 @@ void GoPanelPanel::OnSetterElementChoice(wxCommandEvent& WXUNUSED(event)) {
 		for (int i = 0; i < count; i++)
 			m_organElementsChoice->Deselect(selections[i]);
 	}
-/*
-	if (m_organElementsChoice->GetSelection() != wxNOT_FOUND)
-		m_organElementsChoice->SetSelection(wxNOT_FOUND);
-*/
+
 	m_elementChoiceBtn->Enable();
 	ShouldCombinationControlsBeEnabled();
 }
@@ -369,9 +366,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 		int count = m_organElementsChoice->GetSelections(selections);
 		if (count > 0) {
 			// At least one organ element was selected
-			for (int i = 0; i < selections.size(); i++) {
-
-				// int selectedIndex = m_organElementsChoice->GetSelection();
+			for (unsigned i = 0; i < selections.size(); i++) {
 				std::pair<wxString, int> organElement = ::wxGetApp().m_frame->m_organ->getTypeAndIndexOfElement(selections[i]);
 
 				if (organElement.first == wxT("Manual")) {

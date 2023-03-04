@@ -123,6 +123,64 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 	}
 }
 
+void Rank::read(wxFileConfig *cfg) {
+	name = cfg->Read("Name", wxEmptyString);
+	int firstMIDInote = static_cast<int>(cfg->ReadLong("FirstMidiNoteNumber", 36));
+	if (firstMIDInote > -1 && firstMIDInote < 257) {
+		setFirstMidiNoteNumber(firstMIDInote);
+	}
+	int nbrPipes = static_cast<int>(cfg->ReadLong("NumberOfLogicalPipes", 1));
+	if (nbrPipes > 0 && nbrPipes < 193) {
+		setNumberOfLogicalPipes(nbrPipes);
+	}
+	float ampLvl = static_cast<float>(cfg->ReadDouble("AmplitudeLevel", 100.0f));
+	if (ampLvl >= 0 && ampLvl <= 1000) {
+		setAmplitudeLevel(ampLvl);
+	}
+	float gainValue = static_cast<float>(cfg->ReadDouble("Gain", 0.0f));
+	if (gainValue >= -120 && gainValue <= 40) {
+		setGain(gainValue);
+	}
+	float pitchT = static_cast<float>(cfg->ReadDouble("PitchTuning", 0.0f));
+	if (pitchT >= -1800 && pitchT <= 1800) {
+		setPitchTuning(pitchT);
+	}
+	int trackerDly = static_cast<int>(cfg->ReadLong("TrackerDelay", 0));
+	if (trackerDly > -1 && trackerDly < 10001) {
+		setTrackerDelay(trackerDly);
+	}
+	int harmNbr = static_cast<int>(cfg->ReadLong("HarmonicNumber", 8));
+	if (harmNbr > 0 && harmNbr < 1025) {
+		setHarmonicNumber(harmNbr);
+	}
+	float pitchCorr = static_cast<float>(cfg->ReadDouble("PitchCorrection", 0.0f));
+	if (pitchCorr >= -1800 && pitchCorr <= 1800) {
+		setPitchCorrection(pitchCorr);
+	}
+	int windchestRef = static_cast<int>(cfg->ReadLong("WindchestGroup", 1));
+	if (windchestRef > 0 && windchestRef <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups()) {
+		setWindchest(::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(windchestRef - 1));
+	}
+	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
+	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
+	float minVelocity = static_cast<float>(cfg->ReadDouble("MinVelocityVolume", 100.0f));
+	if (minVelocity >= 0 && minVelocity <= 1000) {
+		setMinVelocityVolume(minVelocity);
+	}
+	float maxVelocity = static_cast<float>(cfg->ReadDouble("MaxVelocityVolume", 100.0f));
+	if (maxVelocity >= 0 && maxVelocity <= 1000) {
+		setMaxVelocityVolume(maxVelocity);
+	}
+	wxString retuningStr = cfg->Read("AcceptsRetuning", wxEmptyString);
+	setAcceptsRetuning(GOODF_functions::parseBoolean(retuningStr, true));
+	for (int i = 0; i < numberOfLogicalPipes; i++) {
+		Pipe p;
+		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);
+		p.read(cfg, pipeNbr, this);
+		m_pipes.push_back(p);
+	}
+}
+
 bool Rank::doesAcceptsRetuning() const {
 	return acceptsRetuning;
 }

@@ -26,6 +26,7 @@
 #include "Attack.h"
 #include "Release.h"
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 
 class Rank;
 
@@ -36,11 +37,13 @@ public:
 	~Pipe();
 
 	void write(wxTextFile *outFile, wxString pipeNr, Rank *parent);
+	void read(wxFileConfig *cfg, wxString pipeNr, Rank *parent);
+	void readAttack(wxFileConfig *cfg, wxString pipeStr);
+
 	bool isFirstAttackRefPath();
 	void writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr);
 	void writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr);
 	void writeRef(wxTextFile *outFile, wxString pipeNr);
-	// wxString fixSeparator(wxString pathToCheck);
 	void writeLoadRelease(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeAttackVelocity(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeMaxTimeSinceLastRelease(wxTextFile *outFile, wxString pipeNr, Attack atk);

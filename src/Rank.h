@@ -26,6 +26,7 @@
 #include <list>
 #include <wx/textfile.h>
 #include <wx/dir.h>
+#include <wx/fileconf.h>
 
 class Rank {
 public:
@@ -34,6 +35,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	void writeFromStop(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
 
 	bool doesAcceptsRetuning() const;
 	void setAcceptsRetuning(bool acceptsRetuning);

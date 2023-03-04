@@ -135,6 +135,174 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 	}
 }
 
+void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
+	wxString cfgBoolValue = cfg->Read(pipeNr + wxT("Percussive"), wxEmptyString);
+	isPercussive = GOODF_functions::parseBoolean(cfgBoolValue, parent->isPercussive());
+	float ampLvl = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("AmplitudeLevel"), 100.0f));
+	if (ampLvl >= 0 && ampLvl <= 1000) {
+		amplitudeLevel = ampLvl;
+	}
+	float gainValue = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("Gain"), 0.0f));
+	if (gainValue >= -120 && gainValue <= 40) {
+		gain = gainValue;
+	}
+	float pitchT = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("PitchTuning"), 0.0f));
+	if (pitchT >= -1800 && pitchT <= 1800) {
+		pitchTuning = pitchT;
+	}
+	int trackerDly = static_cast<int>(cfg->ReadLong(pipeNr + wxT("TrackerDelay"), 0));
+	if (trackerDly > -1 && trackerDly < 10001) {
+		trackerDelay = trackerDly;
+	}
+	int harmNbr = static_cast<int>(cfg->ReadLong(pipeNr + wxT("HarmonicNumber"), parent->getHarmonicNumber()));
+	if (harmNbr > 0 && harmNbr < 1025) {
+		harmonicNumber = harmNbr;
+	}
+	int keyNbr = static_cast<int>(cfg->ReadLong(pipeNr + wxT("MIDIKeyNumber"), -1));
+	if (keyNbr > -1 && keyNbr < 128) {
+		midiKeyNumber = keyNbr;
+	}
+	float pitchFrac = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("MIDIPitchFraction"), -1.0f));
+	if (pitchFrac >= 0 && pitchFrac <= 100) {
+		midiPitchFraction = pitchFrac;
+	}
+	float pitchCorr = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("PitchCorrection"), 0.0f));
+	if (pitchCorr >= -1800 && pitchCorr <= 1800) {
+		pitchCorrection = pitchCorr;
+	}
+	int windchestRef = static_cast<int>(cfg->ReadLong(pipeNr + wxT("WindchestGroup"), 0));
+	if (windchestRef > 0 && windchestRef <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups()) {
+		windchest = ::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(windchestRef - 1);
+	} else {
+		windchest = parent->getWindchest();
+	}
+	float minVelocity = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("MinVelocityVolume"), parent->getMinVelocityVolume()));
+	if (minVelocity >= 0 && minVelocity <= 1000) {
+		minVelocityVolume = minVelocity;
+	}
+	float maxVelocity = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("MaxVelocityVolume"), parent->getMaxVelocityVolume()));
+	if (maxVelocity >= 0 && maxVelocity <= 1000) {
+		maxVelocityVolume = maxVelocity;
+	}
+	wxString retuningStr = cfg->Read(pipeNr + wxT("AcceptsRetuning"), wxEmptyString);
+	acceptsRetuning = GOODF_functions::parseBoolean(retuningStr, parent->doesAcceptsRetuning());
+	int loopXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("LoopCrossfadeLength"), 0));
+	if (loopXfade > 0 && loopXfade < 121) {
+		loopCrossfadeLength = loopXfade;
+	}
+	int relXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCrossfadeLength"), 0));
+	if (relXfade > 0 && relXfade < 201) {
+		releaseCrossfadeLength = relXfade;
+	}
+
+	// the main attack is added first
+	readAttack(cfg, pipeNr);
+	// next any additional attacks
+	int nbrExtraAtks = static_cast<int>(cfg->ReadLong(pipeNr + wxT("AttackCount"), 0));
+	if (nbrExtraAtks > 0 && nbrExtraAtks < 101) {
+		for (int atk = 0; atk < nbrExtraAtks; atk++) {
+			wxString atkStr = pipeNr + wxT("Attack") + GOODF_functions::number_format(atk + 1);
+			readAttack(cfg, atkStr);
+		}
+	}
+
+	int nbrExtraRel = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCount"), 0));
+	if (nbrExtraRel > 0 && nbrExtraRel < 101) {
+		for (int rel = 0; rel < nbrExtraRel; rel++) {
+			wxString relStr = pipeNr + wxT("Release") + GOODF_functions::number_format(rel + 1);
+			wxString relPath = cfg->Read(relStr, wxEmptyString);
+			wxString fullRelPath = GOODF_functions::checkIfFileExist(relPath);
+			if (fullRelPath != wxEmptyString) {
+				int isTrem = static_cast<int>(cfg->ReadLong(relStr + wxT("IsTremulant"), -1));
+				int maxKeyPress = static_cast<int>(cfg->ReadLong(relStr + wxT("MaxKeyPressTime"), -1));
+				int cuePoint = static_cast<int>(cfg->ReadLong(relStr + wxT("CuePoint"), -1));
+				int relEnd = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseEnd"), -1));
+				Release r;
+				r.fileName = relPath;
+				r.fullPath = fullRelPath;
+				if (isTrem > -2 && isTrem < 2)
+					r.isTremulant = isTrem;
+				if (maxKeyPress > -2 && maxKeyPress < 100001)
+					r.maxKeyPressTime = maxKeyPress;
+				if (cuePoint > -2 && cuePoint < 158760001)
+					r.cuePoint = cuePoint;
+				if (relEnd > -2 && relEnd < 158760001)
+					r.releaseEnd = relEnd;
+
+				m_releases.push_back(r);
+			}
+		}
+	}
+
+	// finally a sanity check to see that there is at least one valid attack in the pipe
+	if (m_attacks.empty()) {
+		Attack a;
+		a.fileName = wxT("DUMMY");
+		a.fullPath = wxT("DUMMY");
+		m_attacks.push_back(a);
+	}
+}
+
+void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
+	wxString mainAtkStr = cfg->Read(pipeStr, wxEmptyString);
+	if (mainAtkStr != wxEmptyString) {
+		// the pipe can have a relative path to a sample file or start with REF
+		wxString fullAtkPath = GOODF_functions::checkIfFileExist(mainAtkStr);
+		if (fullAtkPath != wxEmptyString) {
+			wxString loadReleaseStr = cfg->Read(pipeStr + wxT("LoadRelease"), wxEmptyString);
+			int atkVel = static_cast<int>(cfg->ReadLong(pipeStr + wxT("AttackVelocity"), 0));
+			int maxTime = static_cast<int>(cfg->ReadLong(pipeStr + wxT("MaxTimeSinceLastRelease"), -1));
+			int isTrem = static_cast<int>(cfg->ReadLong(pipeStr + wxT("IsTremulant"), -1));
+			int maxKeyPress = static_cast<int>(cfg->ReadLong(pipeStr + wxT("MaxKeyPressTime"), -1));
+			int atkStart = static_cast<int>(cfg->ReadLong(pipeStr + wxT("AttackStart"), 0));
+			int cuePoint = static_cast<int>(cfg->ReadLong(pipeStr + wxT("CuePoint"), -1));
+			int relEnd = static_cast<int>(cfg->ReadLong(pipeStr + wxT("ReleaseEnd"), -1));
+			int loops = static_cast<int>(cfg->ReadLong(pipeStr + wxT("LoopCount"), 0));
+			if (loops < 0)
+				loops = 0;
+			if (loops > 100)
+				loops = 100;
+			Attack a;
+			a.fileName = mainAtkStr;
+			a.fullPath = fullAtkPath;
+			a.loadRelease = GOODF_functions::parseBoolean(loadReleaseStr, !isPercussive);
+			if (atkVel > -1 && atkVel < 128)
+				a.attackVelocity = atkVel;
+			if (maxTime > -2 && maxTime < 100001)
+				a.maxTimeSinceLastRelease = maxTime;
+			if (isTrem > -2 && isTrem < 2)
+				a.isTremulant = isTrem;
+			if (maxKeyPress > -2 && maxKeyPress < 100001)
+				a.maxKeyPressTime = maxKeyPress;
+			if (atkStart > -1 && atkStart < 158760001)
+				a.attackStart = atkStart;
+			if (cuePoint > -2 && cuePoint < 158760001)
+				a.cuePoint = cuePoint;
+			if (relEnd > -2 && relEnd < 158760001)
+				a.releaseEnd = relEnd;
+			for (int i = 0; i > loops; i++) {
+				Loop l;
+				wxString loopId = wxT("Loop") + GOODF_functions::number_format(i + 1);
+				int loopStart = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("Start"), 0));
+				if (loopStart > -1 && loopStart < 158760001)
+					l.start = loopStart;
+				else
+					l.start = 0;
+				int loopEnd = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("End"), 1));
+				if (loopEnd > l.start + 1 && loopEnd < 158760001)
+					l.end = loopEnd;
+				else
+					l.end = l.start + 1;
+			}
+		} else if (mainAtkStr.StartsWith(wxT("REF")) || mainAtkStr.IsSameAs(wxT("DUMMY"), false)) {
+			Attack a;
+			a.fileName = mainAtkStr;
+			a.fullPath = mainAtkStr;
+			m_attacks.push_back(a);
+		}
+	}
+}
+
 bool Pipe::isFirstAttackRefPath() {
 	return m_attacks.front().fileName.StartsWith(wxT("REF"));
 }
