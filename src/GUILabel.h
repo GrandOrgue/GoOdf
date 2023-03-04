@@ -27,6 +27,7 @@
 #include "GoColor.h"
 #include "GoFontSize.h"
 #include "GoImage.h"
+#include <wx/fileconf.h>
 
 class GUILabel : public GUIElement {
 public:
@@ -34,6 +35,8 @@ public:
 	~GUILabel();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	bool isDispAtTopOfDrawstopCol() const;
 	void setDispAtTopOfDrawstopCol(bool dispAtTopOfDrawstopCol);
 	int getDispDrawstopCol() const;
@@ -42,7 +45,7 @@ public:
 	void setDispImageNum(int dispImageNum);
 	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);
-	const GoFontSize& getDispLabelFontSize() const;
+	GoFontSize* getDispLabelFontSize();
 	void setDispLabelFontSize(int size);
 	wxFont getDispLabelFont();
 	void setDispLabelFont(wxFont font);

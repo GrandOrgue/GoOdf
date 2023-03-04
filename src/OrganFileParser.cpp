@@ -132,9 +132,18 @@ void OrganFileParser::parseOrganSection() {
 			m_organFile.SetPath("/Organ");
 		}
 
-		// setter elements can exist that should be re created as GUI elements
-
 		// labels can exist that also should be re created as GUI elements
+		int nbrLabels = static_cast<int>(m_organFile.ReadLong("NumberOfLabels", 0));
+		if (nbrLabels > 0 && nbrLabels < 1000) {
+			for (int i = 0; i < nbrLabels; i++) {
+				wxString labelGroupName = wxT("Label") + GOODF_functions::number_format(i + 1);
+				if (m_organFile.HasGroup(labelGroupName)) {
+					m_organFile.SetPath(wxT("/") + labelGroupName);
+					createGUILabel(m_organ->getOrganPanelAt(0));
+				}
+			}
+			m_organFile.SetPath("/Organ");
+		}
 	}
 
 	// parse enclosures
@@ -234,7 +243,9 @@ void OrganFileParser::parseOrganSection() {
 
 	// parse generals
 
-	// parse panels
+	// parse setter elements from old style (if present) after manuals are parsed
+
+	// parse panels that has images and gui elements but can also exist in old style version
 }
 
 void OrganFileParser::createGUIEnclosure(GoPanel *targetPanel, Enclosure *enclosure) {
@@ -271,5 +282,17 @@ void OrganFileParser::createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch)
 	GUISwitch *switchElement = dynamic_cast<GUISwitch*>(guiSwitch);
 	if (switchElement) {
 		switchElement->read(&m_organFile);
+	}
+}
+
+void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
+	GUIElement *label = new GUILabel();
+	label->setOwningPanel(targetPanel);
+	label->setDisplayName(wxT("GUI Label"));
+	targetPanel->addGuiElement(label);
+
+	GUILabel *theLabel = dynamic_cast<GUILabel*>(label);
+	if (theLabel) {
+		theLabel->read(&m_organFile);
 	}
 }

@@ -19,6 +19,7 @@
  */
 
 #include "GUILabel.h"
+#include "GOODFFunctions.h"
 
 GUILabel::GUILabel() {
 	m_type = wxT("Label");
@@ -122,6 +123,120 @@ void GUILabel::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
+void GUILabel::read(wxFileConfig *cfg) {
+	wxString cfgBoolValue = cfg->Read("FreeXPlacement", wxEmptyString);
+	m_freeXPlacement = GOODF_functions::parseBoolean(cfgBoolValue, true);
+	cfgBoolValue = cfg->Read("FreeYPlacement", wxEmptyString);
+	m_freeYPlacement = GOODF_functions::parseBoolean(cfgBoolValue, true);
+	int xValue = static_cast<int>(cfg->ReadLong("DispXpos", 0));
+	if (xValue > -1 && xValue < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+		m_dispXpos = xValue;
+	}
+	int yValue = static_cast<int>(cfg->ReadLong("DispYpos", 0));
+	if (yValue > -1 && yValue < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+		m_dispYpos = yValue;
+	}
+	cfgBoolValue = cfg->Read("DispAtTopOfDrawstopCol", wxEmptyString);
+	m_dispAtTopOfDrawstopCol = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int col = static_cast<int>(cfg->ReadLong("DispDrawstopCol", 1));
+	if (col > 0 && col < getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols) {
+		m_dispDrawstopCol = col;
+	}
+	cfgBoolValue = cfg->Read("DispSpanDrawstopColToRight", wxEmptyString);
+	m_dispSpanDrawstopColToRight = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	wxString labelColor = cfg->Read("DispLabelColour", wxT("BLACK"));
+	int colorIdx = m_dispLabelColour.getColorNames().Index(labelColor, false);
+	if (colorIdx != wxNOT_FOUND) {
+		m_dispLabelColour.setSelectedColorIndex(colorIdx);
+	} else {
+		wxColour theColor;
+		theColor.Set(labelColor);
+		if (theColor.IsOk())
+			m_dispLabelColour.setColorValue(theColor);
+	}
+	wxString fontSize = cfg->Read("DispLabelFontSize", wxT("NORMAL"));
+	int sizeIdx = m_dispLabelFontSize.getSizeNames().Index(fontSize, false);
+	if (sizeIdx != wxNOT_FOUND) {
+		m_dispLabelFontSize.setSelectedSizeIndex(sizeIdx);
+	} else {
+		// it's possible that it can be a numerical value instead
+		long value;
+		if (fontSize.ToLong(&value)) {
+			if (value > 0 && value < 51)
+				setDispLabelFontSize(value);
+		}
+	}
+	wxFont labelFont(wxFontInfo(m_dispLabelFontSize.getSizeValue()).FaceName(cfg->Read("DispLabelFontName", wxEmptyString)));
+	if (labelFont.IsOk())
+		setDispLabelFont(labelFont);
+	m_name = cfg->Read("Name", wxEmptyString);
+	int imgNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));
+	if (imgNum > -1 && imgNum < 13) {
+		m_dispImageNum = imgNum;
+	}
+	wxString img = cfg->Read("Image", wxEmptyString);
+	wxString fullImgPath = GOODF_functions::checkIfFileExist(img);
+	if (fullImgPath != wxEmptyString) {
+		wxImage realImage = wxImage(fullImgPath);
+		if (realImage.IsOk()) {
+			m_image.setImage(fullImgPath);
+			m_image.setOriginalWidth(realImage.GetWidth());
+			setBitmapWidth(realImage.GetWidth());
+			m_image.setOriginalHeight(realImage.GetHeight());
+			setBitmapHeight(realImage.GetHeight());
+		}
+	}
+	wxString mask = cfg->Read("Mask", wxEmptyString);
+	wxString fullMaskPath = GOODF_functions::checkIfFileExist(mask);
+	if (fullMaskPath != wxEmptyString) {
+		m_image.setMask(fullMaskPath);
+	}
+	int pX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	if (pX > -1 && pX < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+		m_positionX = pX;
+	}
+	int pY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	if (pY > -1 && pY < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+		m_positionY = pY;
+	}
+	int width = static_cast<int>(cfg->ReadLong("Width", 0));
+	if (width > -1 && width < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+		m_width = width;
+	}
+	int height = static_cast<int>(cfg->ReadLong("Height", 0));
+	if (height > -1 && height < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+		m_height = height;
+	}
+	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
+	if (tileX > -1 && tileX < m_bitmapWidth) {
+		m_tileOffsetX = tileX;
+	}
+	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", 0));
+	if (tileY > -1 && tileY < m_bitmapHeight) {
+		m_tileOffsetY = tileY;
+	}
+	int textLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 0));
+	if (textLeft > -1 && textLeft <= m_width) {
+		m_textRectLeft = textLeft;
+	}
+	int textTop = static_cast<int>(cfg->ReadLong("TextRectTop", 0));
+	if (textTop > -1 && textTop <= m_height) {
+		m_textRectTop = textTop;
+	}
+	int textWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", getWidth()));
+	if (textWidth >= 0 && textWidth <= m_width) {
+		m_textRectWidth = textWidth;
+	}
+	int textHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", getHeight()));
+	if (textHeight >= 0 && textHeight <= m_height) {
+		m_textRectHeight = textHeight;
+	}
+	int breakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", getTextRectWidth()));
+	if (breakWidth >= 0 && breakWidth <= m_textRectWidth) {
+		m_textBreakWidth = breakWidth;
+	}
+}
+
 bool GUILabel::isDispAtTopOfDrawstopCol() const {
 	return m_dispAtTopOfDrawstopCol;
 }
@@ -154,8 +269,8 @@ void GUILabel::setDispLabelColour(const GoColor &dispLabelColour) {
 	m_dispLabelColour = dispLabelColour;
 }
 
-const GoFontSize& GUILabel::getDispLabelFontSize() const {
-	return m_dispLabelFontSize;
+GoFontSize* GUILabel::getDispLabelFontSize() {
+	return &m_dispLabelFontSize;
 }
 
 void GUILabel::setDispLabelFontSize(int size) {

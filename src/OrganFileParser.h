@@ -66,6 +66,7 @@ private:
 	void createGUIEnclosure(GoPanel *targetPanel, Enclosure *enclosure);
 	void createGUITremulant(GoPanel *targetPanel, Tremulant *tremulant);
 	void createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch);
+	void createGUILabel(GoPanel *targetPanel);
 
 };
 
