@@ -66,6 +66,53 @@ void Stop::write(wxTextFile *outFile) {
 
 }
 
+void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manual) {
+	m_owningManual = owning_manual;
+	Drawstop::read(cfg, usingOldPanelFormat);
+	int firstPipeKeyNbr = static_cast<int>(cfg->ReadLong("FirstAccessiblePipeLogicalKeyNumber", 1));
+	if (firstPipeKeyNbr > 0 && firstPipeKeyNbr < 129) {
+		m_FirstAccessiblePipeLogicalKeyNumber = firstPipeKeyNbr;
+	}
+	int accessiblePipes = static_cast<int>(cfg->ReadLong("NumberOfAccessiblePipes", 1));
+	if (accessiblePipes > 0 && accessiblePipes < 193) {
+		m_NumberOfAccessiblePipes = accessiblePipes;
+	}
+	int firstPipePipeNbr = static_cast<int>(cfg->ReadLong("FirstAccessiblePipeLogicalPipeNumber", 1));
+	if (firstPipePipeNbr > 0 && firstPipePipeNbr < 193) {
+		m_FirstAccessiblePipeLogicalPipeNumber = firstPipePipeNbr;
+	}
+	int nbrRanks = static_cast<int>(cfg->ReadLong("NumberOfRanks", 0));
+	if (nbrRanks > 0 && nbrRanks <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfRanks()) {
+		// this stop uses references to ranks
+		m_usingInternalRank = false;
+		for (int i = 0; i < nbrRanks; i++) {
+			wxString rankNbrStr = wxT("Rank") + GOODF_functions::number_format(i + 1);
+			int refRank = static_cast<int>(cfg->ReadLong(rankNbrStr, 0));
+			if (refRank > 0 && refRank <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfRanks()) {
+				RankReference rankRef;
+				rankRef.m_rankReference = ::wxGetApp().m_frame->m_organ->getOrganRankAt(refRank - 1);
+				int firstPipe = static_cast<int>(cfg->ReadLong(rankNbrStr + "FirstPipeNumber", 1));
+				if (firstPipe > 0 && firstPipe <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
+					rankRef.m_firstPipeNumber = firstPipe;
+				}
+				int pipeCount = static_cast<int>(cfg->ReadLong(rankNbrStr + "PipeCount", rankRef.m_rankReference->getNumberOfLogicalPipes()));
+				if (pipeCount > -1 && pipeCount <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
+					rankRef.m_pipeCount = pipeCount;
+				}
+				int firstAccKey = static_cast<int>(cfg->ReadLong(rankNbrStr + "FirstAccessibleKeyNumber", 1));
+				if (firstAccKey > 0 && firstAccKey <= m_NumberOfAccessiblePipes) {
+					rankRef.m_firstAccessibleKeyNumber = firstAccKey;
+				}
+				m_referencedRanks.push_back(rankRef);
+			}
+		}
+	} else {
+		// this stop uses an internal rank that must be read
+		m_usingInternalRank = true;
+		m_internalRank.read(cfg);
+	}
+}
+
 Rank* Stop::getRankAt(unsigned index) {
 	auto iterator = std::next(m_referencedRanks.begin(), index);
 	return iterator->m_rankReference;

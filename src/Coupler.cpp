@@ -89,6 +89,43 @@ void Coupler::write(wxTextFile *outFile) {
 	}
 }
 
+void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual) {
+	m_owningManual = owning_manual;
+	Drawstop::read(cfg, usingOldPanelFormat);
+	wxString cfgBoolValue = cfg->Read("UnisonOff", wxEmptyString);
+	m_unisonOff = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int destMan = static_cast<int>(cfg->ReadLong("DestinationManual", -1));
+	if (destMan >= 0 && destMan <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+		m_destinationManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(destMan - 1);
+	}
+	int destShift = static_cast<int>(cfg->ReadLong("DestinationKeyshift", 0));
+	if (destShift > -25 && destShift < 25) {
+		m_destinationKeyshift = destShift;
+	}
+	cfgBoolValue = cfg->Read("CoupleToSubsequentUnisonIntermanualCouplers", wxEmptyString);
+	m_coupleToSubsequentUnisonIntermanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	cfgBoolValue = cfg->Read("CoupleToSubsequentUpwardIntermanualCouplers", wxEmptyString);
+	m_coupleToSubsequentUpwardIntermanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	cfgBoolValue = cfg->Read("CoupleToSubsequentDownwardIntermanualCouplers", wxEmptyString);
+	m_coupleToSubsequentDownwardIntermanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	cfgBoolValue = cfg->Read("CoupleToSubsequentUpwardIntramanualCouplers", wxEmptyString);
+	m_coupleToSubsequentUpwardIntramanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	cfgBoolValue = cfg->Read("CoupleToSubsequentDownwardIntramanualCouplers", wxEmptyString);
+	m_coupleToSubsequentDownwardIntramanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	wxString cplrType = cfg->Read("", wxT("Normal"));
+	if (cplrType.IsSameAs(wxT("Normal"), false) || cplrType.IsSameAs(wxT("Bass"), false) || cplrType.IsSameAs(wxT("Melody"), false)) {
+		m_couplerType = cplrType;
+	}
+	int firstMidiNote = static_cast<int>(cfg->ReadLong("FirstMIDINoteNumber", 0));
+	if (firstMidiNote > -1 && firstMidiNote < 128) {
+		m_firstMIDINoteNumber = firstMidiNote;
+	}
+	int nbrKeys = static_cast<int>(cfg->ReadLong("NumberOfKeys", 127));
+	if (nbrKeys > -1 && nbrKeys < 128) {
+		m_numberOfKeys = nbrKeys;
+	}
+}
+
 wxString Coupler::getCouplerType() {
 	return m_couplerType;
 }

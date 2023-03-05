@@ -24,6 +24,9 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
+#include "GUIStop.h"
+#include "GUICoupler.h"
+#include "GUIDivisional.h"
 
 Manual::Manual() {
 	m_name = wxT("New Manual");
@@ -107,6 +110,148 @@ void Manual::write(wxTextFile *outFile) {
 	}
 }
 
+void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat) {
+	m_name = cfg->Read("Name", wxEmptyString);
+	int logicalKeys = static_cast<int>(cfg->ReadLong("NumberOfLogicalKeys", 1));
+	if (logicalKeys > 0 && logicalKeys < 193) {
+		m_numberOfLogicalKeys = logicalKeys;
+	}
+	int firstAccessibleKey = static_cast<int>(cfg->ReadLong("FirstAccessibleKeyLogicalKeyNumber", 1));
+	if (firstAccessibleKey > 0 && firstAccessibleKey < m_numberOfLogicalKeys) {
+		m_firstAccessibleKeyLogicalKeyNumber = firstAccessibleKey;
+	}
+	int firstMidiNote = static_cast<int>(cfg->ReadLong("FirstAccessibleKeyMIDINoteNumber", 36));
+	if (firstMidiNote > -1 && firstMidiNote < 128) {
+		m_firstAccessibleKeyMIDINoteNumber = firstMidiNote;
+	}
+	int accessibleKeys = static_cast<int>(cfg->ReadLong("NumberOfAccessibleKeys", 0));
+	if (accessibleKeys > -1 && accessibleKeys < 86) {
+		m_numberOfAccessibleKeys = accessibleKeys;
+	}
+	int midiInput = static_cast<int>(cfg->ReadLong("MIDIInputNumber", 0));
+	if (midiInput > -1 && midiInput < 201) {
+		m_midiInputNumber = midiInput;
+	}
+	wxString cfgBoolValue = cfg->Read("Displayed", wxEmptyString);
+	m_displayed = GOODF_functions::parseBoolean(cfgBoolValue, useOldPanelFormat);
+	for (int i = 0; i < 128; i++) {
+		wxString mapStr = wxT("MIDIKey") + GOODF_functions::number_format(i);
+		int mappingValue = static_cast<int>(cfg->ReadLong(mapStr, i));
+		if (mappingValue != i) {
+			if (mappingValue >= 0 && mappingValue <= 127) {
+				setMidiKeyMapValue(mapStr, mappingValue);
+			}
+		}
+	}
+	int nbrSwitches = static_cast<int>(cfg->ReadLong("NumberOfSwitches", 0));
+	if (nbrSwitches > 0 && nbrSwitches < (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+		for (int i = 0; i < nbrSwitches; i++) {
+			wxString switchNbr = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			int swRefNbr = static_cast<int>(cfg->ReadLong(switchNbr, 0));
+			if (swRefNbr > 0 && swRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+				addGoSwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+			}
+		}
+	}
+	int nbrTrems = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
+	if (nbrTrems > 0 && nbrTrems < (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+		for (int i = 0; i < nbrTrems; i++) {
+			wxString tremNbr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
+			int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbr, 0));
+			if (tremRefNbr > 0 && tremRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+				addTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremRefNbr - 1));
+			}
+		}
+	}
+	int nbrStops = static_cast<int>(cfg->ReadLong("NumberOfStops", 0));
+	int nbrCouplers = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
+	int nbrDivisionals = static_cast<int>(cfg->ReadLong("NumberOfDivisionals", 0));
+
+	if (nbrStops > 0 && nbrStops < 1000) {
+		for (int i = 0; i < nbrStops; i++) {
+			wxString stopNbr = wxT("Stop") + GOODF_functions::number_format(i + 1);
+			wxString stopIdx = cfg->Read(stopNbr, wxEmptyString);
+			wxString stopGroup = wxT("Stop") + stopIdx;
+			if (cfg->HasGroup(stopGroup)) {
+				cfg->SetPath(wxT("/") + stopGroup);
+				Stop s;
+				s.read(cfg, useOldPanelFormat, this);
+				::wxGetApp().m_frame->m_organ->addStop(s);
+				addStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(::wxGetApp().m_frame->m_organ->getNumberOfStops() - 1));
+				if (s.isDisplayed()) {
+					// we must also create a GUI element for that stop from this group information
+					int lastStopIdx = m_stops.size() - 1;
+					GUIElement *guiStop = new GUIStop(getStopAt(lastStopIdx));
+					guiStop->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiStop->setDisplayName(s.getName());
+					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiStop);
+
+					GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);
+					if (stopElement) {
+						stopElement->read(cfg, false);
+					}
+				}
+			}
+		}
+	}
+
+	if (nbrCouplers > 0 && nbrCouplers < 1000) {
+		for (int i = 0; i < nbrCouplers; i++) {
+			wxString couplerNbr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
+			wxString cplrIdx = cfg->Read(couplerNbr, wxEmptyString);
+			wxString couplerGroup = wxT("Coupler") + cplrIdx;
+			if (cfg->HasGroup(couplerGroup)) {
+				cfg->SetPath(wxT("/") + couplerGroup);
+				Coupler c;
+				c.read(cfg, useOldPanelFormat, this);
+				::wxGetApp().m_frame->m_organ->addCoupler(c);
+				addCoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(::wxGetApp().m_frame->m_organ->getNumberOfCouplers() - 1));
+				if (c.isDisplayed()) {
+					// we must also create a GUI element for that coupler from this group information
+					int lastCplrIdx = m_couplers.size() - 1;
+					GUIElement *guiCplr = new GUIStop(getStopAt(lastCplrIdx));
+					guiCplr->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiCplr->setDisplayName(c.getName());
+					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiCplr);
+
+					GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
+					if (cplrElement) {
+						cplrElement->read(cfg, false);
+					}
+				}
+			}
+		}
+	}
+
+	if (nbrDivisionals > 0 && nbrDivisionals < 1000) {
+		for (int i = 0; i < nbrDivisionals; i++) {
+			wxString divNbr = wxT("Divisionals") + GOODF_functions::number_format(i + 1);
+			wxString divIdx = cfg->Read(divNbr, wxEmptyString);
+			wxString divGroup = wxT("Divisional") + divIdx;
+			if (cfg->HasGroup(divGroup)) {
+				cfg->SetPath(wxT("/") + divGroup);
+				Divisional d;
+				d.read(cfg, useOldPanelFormat, this);
+				::wxGetApp().m_frame->m_organ->addDivisional(d);
+				addDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(::wxGetApp().m_frame->m_organ->getNumberOfDivisionals() - 1));
+				if (d.isDisplayed()) {
+					// we must also create a GUI element for that divisional from this group information
+					int lastDivIdx = m_divisionals.size() - 1;
+					GUIElement *guiDiv = new GUIDivisional(getDivisionalAt(lastDivIdx));
+					guiDiv->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiDiv->setDisplayName(d.getName());
+					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiDiv);
+
+					GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
+					if (divElement) {
+						divElement->read(cfg, true);
+					}
+				}
+			}
+		}
+	}
+}
+
 wxString Manual::getName() {
 	return m_name;
 }
@@ -169,6 +314,10 @@ void Manual::setIsPedal(bool isPedal) {
 	if (m_thePedal)
 		::wxGetApp().m_frame->m_organ->setHasPedals(true);
 	// TODO: maybe need to adjust organ value of has pedals if the manual is deleted?
+}
+
+bool Manual::isDisplayed() {
+	return m_displayed;
 }
 
 unsigned Manual::getNumberOfStops() {
@@ -441,7 +590,7 @@ void Manual::setMidiKeyMapValue(wxString key, int value) {
 }
 
 void Manual::SetupBasicMidiKeyMap() {
-	for (unsigned i = 0; i < 127; i++) {
+	for (unsigned i = 0; i < 128; i++) {
 		wxString key = wxT("MIDIKey") + GOODF_functions::number_format(i);
 		originalMidiKeyMap.insert(std::make_pair(key, i));
 	}

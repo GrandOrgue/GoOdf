@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include <list>
 #include "Stop.h"
 #include "Divisional.h"
@@ -38,6 +39,8 @@ public:
 	~Manual();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool useOldPanelFormat);
+
 	wxString getName();
 	void setName(wxString name);
 	int getNumberOfLogicalKeys();
@@ -52,6 +55,7 @@ public:
 	void setMidiInputNumber(int midiInputNbr);
 	bool isThePedal();
 	void setIsPedal(bool isPedal);
+	bool isDisplayed();
 	unsigned getNumberOfStops();
 	Stop* getStopAt(unsigned index);
 	void addStop(Stop *stop);

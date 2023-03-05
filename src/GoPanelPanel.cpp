@@ -270,7 +270,9 @@ void GoPanelPanel::setPanel(GoPanel *panel) {
 	}
 	m_setterElementsChoice->Clear();
 	m_setterElementsChoice->InsertItems(::wxGetApp().m_frame->m_organ->getSetterElements(), 0);
-	if (m_organElementsChoice->GetSelection() == wxNOT_FOUND && m_setterElementsChoice->GetSelection() == wxNOT_FOUND) {
+	wxArrayInt selections;
+	int count = m_organElementsChoice->GetSelections(selections);
+	if (count < 1 && m_setterElementsChoice->GetSelection() == wxNOT_FOUND) {
 		m_elementChoiceBtn->Disable();
 	} else {
 		m_elementChoiceBtn->Enable();

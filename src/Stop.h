@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "Drawstop.h"
 #include <list>
 #include "RankReference.h"
@@ -35,6 +36,8 @@ public:
 	~Stop();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manual);
+
 	Rank* getRankAt(unsigned index);
 	RankReference* getRankReferenceAt(unsigned index);
 	unsigned getNumberOfRanks();

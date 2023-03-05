@@ -90,6 +90,81 @@ void Divisional::write(wxTextFile *outFile) {
 	}
 }
 
+void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual) {
+	m_owningManual = owning_manual;
+	Button::read(cfg, usingOldPanelFormat);
+	wxString cfgBoolValue = cfg->Read("Protected", wxEmptyString);
+	m_protected = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int nbrStops = static_cast<int>(cfg->ReadLong("NumberOfStops", 0));
+	if (nbrStops > 0 && nbrStops <= (int) m_owningManual->getNumberOfStops()) {
+		for (int i = 0; i < nbrStops; i++) {
+			wxString stopNbr = wxT("Stop") + GOODF_functions::number_format(i + 1);
+			wxString stopOnMan = cfg->Read(stopNbr, wxEmptyString);
+			long value = 0;
+			if (stopOnMan.ToLong(&value)) {
+				if (value > 0) {
+					// the stop is on
+					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(value), true));
+				} else {
+					// the stop is off
+					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(labs(value)), false));
+				}
+			}
+		}
+	}
+	int nbrCplrs = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
+	if (nbrCplrs > 0 && nbrCplrs <= (int) m_owningManual->getNumberOfCouplers()) {
+		for (int i = 0; i < nbrCplrs; i++) {
+			wxString cplrNbr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
+			wxString cplrOnMan = cfg->Read(cplrNbr, wxEmptyString);
+			long value = 0;
+			if (cplrOnMan.ToLong(&value)) {
+				if (value > 0) {
+					// the coupler is on
+					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(value), true));
+				} else {
+					// the coupler is off
+					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(labs(value)), false));
+				}
+			}
+		}
+	}
+	int nbrTrems = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
+	if (nbrTrems > 0 && nbrTrems <= (int) m_owningManual->getNumberOfTremulants()) {
+		for (int i = 0; i < nbrTrems; i++) {
+			wxString tremNbr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
+			wxString tremId = cfg->Read(tremNbr, wxEmptyString);
+			long value = 0;
+			if (tremId.ToLong(&value)) {
+				if (value > 0) {
+					// the tremulant is on
+					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(value), true));
+				} else {
+					// the tremulant is off
+					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(labs(value)), false));
+				}
+			}
+		}
+	}
+	int nbrSwitches = static_cast<int>(cfg->ReadLong("NumberOfSwitches", 0));
+	if (nbrSwitches > 0 && nbrSwitches <= (int) m_owningManual->getNumberOfGoSwitches()) {
+		for (int i = 0; i < nbrSwitches; i++) {
+			wxString swNbr = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			wxString swId = cfg->Read(swNbr, wxEmptyString);
+			long value = 0;
+			if (swId.ToLong(&value)) {
+				if (value > 0) {
+					// the switch is on
+					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(value), true));
+				} else {
+					// the switch is off
+					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(labs(value)), false));
+				}
+			}
+		}
+	}
+}
+
 bool Divisional::isProtected() {
 	return m_protected;
 }

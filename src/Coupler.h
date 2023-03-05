@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "Drawstop.h"
 #include <list>
 
@@ -34,6 +35,8 @@ public:
 	~Coupler();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual);
+
 	wxString getCouplerType();
 	void setCouplerType(wxString couplerType);
 	bool isCoupleToSubsequentDownwardIntermanualCouplers();

@@ -236,6 +236,30 @@ void OrganFileParser::parseOrganSection() {
 
 	// parse manuals which contain the stops, couplers and divisionals
 	// also they can have tremulant and switch references
+	int nbrManuals = static_cast<int>(m_organFile.ReadLong("NumberOfManuals", 0));
+	if (nbrManuals > 0 && nbrManuals < 17) {
+		if (m_organ->doesHavePedals())
+			nbrManuals += 1;
+		for (int i = 0; i < nbrManuals; i++) {
+			int manIdxNbr = i;
+			if (!m_organ->doesHavePedals())
+				manIdxNbr += 1;
+			wxString manGroupName = wxT("Manual") + GOODF_functions::number_format(manIdxNbr);
+			if (m_organFile.HasGroup(manGroupName)) {
+				m_organFile.SetPath(wxT("/") + manGroupName);
+				Manual m;
+				if (manIdxNbr == 0)
+					m.setIsPedal(true);
+				m.read(&m_organFile, m_isUsingOldPanelFormat);
+				m_organ->addManual(m);
+				if (m.isDisplayed()) {
+					int lastManIdx = m_organ->getNumberOfManuals() - 1;
+					createGUIManual(m_organ->getOrganPanelAt(0), m_organ->getOrganManualAt(lastManIdx));
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse reversible pistons
 
@@ -295,4 +319,8 @@ void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
 	if (theLabel) {
 		theLabel->read(&m_organFile);
 	}
+}
+
+void createGUIManual(GoPanel *targetPanel, Manual *manual) {
+
 }
