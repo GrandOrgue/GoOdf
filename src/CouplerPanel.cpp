@@ -44,6 +44,8 @@ BEGIN_EVENT_TABLE(CouplerPanel, wxPanel)
 	EVT_BUTTON(ID_COUPLER_REMOVE_SWITCH_BTN, CouplerPanel::OnRemoveSwitchReferenceBtn)
 	EVT_LISTBOX(ID_COUPLER_AVAILABLE_SWITCHES, CouplerPanel::OnSwitchListboxSelection)
 	EVT_LISTBOX(ID_COUPLER_REFERENCED_SWITCHES, CouplerPanel::OnReferencedSwitchSelection)
+	EVT_RADIOBUTTON(ID_COUPLER_UNISON_OFF_YES, CouplerPanel::OnUnisonOffRadio)
+	EVT_RADIOBUTTON(ID_COUPLER_UNISON_OFF_NO, CouplerPanel::OnUnisonOffRadio)
 	EVT_CHOICE(ID_COUPLER_DEST_MAN_CHOICE, CouplerPanel::OnDestinationManualChoice)
 	EVT_SPINCTRL(ID_COUPLER_DEST_KEYSHIFT_SPIN, CouplerPanel::OnDestinationKeyShiftSpin)
 	EVT_CHOICE(ID_COUPLER_TYPE_CHOICE, CouplerPanel::OnCouplerTypeChoice)
@@ -274,6 +276,31 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize
 	);
 	fourthRow->Add(m_storeInGeneralNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	fourthRow->AddStretchSpacer();
+	wxStaticText *unisonOffText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Unison off: ")
+	);
+	fourthRow->Add(unisonOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_unisonOffYes = new wxRadioButton(
+		this,
+		ID_COUPLER_UNISON_OFF_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	fourthRow->Add(m_unisonOffYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_unisonOffNo = new wxRadioButton(
+		this,
+		ID_COUPLER_UNISON_OFF_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fourthRow->Add(m_unisonOffNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_unisonOffNo->SetValue(true);
 	panelSizer->Add(fourthRow, 0, wxGROW);
 
 	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -572,6 +599,11 @@ void CouplerPanel::setCoupler(Coupler *coupler) {
 	m_addReferencedSwitch->Disable();
 	m_removeReferencedSwitch->Disable();
 
+	if (m_coupler->isUnisonOff())
+		m_unisonOffYes->SetValue(true);
+	else
+		m_unisonOffNo->SetValue(true);
+
 	// update/populate available manuals
 	if (!availableManuals.IsEmpty())
 		availableManuals.Empty();
@@ -686,6 +718,16 @@ void CouplerPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 	} else {
 		m_storeInGeneralNo->SetValue(true);
 		m_coupler->setStoreInGeneral(false);
+	}
+}
+
+void CouplerPanel::OnUnisonOffRadio(wxCommandEvent& event) {
+	if (event.GetId() == ID_COUPLER_UNISON_OFF_YES) {
+		m_unisonOffYes->SetValue(true);
+		m_coupler->setUnisonOff(true);
+	} else {
+		m_unisonOffNo->SetValue(true);
+		m_coupler->setUnisonOff(false);
 	}
 }
 

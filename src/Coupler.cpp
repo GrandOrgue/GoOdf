@@ -50,14 +50,6 @@ void Coupler::write(wxTextFile *outFile) {
 	} else {
 		outFile->AddLine(wxT("UnisonOff=N"));
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_destinationManual));
-		/*
-		unsigned manId;
-		if (::wxGetApp().m_frame->m_organ->doesHavePedals()) {
-			manId = ::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_destinationManual) - 1;
-		} else {
-			manId = ::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_destinationManual);
-		}
-		outFile->AddLine(wxT("DestinationManual=") + wxString::Format(wxT("%u"), manId)); */
 		outFile->AddLine(wxT("DestinationManual=") + manId);
 		outFile->AddLine(wxT("DestinationKeyshift=") + wxString::Format(wxT("%i"), m_destinationKeyshift));
 		if (m_coupleToSubsequentUnisonIntermanualCouplers)

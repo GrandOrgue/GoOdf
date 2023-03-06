@@ -50,6 +50,8 @@ private:
 	wxRadioButton *m_storeInDivisionalNo;
 	wxRadioButton *m_storeInGeneralYes;
 	wxRadioButton *m_storeInGeneralNo;
+	wxRadioButton *m_unisonOffYes;
+	wxRadioButton *m_unisonOffNo;
 	wxChoice *m_destinationManualChoice;
 	wxSpinCtrl *m_destinationKeyShiftSpin;
 	wxChoice *m_couplerTypeChoice;
@@ -80,6 +82,7 @@ private:
 	void OnGcStateChange(wxCommandEvent& event);
 	void OnStoreInDivisionalChange(wxCommandEvent& event);
 	void OnStoreInGeneralChange(wxCommandEvent& event);
+	void OnUnisonOffRadio(wxCommandEvent& event);
 	void OnDestinationManualChoice(wxCommandEvent& event);
 	void OnDestinationKeyShiftSpin(wxSpinEvent& event);
 	void OnCouplerTypeChoice(wxCommandEvent& event);
