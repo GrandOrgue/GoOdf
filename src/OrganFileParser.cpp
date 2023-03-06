@@ -321,6 +321,14 @@ void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
 	}
 }
 
-void createGUIManual(GoPanel *targetPanel, Manual *manual) {
+void OrganFileParser::createGUIManual(GoPanel *targetPanel, Manual *manual) {
+	GUIElement *man = new GUIManual(manual);
+	man->setOwningPanel(targetPanel);
+	man->setDisplayName(manual->getName());
+	targetPanel->addGuiElement(man);
 
+	GUIManual *theManual = dynamic_cast<GUIManual*>(man);
+	if (theManual) {
+		theManual->read(&m_organFile);
+	}
 }

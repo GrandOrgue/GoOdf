@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "GUIElements.h"
 #include "Manual.h"
 #include <list>
@@ -49,6 +50,8 @@ public:
 	~GUIManual();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg);
+
 	bool isReferencing(Manual *man);
 	void updateDisplayName();
 
