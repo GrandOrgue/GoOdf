@@ -287,10 +287,6 @@ float Rank::getPitchCorrection() const {
 
 void Rank::setPitchCorrection(float pitchCorrection) {
 	this->pitchCorrection = pitchCorrection;
-/*
-	for (std::list<Pipe>::iterator pipe = m_pipes.begin(); pipe != m_pipes.end(); ++pipe) {
-		pipe->pitchCorrection = this->pitchCorrection;
-	} */
 }
 
 float Rank::getPitchTuning() const {
@@ -391,7 +387,7 @@ void Rank::readPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 			wxDIR_FILES
 		);
 
@@ -400,7 +396,7 @@ void Rank::readPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -446,7 +442,7 @@ void Rank::readPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 					wxDIR_FILES
 				);
 
@@ -689,7 +685,7 @@ void Rank::addToPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 			wxDIR_FILES
 		);
 
@@ -698,7 +694,7 @@ void Rank::addToPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -744,7 +740,7 @@ void Rank::addToPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 					wxDIR_FILES
 				);
 
@@ -973,7 +969,7 @@ void Rank::addTremulantToPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 			wxDIR_FILES
 		);
 
@@ -982,7 +978,7 @@ void Rank::addTremulantToPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -1027,7 +1023,7 @@ void Rank::addTremulantToPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 					wxDIR_FILES
 				);
 
@@ -1111,7 +1107,7 @@ void Rank::addReleasesToPipes() {
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeReleases,
-			wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
 			wxDIR_FILES
 		);
 
