@@ -367,7 +367,7 @@ void Rank::readPipes(
 		bool cont = pipeRoot.GetFirst(&folder, wxT("*"), wxDIR_DIRS);
 		while (cont) {
 			allFolders.Add(folder);
-		    cont = pipeRoot.GetNext(&folder);
+			cont = pipeRoot.GetNext(&folder);
 		}
 
 		if (!allFolders.IsEmpty()) {
@@ -546,16 +546,16 @@ void Rank::readPipes(
 					// first store all folders existing in root
 					wxString folderName;
 					bool keepLooking = tremRoot.GetFirst(&folderName, wxT("*"), wxDIR_DIRS);
-					while (keepLooking) {
+					do {
 						foldersInTremulantFolder.Add(folderName);
-					    keepLooking = tremRoot.GetNext(&folderName);
-					}
+						keepLooking = tremRoot.GetNext(&folderName);
+					} while (keepLooking);
 
 					// then get only those with release prefix in them
 					if (!foldersInTremulantFolder.IsEmpty()) {
 						for (unsigned k = 0; k < foldersInTremulantFolder.GetCount(); k++) {
-							if (allFolders.Item(k).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString)
-								tremReleaseFolders.Add(allFolders.Item(k));
+							if (foldersInTremulantFolder.Item(k).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString)
+								tremReleaseFolders.Add(foldersInTremulantFolder.Item(k));
 						}
 					}
 
@@ -590,7 +590,7 @@ void Rank::readPipes(
 
 							if (extractKeyPressTime) {
 								// we try to get a number that have at least 2 digits from the folder name
-								wxString relFolderName = tremulantFolders.Item(j).AfterLast(wxFILE_SEP_PATH);
+								wxString relFolderName = (pipeReleasesToAdd.Item(k).BeforeLast(wxFILE_SEP_PATH)).AfterLast(wxFILE_SEP_PATH);
 								int firstNumberIndex = -1;
 								long keyPressTime = -1;
 								for (unsigned l = 0; l < relFolderName.Length(); l++) {
@@ -1311,7 +1311,7 @@ void Rank::fillArrayStringWithFiles(wxDir &root, wxString path, wxArrayString &l
 	root.GetAllFiles(
 		path,
 		&list,
-		wxString::Format(wxT("%s*.*"), GOODF_functions::number_format(pipeIndex + firstMidiNoteNumber)),
+		wxString::Format(wxT("*%i*.*"), (pipeIndex + firstMidiNoteNumber)),
 		wxDIR_FILES
 	);
 }
