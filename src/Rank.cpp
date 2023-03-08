@@ -63,7 +63,7 @@ void Rank::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 	if (pitchCorrection != 0)
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
-	wxString wcRef = wxString::Format(wxT("%u"), ::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
+	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
 	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
 	if (percussive)
 		outFile->AddLine(wxT("Percussive=Y"));
@@ -100,7 +100,7 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		outFile->AddLine(wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 	if (pitchCorrection != 0)
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
-	wxString wcRef = wxString::Format(wxT("%u"), ::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
+	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
 	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
 	if (percussive)
 		outFile->AddLine(wxT("Percussive=Y"));
@@ -852,8 +852,8 @@ void Rank::addToPipes(
 					// then get only those with release prefix in them
 					if (!foldersInTremulantFolder.IsEmpty()) {
 						for (unsigned k = 0; k < foldersInTremulantFolder.GetCount(); k++) {
-							if (allFolders.Item(k).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString)
-								tremReleaseFolders.Add(allFolders.Item(k));
+							if (foldersInTremulantFolder.Item(k).Lower().Find(releaseFolderPrefix.Lower()) != wxNOT_FOUND && releaseFolderPrefix != wxEmptyString)
+								tremReleaseFolders.Add(foldersInTremulantFolder.Item(k));
 						}
 					}
 
@@ -888,7 +888,7 @@ void Rank::addToPipes(
 
 							if (extractKeyPressTime) {
 								// we try to get a number that have at least 2 digits from the folder name
-								wxString relFolderName = tremulantFolders.Item(j).AfterLast(wxFILE_SEP_PATH);
+								wxString relFolderName = (pipeReleasesToAdd.Item(k).BeforeLast(wxFILE_SEP_PATH)).AfterFirst(wxFILE_SEP_PATH);
 								int firstNumberIndex = -1;
 								long keyPressTime = -1;
 								for (unsigned l = 0; l < relFolderName.Length(); l++) {
