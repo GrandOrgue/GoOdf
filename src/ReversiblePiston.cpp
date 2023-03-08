@@ -59,6 +59,38 @@ void ReversiblePiston::write(wxTextFile *outFile) {
 	}
 }
 
+void ReversiblePiston::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Button::read(cfg, usingOldPanelFormat);
+	wxString type = cfg->Read("ObjectType", wxEmptyString);
+	if (type.IsSameAs(wxT("STOP"), false)) {
+		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
+		if (manNbr >= 0 && manNbr <= ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			int stopNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
+			if (stopNbr > 0 && stopNbr <= ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfStops()) {
+				setStop(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getStopAt(stopNbr - 1));
+			}
+		}
+	} else if (type.IsSameAs(wxT("COUPLER"), false)) {
+		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
+		if (manNbr >= 0 && manNbr <= ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			int couplerNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
+			if (couplerNbr > 0 && couplerNbr <= ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfCouplers()) {
+				setCoupler(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getCouplerAt(couplerNbr - 1));
+			}
+		}
+	} else if (type.IsSameAs(wxT("SWITCH"), false)) {
+		int switchNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
+		if (switchNbr > 0 && switchNbr <= ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+			setSwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(switchNbr - 1));
+		}
+	} else if (type.IsSameAs(wxT("TREMULANT"), false)) {
+		int tremNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
+		if (tremNbr > 0 && tremNbr <= ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+			setTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremNbr - 1));
+		}
+	}
+}
+
 Stop* ReversiblePiston::getStop() {
 	return m_stop;
 }

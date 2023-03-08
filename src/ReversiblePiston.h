@@ -22,6 +22,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "Button.h"
 #include "Stop.h"
 #include "Coupler.h"
@@ -34,6 +35,7 @@ public:
 	~ReversiblePiston();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
 
 	Stop* getStop();
 	void setStop(Stop* stop);

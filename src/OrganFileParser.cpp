@@ -24,6 +24,7 @@
 #include "GOODFFunctions.h"
 #include "GUITremulant.h"
 #include "GUISwitch.h"
+#include "GUIReversiblePiston.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -262,6 +263,23 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse reversible pistons
+	int nbrPistons = static_cast<int>(m_organFile.ReadLong("NumberOfReversiblePistons", 0));
+	if (nbrPistons > 0 && nbrPistons < 33) {
+		for (int i = 0; i < nbrPistons; i++) {
+			wxString pistonGroupName = wxT("ReversiblePiston") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(pistonGroupName)) {
+				m_organFile.SetPath(wxT("/") + pistonGroupName);
+				ReversiblePiston p;
+				p.read(&m_organFile, m_isUsingOldPanelFormat);
+				m_organ->addReversiblePiston(p);
+				if (p.isDisplayed()) {
+					unsigned lastPistonIdx = m_organ->getNumberOfReversiblePistons() - 1;
+					createGUIPiston(m_organ->getOrganPanelAt(0), m_organ->getReversiblePistonAt(lastPistonIdx));
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse divisional couplers
 
@@ -330,5 +348,17 @@ void OrganFileParser::createGUIManual(GoPanel *targetPanel, Manual *manual) {
 	GUIManual *theManual = dynamic_cast<GUIManual*>(man);
 	if (theManual) {
 		theManual->read(&m_organFile);
+	}
+}
+
+void OrganFileParser::createGUIPiston(GoPanel *targetPanel, ReversiblePiston *piston) {
+	GUIElement *revPiston = new GUIReversiblePiston(piston);
+	revPiston->setOwningPanel(targetPanel);
+	revPiston->setDisplayName(piston->getName());
+	targetPanel->addGuiElement(revPiston);
+
+	GUIReversiblePiston *thePiston = dynamic_cast<GUIReversiblePiston*>(piston);
+	if (thePiston) {
+		thePiston->read(&m_organFile, thePiston->isDisplayAsPiston());
 	}
 }

@@ -68,6 +68,7 @@ private:
 	void createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch);
 	void createGUILabel(GoPanel *targetPanel);
 	void createGUIManual(GoPanel *targetPanel, Manual *manual);
+	void createGUIPiston(GoPanel *targetPanel, ReversiblePiston *piston);
 
 };
 
