@@ -69,6 +69,7 @@ private:
 	void createGUILabel(GoPanel *targetPanel);
 	void createGUIManual(GoPanel *targetPanel, Manual *manual);
 	void createGUIPiston(GoPanel *targetPanel, ReversiblePiston *piston);
+	void createGUIDivCplr(GoPanel *targetPanel, DivisionalCoupler *div_cplr);
 
 };
 

@@ -25,6 +25,7 @@
 #include "GUITremulant.h"
 #include "GUISwitch.h"
 #include "GUIReversiblePiston.h"
+#include "GUIDivisionalCoupler.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -282,6 +283,23 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse divisional couplers
+	int nbrDivCplrs = static_cast<int>(m_organFile.ReadLong("NumberOfDivisionalCouplers", 0));
+	if (nbrDivCplrs > 0 && nbrDivCplrs < 9) {
+		for (int i = 0; i < nbrDivCplrs; i++) {
+			wxString divCplrGroupName = wxT("DivisionalCoupler") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(divCplrGroupName)) {
+				m_organFile.SetPath(wxT("/") + divCplrGroupName);
+				DivisionalCoupler divCplr;
+				divCplr.read(&m_organFile, m_isUsingOldPanelFormat);
+				m_organ->addDivisionalCoupler(divCplr);
+				if (divCplr.isDisplayed()) {
+					unsigned lastIdx = m_organ->getNumberOfOrganDivisionalCouplers() - 1;
+					createGUIDivCplr(m_organ->getOrganPanelAt(0), m_organ->getOrganDivisionalCouplerAt(lastIdx));
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse generals
 
@@ -357,8 +375,20 @@ void OrganFileParser::createGUIPiston(GoPanel *targetPanel, ReversiblePiston *pi
 	revPiston->setDisplayName(piston->getName());
 	targetPanel->addGuiElement(revPiston);
 
-	GUIReversiblePiston *thePiston = dynamic_cast<GUIReversiblePiston*>(piston);
+	GUIReversiblePiston *thePiston = dynamic_cast<GUIReversiblePiston*>(revPiston);
 	if (thePiston) {
 		thePiston->read(&m_organFile, thePiston->isDisplayAsPiston());
+	}
+}
+
+void OrganFileParser::createGUIDivCplr(GoPanel *targetPanel, DivisionalCoupler *div_cplr) {
+	GUIElement *divCoupler = new GUIDivisionalCoupler(div_cplr);
+	divCoupler->setOwningPanel(targetPanel);
+	divCoupler->setDisplayName(div_cplr->getName());
+	targetPanel->addGuiElement(divCoupler);
+
+	GUIDivisionalCoupler *theDivCplr = dynamic_cast<GUIDivisionalCoupler*>(divCoupler);
+	if (theDivCplr) {
+		theDivCplr->read(&m_organFile, theDivCplr->isDisplayAsPiston());
 	}
 }

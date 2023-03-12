@@ -47,6 +47,27 @@ void DivisionalCoupler::write(wxTextFile *outFile) {
 	}
 }
 
+void DivisionalCoupler::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Drawstop::read(cfg, usingOldPanelFormat);
+	wxString cfgBoolValue = cfg->Read("BiDirectionalCoupling", wxEmptyString);
+	m_biDirectionalCoupling = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int nbr_manuals = static_cast<int>(cfg->ReadLong("NumberOfManuals", 1));
+	int manuals_in_organ = (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
+	if (nbr_manuals > manuals_in_organ)
+		nbr_manuals = manuals_in_organ;
+	for (int i = 0; i < nbr_manuals; i++) {
+		wxString manNbrId = wxT("Manual") + GOODF_functions::number_format(i + 1);
+		int manRefNbr = static_cast<int>(cfg->ReadLong(manNbrId, -1));
+		if (manRefNbr >= 0 && manRefNbr <= manuals_in_organ) {
+			if (::wxGetApp().m_frame->m_organ->doesHavePedals()) {
+				addAffectedManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(manRefNbr));
+			} else {
+				addAffectedManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(manRefNbr - 1));
+			}
+		}
+	}
+}
+
 bool DivisionalCoupler::hasBiDirectionalCoupling() {
 	return m_biDirectionalCoupling;
 }

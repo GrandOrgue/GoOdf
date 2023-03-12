@@ -32,6 +32,8 @@ public:
 	~DivisionalCoupler();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	bool hasBiDirectionalCoupling();
 	void setBiDirectionalCoupling(bool isBiDirectional);
 	void addAffectedManual(Manual *manual);
