@@ -26,6 +26,7 @@
 #include "GUISwitch.h"
 #include "GUIReversiblePiston.h"
 #include "GUIDivisionalCoupler.h"
+#include "GUIGeneral.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -302,6 +303,23 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse generals
+	int nbrGenerals = static_cast<int>(m_organFile.ReadLong("NumberOfGenerals", 0));
+	if (nbrGenerals > 0 && nbrGenerals < 100) {
+		for (int i = 0; i < nbrGenerals; i++) {
+			wxString generalGroupName = wxT("General") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(generalGroupName)) {
+				m_organFile.SetPath(wxT("/") + generalGroupName);
+				General g;
+				g.read(&m_organFile, m_isUsingOldPanelFormat);
+				m_organ->addGeneral(g);
+				if (g.isDisplayed()) {
+					unsigned lastIdx = m_organ->getNumberOfGenerals() - 1;
+					createGUIGeneral(m_organ->getOrganPanelAt(0), m_organ->getOrganGeneralAt(lastIdx));
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse setter elements from old style (if present) after manuals are parsed
 
@@ -390,5 +408,17 @@ void OrganFileParser::createGUIDivCplr(GoPanel *targetPanel, DivisionalCoupler *
 	GUIDivisionalCoupler *theDivCplr = dynamic_cast<GUIDivisionalCoupler*>(divCoupler);
 	if (theDivCplr) {
 		theDivCplr->read(&m_organFile, theDivCplr->isDisplayAsPiston());
+	}
+}
+
+void OrganFileParser::createGUIGeneral(GoPanel *targetPanel, General *general) {
+	GUIElement *gen = new GUIGeneral(general);
+	gen->setOwningPanel(targetPanel);
+	gen->setDisplayName(general->getName());
+	targetPanel->addGuiElement(gen);
+
+	GUIGeneral *theGeneral = dynamic_cast<GUIGeneral*>(gen);
+	if (theGeneral) {
+		theGeneral->read(&m_organFile, theGeneral->isDisplayAsPiston());
 	}
 }

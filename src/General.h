@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include "Button.h"
 #include <list>
 #include <utility>
@@ -38,6 +39,8 @@ public:
 	~General();
 
 	void write(wxTextFile *outFile);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+
 	bool isProtected();
 	void setProtected(bool option);
 	unsigned getNumberOfStops();

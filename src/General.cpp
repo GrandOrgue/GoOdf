@@ -117,6 +117,125 @@ void General::write(wxTextFile *outFile) {
 	}
 }
 
+void General::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+	Button::read(cfg, usingOldPanelFormat);
+	wxString cfgBoolValue = cfg->Read("Protected", wxEmptyString);
+	m_protected = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int nbrStops = static_cast<int>(cfg->ReadLong("NumberOfStops", 0));
+	if (nbrStops > 0 && nbrStops <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfStops()) {
+		for (int i = 0; i < nbrStops; i++) {
+			wxString stopMan = wxT("StopManual") + GOODF_functions::number_format(i + 1);
+			int manRefIdx = static_cast<int>(cfg->ReadLong(stopMan, -1));
+			if (manRefIdx < 0 || manRefIdx > (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals())
+				continue;
+			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+				manRefIdx -= 1;
+			if (manRefIdx < 0)
+				continue;
+			Manual *refManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(manRefIdx);
+			wxString stopNbr = wxT("StopNumber") + GOODF_functions::number_format(i + 1);
+			wxString stopOnMan = cfg->Read(stopNbr, wxEmptyString);
+			long value = 0;
+			if (stopOnMan.ToLong(&value)) {
+				if (labs(value) > (long) refManual->getNumberOfStops())
+					continue;
+				if (value > 0) {
+					// the stop is on
+					m_stops.push_back(std::make_pair(refManual->getStopAt(value - 1), true));
+				} else {
+					// the stop is off
+					m_stops.push_back(std::make_pair(refManual->getStopAt(labs(value) - 1), false));
+				}
+			}
+		}
+	}
+	int nbrCplrs = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
+	if (nbrCplrs > 0 && nbrCplrs <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfCouplers()) {
+		for (int i = 0; i < nbrCplrs; i++) {
+			wxString cplrMan = wxT("CouplerManual") + GOODF_functions::number_format(i + 1);
+			int manRefIdx = static_cast<int>(cfg->ReadLong(cplrMan, -1));
+			if (manRefIdx < 0 || manRefIdx > (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals())
+				continue;
+			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+				manRefIdx -= 1;
+			if (manRefIdx < 0)
+				continue;
+			Manual *refManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(manRefIdx);
+			wxString cplrNbr = wxT("CouplerNumber") + GOODF_functions::number_format(i + 1);
+			wxString cplrOnMan = cfg->Read(cplrNbr, wxEmptyString);
+			long value = 0;
+			if (cplrOnMan.ToLong(&value)) {
+				if (labs(value) > (long) refManual->getNumberOfCouplers())
+					continue;
+				if (value > 0) {
+					// the coupler is on
+					m_couplers.push_back(std::make_pair(refManual->getCouplerAt(value - 1), true));
+				} else {
+					// the coupler is off
+					m_couplers.push_back(std::make_pair(refManual->getCouplerAt(labs(value) - 1), false));
+				}
+			}
+		}
+	}
+	int nbrTrems = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
+	if (nbrTrems > 0 && nbrTrems <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+		for (int i = 0; i < nbrTrems; i++) {
+			wxString tremNbr = wxT("TremulantNumber") + GOODF_functions::number_format(i + 1);
+			wxString tremId = cfg->Read(tremNbr, wxEmptyString);
+			long value = 0;
+			if (tremId.ToLong(&value)) {
+				if (labs(value) > ::wxGetApp().m_frame->m_organ->getNumberOfTremulants())
+					continue;
+				if (value > 0) {
+					// the tremulant is on
+					m_tremulants.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(value - 1), true));
+				} else {
+					// the tremulant is off
+					m_tremulants.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(labs(value) - 1), false));
+				}
+			}
+		}
+	}
+	int nbrSwitches = static_cast<int>(cfg->ReadLong("NumberOfSwitches", 0));
+	if (nbrSwitches > 0 && nbrSwitches <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+		for (int i = 0; i < nbrSwitches; i++) {
+			wxString swNbr = wxT("SwitchNumber") + GOODF_functions::number_format(i + 1);
+			wxString swId = cfg->Read(swNbr, wxEmptyString);
+			long value = 0;
+			if (swId.ToLong(&value)) {
+				if (labs(value) > ::wxGetApp().m_frame->m_organ->getNumberOfSwitches())
+					continue;
+				if (value > 0) {
+					// the switch is on
+					m_switches.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(value - 1), true));
+				} else {
+					// the switch is off
+					m_switches.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(labs(value) - 1), false));
+				}
+			}
+		}
+	}
+	int nbrDivCplrs = static_cast<int>(cfg->ReadLong("NumberOfDivisionalCouplers", 0));
+	if (nbrDivCplrs > 0 && nbrDivCplrs <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfOrganDivisionalCouplers()) {
+		for (int i = 0; i < nbrDivCplrs; i++) {
+			wxString divCplrNbr = wxT("DivisionalCouplerNumber") + GOODF_functions::number_format(i + 1);
+			wxString divCplrId = cfg->Read(divCplrNbr, wxEmptyString);
+			long value = 0;
+			if (divCplrId.ToLong(&value)) {
+				if (labs(value) > ::wxGetApp().m_frame->m_organ->getNumberOfOrganDivisionalCouplers())
+					continue;
+				if (value > 0) {
+					// the divisional coupler is on
+					m_divisionalCouplers.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(value - 1), true));
+				} else {
+					// the divisional coupler is off
+					m_divisionalCouplers.push_back(std::make_pair(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(labs(value) - 1), false));
+				}
+			}
+		}
+	}
+}
+
 bool General::isProtected() {
 	return m_protected;
 }
