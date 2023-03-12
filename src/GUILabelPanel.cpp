@@ -612,12 +612,14 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 		m_labelColourPick->Disable();
 	}
 	if (m_label->isFreeXPlacement()) {
+		m_freeXposYes->SetValue(true);
 		m_dispXposSpin->Enable();
 		m_elementPosXSpin->Enable();
 		m_spanDrawstopColToRightYes->Disable();
 		m_spanDrawstopColToRightNo->Disable();
 		m_drawstopColSpin->Disable();
 	} else {
+		m_freeXposNo->SetValue(true);
 		m_dispXposSpin->Disable();
 		m_elementPosXSpin->Disable();
 		m_spanDrawstopColToRightYes->Enable();
@@ -626,11 +628,13 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 	}
 
 	if (m_label->isFreeYPlacement()) {
+		m_freeYposYes->SetValue(true);
 		m_dispYposSpin->Enable();
 		m_elementPosYSpin->Enable();
 		m_atTopOfDrawstopColYes->Disable();
 		m_atTopOfDrawstopColNo->Disable();
 	} else {
+		m_freeYposNo->SetValue(true);
 		m_dispYposSpin->Disable();
 		m_elementPosYSpin->Disable();
 		m_atTopOfDrawstopColYes->Enable();
