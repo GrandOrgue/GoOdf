@@ -71,6 +71,8 @@ private:
 	void createGUIPiston(GoPanel *targetPanel, ReversiblePiston *piston);
 	void createGUIDivCplr(GoPanel *targetPanel, DivisionalCoupler *div_cplr);
 	void createGUIGeneral(GoPanel *targetPanel, General *general);
+	void createGUIDivisional(GoPanel *targetPanel, Divisional *divisional);
+	void createFromSetterElement(GoPanel *targetPanel, wxString elementType);
 
 };
 

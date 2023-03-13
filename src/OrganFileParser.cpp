@@ -27,6 +27,7 @@
 #include "GUIReversiblePiston.h"
 #include "GUIDivisionalCoupler.h"
 #include "GUIGeneral.h"
+#include "GUIDivisional.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -321,7 +322,24 @@ void OrganFileParser::parseOrganSection() {
 		m_organFile.SetPath("/Organ");
 	}
 
-	// parse setter elements from old style (if present) after manuals are parsed
+	// parse setter elements from old style (if present)
+	// they will all be converted into the new GUI Element style depending on their type
+	if (m_isUsingOldPanelFormat) {
+		int nbrSetters = static_cast<int>(m_organFile.ReadLong("NumberOfSetterElements", 0));
+		if (nbrSetters > 0 && nbrSetters < 1000) {
+			for (int i = 0; i < nbrSetters; i++) {
+				wxString setterGroupName = wxT("SetterElement") + GOODF_functions::number_format(i + 1);
+				if (m_organFile.HasGroup(setterGroupName)) {
+					m_organFile.SetPath(wxT("/") + setterGroupName);
+					wxString elementType = m_organFile.Read("Type", wxEmptyString);
+					if (elementType != wxEmptyString) {
+						createFromSetterElement(m_organ->getOrganPanelAt(0), elementType);
+					}
+				}
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 
 	// parse panels that has images and gui elements but can also exist in old style version
 }
@@ -420,5 +438,98 @@ void OrganFileParser::createGUIGeneral(GoPanel *targetPanel, General *general) {
 	GUIGeneral *theGeneral = dynamic_cast<GUIGeneral*>(gen);
 	if (theGeneral) {
 		theGeneral->read(&m_organFile, theGeneral->isDisplayAsPiston());
+	}
+}
+
+void OrganFileParser::createGUIDivisional(GoPanel *targetPanel, Divisional *divisional) {
+	GUIElement *guiDiv = new GUIDivisional(divisional);
+	guiDiv->setOwningPanel(targetPanel);
+	targetPanel->addGuiElement(guiDiv);
+
+	GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
+	if (divElement) {
+		divElement->read(&m_organFile, true);
+	}
+}
+
+void OrganFileParser::createFromSetterElement(GoPanel *targetPanel, wxString elementType) {
+	if (elementType == wxT("CrescendoLabel") ||
+		elementType == wxT("GeneralLabel") ||
+		elementType == wxT("PitchLabel") ||
+		elementType == wxT("SequencerLabel") ||
+		elementType == wxT("TemperamentLabel") ||
+		elementType == wxT("TransposeLabel") ) {
+		// this setter element is a type of label
+		createGUILabel(targetPanel);
+		// the label element type must be overridden
+		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+		e->setType(elementType);
+	} else if (elementType.Find("Setter") && elementType.Find("DivisionalBank")) {
+		// we need to get the manual
+		wxString manNbrStr = elementType.Mid(6 , 3);
+		long value = 0;
+		if (!manNbrStr.ToLong(&value)) {
+			return;
+		}
+		int targetManual = (int) value;
+		if (targetManual > ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			return;
+		}
+		createGUILabel(targetPanel);
+		// the element type must be overridden
+		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+		e->setType(elementType);
+	} else if (elementType == wxT("Swell")) {
+		createGUIEnclosure(targetPanel, NULL);
+	} else if (elementType.StartsWith("General") && elementType.Len() == 9) {
+		createGUIGeneral(targetPanel, NULL);
+		// the element type must be overridden
+		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+		e->setType(elementType);
+	} else if (elementType.Find("Setter") && elementType.Find("Divisional") && elementType.Len() == 22) {
+		// we need to get both manual (three X) and the divisional number YYY
+		wxString manNbrStr = elementType.Mid(6 , 3);
+		long value = 0;
+		if (!manNbrStr.ToLong(&value)) {
+			return;
+		}
+		int targetManual = (int) value;
+		if (targetManual > ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			return;
+		}
+		wxString divNbrStr = elementType.Mid(19 ,3);
+		if (!divNbrStr.ToLong(&value)) {
+			return;
+		}
+		createGUIDivisional(targetPanel, NULL);
+		// the element type must be overridden
+		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+		e->setType(elementType);
+		e->setDisplayName(elementType);
+	} else if ((elementType.Find("Setter") && elementType.Find("DivisionalPrevBank")) || (elementType.Find("Setter") && elementType.Find("DivisionalNextBank"))) {
+		// we need to get the manual
+		wxString manNbrStr = elementType.Mid(6 , 3);
+		long value = 0;
+		if (!manNbrStr.ToLong(&value)) {
+			return;
+		}
+		int targetManual = (int) value;
+		if (targetManual > ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			return;
+		}
+		createGUIDivisional(targetPanel, NULL);
+		// the element type must be overridden
+		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+		e->setType(elementType);
+		e->setDisplayName(elementType);
+	} else {
+		// any other valid type we simply create as a gui switch
+		if (::wxGetApp().m_frame->m_organ->getSetterElements().Index(elementType) != wxNOT_FOUND) {
+			createGUISwitch(targetPanel, NULL);
+			// the element type must be overridden
+			GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
+			e->setType(elementType);
+			e->setDisplayName(elementType);
+		}
 	}
 }
