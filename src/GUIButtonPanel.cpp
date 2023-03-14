@@ -1223,7 +1223,7 @@ wxString GUIButtonPanel::GetPathForImageFile() {
 		wxT("Select image file (all image pixel sizes for this element must match)"),
 		defaultPath,
 		"",
-		"PNG files (*.png)|*.png|BMP and GIF files (*.bmp;*.gif)|*.bmp;*.gif|JPG files (*.jpg)|*.jpg|ICO files (*.ico)|*.ico",
+		"Image files (*.png;*.bmp;*.gif;*.jpg;*.ico)|*.png;*.bmp;*.gif;*.jpg;*.ico;*.PNG;*.BMP;*.GIF;*.JPG;*.ICO;*.Png;*.Bmp;*.Gif;*.Jpg;*.Ico",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 

@@ -260,7 +260,7 @@ void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxT("Select image file"),
 		defaultPath,
 		"",
-		"PNG files (*.png)|*.png|BMP and GIF files (*.bmp;*.gif)|*.bmp;*.gif|JPG files (*.jpg)|*.jpg|ICO files (*.ico)|*.ico",
+		"Image files (*.png;*.bmp;*.gif;*.jpg;*.ico)|*.png;*.bmp;*.gif;*.jpg;*.ico;*.PNG;*.BMP;*.GIF;*.JPG;*.ICO;*.Png;*.Bmp;*.Gif;*.Jpg;*.Ico",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
@@ -295,7 +295,7 @@ void GoImagePanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxT("Select mask file (size must match the image file)"),
 		defaultPath,
 		"",
-		"PNG files (*.png)|*.png|BMP and GIF files (*.bmp;*.gif)|*.bmp;*.gif|JPG files (*.jpg)|*.jpg|ICO files (*.ico)|*.ico",
+		"Image files (*.png;*.bmp;*.gif;*.jpg;*.ico)|*.png;*.bmp;*.gif;*.jpg;*.ico;*.PNG;*.BMP;*.GIF;*.JPG;*.ICO;*.Png;*.Bmp;*.Gif;*.Jpg;*.Ico",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
