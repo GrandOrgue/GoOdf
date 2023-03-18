@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Couplers</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T15:50:28.550196600"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Couplers</h1>
+<p>Couplers are used to allow a note played on on manual to play at
+the same pitch on another manual, or at a pitch an octave higher or
+lower on the same manual (intramanual) or other manuals
+(intermanual), or to allow the normal pitch not to be played on the
+same manual (Unison off.) This is configured by the coupler window.
+Couplers can be controlled by Switches, generals, divisionals, and
+GC. For more information on those parameters, see <a href="stop.html">Stops</a>.</p>
+<p><img src="images/goodfhelp21_html_d7cd1cf32d08042a.png" name="Image30" align="left" width="1260" height="934">
+<br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p><b>UnisonOff </b>(Boolean, required) If true, this coupler
+decouples the manual from the stops (turn it into a floating manual).
+</p>
+<p><b>Destination Manual </b><span style="font-weight: normal">The
+manual to which the coupled key presses are sent.</span>
+</p>
+<p><b>Destination Keyshift </b>(integer -24 - 24, required if not a
+unison off coupler) specifies the keyboard shift between source and
+destination manual in terms of absolute MIDI note numbers.
+</p>
+<p>Couple To Subsequent Unison Intermanual Couplers (Boolean,
+required if not a unison off/melody/bass coupler) Triggers further
+inter-manual coupler with a destination key shift of zero. 
+</p>
+<p><b>Couple To Subsequent Upward Intermanual Couplers </b>(Boolean,
+required if not a unison off/melody/bass coupler) Triggers further
+inter-manual coupler with a destination key shift greater than zero. 
+</p>
+<p><b>Couple To Subsequent Downward Intermanual Couplers </b>(Boolean,
+required if not a unison off/melody/bass coupler) Triggers further
+inter-manual coupler with a destination key shift less than zero. 
+</p>
+<p><b>Couple To Subsequent Upward Intramanual Couplers </b>(Boolean,
+required if not a unison off/melody/bass coupler) Triggers further
+intramanual coupler with a destination key shift greater than zero. 
+</p>
+<p><b>Couple To Subsequent Downward Intramanual Couplers </b>(Boolean,
+required if not a unison off/melody/bass coupler) Triggers further
+intramanual coupler with a destination key shift less than zero. 
+</p>
+<p><b>Coupler Type </b>(enumeration, default: Normal) Type of the
+coupler: Normal, Bass or Melody. Bass couples only the lowest note
+being currently platy on the manual; Melody couples only the highest
+note.</p>
+<p><b>First MIDI Note Number </b>(integer 0-127, default: 0) first
+MIDI note number to forward.
+</p>
+<p><b>Number Of Keys </b>(integer 0-127, default: 0) number of keys
+to forward starting with FirstMIDINoteNumber. 
+</p>
+</body>
+</html>

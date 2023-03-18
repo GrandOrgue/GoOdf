@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Labels.</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-15T13:10:38.509545677"/>
+	<style type="text/css">
+		@page { margin: 0.79in }
+		p { margin-bottom: 0.1in }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt }
+		h1.cjk { font-size: 18pt }
+		h1.ctl { font-size: 18pt }
+	</style>
+</head>
+<body lang="en-US" dir="ltr"><h1 class="western">Labels.</h1>
+<p>Label parameters are set by clicking on the Label’s GUI element
+under ‘Panels’ in the object tree at the left of the GOODF
+window.</p>
+<p><b>Free X pos. </b>(Boolean, default: true) True means that the X
+position is determined by DispXpos, else by DispDrawstopCol and
+DispSpanDrawstopColToRight. 
+</p>
+<p><b>Free Y Pos. (</b>Boolean, default: true) True means that the Y
+position is determined by DispYpos, else by DispAtTopOfDrawstopCol. 
+</p>
+<p><b>DispXpos </b>(integer 0-panel width, default: 0) absolute X
+position 
+</p>
+<p><b>DispYpos </b>(integer 0-panel height, default: 0) absolute Y
+position</p>
+<p><b>At TopOf Drawstop Col </b>(Boolean, required if FreeYPlacement
+is true) If true, the label is displayed above the drawstop, else
+below. 
+</p>
+<p><b>DispDrawstopCol </b>(integer 1- number of drawstop columns,
+required if FreeXPlacement is false) Position label at the specified
+drawstop column. 
+</p>
+<p><b>Span Column To Righ</b>t (Boolean, required if FreeXPlacement
+is false) If true, move label half of the drawstop to the right. 
+</p>
+<p><b>DispLabelColour </b>(color, default: black) Color for the label
+text. 
+</p>
+<p><b>Label Font</b>  Point size and name of the label font from
+pulldowns.</p>
+<p><b>Text </b>(string, default: empty) The text to display on this
+object 
+</p>
+<p><b>DispImageNum </b> Builtin bitmap set to use, chosen by a
+pulldown.  Note the label width and height change with this
+selection.</p>
+<p><b>Image</b>(string, default: use internal bitmap according to
+DispImageNum) Specify the file name of an image to use as bitmap. If
+the bitmap contains a mask for transparency, it will be used. 
+</p>
+<p><b>Mask </b>(string, default: empty) File name for a external mask
+for the bitmap. If empty, no mask is added. 
+</p>
+<p><b>PositionX </b>(integer 0 - panel width, default:  -1according
+to the definitions above) Allow to override X position for button 
+</p>
+<p><span style="font-style: normal"><b>PositionY </b></span>(integer
+0 - panel height, default: -1 according to definitions above) Allow
+to override Y position for button 
+</p>
+<p><b>Width </b>(integer 0 - panel width, default: bitmap width)
+Width of the button. If larger than the bitmap, the bitmap is tiled. 
+</p>
+<p><b>Height </b>(integer 0 - panel height, default: bitmap height)
+Height of the button. If larger than the bitmap, the bitmap is tiled.
+</p>
+<p><b>TileOffsetX </b>(integer 0 - bitmap width, default: 0) X
+position on the bitmap of the left pixel of the button 
+</p>
+<p><b>TileOffsetY </b>(integer 0 - bitmap width, default: 0) Y
+position on the bitmap of the top pixel of the button 
+</p>
+<p><b>TextRectLeft </b>(integer 0 - Height, default: 0) relative X of
+left border of the text rectangle 
+</p>
+<p><b>TextRectTop </b>(integer 0 - Height, default: 0) relative Y of
+top border of the text rectangle 
+</p>
+<p><b>TextRectWidth </b>(integer 0 - Width, default: Width) width of
+the text rectangle 
+</p>
+<p><b>TextRectHeight </b>(integer 0 - Height, default: Height) height
+of the text rectangle 
+</p>
+<p><b>TextBreakWidth </b>(integer 0 - text rectangle width, default:
+Width) If 0, no text is displayed. Otherwise the value specifies the
+maximum line length used for text breaking. 
+</p>
+</body>
+</html>

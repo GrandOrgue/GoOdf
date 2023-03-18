@@ -1,6 +1,6 @@
 /*
  * Organ.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo
+ * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Introduction</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T12:21:29.965698302"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Introduction</h1>
+<p>This page provides a brief description of the objects that define
+an ODF. For more information on how to use these objects see the
+<a href="gettingstarted.html">Getting Started </a>page. Objects are
+separated into functional objects, GUI objects, and pipes.</p>
+<h2 class="western">Functional objects</h2>
+<p>GOODF creates and organizes objects to create a .organ file that
+can be loaded by GrandOrgue. The objects appear in a tree view on the
+left side of the GOODF window as shown in the picture:</p>
+<p><img src="images/goodfhelp3_html_be5e16cd930f637f.png" name="Image2" align="left" width="206" height="561">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>The following bullets describe the available objects and their
+relationship to one another. There are also links to a complete
+description of all the parameters associated with each object:</p>
+<ul>
+	<li><p><a href="organ.html">Organ</a>: The Organ is the top level
+	object and there can only be one per .organ file. All other objects
+	fall under Organ.</p>
+	<li><p><a href="manual.html">Manuals</a>: The Manuals are created
+	for each keyboard (including the Pedal Clavier). Stops, Couplers,
+	and Divisional objects are created as subsidiary objects to the
+	manual. The manual references Switches and Tremulants that are
+	associated with it so that Divisionals can control these Switches
+	and Tremulants.</p>
+	<ul>
+		<li><p><a href="stop.html">Stops </a>are Objects that turn on or
+		off ranks of pipes. They can either act directly or be controlled
+		by switches. Stops can have an internal Rank of pipe samples, or
+		can reference one or more external ranks.</p>
+		<li><p><a href="coupler.html">Couplers </a>take key presses on the
+		Keyboard they are associated with and forward them to another
+		keyboard at the same pitch, or a higher or a lower pitch. They can
+		also forward key presses to the same keyboard or disable their own
+		keyboard with a ‘Unison Off’ function. Couplers either act
+		directly or can be controlled by switches</p>
+		<li><p><a href="divisional.html">Divisionals</a> are memory storage
+		elements, typically part of a combination action to store and
+		recall the on/off state of each stop, coupler, tremulant, and
+		switch associated with or referenced by the manual under which it
+		is defined.</p>
+	</ul>
+	<li><p><a href="windchest.html">Windchestgroups</a> are an analogy
+	to the chest that real pipes are mounted on. Each Rank associates
+	itself with a windchestgroup. Each windchestgroup references one or
+	more Tremulants or expression Enclosures.</p>
+	<li><p><a href="enclosure.html">Enclosures</a> are a mechanism to to
+	change the volume, and in some cases the high frequencies of the
+	pipes mounted on a windchestgroup. Enclosures are referenced by one
+	or more windchestgroups. Enclosures are controlled by Swell Pedals
+	or sliders added to a Panel.</p>
+	<li><p><a href="tremulant.html#12.Tremulants%7Coutline">Tremulants</a>
+	are a mechanism to introduce a slow periodic variation in pitch and
+	amplitude to the sound of a rank of pipes. Tremulants are referenced
+	by windchestgroups and by manuals.</p>
+	<li><p><a href="rank.html">Ranks</a> are collections of pipes with
+	the same sound. Ranks are not directly controlled, but can be
+	referenced by stops. Ranks can also be defined within a stop as
+	subsidiary to it.</p>
+	<li><p><a href="#20.Pipes|outline">Pipes</a> are the individual
+	sound samples used to create a rank. Pipes are referenced by ranks,
+	and can include attack samples, release samples, and tremulant
+	samples. Some editing of individual and group of pipe sample
+	parameters can be had by right clicking in the expanded pipe tree.
+	See <a href="usinggoodf.html#5.Using%20GoODF%7Coutline">Using GOODF</a>
+	for more information on working with samples</p>
+	<li><p><a href="switch.html">Switches</a> are objects used to
+	control other objects using combinational logic. Switches can be
+	made visible so they appear to the user as stop knobs and can be
+	referenced by tremulants, manuals, and stops. See <a href="usinggoodf.html">Using
+	GOODF</a> for more information on why and how to use switches.</p>
+	<li><p><a href="reversible.html">Reversible Pistons</a> are like
+	Divisionals or Generals, but they behave as binary latches. Press it
+	once to activate, then press again to deactivate. Reversible pistons
+	reference one instance of a stop, coupler, Switch, or Tremulant. If
+	it references a stop or a coupler it must also reference a manual,
+	but GOODF takes care of the manual reference Automatically.</p>
+	<li><p><a href="divcouplers.html">Divisional Coupler</a> is an
+	object which when active allows a Divisional on one manual to
+	activate the Corresponding Divisional on the other referenced
+	manuals. The Divisional coupler references one or more manuals.</p>
+	<li><p><a href="general.html">Generals</a> are memory storage
+	elements that are like divisionals, except they can apply their
+	action to the whole organ, not just one Manual. As such they are not
+	referenced by nor do they reference a manual. They can reference
+	stops, couplers, tremulants, and switches.</p>
+</ul>
+<h2 class="western">GUI Elements</h2>
+<p>GUI objects can be created from many of the functional objects
+above and displayed on one or more panels. GUI objects can use
+graphical elements built into the GrandOrgue software, or can use
+images you create yourself. Thus for example, custom keyboards,
+pedals, Stop knobs, and sliders or expression pedals can be created.
+For more information on how to create GUI Objects and Panels, see
+<a href="creatinggui.html">Creating your Organ GUI.</a></p>
+<p>Available GUI objects are as follows:</p>
+<ul>
+	<li><p><a href="panel.html">Panel</a> refers to an independent
+	window that can be opened or closed from the GrandOrgue main
+	application window’s Panel menu. At a minimum, a Main panel is
+	required. Often other panels with, for example, left and right side
+	stop knob arrays are also created. A functional object can be
+	represented by a GUI object on more than one panel. Since GrandOrgue
+	includes many default panels, for example for couplers, generals,
+	Divisionals, the number you may wish to create will usually be
+	limited.</p>
+	<li><p>By clicking on the Main Panel entry, Available Organ Elements
+	and Available Setter elements can be selected to create <a href="element.html">GUI
+	elements.</a> Available Organ elements are the Objects such as
+	manuals, stops, tremulants, switches, and enclosures that you
+	created. Available Setter elements are objects predefined in
+	GrandOrgue that can be placed on panels as GUI elements. Of
+	particular import if you are using generals or divisionals, are the
+	Set element and the GC (general cancel) elements. Once you have
+	selected an element, and clicked “create a GUI element of any
+	selected element above” you will see a new GUI element appear in
+	the list at the left</p>
+	<p>Different types of element have different parameters. For
+	example, for keyboards and pedals you can choose a few variations of
+	standard displays. For enclosures, you can pick one of several
+	predefined swell pedals, and for stops and generals, several styles
+	of predefined knobs and buttons.</p>
+	<p>You can also define your own GUI element appearance using your
+	own images. For example, you may want an enclosure to appear as a
+	slider rather than as a swell pedal. In that case a series of bitmap
+	images are referenced, one for each of the up to 127 positions for
+	the enclosure object. 
+	</p>
+	<li><p><a href="image.html">Images</a> are separate GUI elements
+	that can be placed on the panel.</p>
+	<li><p><a href="label.html">Labels</a> are separate GUI elements
+	that can be placed on the panel</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<h2 class="western"><a name="20.Pipes|outline"></a>Pipes</h2>
+<p>Each rank object (either internal to a stop, or separately
+defined) references one or more pipes. Each pipe has one or more .wav
+file samples associated with it. Alternatively A pipe in a rank can
+borrow one or more pipes from another stop (or more correctly from a
+rank internally defined by a stop object). It cannot borrow from
+another rank. 
+</p>
+<p>Pipe samples are generally stored in a directory structure with
+each sample labeled with its midi note number. In this case these
+samples can easily be associated with the pipes in a rank by telling
+GOODF to look in the proper directory on your computer. Samples have
+the following variations:</p>
+<ul>
+	<li><p>attack samples include the initial transient when a pipe
+	receives wind, as well as a sustain section defined by a loop which
+	continues as long as the pipe is sounding</p>
+	<li><p>One or more release samples include the transient sound of
+	the pipe when air is cut off, as well as the reverberation of the
+	room in which the sample is taken. In simple sample sets the release
+	sample is included in the attack .wav file. In more complicated
+	sample sets two or more sub-directories will define multiple release
+	samples. The sample to be used depends on how long the manual key
+	operating the pipe is held down</p>
+	<li><p>Tremulant samples may be available which sample the same pipe
+	with its tremulant engaged. Tremulant samples will include their own
+	sets of releases.</p>
+	<li><p>Many sample sets now come in surround sound where pipes are
+	sampled at different positions in the room, for example, direct,
+	near, and far samples. Suggestions for how to deal with these are
+	found in the Using<a href="usinggoodf.html"> GOODF section</a>. More
+	information can be found in <a href="pipe.html">pipes</a>.</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<p>Recording and preparing the sample files is outside the scope of
+GOODF. However other software to assist with this is available, as
+are web based tutorials on the sampling process, noise reduction, and
+adding loop and release markers.</p>
+</body>
+</html>

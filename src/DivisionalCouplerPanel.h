@@ -1,6 +1,6 @@
 /*
  * DivisionalCouplerPanel.h is part of GOODF.
- * Copyright (C) 2023 Lars Palo
+ * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -8,28 +8,171 @@
 				<object type="text/sitemap">
 					<param name="Name" value="GOODF Help">
 					<param name="ID" value=1>
-					<param name="Local" value="GOODFHelp.htm">
+					<param name="Local" value="goodf.html">
 				</object>
 			<li>
 				<object type="text/sitemap">
 					<param name="Name" value="Getting started">
 					<param name="ID" value=2>
-					<param name="Local" value="GettingStarted.htm">
+					<param name="Local" value="gettingstarted.html">
 				</object>
 				<ul>
 					<li>
 						<object type="text/sitemap">
-							<param name="Name" value="Introduction">
+							<param name="Name" value="Features">
 							<param name="ID" value=3>
-							<param name="Local" value="Introduction.htm">
+							<param name="Local" value="features.html">
 						</object>
 					<li>
 						<object type="text/sitemap">
-							<param name="Name" value="Features">
+							<param name="Name" value="Introduction and Objects">
 							<param name="ID" value=4>
-							<param name="Local" value="Features.htm">
+							<param name="Local" value="introduction.html">
 						</object>
+					<ul>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Organ">
+								<param name="ID" value=5>
+								<param name="Local" value="organ.html">
+							</object>
+							
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Manuals">
+								<param name="ID" value=6>
+								<param name="Local" value="manual.html">
+							</object>
+						<ul>
+								<li>
+									<object type="text/sitemap">
+										<param name="Name" value="Stops">
+										<param name="ID" value=7>
+										<param name="Local" value="stop.html">
+									</object>
+								<li>
+									<object type="text/sitemap">
+										<param name="Name" value="Couplers">
+										<param name="ID" value=8>
+										<param name="Local" value="coupler.html">
+									</object>
+								<li>
+									<object type="text/sitemap">
+										<param name="Name" value="Divisionals">
+										<param name="ID" value=9>
+										<param name="Local" value="divisional.html">
+									</object>
+						</ul>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Windchest Groups">
+								<param name="ID" value=10>
+								<param name="Local" value="windchest.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Enclosures">
+								<param name="ID" value=11>
+								<param name="Local" value="enclosure.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Tremulants">
+								<param name="ID" value=12>
+								<param name="Local" value="tremulant.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Ranks">
+								<param name="ID" value=13>
+								<param name="Local" value="rank.html">
+							</object>
+						<ul>
+							<li>
+								<object type="text/sitemap">
+									<param name="Name" value="Pipes ">
+									<param name="ID" value=14>
+									<param name="Local" value="pipe.html">
+								</object>
+						</ul>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Switches">
+								<param name="ID" value=15>
+								<param name="Local" value="switch.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Reversible Pistons">
+								<param name="ID" value=16>
+								<param name="Local" value="reversible.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Generals">
+								<param name="ID" value=17>
+								<param name="Local" value="general.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Divisional Couplers">
+								<param name="ID" value=18>
+								<param name="Local" value="divcouplers.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Panel and Display Metrics">
+								<param name="ID" value=19>
+								<param name="Local" value="panel.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="GUI elements">
+								<param name="ID" value=20>
+								<param name="Local" value="element.html">
+							</object>\
+						<ul>
+								<li>
+									<object type="text/sitemap">
+										<param name="Name" value="Images">
+										<param name="ID" value=21>
+										<param name="Local" value="image.html">
+									</object>
+								<li>
+									<object type="text/sitemap">
+										<param name="Name" value="Labels">
+										<param name="ID" value=22>
+										<param name="Local" value="label.html">
+									</object>
+						</ul>
+					</ul>
+					<li>
+						<object type="text/sitemap">
+							<param name="Name" value="Using GOODF">
+							<param name="ID" value=23>
+							<param name="Local" value="usinggoodf.html">
+						</object>
+				<ul>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Working with Samples">
+								<param name="ID" value=24>
+								<param name="Local" value="workingwithsamples.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Using Windchests">
+								<param name="ID" value=25>
+								<param name="Local" value="usingwindchests.html">
+							</object>
+						<li>
+							<object type="text/sitemap">
+								<param name="Name" value="Creating your Organ GUI">
+								<param name="ID" value=26>
+								<param name="Local" value="creatinggui.html">
+							</object>
 				</ul>
+		   </ul>
 		</ul>
 	</body>
 </html>

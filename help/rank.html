@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Ranks</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T12:46:36.623026828"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Ranks</h1>
+<p>Ranks are arrays of pipes that sound from a manual when a stop
+referencing a rank is activated. The Parameter window for a rank is
+shown here:</p>
+<p><img src="images/goodfhelp14_html_873b003fca0e7fee.png" name="Image24" align="left" width="924" height="733">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<h2 class="western">Parameters</h2>
+<p><b>Name </b>(string, required) Name of the rank. The name may be
+presented to the user in lists too, therefore it should be
+descriptive. 
+</p>
+<p><b>First Midi Note </b>(integer 0-256, if the rank is part of a
+stop section, the default value is derived from the associated
+manuals. Otherwise required) Midi note number of the first pipe 
+</p>
+<p><b>Number Of Logical Pipes </b>(integer 1-192, required) Number of
+pipes in this rank 
+</p>
+<p><b>AmplitudeLevel </b>(float 0-1000, default: 100) Linear
+amplitude scale factor applied to the whole rank. 100 means no
+change. 
+</p>
+<p><b>Gain </b>(float -120 - 40, default: 0) Amplitude scale factor
+in dB applied to the whole rank. 0 means no change. 
+</p>
+<p><b>PitchTuning </b>float -1200-1200, default: 0) Re-tune the rank
+by the specified number of cents. 
+</p>
+<p><b>TrackerDelay </b>(integer 0 - 10000, default: 0) Delay
+introduced by the tracker for that rank. 
+</p>
+<p>Harmonic number (float 1-1024, default: 8) Harmonic number (= 64 /
+rank size), e.g. 2 2/3 =&gt; 64 / (2 2/3) = 24. The harmonic number
+is used determining alternative tunings. 
+</p>
+<p><b>Pitch correction </b>(float -1200-1200, default: 0) Correction
+factor in cent for the pitch specified in the sample. This setting is
+used for re-tuning to other temperaments. 
+</p>
+<p><b>WindchestGroup </b>(integer 1 - number of windchests, required)
+specify the windchest on which the pipes of the are placed. 
+</p>
+<p><b>Percussive </b>(Boolean, required) If true, the samples are
+played as is (without any loop/release handling) This is used for
+things like chimes, or for stop or key activation noises.</p>
+<p><b>Min velocity volume </b>(float 0-1000, default: 100) Linear
+amplitude scale factor at low velocity applied to the whole rank. 100
+means no change. 
+</p>
+<p><b>Max velocity volume </b>(float 0-1000, default: 100) Linear
+amplitude scale factor at high velocity applied to the whole rank.
+100 means no change. 
+</p>
+<p><b>Accepts re-tuning </b>(Boolean, default: true) Determines if
+the rank will be re-tuned according to the current temperament.
+Re-tuning should be only disabled for sound effects. 
+</p>
+<p>The Bottom half of the window (below the Expand the pipe tree
+button) is used for loading samples. See <a href="#6.Working with samples|outline">Working
+with samples</a> for more information.</p>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /* 
  * GOODFFrame.cpp is a part of GOODF software
- * Copyright (C) 2023 Lars Palo
+ * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +267,7 @@ void GOODFFrame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	info.SetName(wxT("GOODF"));
 	info.SetVersion(wxT(GOODF_VERSION));
 	info.SetDescription(wxT("A software for creating and editing GrandOrgue ODFs"));
-	info.SetCopyright(wxT("Copyright (C) 2023 Lars Palo <larspalo AT yahoo DOT se>\nReleased under GNU GPLv3 licence"));
+	info.SetCopyright(wxT("Copyright (C) 2023 Lars Palo and contributors (see AUTHORS) <larspalo AT yahoo DOT se>\nReleased under GNU GPLv3 licence"));
 	info.SetWebSite(wxT("https://github.com/larspalo/GOODF"));
 
 	wxAboutBox(info);

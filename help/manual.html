@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Manuals</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T13:52:55.032913858"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Manuals</h1>
+<p><br/>
+<br/>
+
+</p>
+<p>Manuals (including the pedals) are created for each division of
+the organ. For floating divisions, a manual is created, but its GUI
+element is not. In GOODF stops,couplers, and divisional objects are
+created in the manual object as subsidiary objects, and they appear
+under the manual in the object tree at the left of the GOODF window,
+and once created, are edited independent of their manual. In addition
+to couplers, independently created Tremulant and Switch objects can
+be referenced in the manual editing window. The purpose of
+referencing them here is so that divisional objects of this manual
+can control them.</p>
+<p>The manual editing window looks like this:</p>
+<p><img src="images/goodfhelp10_html_7245aab9aef730b1.png" name="Image22" align="left" width="917" height="750" border="0"/>
+<br clear="left"/>
+</p>
+<h2 class="western">Manual Parameter</h2>
+<p><br/>
+<br/>
+
+</p>
+<p><b>Manual Name</b> is the name by which the manual is known, such
+as Great, Hauptwerk, Positive, Swell, Choir, etc. It must be entered
+here since its value can not be changed in its GUI element.</p>
+<p><b>Number Of Logical Keys </b>(integer 1-192, required) Number of
+keys on this manual (including non-playable ones). None playable keys
+are accessed with sub and super intramanual couplers</p>
+<p><b>First Accessible Key LogicalKeyNumber </b>(integer 1 -
+NumberOfLogicalKeys, required) number of the first usable key 
+</p>
+<p><b>First Accessible Key MIDI NoteNumber </b>(integer 0 - 127,
+required) MIDI note number of the first MIDI accessible key. 
+</p>
+<p><b>Number Of Accessible Keys </b>(integer 0 - 85, required) number
+of MIDI accessible keys. 
+</p>
+<p><b>Midi Input Number (</b><span style="font-weight: normal">integer
+0 - 200, default: 0) This number is used while building the initial
+MIDI configuration to map the manual object to what MIDI device the
+the user has set for the respective pedal/manual. 0 means no
+association. 1 maps to pedal, 2 to first manual, 3 to second manual
+etc. NOTE: the GUI only allows the association of the first few
+manuals. Second touch manuals can be set to the same number as the
+main manual as the user then only has to configure the low velocity
+to make it work. </span>
+</p>
+<p><font color="#000000"><b>MIDI key map key</b><span style="font-weight: normal">:
+This allows a key on the manual to be mapped to a different Midi note
+number than its default. Use the pulldown to select the key, then use
+</span><b>maps to value</b> <span style="font-weight: normal">to
+select the new midi note to which it responds. You can repeat using
+the pulldown for as many keys as you wish to remap</span></font></p>
+</body>
+</html>

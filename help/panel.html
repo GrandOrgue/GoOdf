@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Panels</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T13:55:59.629403039"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Panels</h1>
+<p>A Panel is a resize-able floating window in GrandOrgue. The main
+panel is required and normally has , at a minimum, the keyboards,
+stops, couplers, and expression elements. The entry window in GOODF
+lets you select the objects for which GUI elements will be created</p>
+<h2 class="western">Panel window</h2>
+<p><img src="images/goodfhelp23_html_e35ae37cf7508d22.png" name="Image29" align="left" width="1260" height="934">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>Lists of available objects appear here, ones you’ve created on
+the left, and built in objects on the right. You can select one or
+more from each list, then Click the ‘Create a GUI element of any
+selected item above’ button. It is important to remember that
+manuals will be added from the bottom up in the order in which you
+create their GUI elements.</p>
+<p>It is also possible to add on ore more Label GUI element(s) by
+clicking that button. Labels are further defined by editing them
+directly. See <a href="#24.Labels.|outline">Labels</a></p>
+<p>Images can be placed as well by clicking the ‘Add image to
+panel’ button. In this case a new editing window appears
+immediately, but you can also edit the images directly. See <a href="#25.Images|outline">Images</a>.</p>
+<h2 class="western">Display metrics window</h2>
+<p>The Display Metrics window is used to define the graphical
+characteristics of the panel. It includes the ability to set fonts,
+panel size, element locations and sizes, an background patterns and
+colors.</p>
+<p><img src="images/goodfhelp23_html_de59c0a0f1b03a7a.png" name="Image20" align="left" width="925" height="741">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>The layout of any panel is described by a layout model. The
+available space is split vertically into three columns: The left and
+the right column contain drawstops laid out via a mesh. The middle
+row is vertically divided: 
+</p>
+<p><img src="images/goodfhelp23_html_5e028c8e166f1b1a.png" name="Image19" align="left" width="699" height="460">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>At the bottom, the pedal and its buttons are placed (if present).
+Above, an extra row of buttons may follow. The next row contains the
+enclosures. Then all manuals with their associated buttons follow.
+The two rows are a block of buttons and pistons. The exact order can
+be specified via an attribute. 
+</p>
+<p>Booleans are indicated by radio buttons. Strings and build in
+graphic elements use pulldown menus.</p>
+<p>The Following Parameters are used</p>
+<p><b>Horizontal panelsize </b>(panel size, required) Height of the
+panel. Pixels can be entered directly by selecting <i>Custom Pixel
+Size</i></p>
+<p><b>Vertical panelsize </b>(panel size, required) Width of the
+panel. Pixels can be entered directly by selecting <i>Custom Pixel
+Size</i></p>
+<p><b>Drawstop Background </b>(bitmap number, required) shown as 01
+in the above image. 
+</p>
+<p><b>Console Background </b>(bitmap number, required) shown as 05 in
+the above image. 
+</p>
+<p><b>Keyboard Horiz Bg </b>(bitmap number, required) shown as 13 in
+the above image 
+</p>
+<p><b>Keyboard Vert Bg </b>(bitmap number, required) shown as 20 in
+the above image 
+</p>
+<p><b>Drawstop Inset Bg </b>(bitmap number, required) Not shown in
+the picture, but this region surrounds the Drawstop rows and columns.</p>
+<p><b>Control Label Font </b>(string, required) Name of the font for
+drawstop and Combination button labels. Can be over-ridden for
+individual elements later.</p>
+<p><font color="#000000"><b>Shortcut KeyLabel Font </b>(string,
+required) Name of the font for keyboard labels </font>
+</p>
+<p><b>Shortcut Key Label Colour </b>(color, required) Color for
+shortcut labels 
+</p>
+<p><b>Group Label Font </b>(string, required) font name for labels 
+</p>
+<p><b>Drawstop Columns </b>(integer 2-12, required) number of
+drawstop columns. Must be even. NOTE: If you want more than 12
+drawstop columns, you must use absolute positioning. 
+</p>
+<p><b>Drawstop Rows </b>(integer 1-20, required) Number of drawstop
+rows. NOTE: If you want more than 20 drawstop rows you must use
+absolute positioning. 
+</p>
+<p><b>Drawstop Columns Offset </b>(Boolean, required) If true, each
+second row of drawstops on the left/right is vertically shifted. 
+</p>
+<p><b>With Outer Up </b>(Boolean, required if DrawstopColsOffset is
+true) Determines if second row is shifted up or down. 
+</p>
+<p><b>Pair Columns </b>(Boolean, required) group two drawstop rows
+together. Number of drawstop rows must be divisible by 4. 
+</p>
+<p><b>Extra Drawstop Rows </b>(integer 0-99, required) number of
+drawstop rows in the center block. The row numbers start with 100. 
+</p>
+<p><b>Extra Drawstop Columns </b>(integer 0 - 40, required) number of
+drawstop cols in the center block 
+</p>
+<p><b>Button Columns </b>(integer 1-32, required) Number of columns
+for laying pistons in the center block 
+</p>
+<p><b>Extra Button Rows </b>(integer 0-99, required) number of rows
+for laying extra pistons in the center block. The row numbers start
+with 100. 
+</p>
+<p><b>Extra Ped Button Row </b>(Boolean, required) lay an extra
+piston row with row number 9. 
+</p>
+<p><b>(Extra Pedal button row) Offset </b>(Boolean, required if
+ExtraPedalButtonRow is true) move extra pistons row slightly to the
+left. 
+</p>
+<p><b>(ExtraPedalButtonRow) Right </b>(Boolean, required if
+ExtraPedalButtonRow is true) move extra pistons row slightly to the
+right. 
+</p>
+<p><b>Buttons Above Manuals </b>(Boolean, required) lay the pistons
+associated with the manual above (true) or below (false) the manual. 
+</p>
+<p><b>Trim Above Manuals </b>(Boolean, required) put trim (13) above
+manuals</p>
+<p><b>Trim Below Manuals </b>(Boolean, required) put trim (13) above
+manuals 
+</p>
+<p><b>Trim Above Extra Rows </b>(Boolean, required) put trim (13)
+above extra button and drawstop rows</p>
+<p><b>Extra Drawstops Above Buttons </b>(Boolean, required) lay extra
+drawstop block above or below the extra piston block. 
+</p>
+<p><b>Drawstop Width </b>(integer 1-150, default: 78) Drawstop width
+used for layout calculation 
+</p>
+<p><b>Drawstop Height </b>(integer 1-150, default: 69) Drawstop
+height used for layout calculation 
+</p>
+<p><b>Piston Width </b>(integer 1-150, default: 44) Piston width used
+for layout calculation 
+</p>
+<p><b>Piston Height </b>(integer 1-150, default: 40) Piston height
+used for layout calculation 
+</p>
+<p><b>Enclosure Width </b>(integer 1-150, default: 52) Enclosure
+width used for layout calculation 
+</p>
+<p><b>Enclosure Height</b><span style="font-weight: normal">(integer
+1-150, default: 63) Enclosure height used for layout calculation </span>
+</p>
+<p><b>Pedal Height </b>(integer 1-500, default: 40) Pedal height used
+for layout calculation 
+</p>
+<p><b>Pedal Key Width </b>(integer 1-500, default: 7) Width of one
+pedal key used for layout calculation 
+</p>
+<p><b>Manual Height </b>(integer 1-500, default: 32) Manual height
+used for layout calculation 
+</p>
+<p><b>Manual Key Width </b>(integer 1-500, default: 12) Width of one
+manual key used for layout calculation 
+</p>
+</body>
+</html>

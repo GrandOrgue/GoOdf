@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Pipes</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T15:56:37.206867360"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Pipes</h1>
+<p>Pipes are found subsidiary to ranks or stops that load them. For
+more information on loading pipes see working with samples.</p>
+<p>Editing of pipes is done by right clicking an element in the
+expanded pipe tree. For example if you right click on Pipe001, you
+get a pop up window with the following options;</p>
+<p><br/>
+<br/>
+
+</p>
+<ul>
+	<li><p style="font-variant: normal; font-style: normal">Add new
+	attack from: pops up a window showing your directories so you can
+	select a new (individual) attack sample 
+	</p>
+	<li><p>Add new release from: <span style="font-variant: normal"><span style="font-style: normal">pops
+	up a window showing your directories so you can select a new
+	(individual) release sample </span></span>
+	</p>
+	<li><p>Borrow pipe: Pops up this window<img src="images/goodfhelp20_html_5145d83282209ca0.png" name="Image25" align="left" width="520" height="420">
+  <br clear="left"/>
+</img>
+
+		</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<p>to let you borrow one or more pipes from another stop’s internal
+ranks</p>
+<ul>
+	<li><p>Reset this pipe: removes all samples from the pipe and sets
+	its attack back to DUMMY</p>
+	<li><p>edit pipe properties: pops up this window, to allow editing
+	of a single pipe’s parameters. 
+	</p>
+</ul>
+<p><img src="images/goodfhelp20_html_a30b2c67f0a59173.png" name="Image26" align="left" width="1043" height="592">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>Most of the parameters are discussed under <a href="#14.Ranks|outline">Rank</a>.
+However there are a few new ones:</p>
+<p><b>MIDI pitch Fraction </b>Overrides the number specified in the
+wav file if this is not set to -1</p>
+<p><b>Loop crossfade length </b><span style="font-weight: normal">(int
+0 - 120, default: 0) Crossfade length in ms between loop start and
+loop end. A cross fade requires enough samples before the start of
+the loop. </span>
+</p>
+<p><b>Release crossfade length</b> (int 0 - 200, default: 0)
+Crossfade length in ms between loop and the release (or other
+attacks). 0 means automatic selection. 
+</p>
+<p>If you right click on an attack sample you get the choice of
+editing the attack sample properties or deleting the attack. If you
+choose edit the following window pops up:</p>
+<p><img src="images/goodfhelp20_html_37091e0af4f731a2.png" name="Image27" align="left" width="1228" height="664">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>Similarly when you right click on a release and choose edit, you
+get the following similar window. 
+</p>
+<p><img src="images/goodfhelp20_html_8592c993c43c679e.png" name="Image28" align="left" width="962" height="487">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>Following the editing make sure you exit the edited box before
+hitting the Exit button. If you make a change the ‘Copy properties
+to other attacks(or releases)from the same directory’ becomes
+active, so you can apply the changes to all the similar attacks or
+releases in the pipe tree.</p>
+<p>The following parameters are defined:</p>
+<p><b>Max key press time</b> (int -1 - 100000, default: -1) Up to
+this time value in ms, the release sample is chosen. -1 means
+infinite. <font color="#000000">This is included in the attack sample
+editing to control the key press time for the release contained in
+the attack sample.</font></p>
+<p><b>Attack Velocity </b><span style="font-weight: normal">The
+maximum velocity value in the note on message driving the key on the
+manual to which this pipe is referenced to use this attack sample.</span></p>
+<p><b>Max time since last release </b><span style="font-weight: normal">(int
+-1 - 100000, default: -1) maximum time since the last release of the
+key to be able to use that attack. -1 means infinite. </span>
+</p>
+<p><span style="font-weight: normal">(If </span><b>Attack Velocity</b><span style="font-weight: normal">=0
+and </span><b>Max time since last release</b> <span style="font-weight: normal">is
+set to -1 the attack sample to use will be chosen randomly.)</span></p>
+<p><b>Attack velocity</b> (int 0 - 127, default: 0) minimum velocity
+to use this attack sample. (multiple attack samples can be specified
+and chosen based on the velocity byte of the midi note on message
+sent from hardware.)</p>
+<p><b>Is Tremulant:</b> Choice of three settings:</p>
+<ul>
+	<li><p><i>No, not affected by wave tremulants:</i></p>
+	<li><p><i>Play when wave tremulant is OFF</i></p>
+	<li><p><i>Play when wave tremulant is ON</i></p>
+</ul>
+<p style="margin-left: 0.49in">this only applies to wave tremulants,
+not synth tremulants for the windchest on which this pipe is mounted</p>
+<p><br/>
+<br/>
+
+</p>
+<p><b>Cuepoint position</b> and <b>Release end and Attack Start </b>(int
+-1 - 158760000, default: -1) Allows to override the Start sample of
+the release, the end sample of the release, and the start of the
+attack. -1 means use from the wave file. 
+</p>
+<p>You can also create your own loops in the attack samples – see
+GrandOrgue help for more information.</p>
+</body>
+</html>

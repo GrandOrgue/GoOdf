@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Organ</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T12:28:03.589106822"/>
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+Organ</h1>
+<p>The Organ object is the top level object and what is important
+here is to specify the location of the .organ file in your directory
+structure (relative to the location of the samples, so don’t move
+your sample directory(s) after you’ve created your .organ file).
+Also important is the name of the file.</p>
+<p><img src="images/goodfhelp9_html_d9e1620f8a1282d5.png" name="Image21" align="left" width="925" height="741">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<h2 class="western">Organ Properties 
+</h2>
+<p><b>ChurchName </b>(string, required) Name of the organ/church.
+This string should be unique, as setting files for organs with the
+same ChurchName are considered compatible. GrandOrgue will not load a
+settings file if the ChurchName does not match. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<p><b>ChurchAddress </b>(string, required) informational text
+displayed in the property dialog 
+</p>
+<p><b>OrganBuilder </b>(string, required) informational text
+displayed in the property dialog 
+</p>
+<p><b>OrganBuildDate </b>(string, required) informational text
+displayed in the property dialog 
+</p>
+<p><b>OrganComments </b>(string, required) informational text
+displayed in the property dialog 
+</p>
+<p><b>RecordingDetails </b>(string, required) informational text
+displayed in the property dialog 
+</p>
+<p>I<b>nfoFilename </b>(string, not required) relative path to an
+HTML file with more information about the organ. This setting is
+currently not supported for organ packages. 
+</p>
+<p><b>Divisionals Store Intermanual Couplers </b>(Boolean, required)
+determines if divisionals store/change the state of associated
+intermanual couplers. 
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>Divisionals
+Store Intramanual Couplers </b></span></span>(Boolean, required)
+determines if divisionals store/change the state of associated
+intramanual couplers. 
+</p>
+<p><b>Divisionals Store Tremulants </b>(Boolean, required) determines
+if divisionals store/change the state of associated tremulants. 
+</p>
+<p><b>Generals Store Divisional Couplers </b>(Boolean, required)
+determines if divisionals store/change the state of divisional
+couplers. 
+</p>
+<p><b>Combinations Store Non Displayed Drawstops </b>(Boolean,
+default: true) determines, if the state of invisible objects (on the
+main panel) is stored in divisionals, generals and the setter. 
+</p>
+<p><b>Amplitude Level </b>(float 0-1000, default: 100) Linear
+amplitude scale factor applied to the whole organ. 100 means no
+change. 
+</p>
+<p><b>Gain </b>(float -120 - 40, default: 0) Amplitude scale factor
+in dB applied to the whole organ. 0 means no change. 
+</p>
+<p><b>Pitch Tuning </b>(float -1200-1200, default: 0) Re-tune the
+whole organ the specified number of cents. 
+</p>
+<p><b>Tracker Delay</b>(integer 0 - 10000, default: 0) Delay
+introduced by the tracker applied to the whole organ. 
+</p>
+</body>
+</html>

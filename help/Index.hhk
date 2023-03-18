@@ -16,8 +16,129 @@
 	</object>
 <li>
 	<object type="text/sitemap">
-		<param name="Local" value="Introduction.htm">
-		<param name="Name" value="Introduction">
+		<param name="Local" value="coupler.html">
+		<param name="Name" value="Couplers">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="creatinggui.html">
+		<param name="Name" value="Creating your GUI">
+	</object>
+
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="divisionals.html">
+		<param name="Name" value="Divisionals">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="divcouplers.html">
+		<param name="Name" value="Divisional Couplers">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="enclosure.html">
+		<param name="Name" value="Enclosures">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="features.html">
+		<param name="Name" value="Features">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="general.html">
+		<param name="Name" value="Generals">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="gettingstarted.html">
+		<param name="Name" value="Getting Started">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="element.html">
+		<param name="Name" value="GUI Elements">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="Image.html">
+		<param name="Name" value="Images">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="Introduction.html">
+		<param name="Name" value="Introduction and Objects">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="label.html">
+		<param name="Name" value="Labels">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="manual.html">
+		<param name="Name" value="Manuals">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="organ.html">
+		<param name="Name" value="Organ">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="panel.html">
+		<param name="Name" value="LoopAuditioneer Help">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="pipe.html">
+		<param name="Name" value="Pipes ">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="rank.html">
+		<param name="Name" value="Ranks">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="reverisble.html">
+		<param name="Name" value="Reversible pistons">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="stop.html">
+		<param name="Name" value="Stops">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="switch.html">
+		<param name="Name" value="Switches">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="tremulant.html">
+		<param name="Name" value="Tremulants">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="usinggoodf.html">
+		<param name="Name" value="Using GOODF">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="usingwindchests.html">
+		<param name="Name" value="Using Windchests">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="windchest.html">
+		<param name="Name" value="Windchests">
+	</object>
+<li>
+	<object type="text/sitemap">
+		<param name="Local" value="workingwithsamples.html">
+		<param name="Name" value="Working with Samples">
 	</object>
 <li>
 	<object type="text/sitemap">

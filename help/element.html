@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>GUI elements</title>
+	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2023-03-17T13:50:20.792946529"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 8.5in 11in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
+		h3 { margin-top: 0.1in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h3.western { font-family: "Liberation Sans", sans-serif; font-size: 14pt; font-weight: bold }
+		h3.cjk { font-family: "Unifont"; font-size: 14pt; font-weight: bold }
+		h3.ctl { font-family: "FreeSans"; font-size: 14pt; font-weight: bold }
+		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
+		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
+		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
+		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
+		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
+		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
+GUI elements</h1>
+<p>Other GUI elements include manuals,Enclosures, buttons, and
+drawstops. All of these elements can be displayed on a panel using
+images internal to GrandOrgue, or with fully custom images.</p>
+<h2 class="western">Enclosures</h2>
+<p>Enclosures are represented by swell pedals (built in) or
+sliders(custom, normally used for setting volume of noises and
+surround sound channels)</p>
+<p><img src="images/goodfhelp26_html_d7313a6d590e7c6f.png" name="Image34" align="left" width="1260" height="934">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p><font color="#000000"><b>DisplayLabelText</b>: If you don’t
+enter anything here the name of the Stop, Tremulant, or Switch
+entered when you created it will automatically apply. You may however
+want to add a different name, put the name in ALL CAPS, or add spaces
+to allow a line break so that the name fits within the stop’s
+DisplayImage.</font></p>
+<p><font color="#000000"><b>Labelfont: </b><span style="font-weight: normal">this
+is a pulldown of all available fonts. You only need to specify if you
+want a different font than you set as the </span><b>Control Label
+Font</b> <span style="font-weight: normal">in the DisplayMetrics
+window</span></font></p>
+<p><font color="#000000"><b>DisplayLabelColour</b><span style="font-weight: normal">:
+Select the colour for the text from the pulldown or select Custom
+Color and then click on the color sample to the right to pop up a
+color selector window. You can pick one of the predefined colors from
+this window, or click on the + sign in this window to define a new
+custom color which can then be selected. </span></font>
+</p>
+<p><font color="#000000"><b>Enclosure Style</b> <span style="font-weight: normal">This
+is a pulldown that shows the available Images built into GrandOrgue
+for drawstops.</span></font></p>
+<p><font color="#000000"><b>PositionX</b> <span style="font-weight: normal">and
+</span><b>PositionY </b><span style="font-weight: normal">The
+location of the enclosure on the panel. 0 to size of panel in pixels.
+Use -1 to let GOODF manage the placement</span></font></p>
+<p><b>Width </b>(integer 0 - panel width, default: bitmap width)
+These are set automatically if a build in enclosure is chosen</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>Height</b></span></span><span style="font-variant: normal">
+</span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - panel height, default: bitmap height) </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TileOffsetX
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - bitmap width, default: 0) X position on the bitmap of the left
+pixel of the enclosure </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TileOffsetY
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - bitmap width, default: 0) Y position on the bitmap of the top
+pixel of the enclosure </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseRectLeft
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Width, default: 0) relative X of left border of the mouse
+rectangle (region in which the GUI element responds to the mouse)</span></span></span></p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseRectTop
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Height, default: implementation dependent) relative Y of top
+border of the mouse rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseRectWidth
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Width, default: Width) width of the mouse rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseRectHeight
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Height, default: implementation dependent) height of the mouse
+rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseAxisStart
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - MouseRectHeight, default: implementation dependent) top Y
+coordinate of the axis </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>MouseAxisEnd
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+MouseAxisStart - MouseRectHeight, default: implementation dependent)
+bottom Y coordinate of the axis </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TextRectLeft
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Height, default: 0) relative X of left border of the text
+rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TextRectTop
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Height, default: implementation dependent) relative Y of top
+border of the text rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TextRectWidth</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Width, default: Width) width of the text rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TextRectHeight
+</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - Height, default: implementation dependent) height of the text
+rectangle </span></span></span>
+</p>
+<p><span style="font-variant: normal"><span style="font-style: normal"><b>TextBreakWidth</b></span></span><span style="font-variant: normal"><span style="font-style: normal"><span style="font-weight: normal">(integer
+0 - text rectangle width, default: TextWidth) If 0, no text is
+displayed. Otherwise the value specifies the maximum line length used
+for text breaking. </span></span></span>
+</p>
+<h3 class="western">Custom enclosure GUI elements</h3>
+<p style="font-variant: normal; font-style: normal; font-weight: normal">
+Custom enclosure GUI elements are created using a series of images
+loaded in sequence. Each image represents a different position of the
+enclosure element. A separate mask may be loaded. Since the enclosure
+responds to a MIDI Continuous Controller with only 128 possible
+values, there need be no more than 128 images. However, fewer images
+are often used, perhaps 16 or 32.</p>
+<h3 class="western">Manuals 
+</h3>
+<p>Manual GUI elements can be edited primarily to create custom
+manual GUI elements rather than using the images built into
+GrandOrgue. The manual GUI element editing window looks like this:</p>
+<p><img src="images/goodfhelp26_html_f7d19459420cb8b2.png" name="Image35" align="left" width="1260" height="934">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>Parameters are as follows:</p>
+<p><b>PositionX </b>(integer 0 - panel width, default: (-1)according
+to layout model) Allow to override X position for manual. 
+</p>
+<p><b>PositionY </b>(integer 0 - panel height, default: (-1)according
+to layout model) Allow to override Y position for manual. 
+</p>
+<p>The Available keytypes are shown in two panels at the left. They
+can be added to the User added keys panel with the Add key button. At
+a minimum you need to add 14 keys from the leftmost panel-- a full
+octave plus the beginning key (normally FirstC), and the last key
+(normally LastC for a 61 note keyboard) Use this scheme if your
+custom keys are the same for each octave. Otherwise you can add up to
+61 keys from the center panel if you have different images for each
+octave.</p>
+<p><b>ImageOn</b>(string, default: implementation dependent bitmap)
+Bitmap for the specified key type, if the key is pressed. The bitmap
+may contain a mask. (one of these is needed for each of the User
+added keys.</p>
+<p><b>ImageOff</b>(string, default: implementation dependent bitmap)
+Bitmap for the specified key type, if the key is not pressed. The
+bitmap may contain a mask. 
+</p>
+<p><b>MaskOn </b>(string, default: empty string) Mask for the
+corresponding On bitmap. If empty, no external mask is loaded. 
+</p>
+<p><b>MaskOff </b>(string, default: corresponding on mask) Mask for
+the corresponding Off bitmap. If empty, no external mask is loaded. 
+</p>
+<p><b>Width</b>(integer 0 - 500, default: implementation dependent)
+This value is added to the x position of the current key to determine
+the position of the next key. (one of these is needed for each of the
+User added keys.)</p>
+<p>Offset (integer -500 - 500, default: implementation dependent)
+This value can be used to adjust the display of the current key, e.g.
+to place a sharp key overlapped with the previous key. (one of these
+is needed for each of the User added keys.)</p>
+<p><b>Yoffset </b>(integer 0 - 500, default: 0) This value is can be
+used to adjust the Y coordinate of the current key. 
+</p>
+<p><b>MouseRectLeft </b>(integer 0 - key bitmap width - 1 , default:
+0) relative X of left border of the mouse rectangle 
+</p>
+<p><b>MouseRectTop </b>(integer 0 - key bitmap height - 1, default:
+0) relative Y of top border of the mouse rectangle 
+</p>
+<p><b>MouseRectWidth </b>(integer 0 - key bitmap width, default: key
+bitmap width) width of the mouse rectangle 
+</p>
+<p><b>MouseRectHeight </b>(integer 0 - key bitmap height, default:
+key bitmap height) height of the mouse rectangle 
+</p>
+<p><b>Key Colour Inverted </b>(Boolean, required) True means, the
+black keys are drawn in a light color while the white keys are drawn
+in a dark color. 
+</p>
+<p><b>Key Colour Wooden </b>(Boolean, default: false) True means,
+that a wood background is used for the keys. 
+</p>
+<p><b>FirstNote (MIDI nbr) </b>(integer 0 - 127, default:
+FirstAccessibleKeyMIDINoteNumber) Display the first key as the
+following note. 
+</p>
+<p><b>(Nbr of) Display Keys</b>(integer 1 - NumberOfAccessibleKeys,
+default: NumberOfAccessibleKeys) number of keys to display. 
+</p>
+<p><b>DisplayKey </b>(integer 0 - 127, default: FirstAccessibleKey
+The number in the key is between 1 and DisplayKeys. 
+</p>
+<p>The following two parameters are set individually for each
+DisplayKey number, that is, for each key on the keyboard</p>
+<p><b>Maps to back-end MIDI </b>contains the midi number of the
+back-end key(from the manual object) , that is connected to this GUI
+key. 
+</p>
+<p><b>Maps to front-end MIDI </b>contains the midi number of the
+displayed front-end GUI key. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h3 class="western">Pistons and Drawstops:</h3>
+<p>These use the same GUI element parameter window, so we can discuss
+them together:</p>
+<p><img src="images/goodfhelp26_html_7169ce2156d82140.png" name="Image36" align="left" width="1260" height="934">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p><b>Display As Piston</b> (Boolean, default: true for divisionals,
+generals and pistons, else false) True means to display as button,
+false as drawstop 
+</p>
+<p><b>Display Label On Left </b>(Boolean, default: true) If displayed
+as a piston and this attribute is true, move it a little bit left.
+Otherwise ignored. 
+</p>
+<p><b>MouseRadius </b>(integer 0 - max(MouseRectHeight,
+MouseRectWidth), default: max(MouseRectHeight, MouseRectWidth) / 2)
+If 0, the mouse events are captured inside the mouse rectangle.
+Otherwise they must be inside a circle of the specified size too. 
+</p>
+<p><b>Disp ImageNum.</b> A pulldown of available internal images for
+buttons or drawstops</p>
+<p>Custom image may be specified for the on state and the off state,
+along with a mask. Text Break Width must be set to 0 if your custom
+image already has the stop name or piston number in the image.</p>
+<p>The following are used for automatic placement if <b>PositionX</b>
+and <b>PositionY</b> are set to -1</p>
+<p><b>DispButtonRown</b>(button row, default: 1) If displayed as
+piston, it contains the button row according to the layout model(set
+in the panel’s DisplayMetrics). Otherwise ignored. 
+</p>
+<p><b>DispButtonCol </b>(button column, default: 1) If displayed as
+piston, it contains the button column according to the layout model.
+Otherwise ignored. 
+</p>
+<p><b>DispDrawstopRow </b>(drawstop row, default: 1) If displayed as
+drawstop, it contains the drawstop row according to the layout model.
+Otherwise ignored. 
+</p>
+<p><b>DispDrawstopCol </b>(drawstop column, default: 1) If displayed
+as drawstop, it contains the drawstop column according to the layout
+model. Otherwise ignored. 
+</p>
+</body>
+</html>
