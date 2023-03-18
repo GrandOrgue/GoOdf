@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/textfile.h>
+#include <wx/fileconf.h>
 #include <list>
 #include "GoImage.h"
 #include "DisplayMetrics.h"
@@ -38,6 +39,7 @@ public:
 	~GoPanel();
 
 	void write(wxTextFile *outFile, unsigned panelNbr);
+	void read(wxFileConfig *cfg, wxString panelId);
 
 	wxString getName();
 	void setName(wxString name);

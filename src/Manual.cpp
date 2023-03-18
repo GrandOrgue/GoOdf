@@ -209,7 +209,7 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat) {
 				if (c.isDisplayed()) {
 					// we must also create a GUI element for that coupler from this group information
 					int lastCplrIdx = m_couplers.size() - 1;
-					GUIElement *guiCplr = new GUIStop(getStopAt(lastCplrIdx));
+					GUIElement *guiCplr = new GUICoupler(getCouplerAt(lastCplrIdx));
 					guiCplr->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
 					guiCplr->setDisplayName(c.getName());
 					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiCplr);

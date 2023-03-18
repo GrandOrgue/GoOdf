@@ -79,6 +79,30 @@ void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
 	}
 }
 
+void GoPanel::read(wxFileConfig *cfg, wxString panelId) {
+	m_name = cfg->Read("Name", wxEmptyString);
+	m_group = cfg->Read("Group", wxEmptyString);
+	wxString cfgBoolValue = cfg->Read("HasPedals", wxEmptyString);
+	m_hasPedals = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	m_displayMetrics.read(cfg);
+	int nbrImages = static_cast<int>(cfg->ReadLong("NumberOfImages", 0));
+	if (nbrImages > 0 && nbrImages < 1000) {
+		for (int i = 0; i < nbrImages; i++) {
+			wxString imgGroupName = wxT("Image") + GOODF_functions::number_format(i + 1);
+			if (cfg->HasGroup(panelId + imgGroupName)) {
+				cfg->SetPath(wxT("/") + panelId + imgGroupName);
+				GoImage img;
+				img.setOwningPanelWidth(m_displayMetrics.m_dispScreenSizeHoriz.getNumericalValue());
+				img.setOwningPanelHeight(m_displayMetrics.m_dispScreenSizeVert.getNumericalValue());
+				bool imgIsOk = img.read(cfg);
+				if (imgIsOk)
+					addImage(img);
+			}
+		}
+		cfg->SetPath(wxT("/") + panelId);
+	}
+}
+
 wxString GoPanel::getName() {
 	return m_name;
 }

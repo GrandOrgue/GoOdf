@@ -28,6 +28,8 @@
 #include "GUIDivisionalCoupler.h"
 #include "GUIGeneral.h"
 #include "GUIDivisional.h"
+#include "GUICoupler.h"
+#include "GUIStop.h"
 
 OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_filePath = filePath;
@@ -342,6 +344,28 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse panels that has images and gui elements but can also exist in old style version
+	int nbrPanels = static_cast<int>(m_organFile.ReadLong("NumberOfPanels", 0));
+	if (!m_isUsingOldPanelFormat) {
+		// For the new format there exist a [Panel000] as main panel that must be read first.
+		// That panel is already created with the organ and it won't be included in the count of number of panels either.
+		// The check if that section exist in the .organ file has already been done.
+		m_organFile.SetPath(wxT("/Panel000"));
+		m_organ->getOrganPanelAt(0)->read(&m_organFile, wxT("Panel000"));
+		parsePanelElements(m_organ->getOrganPanelAt(0), wxT("Panel000"));
+		m_organFile.SetPath("/Organ");
+	}
+	if (nbrPanels > 0 && nbrPanels < 100) {
+		for (int i = 0; i < nbrPanels; i++) {
+			wxString panelGroupName = wxT("Panel") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(panelGroupName)) {
+				m_organFile.SetPath(wxT("/") + panelGroupName);
+				GoPanel p;
+				p.read(&m_organFile, panelGroupName);
+				m_organ->addPanel(p);
+			}
+		}
+		m_organFile.SetPath("/Organ");
+	}
 }
 
 void OrganFileParser::createGUIEnclosure(GoPanel *targetPanel, Enclosure *enclosure) {
@@ -530,6 +554,305 @@ void OrganFileParser::createFromSetterElement(GoPanel *targetPanel, wxString ele
 			GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
 			e->setType(elementType);
 			e->setDisplayName(elementType);
+		}
+	}
+}
+
+void OrganFileParser::createGUICoupler(GoPanel *targetPanel, Coupler *coupler) {
+	GUIElement *guiCplr = new GUICoupler(coupler);
+	guiCplr->setOwningPanel(targetPanel);
+	guiCplr->setDisplayName(coupler->getName());
+	targetPanel->addGuiElement(guiCplr);
+
+	GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
+	if (cplrElement) {
+		cplrElement->read(&m_organFile, false);
+	}
+}
+
+void OrganFileParser::createGUIStop(GoPanel *targetPanel, Stop *stop) {
+	GUIElement *guiStop = new GUIStop(stop);
+	guiStop->setOwningPanel(targetPanel);
+	guiStop->setDisplayName(stop->getName());
+	targetPanel->addGuiElement(guiStop);
+
+	GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);
+	if (stopElement) {
+		stopElement->read(&m_organFile, false);
+	}
+}
+
+void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId) {
+	bool new_format = false;
+	int nbrGuiElements = static_cast<int>(m_organFile.ReadLong("NumberOfGUIElements", 0));
+	if (panelId.IsSameAs(wxT("Panel000"), false) || nbrGuiElements) {
+		new_format = true;
+		if (nbrGuiElements > 0 && nbrGuiElements < 1000) {
+			for (int i = 0; i < nbrGuiElements; i++) {
+				wxString elementGroupName = wxT("Element") + GOODF_functions::number_format(i + 1);
+				if (m_organFile.HasGroup(panelId + elementGroupName)) {
+					m_organFile.SetPath(wxT("/") + panelId + elementGroupName);
+					wxString elementType = m_organFile.Read("Type", wxEmptyString);
+					if (elementType.IsSameAs(wxT("Divisional"))) {
+						int manualIdx = static_cast<int>(m_organFile.ReadLong("Manual", -1));
+						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+							if (!m_organ->doesHavePedals() && manualIdx > 0)
+								manualIdx -= 1;
+							Manual *man = m_organ->getOrganManualAt(manualIdx);
+							int divIdx = static_cast<int>(m_organFile.ReadLong("Divisional", 0));
+							if (divIdx > 0 && divIdx <= man->getNumberOfDivisionals()) {
+								createGUIDivisional(targetPanel, man->getDivisionalAt(divIdx));
+							}
+						}
+					} else if (elementType.IsSameAs(wxT("Coupler"))) {
+						int manualIdx = static_cast<int>(m_organFile.ReadLong("Manual", -1));
+						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+							if (!m_organ->doesHavePedals() && manualIdx > 0)
+								manualIdx -= 1;
+							Manual *man = m_organ->getOrganManualAt(manualIdx);
+							int cplrIdx = static_cast<int>(m_organFile.ReadLong("Coupler", 0));
+							if (cplrIdx > 0 && cplrIdx <= man->getNumberOfCouplers()) {
+								createGUICoupler(targetPanel, man->getCouplerAt(cplrIdx));
+							}
+						}
+					} else if (elementType.IsSameAs(wxT("Stop"))) {
+						int manualIdx = static_cast<int>(m_organFile.ReadLong("Manual", -1));
+						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+							if (!m_organ->doesHavePedals() && manualIdx > 0)
+								manualIdx -= 1;
+							Manual *man = m_organ->getOrganManualAt(manualIdx);
+							int stopIdx = static_cast<int>(m_organFile.ReadLong("Stop", 0));
+							if (stopIdx > 0 && stopIdx <= man->getNumberOfStops()) {
+								createGUIStop(targetPanel, man->getStopAt(stopIdx));
+							}
+						}
+					} else if (elementType.IsSameAs(wxT("Enclosure"))) {
+						int enclosureIdx = static_cast<int>(m_organFile.ReadLong("Enclosure", 0));
+						if (enclosureIdx > 0 && enclosureIdx <= (int)m_organ->getNumberOfEnclosures()) {
+							createGUIEnclosure(targetPanel, m_organ->getOrganEnclosureAt(enclosureIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("Tremulant"))) {
+						int tremIdx = static_cast<int>(m_organFile.ReadLong("Tremulant", 0));
+						if (tremIdx > 0 && tremIdx <= (int)m_organ->getNumberOfTremulants()) {
+							createGUITremulant(targetPanel, m_organ->getOrganTremulantAt(tremIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("DivisionalCoupler"))) {
+						int divCplrIdx = static_cast<int>(m_organFile.ReadLong("DivisionalCoupler", 0));
+						if (divCplrIdx > 0 && divCplrIdx <= (int)m_organ->getNumberOfOrganDivisionalCouplers()) {
+							createGUIDivCplr(targetPanel, m_organ->getOrganDivisionalCouplerAt(divCplrIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("General"))) {
+						int genIdx = static_cast<int>(m_organFile.ReadLong("General", 0));
+						if (genIdx > 0 && genIdx <= (int)m_organ->getNumberOfGenerals()) {
+							createGUIGeneral(targetPanel, m_organ->getOrganGeneralAt(genIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("ReversiblePiston"))) {
+						int revPistonIdx = static_cast<int>(m_organFile.ReadLong("ReversiblePiston", 0));
+						if (revPistonIdx > 0 && revPistonIdx <= (int)m_organ->getNumberOfReversiblePistons()) {
+							createGUIPiston(targetPanel, m_organ->getReversiblePistonAt(revPistonIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("Switch"))) {
+						int switchIdx = static_cast<int>(m_organFile.ReadLong("Switch", 0));
+						if (switchIdx > 0 && switchIdx <= (int)m_organ->getNumberOfSwitches()) {
+							createGUISwitch(targetPanel, m_organ->getOrganSwitchAt(switchIdx - 1));
+						}
+					} else if (elementType.IsSameAs(wxT("Label"))) {
+						createGUILabel(targetPanel);
+					} else if (elementType.IsSameAs(wxT("Manual"))) {
+						int manIdx = static_cast<int>(m_organFile.ReadLong("Manual", -1));
+						if (manIdx >= 0 && manIdx <= (int)m_organ->getNumberOfManuals()) {
+							if (!m_organ->doesHavePedals() && manIdx > 0)
+								manIdx -= 1;
+							createGUIManual(targetPanel, m_organ->getOrganManualAt(manIdx));
+						}
+					} else {
+						// the type can also be a valid setter element
+						createFromSetterElement(targetPanel, elementType);
+					}
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+	} else {
+		// old style panel elements are read in another way, but they will be converted to the new style
+		int nbrManuals = static_cast<int>(m_organFile.ReadLong("NumberOfManuals", 0));
+		for (int i = 0; i < nbrManuals; i++) {
+			wxString manStr = wxT("Manual") + GOODF_functions::number_format(i + 1);
+			int manRefId = static_cast<int>(m_organFile.ReadLong(manStr, -1));
+			if (manRefId >= 0 && manRefId <= m_organ->getNumberOfManuals()) {
+				int manIdx = manRefId;
+				if (!m_organ->doesHavePedals() && manIdx > 0)
+					manIdx -= 1;
+				wxString thePath = panelId + wxT("Manual") + GOODF_functions::number_format(manRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUIManual(targetPanel, m_organ->getOrganManualAt(manIdx));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrSetters = static_cast<int>(m_organFile.ReadLong("NumberOfSetterElements", 0));
+		for (int i = 0; i < nbrSetters; i++) {
+			wxString setterGroupName = panelId + wxT("SetterElement") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(setterGroupName)) {
+				m_organFile.SetPath(wxT("/") + setterGroupName);
+				wxString elementType = m_organFile.Read("Type", wxEmptyString);
+				if (elementType != wxEmptyString) {
+					createFromSetterElement(m_organ->getOrganPanelAt(0), elementType);
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrEnclosures = static_cast<int>(m_organFile.ReadLong("NumberOfEnclosures", 0));
+		for (int i = 0; i < nbrEnclosures; i++) {
+			wxString encStr = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
+			int encRefId = static_cast<int>(m_organFile.ReadLong(encStr, 0));
+			if (encRefId > 0 && encRefId <= m_organ->getNumberOfEnclosures()) {
+				wxString thePath = panelId + wxT("Enclosure") + GOODF_functions::number_format(encRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUIEnclosure(targetPanel, m_organ->getOrganEnclosureAt(encRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrTremulants = static_cast<int>(m_organFile.ReadLong("NumberOfTremulants", 0));
+		for (int i = 0; i < nbrTremulants; i++) {
+			wxString tremStr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
+			int tremRefId = static_cast<int>(m_organFile.ReadLong(tremStr, 0));
+			if (tremRefId > 0 && tremRefId <= m_organ->getNumberOfTremulants()) {
+				wxString thePath = panelId + wxT("Tremulant") + GOODF_functions::number_format(tremRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUITremulant(targetPanel, m_organ->getOrganTremulantAt(tremRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrPistons = static_cast<int>(m_organFile.ReadLong("NumberOfReversiblePistons", 0));
+		for (int i = 0; i < nbrPistons; i++) {
+			wxString pistonStr = wxT("ReversiblePiston") + GOODF_functions::number_format(i + 1);
+			int pistonRefId = static_cast<int>(m_organFile.ReadLong(pistonStr, 0));
+			if (pistonRefId > 0 && pistonRefId <= m_organ->getNumberOfReversiblePistons()) {
+				wxString thePath = panelId + wxT("ReversiblePiston") + GOODF_functions::number_format(pistonRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUIPiston(targetPanel, m_organ->getReversiblePistonAt(pistonRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrSwitches = static_cast<int>(m_organFile.ReadLong("NumberOfSwitches", 0));
+		for (int i = 0; i < nbrSwitches; i++) {
+			wxString swStr = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			int swRefId = static_cast<int>(m_organFile.ReadLong(swStr, 0));
+			if (swRefId > 0 && swRefId <= m_organ->getNumberOfSwitches()) {
+				wxString thePath = panelId + wxT("Switch") + GOODF_functions::number_format(swRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUISwitch(targetPanel, m_organ->getOrganSwitchAt(swRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrGenerals = static_cast<int>(m_organFile.ReadLong("NumberOfGenerals", 0));
+		for (int i = 0; i < nbrGenerals; i++) {
+			wxString genStr = wxT("General") + GOODF_functions::number_format(i + 1);
+			int genRefId = static_cast<int>(m_organFile.ReadLong(genStr, 0));
+			if (genRefId > 0 && genRefId <= m_organ->getNumberOfGenerals()) {
+				wxString thePath = panelId + wxT("General") + GOODF_functions::number_format(genRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUIGeneral(targetPanel, m_organ->getOrganGeneralAt(genRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrDivCplrs = static_cast<int>(m_organFile.ReadLong("NumberOfDivisionalCouplers", 0));
+		for (int i = 0; i < nbrDivCplrs; i++) {
+			wxString divCplrStr = wxT("DivisionalCoupler") + GOODF_functions::number_format(i + 1);
+			int divCplrRefId = static_cast<int>(m_organFile.ReadLong(divCplrStr, 0));
+			if (divCplrRefId > 0 && divCplrRefId <= m_organ->getNumberOfOrganDivisionalCouplers()) {
+				wxString thePath = panelId + wxT("DivisionalCoupler") + GOODF_functions::number_format(divCplrRefId);
+				if (m_organFile.HasGroup(thePath)) {
+					m_organFile.SetPath(wxT("/") + thePath);
+					createGUIDivCplr(targetPanel, m_organ->getOrganDivisionalCouplerAt(divCplrRefId - 1));
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrStops = static_cast<int>(m_organFile.ReadLong("NumberOfStops", 0));
+		for (int i = 0; i < nbrStops; i++) {
+			wxString stopManStr = wxT("Stop") + GOODF_functions::number_format(i + 1) + wxT("Manual");
+			wxString stopStr = wxT("Stop") + GOODF_functions::number_format(i + 1);
+			int manRefId = static_cast<int>(m_organFile.ReadLong(stopManStr, -1));
+			if (manRefId >= 0 && manRefId <= m_organ->getNumberOfManuals()) {
+				int manIdx = manRefId;
+				if (!m_organ->doesHavePedals() && manIdx > 0)
+					manIdx -= 1;
+				Manual *man = m_organ->getOrganManualAt(manIdx);
+				int stopRefId = static_cast<int>(m_organFile.ReadLong(stopStr, 0));
+				if (stopRefId > 0 && stopRefId <= man->getNumberOfStops()) {
+					wxString thePath = panelId + wxT("Stop") + GOODF_functions::number_format(i + 1);
+					if (m_organFile.HasGroup(thePath)) {
+						m_organFile.SetPath(wxT("/") + thePath);
+						createGUIStop(targetPanel, man->getStopAt(stopRefId - 1));
+					}
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrCplrs = static_cast<int>(m_organFile.ReadLong("NumberOfCouplers", 0));
+		for (int i = 0; i < nbrCplrs; i++) {
+			wxString couplerManStr = wxT("Coupler") + GOODF_functions::number_format(i + 1) + wxT("Manual");
+			wxString couplerStr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
+			int manRefId = static_cast<int>(m_organFile.ReadLong(couplerManStr, -1));
+			if (manRefId >= 0 && manRefId <= m_organ->getNumberOfManuals()) {
+				int manIdx = manRefId;
+				if (!m_organ->doesHavePedals() && manIdx > 0)
+					manIdx -= 1;
+				Manual *man = m_organ->getOrganManualAt(manIdx);
+				int couplerRefId = static_cast<int>(m_organFile.ReadLong(couplerStr, 0));
+				if (couplerRefId > 0 && couplerRefId <= man->getNumberOfCouplers()) {
+					wxString thePath = panelId + wxT("Coupler") + GOODF_functions::number_format(i + 1);
+					if (m_organFile.HasGroup(thePath)) {
+						m_organFile.SetPath(wxT("/") + thePath);
+						createGUICoupler(targetPanel, man->getCouplerAt(couplerRefId - 1));
+					}
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrDivisionals = static_cast<int>(m_organFile.ReadLong("NumberOfDivisionals", 0));
+		for (int i = 0; i < nbrDivisionals; i++) {
+			wxString divManStr = wxT("Divisional") + GOODF_functions::number_format(i + 1) + wxT("Manual");
+			wxString divStr = wxT("Divisional") + GOODF_functions::number_format(i + 1);
+			int manRefId = static_cast<int>(m_organFile.ReadLong(divManStr, -1));
+			if (manRefId >= 0 && manRefId <= m_organ->getNumberOfManuals()) {
+				int manIdx = manRefId;
+				if (!m_organ->doesHavePedals() && manIdx > 0)
+					manIdx -= 1;
+				Manual *man = m_organ->getOrganManualAt(manIdx);
+				int divRefId = static_cast<int>(m_organFile.ReadLong(divStr, 0));
+				if (divRefId > 0 && divRefId <= man->getNumberOfDivisionals()) {
+					wxString thePath = panelId + wxT("Divisional") + GOODF_functions::number_format(i + 1);
+					if (m_organFile.HasGroup(thePath)) {
+						m_organFile.SetPath(wxT("/") + thePath);
+						createGUIDivisional(targetPanel, man->getDivisionalAt(divRefId - 1));
+					}
+				}
+			}
+			m_organFile.SetPath(wxT("/") + panelId);
+		}
+		int nbrLabels = static_cast<int>(m_organFile.ReadLong("NumberOfLabels", 0));
+		for (int i = 0; i < nbrLabels; i++) {
+			wxString thePath = panelId + wxT("Label") + GOODF_functions::number_format(i + 1);
+			if (m_organFile.HasGroup(thePath)) {
+				m_organFile.SetPath(wxT("/") + thePath);
+				createGUILabel(targetPanel);
+			}
+
+			m_organFile.SetPath(wxT("/") + panelId);
 		}
 	}
 }

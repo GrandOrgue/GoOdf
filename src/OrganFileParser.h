@@ -73,6 +73,10 @@ private:
 	void createGUIGeneral(GoPanel *targetPanel, General *general);
 	void createGUIDivisional(GoPanel *targetPanel, Divisional *divisional);
 	void createFromSetterElement(GoPanel *targetPanel, wxString elementType);
+	void createGUICoupler(GoPanel *targetPanel, Coupler *coupler);
+	void createGUIStop(GoPanel *targetPanel, Stop *stop);
+
+	void parsePanelElements(GoPanel *targetPanel, wxString panelId);
 
 };
 
