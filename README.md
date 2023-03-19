@@ -1,8 +1,8 @@
 # GOODF
 
-GOODF is a tool for creating organ definition files for GrandOrgue. Editing of existing .organ files is implemented since version 0.4.
+GOODF is a tool for creating organ definition files for GrandOrgue. Editing of existing .organ files is implemented since version 0.4. Opening complex .organ files can take quite a while for the software to process, so please be patient if you try it.
 
-It's currently mainly tested on Linux, but building for Windows is possible.
+The software is currently mainly tested on Linux, but building for Windows is possible.
 
 ## Current status
 GOODF is hosted on Github. The repository can be found at [https://github.com/larspalo/GOODF](https://github.com/larspalo/GOODF).
