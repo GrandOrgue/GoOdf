@@ -50,5 +50,6 @@ bool GUIGeneral::isReferencing(General *general) {
 }
 
 void GUIGeneral::updateDisplayName() {
-	setDisplayName(m_general->getName());
+	if (m_general)
+		setDisplayName(m_general->getName());
 }

@@ -39,7 +39,7 @@ public:
 	~Manual();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg, bool useOldPanelFormat);
+	void read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId);
 
 	wxString getName();
 	void setName(wxString name);

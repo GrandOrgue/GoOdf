@@ -173,6 +173,8 @@ void Rank::read(wxFileConfig *cfg) {
 	}
 	wxString retuningStr = cfg->Read("AcceptsRetuning", wxEmptyString);
 	setAcceptsRetuning(GOODF_functions::parseBoolean(retuningStr, true));
+	if (!m_pipes.empty())
+		m_pipes.clear();
 	for (int i = 0; i < numberOfLogicalPipes; i++) {
 		Pipe p;
 		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);

@@ -66,7 +66,7 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 	for (int i = 0; i < nbrEnclosures; i++) {
 		wxString encNbrStr = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
 		int encRefNbr = static_cast<int>(cfg->ReadLong(encNbrStr, 0));
-		if (encRefNbr > 0 && encRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfEnclosures()) {
+		if (encRefNbr > 0 && encRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfEnclosures()) {
 			addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(encRefNbr - 1));
 		}
 	}
@@ -76,7 +76,7 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 	for (int i = 0; i < nbrTremulants; i++) {
 		wxString tremNbrStr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
 		int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbrStr, 0));
-		if (tremRefNbr > 0 && tremRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+		if (tremRefNbr > 0 && tremRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
 			addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremRefNbr - 1));
 		}
 	}

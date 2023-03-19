@@ -55,6 +55,7 @@ public:
 	void OnAbout(wxCommandEvent& event);
 	void OnHelp(wxCommandEvent& event);
 	void OnWriteODF(wxCommandEvent& event);
+	void OnReadOrganFile(wxCommandEvent& event);
 
 	void OrganTreeChildItemLabelChanged(wxString label);
 	void RemoveCurrentItemFromOrgan();
@@ -133,6 +134,7 @@ private:
 	void OnAddNewPanel(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
+	void removeAllItemsFromTree();
 
 };
 

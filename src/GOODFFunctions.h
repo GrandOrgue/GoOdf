@@ -70,7 +70,7 @@ namespace GOODF_functions {
 	inline wxString checkIfFileExist(wxString relativePath) {
 		if (relativePath != wxEmptyString) {
 			wxString fullFilePath = ::wxGetApp().m_frame->m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
-			wxFileName theFile = wxFileName(fullFilePath);
+			wxFileName theFile = wxFileName(fullFilePath, wxPATH_DOS);
 			if (theFile.FileExists()) {
 				return theFile.GetFullPath();
 			}

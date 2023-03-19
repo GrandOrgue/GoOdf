@@ -37,23 +37,23 @@ ReversiblePiston::~ReversiblePiston() {
 void ReversiblePiston::write(wxTextFile *outFile) {
 	Button::write(outFile);
 	if (m_stop) {
-		outFile->AddLine(wxT("ObjecType=STOP"));
+		outFile->AddLine(wxT("ObjectType=STOP"));
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_stop->getOwningManual()));
 		outFile->AddLine(wxT("ManualNumber=") + manId);
 		wxString objId = GOODF_functions::number_format(m_stop->getOwningManual()->getIndexOfStop(m_stop));
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_coupler) {
-		outFile->AddLine(wxT("ObjecType=COUPLER"));
+		outFile->AddLine(wxT("ObjectType=COUPLER"));
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_coupler->getOwningManual()));
 		outFile->AddLine(wxT("ManualNumber=") + manId);
-		wxString objId = GOODF_functions::number_format(m_coupler->getOwningManual()->getIndexOfStop(m_stop));
+		wxString objId = GOODF_functions::number_format(m_coupler->getOwningManual()->getIndexOfCoupler(m_coupler));
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_switch) {
-		outFile->AddLine(wxT("ObjecType=SWITCH"));
+		outFile->AddLine(wxT("ObjectType=SWITCH"));
 		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switch));
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_tremulant) {
-		outFile->AddLine(wxT("ObjecType=TREMULANT"));
+		outFile->AddLine(wxT("ObjectType=TREMULANT"));
 		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(m_tremulant));
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	}
@@ -65,6 +65,8 @@ void ReversiblePiston::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	if (type.IsSameAs(wxT("STOP"), false)) {
 		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
 		if (manNbr >= 0 && manNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+				manNbr -= 1;
 			int stopNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
 			if (stopNbr > 0 && stopNbr <= (int) ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfStops()) {
 				setStop(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getStopAt(stopNbr - 1));
@@ -73,6 +75,8 @@ void ReversiblePiston::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	} else if (type.IsSameAs(wxT("COUPLER"), false)) {
 		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
 		if (manNbr >= 0 && manNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
+			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+				manNbr -= 1;
 			int couplerNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
 			if (couplerNbr > 0 && couplerNbr <= (int) ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfCouplers()) {
 				setCoupler(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getCouplerAt(couplerNbr - 1));

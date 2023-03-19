@@ -166,8 +166,9 @@ void GUILabel::read(wxFileConfig *cfg) {
 				setDispLabelFontSize(value);
 		}
 	}
-	wxFont labelFont(wxFontInfo(m_dispLabelFontSize.getSizeValue()).FaceName(cfg->Read("DispLabelFontName", wxEmptyString)));
-	if (labelFont.IsOk())
+	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
+	wxFont labelFont(wxFontInfo(m_dispLabelFontSize.getSizeValue()).FaceName(fontStr));
+	if (fontStr != wxEmptyString && labelFont.IsOk())
 		setDispLabelFont(labelFont);
 	m_name = cfg->Read("Name", wxEmptyString);
 	int imgNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));
@@ -191,21 +192,25 @@ void GUILabel::read(wxFileConfig *cfg) {
 	if (fullMaskPath != wxEmptyString) {
 		m_image.setMask(fullMaskPath);
 	}
-	int pX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	int pX = static_cast<int>(cfg->ReadLong("PositionX", -1));
 	if (pX > -1 && pX < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
 		m_positionX = pX;
 	}
-	int pY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	int pY = static_cast<int>(cfg->ReadLong("PositionY", -1));
 	if (pY > -1 && pY < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
 		m_positionY = pY;
 	}
-	int width = static_cast<int>(cfg->ReadLong("Width", 0));
+	int width = static_cast<int>(cfg->ReadLong("Width", -1));
 	if (width > -1 && width < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
 		m_width = width;
+	} else {
+		m_width = m_bitmapWidth;
 	}
-	int height = static_cast<int>(cfg->ReadLong("Height", 0));
+	int height = static_cast<int>(cfg->ReadLong("Height", -1));
 	if (height > -1 && height < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
 		m_height = height;
+	} else {
+		m_height = m_bitmapHeight;
 	}
 	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
 	if (tileX > -1 && tileX < m_bitmapWidth) {

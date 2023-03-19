@@ -82,7 +82,7 @@ void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 		wxString swNbrId = wxT("Switch") + GOODF_functions::number_format(i + 1);
 		int swRefNbr = static_cast<int>(cfg->ReadLong(swNbrId, 0));
 		// if the number of the referenced switch is lower than the number of switches in the organ it's ok
-		if (swRefNbr > 0 && swRefNbr < (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+		if (swRefNbr > 0 && swRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
 			// but the index of the switch is actually one lower than in the organ file
 			addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
 		}

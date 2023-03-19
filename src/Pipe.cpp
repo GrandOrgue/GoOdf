@@ -263,7 +263,7 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 			if (loops > 100)
 				loops = 100;
 			Attack a;
-			a.fileName = mainAtkStr;
+			a.fileName = GOODF_functions::removeBaseOdfPath(fullAtkPath);
 			a.fullPath = fullAtkPath;
 			a.loadRelease = GOODF_functions::parseBoolean(loadReleaseStr, !isPercussive);
 			if (atkVel > -1 && atkVel < 128)
@@ -294,6 +294,7 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 				else
 					l.end = l.start + 1;
 			}
+			m_attacks.push_back(a);
 		} else if (mainAtkStr.StartsWith(wxT("REF")) || mainAtkStr.IsSameAs(wxT("DUMMY"), false)) {
 			Attack a;
 			a.fileName = mainAtkStr;

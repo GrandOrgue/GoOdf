@@ -85,7 +85,7 @@ void DisplayMetrics::write(wxTextFile *outFile) {
 	outFile->AddLine(wxT("DispDrawstopInsetBackgroundImageNum=") + wxString::Format(wxT("%i"), m_dispDrawstopInsetBackgroundImageNum));
 	outFile->AddLine(wxT("DispControlLabelFont=") + m_dispControlLabelFont.GetFaceName());
 	outFile->AddLine(wxT("DispShortcutKeyLabelFont=") + m_dispShortcutKeyLabelFont.GetFaceName());
-	outFile->AddLine(wxT("DispShortcutKeyLabelColour=") + m_dispShortcutKeyLabelColour.getHtmlValue());
+	outFile->AddLine(wxT("DispShortcutKeyLabelColour=") + m_dispShortcutKeyLabelColour.getColorName());
 	outFile->AddLine(wxT("DispGroupLabelFont=") + m_dispGroupLabelFont.GetFaceName());
 	outFile->AddLine(wxT("DispDrawstopCols=") + wxString::Format(wxT("%i"), m_dispDrawstopCols));
 	outFile->AddLine(wxT("DispDrawstopRows=") + wxString::Format(wxT("%i"), m_dispDrawstopRows));
@@ -239,6 +239,20 @@ void DisplayMetrics::read(wxFileConfig *cfg) {
 	fontName = cfg->Read("DispGroupLabelFont", wxEmptyString);
 	if (fontName != wxEmptyString)
 		m_dispGroupLabelFont = wxFont(wxFontInfo(7).FaceName(fontName));
+	wxString labelColor = cfg->Read("DispShortcutKeyLabelColour", wxEmptyString);
+	if (labelColor != wxEmptyString) {
+		int colorIdx = m_dispShortcutKeyLabelColour.getColorNames().Index(labelColor, false);
+		if (colorIdx != wxNOT_FOUND) {
+			m_dispShortcutKeyLabelColour.setSelectedColorIndex(colorIdx);
+		} else {
+			// is it possible that it's a html format color code instead
+			wxColour color;
+			color.Set(labelColor);
+			if (color.IsOk()) {
+				m_dispShortcutKeyLabelColour.setColorValue(color);
+			}
+		}
+	}
 	int drawstopCols = static_cast<int>(cfg->ReadLong("DispDrawstopCols", 2));
 	if (drawstopCols > 1 && drawstopCols < 13 && drawstopCols % 2 == 0)
 		m_dispDrawstopCols = drawstopCols;

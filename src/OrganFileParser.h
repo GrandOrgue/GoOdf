@@ -36,7 +36,7 @@ private:
 
 	Organ *m_organ;
 	wxString m_filePath;
-	wxFileConfig m_organFile;
+	wxFileConfig *m_organFile;
 	bool m_fileIsOk;
 	bool m_organIsReady;
 	bool m_isUsingOldPanelFormat;

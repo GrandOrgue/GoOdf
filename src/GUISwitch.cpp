@@ -53,5 +53,6 @@ bool GUISwitch::isReferencing(GoSwitch *sw) {
 }
 
 void GUISwitch::updateDisplayName() {
-	setDisplayName(m_switch->getName());
+	if (m_switch)
+		setDisplayName(m_switch->getName());
 }

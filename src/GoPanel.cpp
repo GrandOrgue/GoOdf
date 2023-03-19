@@ -80,7 +80,8 @@ void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
 }
 
 void GoPanel::read(wxFileConfig *cfg, wxString panelId) {
-	m_name = cfg->Read("Name", wxEmptyString);
+	if (panelId != wxT("Panel000"))
+		m_name = cfg->Read("Name", wxEmptyString);
 	m_group = cfg->Read("Group", wxEmptyString);
 	wxString cfgBoolValue = cfg->Read("HasPedals", wxEmptyString);
 	m_hasPedals = GOODF_functions::parseBoolean(cfgBoolValue, false);
@@ -89,6 +90,7 @@ void GoPanel::read(wxFileConfig *cfg, wxString panelId) {
 	if (nbrImages > 0 && nbrImages < 1000) {
 		for (int i = 0; i < nbrImages; i++) {
 			wxString imgGroupName = wxT("Image") + GOODF_functions::number_format(i + 1);
+			cfg->SetPath(wxT("/"));
 			if (cfg->HasGroup(panelId + imgGroupName)) {
 				cfg->SetPath(wxT("/") + panelId + imgGroupName);
 				GoImage img;

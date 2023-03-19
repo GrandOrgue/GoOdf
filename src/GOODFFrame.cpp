@@ -28,6 +28,7 @@
 #include <wx/button.h>
 #include "Enclosure.h"
 #include "Windchestgroup.h"
+#include "OrganFileParser.h"
 
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
@@ -36,6 +37,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, GOODFFrame::OnQuit)
 	EVT_MENU(ID_WRITE_ODF, GOODFFrame::OnWriteODF)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
+	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_BUTTON(ID_ADD_ENCLOSURE_BTN, GOODFFrame::OnAddNewEnclosure)
 	EVT_BUTTON(ID_ADD_TREMULANT_BTN, GOODFFrame::OnAddNewTremulant)
@@ -58,6 +60,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	// Add file menu items
 	m_fileMenu->Append(ID_NEW_ORGAN, wxT("&New Organ\tAlt-N"), wxT("Create a new organ"));
+	m_fileMenu->Append(ID_READ_ORGAN, wxT("Open file\tCtrl+O"), wxT("Open existing .organ file"));
 	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tAlt-X"), wxT("Quit this program"));
 	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF"), wxT("Write the .organ file"));
 
@@ -309,6 +312,114 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	msg.ShowModal();
 	odfFile->Close();
 	delete odfFile;
+}
+
+void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
+	if (m_organ->isModified()) {
+		wxMessageDialog dlg(this, wxT("All current organ data will be lost! Do you want to proceed?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (dlg.ShowModal() != wxID_YES) {
+			return;
+		}
+	}
+	if (m_organ) {
+		delete m_organ;
+		m_organ = NULL;
+	}
+	m_organ = new Organ();
+	removeAllItemsFromTree();
+
+	wxString organFilePath;
+
+	wxFileDialog fileDialog(
+		this,
+		wxT("Select .organ file to open"),
+		wxStandardPaths::Get().GetDocumentsDir(),
+		"",
+		"GrandOrgue ODF files (*.organ)|*.organ;*.ORGAN",
+		wxFD_OPEN|wxFD_FILE_MUST_EXIST
+	);
+
+	if (fileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	organFilePath = fileDialog.GetPath();
+
+	OrganFileParser parser(organFilePath, m_organ);
+	if (parser.isOrganReady()) {
+		wxFileName f_name = wxFileName(organFilePath);
+		m_organPanel->setCurrentOrgan(m_organ);
+		m_organPanel->setOdfPath(f_name.GetPath());
+		m_organPanel->setOdfName(f_name.GetName());
+		for (unsigned i = 0; i < m_organ->getNumberOfEnclosures(); i++) {
+			m_organTreeCtrl->AppendItem(tree_enclosures, m_organ->getOrganEnclosureAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfTremulants(); i++) {
+			m_organTreeCtrl->AppendItem(tree_tremulants, m_organ->getOrganTremulantAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfWindchestgroups(); i++) {
+			m_organTreeCtrl->AppendItem(tree_windchestgrps, m_organ->getOrganWindchestgroupAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfSwitches() ; i++) {
+			m_organTreeCtrl->AppendItem(tree_switches, m_organ->getOrganSwitchAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfRanks() ; i++) {
+			m_organTreeCtrl->AppendItem(tree_ranks, m_organ->getOrganRankAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfManuals() ; i++) {
+			wxTreeItemId thisManual = m_organTreeCtrl->AppendItem(tree_manuals, m_organ->getOrganManualAt(i)->getName());
+
+			// create the subitems for Stops, Couplers and Divisionals
+			wxTreeItemId thisManualStops = m_organTreeCtrl->AppendItem(thisManual, wxT("Stops"));
+			wxTreeItemId thisManualCouplers = m_organTreeCtrl->AppendItem(thisManual, wxT("Couplers"));
+			wxTreeItemId thisManualDivisionals = m_organTreeCtrl->AppendItem(thisManual, wxT("Divisionals"));
+
+			// then they can be populated
+			for (unsigned j = 0; j < m_organ->getOrganManualAt(i)->getNumberOfStops(); j++) {
+				m_organTreeCtrl->AppendItem(thisManualStops, m_organ->getOrganManualAt(i)->getStopAt(j)->getName());
+			}
+			for (unsigned j = 0; j < m_organ->getOrganManualAt(i)->getNumberOfCouplers(); j++) {
+				m_organTreeCtrl->AppendItem(thisManualCouplers, m_organ->getOrganManualAt(i)->getCouplerAt(j)->getName());
+			}
+			for (unsigned j = 0; j < m_organ->getOrganManualAt(i)->getNumberOfDivisionals(); j++) {
+				m_organTreeCtrl->AppendItem(thisManualDivisionals, m_organ->getOrganManualAt(i)->getDivisionalAt(j)->getName());
+			}
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfOrganDivisionalCouplers() ; i++) {
+			m_organTreeCtrl->AppendItem(tree_divisionalCouplers, m_organ->getOrganDivisionalCouplerAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfGenerals() ; i++) {
+			m_organTreeCtrl->AppendItem(tree_generals, m_organ->getOrganGeneralAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfReversiblePistons() ; i++) {
+			m_organTreeCtrl->AppendItem(tree_reversiblePistons, m_organ->getReversiblePistonAt(i)->getName());
+		}
+		for (unsigned i = 0; i < m_organ->getNumberOfPanels(); i++) {
+			wxTreeItemId thisPanel = m_organTreeCtrl->AppendItem(tree_panels, m_organ->getOrganPanelAt(i)->getName());
+
+			// create the subitems for Displaymetrics, Images and GUIElements
+			m_organTreeCtrl->AppendItem(thisPanel, wxT("Displaymetrics"));
+			wxTreeItemId panelImages = m_organTreeCtrl->AppendItem(thisPanel, wxT("Images"));
+			m_organTreeCtrl->AppendItem(thisPanel, wxT("GUI Elements"));
+
+			for (unsigned j = 0; j < m_organ->getOrganPanelAt(i)->getNumberOfImages(); j++) {
+				m_organTreeCtrl->AppendItem(panelImages, m_organ->getOrganPanelAt(i)->getImageAt(j)->getImageNameOnly());
+			}
+			RebuildPanelGuiElementsInTree(i);
+		}
+	} else {
+		if (m_organ) {
+			delete m_organ;
+			m_organ = NULL;
+		}
+		m_organ = new Organ();
+		removeAllItemsFromTree();
+		SetupOrganMainPanel();
+		m_organPanel->setCurrentOrgan(m_organ);
+		m_organPanel->setOdfPath(wxEmptyString);
+		m_organPanel->setOdfName(wxEmptyString);
+	}
+	m_organ->organElementHasChanged();
+	m_organTreeCtrl->SelectItem(tree_organ);
 }
 
 void GOODFFrame::OrganTreeChildItemLabelChanged(wxString label) {
@@ -1115,16 +1226,7 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 		}
 		m_organ = new Organ();
 
-		m_organTreeCtrl->DeleteChildren(tree_manuals);
-		m_organTreeCtrl->DeleteChildren(tree_windchestgrps);
-		m_organTreeCtrl->DeleteChildren(tree_enclosures);
-		m_organTreeCtrl->DeleteChildren(tree_tremulants);
-		m_organTreeCtrl->DeleteChildren(tree_ranks);
-		m_organTreeCtrl->DeleteChildren(tree_switches);
-		m_organTreeCtrl->DeleteChildren(tree_reversiblePistons);
-		m_organTreeCtrl->DeleteChildren(tree_divisionalCouplers);
-		m_organTreeCtrl->DeleteChildren(tree_generals);
-		m_organTreeCtrl->DeleteChildren(tree_panels);
+		removeAllItemsFromTree();
 		SetupOrganMainPanel();
 		m_organTreeCtrl->SelectItem(tree_organ);
 
@@ -1258,4 +1360,17 @@ void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
 	for (int i = 0; i < nbrElements; i++) {
 		m_organTreeCtrl->AppendItem(guiElements, m_organ->getOrganPanelAt(panelIndex)->getGuiElementAt(i)->getDisplayName());
 	}
+}
+
+void GOODFFrame::removeAllItemsFromTree() {
+	m_organTreeCtrl->DeleteChildren(tree_manuals);
+	m_organTreeCtrl->DeleteChildren(tree_windchestgrps);
+	m_organTreeCtrl->DeleteChildren(tree_enclosures);
+	m_organTreeCtrl->DeleteChildren(tree_tremulants);
+	m_organTreeCtrl->DeleteChildren(tree_ranks);
+	m_organTreeCtrl->DeleteChildren(tree_switches);
+	m_organTreeCtrl->DeleteChildren(tree_reversiblePistons);
+	m_organTreeCtrl->DeleteChildren(tree_divisionalCouplers);
+	m_organTreeCtrl->DeleteChildren(tree_generals);
+	m_organTreeCtrl->DeleteChildren(tree_panels);
 }

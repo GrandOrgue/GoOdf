@@ -41,7 +41,7 @@ void Divisional::write(wxTextFile *outFile) {
 	unsigned counter = 1;
 	for (std::pair<Stop*, bool> stop : m_stops) {
 		int stopIdx = m_owningManual->getIndexOfStop(stop.first);
-		wxString stopId = GOODF_functions::number_format(stopIdx);
+		wxString stopId = GOODF_functions::number_format(stopIdx + 1);
 		if (stop.second)
 			outFile->AddLine(wxT("Stop") + GOODF_functions::number_format(counter) + wxT("=") + stopId);
 		else
@@ -54,7 +54,7 @@ void Divisional::write(wxTextFile *outFile) {
 	counter = 1;
 	for (std::pair<Coupler*, bool> coupler : m_couplers) {
 		int couplerIdx = m_owningManual->getIndexOfCoupler(coupler.first);
-		wxString couplerId = GOODF_functions::number_format(couplerIdx);
+		wxString couplerId = GOODF_functions::number_format(couplerIdx + 1);
 		if (coupler.second)
 			outFile->AddLine(wxT("Coupler") + GOODF_functions::number_format(counter) + wxT("=") + couplerId);
 		else
@@ -67,7 +67,7 @@ void Divisional::write(wxTextFile *outFile) {
 	counter = 1;
 	for (std::pair<Tremulant*, bool> trem : m_tremulants) {
 		int tremIdx = m_owningManual->getIndexOfTremulant(trem.first);
-		wxString tremId = GOODF_functions::number_format(tremIdx);
+		wxString tremId = GOODF_functions::number_format(tremIdx + 1);
 		if (trem.second)
 			outFile->AddLine(wxT("Tremulant") + GOODF_functions::number_format(counter) + wxT("=") + tremId);
 		else
@@ -80,7 +80,7 @@ void Divisional::write(wxTextFile *outFile) {
 	counter = 1;
 	for (std::pair<GoSwitch*, bool> sw : m_switches) {
 		int switchIdx = m_owningManual->getIndexOfGoSwitch(sw.first);
-		wxString switchId = GOODF_functions::number_format(switchIdx);
+		wxString switchId = GOODF_functions::number_format(switchIdx + 1);
 		if (sw.second)
 			outFile->AddLine(wxT("Switch") + GOODF_functions::number_format(counter) + wxT("=") + switchId);
 		else
@@ -104,10 +104,10 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			if (stopOnMan.ToLong(&value)) {
 				if (value > 0) {
 					// the stop is on
-					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(value), true));
+					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(value - 1), true));
 				} else {
 					// the stop is off
-					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(labs(value)), false));
+					m_stops.push_back(std::make_pair(m_owningManual->getStopAt(labs(value) - 1), false));
 				}
 			}
 		}
@@ -121,10 +121,10 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			if (cplrOnMan.ToLong(&value)) {
 				if (value > 0) {
 					// the coupler is on
-					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(value), true));
+					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(value - 1), true));
 				} else {
 					// the coupler is off
-					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(labs(value)), false));
+					m_couplers.push_back(std::make_pair(m_owningManual->getCouplerAt(labs(value) - 1), false));
 				}
 			}
 		}
@@ -138,10 +138,10 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			if (tremId.ToLong(&value)) {
 				if (value > 0) {
 					// the tremulant is on
-					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(value), true));
+					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(value - 1), true));
 				} else {
 					// the tremulant is off
-					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(labs(value)), false));
+					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(labs(value) - 1), false));
 				}
 			}
 		}
@@ -155,10 +155,10 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			if (swId.ToLong(&value)) {
 				if (value > 0) {
 					// the switch is on
-					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(value), true));
+					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(value - 1), true));
 				} else {
 					// the switch is off
-					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(labs(value)), false));
+					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(labs(value) - 1), false));
 				}
 			}
 		}

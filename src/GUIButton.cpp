@@ -102,19 +102,19 @@ void GUIButton::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("DispDrawstopCol=") + wxString::Format(wxT("%i"), m_dispDrawstopCol));
 	if (m_imageOn != wxEmptyString) {
 		wxString relativePath = GOODF_functions::removeBaseOdfPath(m_imageOn);
-		outFile->AddLine(wxT("ImageOn=") + relativePath);
+		outFile->AddLine(wxT("ImageOn=") + GOODF_functions::fixSeparator(relativePath));
 	}
 	if (m_imageOff != wxEmptyString) {
 		wxString relativePath = GOODF_functions::removeBaseOdfPath(m_imageOff);
-		outFile->AddLine(wxT("ImageOff=") + relativePath);
+		outFile->AddLine(wxT("ImageOff=") + GOODF_functions::fixSeparator(relativePath));
 	}
 	if (m_maskOn != wxEmptyString) {
 		wxString relativePath = GOODF_functions::removeBaseOdfPath(m_maskOn);
-		outFile->AddLine(wxT("MaskOn=") + relativePath);
+		outFile->AddLine(wxT("MaskOn=") + GOODF_functions::fixSeparator(relativePath));
 	}
 	if (m_maskOff != wxEmptyString) {
 		wxString relativePath = GOODF_functions::removeBaseOdfPath(m_maskOff);
-		outFile->AddLine(wxT("MaskOff=") + relativePath);
+		outFile->AddLine(wxT("MaskOff=") + GOODF_functions::fixSeparator(relativePath));
 	}
 	if (m_width != m_bitmapWidth)
 		outFile->AddLine(wxT("Width=") + wxString::Format(wxT("%i"), m_width));
@@ -173,8 +173,9 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 				setDispLabelFontSize(value);
 		}
 	}
-	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(cfg->Read("DispLabelFontName", wxEmptyString)));
-	if (labelFont.IsOk())
+	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
+	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(fontStr));
+	if (fontStr != wxEmptyString && labelFont.IsOk())
 		setDispLabelFont(labelFont);
 	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
 	cfgBoolValue = cfg->Read("DisplayKeyLabelOnLeft", wxEmptyString);
@@ -201,6 +202,15 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 		m_dispDrawstopCol = stopCol;
 	wxString image_on = cfg->Read("ImageOn", wxEmptyString);
 	m_imageOn = GOODF_functions::checkIfFileExist(image_on);
+	if (m_imageOn != wxEmptyString) {
+		wxImage img = wxImage(m_imageOn);
+		if (img.IsOk()) {
+			int width = img.GetWidth();
+			int height = img.GetHeight();
+			setBitmapWidth(width);
+			setBitmapHeight(height);
+		}
+	}
 	wxString image_off = cfg->Read("ImageOff", wxEmptyString);
 	m_imageOff = GOODF_functions::checkIfFileExist(image_off);
 	wxString mask_on = cfg->Read("MaskOn", wxEmptyString);
@@ -209,67 +219,83 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 	m_maskOff = GOODF_functions::checkIfFileExist(mask_off);
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
-	int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));
 	if (posX > -1 && posX < thePanelWidth)
 		setPosX(posX);
-	int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	int posY = static_cast<int>(cfg->ReadLong("PositionY", -1));
 	if (posY > -1 && posY < thePanelHeight)
 		setPosY(posY);
-	int encWidth = static_cast<int>(cfg->ReadLong("Width", 0));
+	int encWidth = static_cast<int>(cfg->ReadLong("Width", -1));
 	if (encWidth > -1 && encWidth < thePanelWidth) {
 		setWidth(encWidth);
+	} else {
+		setWidth(m_bitmapWidth);
 	}
-	int encHeight = static_cast<int>(cfg->ReadLong("Height", 0));
+	int encHeight = static_cast<int>(cfg->ReadLong("Height", -1));
 	if (encHeight > -1 && encHeight < thePanelHeight) {
 		setHeight(encHeight);
+	} else {
+		setHeight(m_bitmapHeight);
 	}
-	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
+	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", -1));
 	if (tileX > -1 && tileX < getBitmapWidth() + 1) {
 		setTileOffsetX(tileX);
 	}
-	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", 0));
+	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", -1));
 	if (tileY > -1 && tileY < getBitmapHeight() + 1) {
 		setTileOffsetY(tileY);
 	}
-	int mouseRectLeft = static_cast<int>(cfg->ReadLong("MouseRectLeft", 0));
+	int mouseRectLeft = static_cast<int>(cfg->ReadLong("MouseRectLeft", -1));
 	if (mouseRectLeft > -1 && mouseRectLeft < getWidth() + 1) {
 		setMouseRectLeft(mouseRectLeft);
 	}
-	int mouseRectTop = static_cast<int>(cfg->ReadLong("MouseRectTop", 0));
+	int mouseRectTop = static_cast<int>(cfg->ReadLong("MouseRectTop", -1));
 	if (mouseRectTop > -1 && mouseRectTop < getHeight() + 1) {
 		setMouseRectTop(mouseRectTop);
 	}
-	int mouseRectWidth = static_cast<int>(cfg->ReadLong("MouseRectWidth", 0));
+	int mouseRectWidth = static_cast<int>(cfg->ReadLong("MouseRectWidth", -1));
 	if (mouseRectWidth > -1 && mouseRectWidth < getWidth() + 1) {
 		setMouseRectWidth(mouseRectWidth);
+	} else {
+		setMouseRectWidth(getWidth());
 	}
-	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", 0));
+	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", -1));
 	if (mouseRectHeight > -1 && mouseRectHeight < getHeight() + 1) {
 		setMouseRectHeight(mouseRectHeight);
+	} else {
+		setMouseRectHeight(getHeight());
 	}
-	int mouseRadius = static_cast<int>(cfg->ReadLong("MouseRadius", 0));
+	int mouseRadius = static_cast<int>(cfg->ReadLong("MouseRadius", -1));
 	if (mouseRadius > -1 && mouseRadius < std::max(m_mouseRectWidth, m_mouseRectHeight)) {
 		setMouseRadius(mouseRadius);
+	} else {
+		setMouseRadius(std::min(getWidth(), getHeight()) / 2);
 	}
-	int textRectLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 0));
+	int textRectLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", -1));
 	if (textRectLeft > -1 && textRectLeft < getWidth() + 1) {
 		setTextRectLeft(textRectLeft);
 	}
-	int textRectTop = static_cast<int>(cfg->ReadLong("TextRectTop", 0));
+	int textRectTop = static_cast<int>(cfg->ReadLong("TextRectTop", -1));
 	if (textRectTop > -1 && textRectTop < getHeight() + 1) {
 		setTextRectTop(textRectTop);
 	}
-	int textRectWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", 0));
+	int textRectWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", -1));
 	if (textRectWidth > -1 && textRectWidth < getWidth() + 1) {
 		setTextRectWidth(textRectWidth);
+	} else {
+		setTextRectWidth(getWidth());
 	}
-	int textRectHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", 0));
+	int textRectHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", -1));
 	if (textRectHeight > -1 && textRectHeight < getHeight() + 1) {
 		setTextRectHeight(textRectHeight);
+	} else {
+		setTextRectHeight(getHeight());
 	}
-	int textBreakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", getTextRectWidth()));
+	int textBreakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", -1));
 	if (textBreakWidth > -1 && textBreakWidth < getTextRectWidth() + 1) {
 		setTextBreakWidth(textBreakWidth);
+	} else {
+		setTextBreakWidth(getWidth());
 	}
 }
 

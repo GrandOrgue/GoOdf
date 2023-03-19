@@ -50,13 +50,13 @@ void GUIManual::write(wxTextFile *outFile) {
 		for (KEYTYPE& key : m_keytypes) {
 			if (key.KeytypeIdentifier.StartsWith(wxT("Key"))) {
 				if (key.ImageOn.getImage() != wxEmptyString)
-					outFile->AddLine(key.KeytypeIdentifier + wxT("ImageOn=") + key.ImageOn.getRelativeImagePath());
+					outFile->AddLine(key.KeytypeIdentifier + wxT("ImageOn=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeImagePath()));
 				if (key.ImageOff.getImage() != wxEmptyString)
-					outFile->AddLine(key.KeytypeIdentifier + wxT("ImageOff=") + key.ImageOff.getRelativeImagePath());
+					outFile->AddLine(key.KeytypeIdentifier + wxT("ImageOff=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeImagePath()));
 				if (key.ImageOn.getMask() != wxEmptyString)
-					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOn=") + key.ImageOn.getRelativeMaskPath());
+					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOn=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeMaskPath()));
 				if (key.ImageOff.getMask() != wxEmptyString)
-					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOff=") + key.ImageOff.getRelativeMaskPath());
+					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOff=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
 				if (key.Width != key.BitmapWidth)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Width=") + wxString::Format(wxT("%i"), key.Width));
 				if (key.Offset != 0)
@@ -73,13 +73,13 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MouseRectHeight=") + wxString::Format(wxT("%i"), key.MouseRectHeight));
 			} else {
 				if (key.ImageOn.getImage() != wxEmptyString)
-					outFile->AddLine(wxT("ImageOn_") + key.KeytypeIdentifier + wxT("=") + key.ImageOn.getRelativeImagePath());
+					outFile->AddLine(wxT("ImageOn_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeImagePath()));
 				if (key.ImageOff.getImage() != wxEmptyString)
-					outFile->AddLine(wxT("ImageOff_") + key.KeytypeIdentifier + wxT("=") + key.ImageOff.getRelativeImagePath());
+					outFile->AddLine(wxT("ImageOff_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeImagePath()));
 				if (key.ImageOn.getMask() != wxEmptyString)
-					outFile->AddLine(wxT("MaskOn_") + key.KeytypeIdentifier + wxT("=") + key.ImageOn.getRelativeMaskPath());
+					outFile->AddLine(wxT("MaskOn_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeMaskPath()));
 				if (key.ImageOff.getMask() != wxEmptyString)
-					outFile->AddLine(wxT("MaskOff_") + key.KeytypeIdentifier + wxT("=") + key.ImageOff.getRelativeMaskPath());
+					outFile->AddLine(wxT("MaskOff_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
 				if (key.Width != key.BitmapWidth)
 					outFile->AddLine(wxT("Width_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.Width));
 				if (key.Offset != 0)
@@ -112,10 +112,10 @@ void GUIManual::write(wxTextFile *outFile) {
 void GUIManual::read(wxFileConfig *cfg) {
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
-	int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
+	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));
 	if (posX > -1 && posX < thePanelWidth)
 		setPosX(posX);
-	int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
+	int posY = static_cast<int>(cfg->ReadLong("PositionY", -1));
 	if (posY > -1 && posY < thePanelHeight)
 		setPosY(posY);
 	for (int i = 0; i < 3; i++) {

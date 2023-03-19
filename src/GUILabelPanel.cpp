@@ -1007,6 +1007,8 @@ void GUILabelPanel::UpdateSpinRanges() {
 
 void GUILabelPanel::UpdateDefaultSpinValues() {
 	m_drawstopColSpin->SetValue(m_label->getDispDrawstopCol());
+	m_dispXposSpin->SetValue(m_label->getDispXpos());
+	m_dispYposSpin->SetValue(m_label->getDispYpos());
 	m_elementPosXSpin->SetValue(m_label->getPosX());
 	m_elementPosYSpin->SetValue(m_label->getPosY());
 	m_widthSpin->SetValue(m_label->getWidth());

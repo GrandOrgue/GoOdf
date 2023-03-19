@@ -438,9 +438,10 @@ unsigned Organ::getIndexOfOrganEnclosure(Enclosure *enclosure) {
 		return 0;
 }
 
-void Organ::addEnclosure(Enclosure enclosure) {
+void Organ::addEnclosure(Enclosure enclosure, bool isParsing) {
 	m_Enclosures.push_back(enclosure);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeEnclosureAt(unsigned index) {
@@ -475,9 +476,10 @@ unsigned Organ::getIndexOfOrganTremulant(Tremulant *tremulant) {
 		return 0;
 }
 
-void Organ::addTremulant(Tremulant tremulant) {
+void Organ::addTremulant(Tremulant tremulant, bool isParsing) {
 	m_Tremulants.push_back(tremulant);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeTremulantAt(unsigned index) {
@@ -559,9 +561,10 @@ unsigned Organ::getNumberOfSwitches() {
 	return m_Switches.size();
 }
 
-void Organ::addSwitch(GoSwitch theSwitch) {
+void Organ::addSwitch(GoSwitch theSwitch, bool isParsing) {
 	m_Switches.push_back(theSwitch);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 unsigned Organ::getIndexOfOrganSwitch(GoSwitch *switchToFind) {
@@ -682,9 +685,10 @@ unsigned Organ::getIndexOfOrganStop(Stop *stop) {
 		return 0;
 }
 
-void Organ::addStop(Stop stop) {
+void Organ::addStop(Stop stop, bool isParsing) {
 	m_Stops.push_back(stop);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeStopAt(unsigned index) {
@@ -792,9 +796,10 @@ unsigned Organ::getIndexOfOrganManual(Manual *manual) {
 		return 0;
 }
 
-void Organ::addManual(Manual manual) {
+void Organ::addManual(Manual manual, bool isParsing) {
 	m_Manuals.push_back(manual);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeManualAt(unsigned index) {
@@ -835,9 +840,10 @@ unsigned Organ::getIndexOfOrganCoupler(Coupler *coupler) {
 		return 0;
 }
 
-void Organ::addCoupler(Coupler coupler) {
+void Organ::addCoupler(Coupler coupler, bool isParsing) {
 	m_Couplers.push_back(coupler);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeCouplerAt(unsigned index) {
@@ -904,9 +910,10 @@ unsigned Organ::getIndexOfOrganDivisional(Divisional *divisional) {
 		return 0;
 }
 
-void Organ::addDivisional(Divisional divisional) {
+void Organ::addDivisional(Divisional divisional, bool isParsing) {
 	m_Divisionals.push_back(divisional);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeDivisionalAt(unsigned index) {
@@ -960,9 +967,10 @@ unsigned Organ::getIndexOfOrganDivisionalCoupler(DivisionalCoupler *divCplr) {
 		return 0;
 }
 
-void Organ::addDivisionalCoupler(DivisionalCoupler divCplr) {
+void Organ::addDivisionalCoupler(DivisionalCoupler divCplr, bool isParsing) {
 	m_DivisionalCouplers.push_back(divCplr);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeDivisionalCouplerAt(unsigned index) {
@@ -1028,9 +1036,10 @@ unsigned Organ::getIndexOfOrganGeneral(General *general) {
 		return 0;
 }
 
-void Organ::addGeneral(General general) {
+void Organ::addGeneral(General general, bool isParsing) {
 	m_Generals.push_back(general);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeGeneralAt(unsigned index) {
@@ -1090,9 +1099,10 @@ unsigned Organ::getIndexOfReversiblePiston(ReversiblePiston *piston) {
 		return 0;
 }
 
-void Organ::addReversiblePiston(ReversiblePiston piston) {
+void Organ::addReversiblePiston(ReversiblePiston piston, bool isParsing) {
 	m_ReversiblePistons.push_back(piston);
-	updateOrganElements();
+	if (!isParsing)
+		updateOrganElements();
 }
 
 void Organ::removeReversiblePistonAt(unsigned index) {
@@ -1394,4 +1404,73 @@ void Organ::updateRelativePipePaths() {
 	for (Rank& r : m_Ranks) {
 		r.updatePipeRelativePaths();
 	}
+}
+
+bool Organ::isModified() {
+	if (m_odfRoot != wxEmptyString)
+		return true;
+	if (m_churchName != wxEmptyString)
+		return true;
+	if (m_churchAddress != wxEmptyString)
+			return true;
+	if (m_organBuilder != wxEmptyString)
+		return true;
+	if (m_organBuildDate != wxEmptyString)
+		return true;
+	if (m_organComments != wxEmptyString)
+		return true;
+	if (m_recordingDetails != wxEmptyString)
+		return true;
+	if (m_infoFilename != wxEmptyString)
+		return true;
+	if (!m_divisionalsStoreIntermanualCouplers)
+		return true;
+	if (!m_divisionalsStoreIntramanualCouplers)
+		return true;
+	if (!m_divisionalsStoreTremulants)
+		return true;
+	if (!m_generalsStoreDivisionalCouplers)
+		return true;
+	if (!m_combinationsStoreNonDisplayedDrawstops)
+		return true;
+	if (m_hasPedals)
+		return true;
+	if (m_amplitudeLevel != 100.0f)
+		return true;
+	if (m_gain != 0.0f)
+		return true;
+	if (m_pitchTuning != 0.0f)
+		return true;
+	if (m_pitchCorrection != 0.0f)
+		return true;
+	if (m_trackerDelay != 0)
+		return true;
+	if (!m_Enclosures.empty())
+		return true;
+	if (!m_Tremulants.empty())
+		return true;
+	if (!m_Windchestgroups.empty())
+		return true;
+	if (!m_Switches.empty())
+		return true;
+	if (!m_Ranks.empty())
+		return true;
+	if (!m_Stops.empty())
+		return true;
+	if (!m_Manuals.empty())
+		return true;
+	if (!m_Couplers.empty())
+		return true;
+	if (!m_Divisionals.empty())
+		return true;
+	if (!m_DivisionalCouplers.empty())
+		return true;
+	if (!m_Generals.empty())
+		return true;
+	if (!m_ReversiblePistons.empty())
+		return true;
+	if (m_Panels.size() > 1)
+		return true;
+
+	return false;
 }
