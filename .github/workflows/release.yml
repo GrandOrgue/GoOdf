@@ -40,19 +40,17 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Cache wxCrossbuild
-        id: cache-wx
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-wxCross
-        with:
-          path: ${{github.workspace}}/wxCross
-          key: wxCrossbuild
+      id: cache-wxcross
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/wxCross
+        key: wxCrossbuild
 
     - name: Get dependencies
       run: sudo apt-get install -y wget build-essential cmake pkg-config libwxgtk3.0-gtk3-dev gcc-mingw-w64-i686 g++-mingw-w64-i686 imagemagick
 
-    - if: ${{ steps.cache-wx.outputs.cache-hit != 'true' }}
-      name: Cross compile wxWidgets
+    - name: Cross compile wxWidgets
+      if: steps.cache-wxcross.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2
         tar -xf wxWidgets-3.2.2.1.tar.bz2
