@@ -25,12 +25,10 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Package
-      needs: Build
       working-directory: ${{github.workspace}}/build
       run: cpack
 
     - uses: actions/upload-artifact@v3
-      needs: Package
       with:
         name: linux-build-artifact
         path: ${{github.workspace}}/build/GOODF*.tar.gz
