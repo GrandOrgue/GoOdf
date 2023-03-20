@@ -30,5 +30,50 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: linux-build-artifact
+        name: GOODF-${{github.ref_name}}-linux
         path: ${{github.workspace}}/build/GOODF*.tar.gz
+
+  build-cross-windows:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache wxCrossbuild
+        id: cache-wx
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-wxCross
+        with:
+          path: ${{github.workspace}}/wxCross
+          key: wxCrossbuild
+
+    - name: Get dependencies
+      run: sudo apt-get install -y wget build-essential cmake pkg-config libwxgtk3.0-gtk3-dev gcc-mingw-w64-i686 g++-mingw-w64-i686 imagemagick
+
+    - if: ${{ steps.cache-wx.outputs.cache-hit != 'true' }}
+      name: Cross compile wxWidgets
+      run: |
+        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2
+        tar -xf wxWidgets-3.2.2.1.tar.bz2
+        mkdir wxCross
+        cd wxCross
+        ../wxWidgets-3.2.2.1/configure --host=i686-w64-mingw32 --build=i686-linux --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
+        make
+        make install
+        cd ..
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/crossbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=toolchain.def
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/crossbuild --config ${{env.BUILD_TYPE}}
+
+    - name: Package
+      working-directory: ${{github.workspace}}/crossbuild
+      run: cpack
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: GOODF-${{github.ref_name}}-windows
+        path: ${{github.workspace}}/crossbuild/GOODF*.zip
