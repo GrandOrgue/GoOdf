@@ -55,10 +55,13 @@ jobs:
         wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2
         tar -xf wxWidgets-3.2.2.1.tar.bz2
         mkdir wxCross
-        cd wxCross
-        ../wxWidgets-3.2.2.1/configure --host=i686-w64-mingw32 --build=i686-linux --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
+        cd wxWidgets-3.2.2.1.tar.bz2
+        mkdir win-ur-static
+        cd win-ur-static
+        ../configure --host=i686-w64-mingw32 --build=i686-linux --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
         make
         make install
+        cd ..
         cd ..
 
     - name: Configure CMake
