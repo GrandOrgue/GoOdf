@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 
 env:
   BUILD_TYPE: Release
@@ -78,3 +78,36 @@ jobs:
       with:
         name: GOODF-${{github.ref_name}}-windows
         path: ${{github.workspace}}/crossbuild/GOODF*.zip
+
+  release:
+    needs: [ build-linux, build-cross-windows ]
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: GOODF-${{github.ref_name}}-linux
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: GOODF-${{github.ref_name}}-windows
+
+    - name: Get dependencies
+      run: sudo apt-get install -y unzip
+
+    - name: Unzip downloads
+      run: |
+        unzip GOODF-${{github.ref_name}}-linux.zip
+        unzip GOODF-${{github.ref_name}}-windows.zip
+
+    - name: Populate Release
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: false
+        prerelease: false
+        body: Relsease files created from GitHub action runners.
+        files: |
+          GOODF-${{github.ref_name}}-linux.x86_64.tar.gz
+          GOODF-${{github.ref_name}}-windows.x86.zip
