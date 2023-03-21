@@ -1,0 +1,47 @@
+name: Test Build
+
+on:
+  workflow_dispatch
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get dependencies
+      run: sudo apt-get install -y build-essential cmake libwxgtk3.0-gtk3-dev imagemagick
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Package
+      working-directory: ${{github.workspace}}/build
+      run: cpack
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: GOODF-${{github.ref_name}}-linux
+        path: ${{github.workspace}}/build/GOODF*.tar.gz
+
+  download:
+    needs: [ build-linux ]
+    name: Test GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: GOODF-${{github.ref_name}}-linux
+        path: ${{github.workspace}}
+
+    - name: Display structure of downloaded files
+      run: ls -R
