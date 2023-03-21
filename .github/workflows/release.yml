@@ -94,6 +94,12 @@ jobs:
       with:
         name: GOODF-${{github.ref_name}}-windows
 
+    - name: Remove Starting v From Tag
+      id: remove_v
+      run: |
+        TAG=${{github.ref_name}}
+        echo "release_version=${TAG#v}" >> $GITHUB_ENV
+
     - name: Populate Release
       uses: softprops/action-gh-release@v1
       with:
@@ -101,5 +107,5 @@ jobs:
         prerelease: false
         body: Relsease files created from GitHub action runners.
         files: |
-          GOODF-${{github.ref_name}}-linux.x86_64.tar.gz
-          GOODF-${{github.ref_name}}-windows.x86.zip
+          GOODF-${{env.release_version}}-linux.x86_64.tar.gz
+          GOODF-${{env.release_version}}-windows.x86.zip
