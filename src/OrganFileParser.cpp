@@ -40,13 +40,20 @@ OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_errorMessage = wxEmptyString;
 
 	readIniFile();
-	if (m_fileIsOk)
+	if (m_fileIsOk) {
+		m_progressDlg = new wxProgressDialog(
+			wxT("Parsing ") + m_filePath,
+			wxEmptyString
+		);
 		parseOrgan();
+	}
 }
 
 OrganFileParser::~OrganFileParser() {
 	if (m_organFile)
 		delete m_organFile;
+	if (m_progressDlg)
+		delete m_progressDlg;
 }
 
 void OrganFileParser::parseOrgan() {
@@ -79,6 +86,7 @@ void OrganFileParser::readIniFile() {
 void OrganFileParser::parseOrganSection() {
 	m_organFile->SetPath("/Organ");
 
+	m_progressDlg->Update(0, wxT("Parsing [Organ] section"));
 	m_organ->setChurchName(m_organFile->Read("ChurchName", wxEmptyString));
 	m_organ->setChurchAddress(m_organFile->Read("ChurchAddress", wxEmptyString));
 	m_organ->setOrganBuilder(m_organFile->Read("OrganBuilder", wxEmptyString));
@@ -130,6 +138,7 @@ void OrganFileParser::parseOrganSection() {
 				m_organFile->SetPath("/");
 				wxString imgGroupName = wxT("Image") + GOODF_functions::number_format(i + 1);
 				if (m_organFile->HasGroup(imgGroupName)) {
+					m_progressDlg->Update(5, wxT("Parsing old style [") + imgGroupName + wxT("] section"));
 					m_organFile->SetPath(wxT("/") + imgGroupName);
 					GoImage img;
 					img.setOwningPanelWidth(m_organ->getOrganPanelAt(0)->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
@@ -148,6 +157,7 @@ void OrganFileParser::parseOrganSection() {
 			for (int i = 0; i < nbrLabels; i++) {
 				m_organFile->SetPath("/");
 				wxString labelGroupName = wxT("Label") + GOODF_functions::number_format(i + 1);
+				m_progressDlg->Update(10, wxT("Parsing old style [") + labelGroupName + wxT("] section"));
 				if (m_organFile->HasGroup(labelGroupName)) {
 					m_organFile->SetPath(wxT("/") + labelGroupName);
 					createGUILabel(m_organ->getOrganPanelAt(0));
@@ -163,6 +173,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrEnclosures; i++) {
 			m_organFile->SetPath("/");
 			wxString enclosureGroupName = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(15, wxT("Parsing [") + enclosureGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(enclosureGroupName)) {
 				m_organFile->SetPath(wxT("/") + enclosureGroupName);
 				Enclosure enc;
@@ -184,6 +195,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrSwitches; i++) {
 			m_organFile->SetPath("/");
 			wxString switchGroupName = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(20, wxT("Parsing [") + switchGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(switchGroupName)) {
 				m_organFile->SetPath(wxT("/") + switchGroupName);
 				GoSwitch sw;
@@ -204,6 +216,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrTrems; i++) {
 			m_organFile->SetPath("/");
 			wxString tremGroupName = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(25, wxT("Parsing [") + tremGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(tremGroupName)) {
 				m_organFile->SetPath(wxT("/") + tremGroupName);
 				Tremulant trem;
@@ -224,6 +237,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrWindchests; i++) {
 			m_organFile->SetPath("/");
 			wxString windchestGroupName = wxT("WindchestGroup") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(30, wxT("Parsing [") + windchestGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(windchestGroupName)) {
 				m_organFile->SetPath(wxT("/") + windchestGroupName);
 				Windchestgroup windchest;
@@ -240,6 +254,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrRanks; i++) {
 			m_organFile->SetPath("/");
 			wxString rankGroupName = wxT("Rank") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(35, wxT("Parsing [") + rankGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(rankGroupName)) {
 				m_organFile->SetPath(wxT("/") + rankGroupName);
 				Rank r;
@@ -262,6 +277,8 @@ void OrganFileParser::parseOrganSection() {
 			if (!m_organ->doesHavePedals())
 				manIdxNbr += 1;
 			wxString manGroupName = wxT("Manual") + GOODF_functions::number_format(manIdxNbr);
+			int dlgValue = 40 + (24 / nbrManuals) * i;
+			m_progressDlg->Update(40, wxT("Parsing [") + manGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(manGroupName)) {
 				m_organFile->SetPath(wxT("/") + manGroupName);
 				Manual m;
@@ -284,6 +301,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrPistons; i++) {
 			m_organFile->SetPath("/");
 			wxString pistonGroupName = wxT("ReversiblePiston") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(65, wxT("Parsing [") + pistonGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(pistonGroupName)) {
 				m_organFile->SetPath(wxT("/") + pistonGroupName);
 				ReversiblePiston p;
@@ -304,6 +322,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrDivCplrs; i++) {
 			m_organFile->SetPath("/");
 			wxString divCplrGroupName = wxT("DivisionalCoupler") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(70, wxT("Parsing [") + divCplrGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(divCplrGroupName)) {
 				m_organFile->SetPath(wxT("/") + divCplrGroupName);
 				DivisionalCoupler divCplr;
@@ -324,6 +343,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrGenerals; i++) {
 			m_organFile->SetPath("/");
 			wxString generalGroupName = wxT("General") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(75, wxT("Parsing [") + generalGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(generalGroupName)) {
 				m_organFile->SetPath(wxT("/") + generalGroupName);
 				General g;
@@ -346,6 +366,7 @@ void OrganFileParser::parseOrganSection() {
 			for (int i = 0; i < nbrSetters; i++) {
 				m_organFile->SetPath("/");
 				wxString setterGroupName = wxT("SetterElement") + GOODF_functions::number_format(i + 1);
+				m_progressDlg->Update(80, wxT("Parsing old style [") + setterGroupName + wxT("] section"));
 				if (m_organFile->HasGroup(setterGroupName)) {
 					m_organFile->SetPath(wxT("/") + setterGroupName);
 					wxString elementType = m_organFile->Read("Type", wxEmptyString);
@@ -366,6 +387,7 @@ void OrganFileParser::parseOrganSection() {
 		// The check if that section exist in the .organ file has already been done.
 		m_organFile->SetPath(wxT("/Panel000"));
 		m_organ->getOrganPanelAt(0)->read(m_organFile, wxT("Panel000"));
+		m_progressDlg->Update(85, wxT("Parsing [Panel000] section"));
 		parsePanelElements(m_organ->getOrganPanelAt(0), wxT("Panel000"));
 		m_organFile->SetPath("/Organ");
 	}
@@ -373,15 +395,18 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrPanels; i++) {
 			m_organFile->SetPath("/");
 			wxString panelGroupName = wxT("Panel") + GOODF_functions::number_format(i + 1);
+			m_progressDlg->Update(90, wxT("Parsing [") + panelGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(panelGroupName)) {
 				m_organFile->SetPath(wxT("/") + panelGroupName);
 				GoPanel p;
 				p.read(m_organFile, panelGroupName);
 				m_organ->addPanel(p);
+				parsePanelElements(m_organ->getOrganPanelAt(m_organ->getNumberOfPanels() - 1), panelGroupName);
 			}
 		}
 		m_organFile->SetPath("/Organ");
 	}
+	m_progressDlg->Update(100, wxT("Whole .organ file has been parsed!"));
 }
 
 void OrganFileParser::createGUIEnclosure(GoPanel *targetPanel, Enclosure *enclosure) {
@@ -608,7 +633,7 @@ void OrganFileParser::createGUIStop(GoPanel *targetPanel, Stop *stop) {
 
 void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId) {
 	int nbrGuiElements = static_cast<int>(m_organFile->ReadLong("NumberOfGUIElements", 0));
-	if (panelId.IsSameAs(wxT("Panel000"), false) || nbrGuiElements) {
+	if (panelId.IsSameAs(wxT("Panel000"), false) || nbrGuiElements > 0) {
 		if (nbrGuiElements > 0 && nbrGuiElements < 1000) {
 			for (int i = 0; i < nbrGuiElements; i++) {
 				wxString elementGroupName = wxT("Element") + GOODF_functions::number_format(i + 1);

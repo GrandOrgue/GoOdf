@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/fileconf.h>
+#include <wx/progdlg.h>
 #include "Organ.h"
 
 class OrganFileParser {
@@ -41,6 +42,7 @@ private:
 	bool m_organIsReady;
 	bool m_isUsingOldPanelFormat;
 	wxString m_errorMessage;
+	wxProgressDialog *m_progressDlg;
 
 	int m_enclosuresToParse;
 	int m_tremulantsToParse;

@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name and info
 project(
   GOODF
-  VERSION 0.4.0
+  VERSION 0.4.1
   DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
