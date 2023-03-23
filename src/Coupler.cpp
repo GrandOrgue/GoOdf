@@ -88,7 +88,9 @@ void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_m
 	m_unisonOff = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int destMan = static_cast<int>(cfg->ReadLong("DestinationManual", -1));
 	if (destMan >= 0 && destMan <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
-		m_destinationManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(destMan - 1);
+		if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+			destMan -= 1;
+		m_destinationManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(destMan);
 	}
 	int destShift = static_cast<int>(cfg->ReadLong("DestinationKeyshift", 0));
 	if (destShift > -25 && destShift < 25) {

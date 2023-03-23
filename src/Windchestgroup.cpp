@@ -39,7 +39,6 @@ void Windchestgroup::write(wxTextFile *outFile) {
 		for (auto& enc : m_Enclosures) {
 			i++;
 			wxString encNumber = GOODF_functions::number_format(i);
-			// unsigned refIndex = ::wxGetApp().m_frame->m_organ->getIndexOfOrganEnclosure(enc);
 			wxString encRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganEnclosure(enc));
 			outFile->AddLine(wxT("Enclosure") + encNumber + wxT("=") + encRef);
 		}
@@ -51,7 +50,6 @@ void Windchestgroup::write(wxTextFile *outFile) {
 		for (auto& trem : m_Tremulants) {
 			i++;
 			wxString tremNumber = GOODF_functions::number_format(i);
-			// unsigned refIndex = ::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(trem);
 			wxString tremRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(trem));
 			outFile->AddLine(wxT("Tremulant") + tremNumber + wxT("=") + tremRef);
 		}
@@ -60,6 +58,8 @@ void Windchestgroup::write(wxTextFile *outFile) {
 
 void Windchestgroup::read(wxFileConfig *cfg) {
 	name = cfg->Read("Name", wxEmptyString);
+	if (name == wxEmptyString)
+		name = wxString::Format(wxT("Windchest %i"), ((int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups() + 1));
 	int nbrEnclosures = static_cast<int>(cfg->ReadLong("NumberOfEnclosures", 0));
 	if (nbrEnclosures > 50)
 		nbrEnclosures = 50;

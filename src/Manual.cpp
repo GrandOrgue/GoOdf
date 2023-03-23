@@ -164,7 +164,7 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 		}
 	}
 	int nbrStops = static_cast<int>(cfg->ReadLong("NumberOfStops", 0));
-	int nbrCouplers = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
+
 	int nbrDivisionals = static_cast<int>(cfg->ReadLong("NumberOfDivisionals", 0));
 
 	if (nbrStops > 0 && nbrStops < 1000) {
@@ -191,36 +191,6 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 					GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);
 					if (stopElement) {
 						stopElement->read(cfg, false);
-					}
-				}
-			}
-		}
-	}
-
-	if (nbrCouplers > 0 && nbrCouplers < 1000) {
-		for (int i = 0; i < nbrCouplers; i++) {
-			cfg->SetPath(wxT("/") + manId);
-			wxString couplerNbr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
-			wxString cplrIdx = cfg->Read(couplerNbr, wxEmptyString);
-			wxString couplerGroup = wxT("Coupler") + cplrIdx;
-			cfg->SetPath("/");
-			if (cfg->HasGroup(couplerGroup)) {
-				cfg->SetPath(wxT("/") + couplerGroup);
-				Coupler c;
-				c.read(cfg, useOldPanelFormat, this);
-				::wxGetApp().m_frame->m_organ->addCoupler(c, true);
-				addCoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(::wxGetApp().m_frame->m_organ->getNumberOfCouplers() - 1));
-				if (c.isDisplayed()) {
-					// we must also create a GUI element for that coupler from this group information
-					int lastCplrIdx = m_couplers.size() - 1;
-					GUIElement *guiCplr = new GUICoupler(getCouplerAt(lastCplrIdx));
-					guiCplr->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
-					guiCplr->setDisplayName(c.getName());
-					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiCplr);
-
-					GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
-					if (cplrElement) {
-						cplrElement->read(cfg, false);
 					}
 				}
 			}
@@ -257,6 +227,41 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 		}
 	}
 	cfg->SetPath(wxT("/") + manId);
+}
+
+void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
+	int nbrCouplers = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
+
+	if (nbrCouplers > 0 && nbrCouplers < 1000) {
+		for (int i = 0; i < nbrCouplers; i++) {
+			cfg->SetPath(wxT("/") + manId);
+			wxString couplerNbr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
+			wxString cplrIdx = cfg->Read(couplerNbr, wxEmptyString);
+			wxString couplerGroup = wxT("Coupler") + cplrIdx;
+			cfg->SetPath("/");
+			if (cfg->HasGroup(couplerGroup)) {
+				cfg->SetPath(wxT("/") + couplerGroup);
+				Coupler c;
+				c.read(cfg, useOldPanelFormat, this);
+				::wxGetApp().m_frame->m_organ->addCoupler(c, true);
+				addCoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(::wxGetApp().m_frame->m_organ->getNumberOfCouplers() - 1));
+				if (c.isDisplayed()) {
+					// we must also create a GUI element for that coupler from this group information
+					int lastCplrIdx = m_couplers.size() - 1;
+					GUIElement *guiCplr = new GUICoupler(getCouplerAt(lastCplrIdx));
+					guiCplr->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiCplr->setDisplayName(c.getName());
+					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiCplr);
+
+					GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
+					if (cplrElement) {
+						cplrElement->read(cfg, false);
+					}
+				}
+			}
+		}
+	}
+
 }
 
 wxString Manual::getName() {

@@ -276,22 +276,25 @@ void GUIManual::read(wxFileConfig *cfg) {
 					if (keyYoffset > -501 && keyYoffset < 501) {
 						type->YOffset = keyYoffset;
 					}
-
-					int keyMouseRectLeft = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectLeft"), 0));
+					int keyMouseRectLeft = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectLeft"), -1));
 					if (keyMouseRectLeft >= 0 && keyMouseRectLeft < type->BitmapWidth) {
 						type->MouseRectLeft = keyMouseRectLeft;
 					}
-					int keyMouseRectTop = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectTop"), 0));
+					int keyMouseRectTop = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectTop"), -1));
 					if (keyMouseRectTop >= 0 && keyMouseRectTop < type->BitmapHeight) {
 						type->MouseRectTop = keyMouseRectTop;
 					}
-					int keyMouseRectWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectWidth"), 0));
+					int keyMouseRectWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectWidth"), -1));
 					if (keyMouseRectWidth >= 0 && keyMouseRectWidth <= type->BitmapWidth) {
 						type->MouseRectWidth = keyMouseRectWidth;
+					} else {
+						type->MouseRectWidth = width;
 					}
-					int keyMouseRectHeight = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectHeight"), 0));
+					int keyMouseRectHeight = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectHeight"), -1));
 					if (keyMouseRectHeight >= 0 && keyMouseRectHeight <= type->BitmapHeight) {
 						type->MouseRectHeight = keyMouseRectHeight;
+					} else {
+						type->MouseRectHeight = height;
 					}
 				}
 			}

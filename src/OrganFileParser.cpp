@@ -266,7 +266,8 @@ void OrganFileParser::parseOrganSection() {
 	}
 
 	// parse manuals which contain the stops, couplers and divisionals
-	// also they can have tremulant and switch references
+	// also they can have tremulant and switch references, but the couplers
+	// needs to be parsed after all manuals have been added to the organ
 	int nbrManuals = static_cast<int>(m_organFile->ReadLong("NumberOfManuals", 0));
 	if (nbrManuals > 0 && nbrManuals < 17) {
 		if (m_organ->doesHavePedals())
@@ -278,7 +279,7 @@ void OrganFileParser::parseOrganSection() {
 				manIdxNbr += 1;
 			wxString manGroupName = wxT("Manual") + GOODF_functions::number_format(manIdxNbr);
 			int dlgValue = 40 + (24 / nbrManuals) * i;
-			m_progressDlg->Update(40, wxT("Parsing [") + manGroupName + wxT("] section"));
+			m_progressDlg->Update(dlgValue, wxT("Parsing [") + manGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(manGroupName)) {
 				m_organFile->SetPath(wxT("/") + manGroupName);
 				Manual m;
@@ -289,7 +290,23 @@ void OrganFileParser::parseOrganSection() {
 				man->read(m_organFile, m_isUsingOldPanelFormat, manGroupName);
 				if (man->isDisplayed()) {
 					createGUIManual(m_organ->getOrganPanelAt(0), man);
+					if (manGroupName.IsSameAs(wxT("Manual000")))
+						m_organ->getOrganPanelAt(0)->setHasPedals(true);
 				}
+			}
+		}
+
+		for (int i = 0; i < nbrManuals; i++) {
+			m_organFile->SetPath("/");
+			int manIdxNbr = i;
+			if (!m_organ->doesHavePedals())
+				manIdxNbr += 1;
+			wxString manGroupName = wxT("Manual") + GOODF_functions::number_format(manIdxNbr);
+			m_progressDlg->Update(65, wxT("Parsing couplers for [") + manGroupName + wxT("]"));
+			if (m_organFile->HasGroup(manGroupName) && i < (int) m_organ->getNumberOfManuals()) {
+				m_organFile->SetPath(wxT("/") + manGroupName);
+				Manual *man = m_organ->getOrganManualAt(i);
+				man->readCouplers(m_organFile, m_isUsingOldPanelFormat, manGroupName);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -301,7 +318,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrPistons; i++) {
 			m_organFile->SetPath("/");
 			wxString pistonGroupName = wxT("ReversiblePiston") + GOODF_functions::number_format(i + 1);
-			m_progressDlg->Update(65, wxT("Parsing [") + pistonGroupName + wxT("] section"));
+			m_progressDlg->Update(66, wxT("Parsing [") + pistonGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(pistonGroupName)) {
 				m_organFile->SetPath(wxT("/") + pistonGroupName);
 				ReversiblePiston p;
@@ -649,7 +666,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 							Manual *man = m_organ->getOrganManualAt(manualIdx);
 							int divIdx = static_cast<int>(m_organFile->ReadLong("Divisional", 0));
 							if (divIdx > 0 && divIdx <= (int)man->getNumberOfDivisionals()) {
-								createGUIDivisional(targetPanel, man->getDivisionalAt(divIdx));
+								createGUIDivisional(targetPanel, man->getDivisionalAt(divIdx - 1));
 							}
 						}
 					} else if (elementType.IsSameAs(wxT("Coupler"))) {
@@ -660,7 +677,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 							Manual *man = m_organ->getOrganManualAt(manualIdx);
 							int cplrIdx = static_cast<int>(m_organFile->ReadLong("Coupler", 0));
 							if (cplrIdx > 0 && cplrIdx <= (int)man->getNumberOfCouplers()) {
-								createGUICoupler(targetPanel, man->getCouplerAt(cplrIdx));
+								createGUICoupler(targetPanel, man->getCouplerAt(cplrIdx - 1));
 							}
 						}
 					} else if (elementType.IsSameAs(wxT("Stop"))) {
@@ -671,7 +688,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 							Manual *man = m_organ->getOrganManualAt(manualIdx);
 							int stopIdx = static_cast<int>(m_organFile->ReadLong("Stop", 0));
 							if (stopIdx > 0 && stopIdx <= (int)man->getNumberOfStops()) {
-								createGUIStop(targetPanel, man->getStopAt(stopIdx));
+								createGUIStop(targetPanel, man->getStopAt(stopIdx - 1));
 							}
 						}
 					} else if (elementType.IsSameAs(wxT("Enclosure"))) {
