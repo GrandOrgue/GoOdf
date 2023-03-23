@@ -59,8 +59,10 @@ namespace GOODF_functions {
 
 	inline wxString removeBaseOdfPath(wxString path) {
 		wxString stringToReturn = path;
-		if (stringToReturn != wxEmptyString) {
-			stringToReturn.Replace(::wxGetApp().m_frame->m_organ->getOdfRoot(), wxT(""));
+		wxFileName fName = wxFileName(path);
+		if (fName.FileExists()) {
+			fName.MakeRelativeTo(::wxGetApp().m_frame->m_organ->getOdfRoot());
+			stringToReturn = fName.GetFullPath();
 			if (stringToReturn.StartsWith(wxFILE_SEP_PATH))
 				stringToReturn.erase(0, 1);
 			else if (stringToReturn.StartsWith(wxT("./")) || stringToReturn.StartsWith(wxT(".\\")))

@@ -1329,12 +1329,7 @@ void Rank::onlyAddWaveFiles(wxArrayString &source, wxArrayString &selection) {
 }
 
 wxString Rank::getOnlyFileName(wxString path) {
-	wxString name = path;
-	name.Replace(::wxGetApp().m_frame->m_organ->getOdfRoot(), wxT(""));
-	if (name.StartsWith(wxFILE_SEP_PATH))
-		name.erase(0, 1);
-
-	return name;
+	return GOODF_functions::removeBaseOdfPath(path);
 }
 
 void Rank::setupPipeProperties(Pipe &pipe) {

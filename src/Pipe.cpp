@@ -322,7 +322,7 @@ void Pipe::writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr) {
 			}
 			k++;
 			wxString attackName = pipeNr + wxT("Attack") + GOODF_functions::number_format(k);
-			wxString fullLine = GOODF_functions::fixSeparator(attackName + wxT("=") + atk.fileName);
+			wxString fullLine = GOODF_functions::fixSeparator(attackName + wxT("=") + GOODF_functions::removeBaseOdfPath(atk.fileName));
 			outFile->AddLine(fullLine);
 
 			writeLoadRelease(outFile, attackName, atk);
@@ -347,7 +347,7 @@ void Pipe::writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr) {
 		for (Release rel : m_releases) {
 			k++;
 			wxString releaseName = pipeNr + "Release" + GOODF_functions::number_format(k);
-			wxString fullLine = GOODF_functions::fixSeparator(releaseName + "=" + rel.fileName);
+			wxString fullLine = GOODF_functions::fixSeparator(releaseName + "=" + GOODF_functions::removeBaseOdfPath(rel.fileName));
 			outFile->AddLine(fullLine);
 
 			if (rel.isTremulant != -1)
@@ -368,16 +368,6 @@ void Pipe::writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr) {
 void Pipe::writeRef(wxTextFile *outFile, wxString pipeNr) {
 	outFile->AddLine(pipeNr + wxT("=") + m_attacks.front().fileName);
 }
-
-/*
-wxString Pipe::fixSeparator(wxString pathToCheck) {
-	if (pathToCheck.Contains("/")) {
-		pathToCheck.Replace("/", "\\");
-	}
-
-	return pathToCheck;
-}
-*/
 
 void Pipe::writeLoadRelease(wxTextFile *outFile, wxString pipeNr, Attack atk) {
 	if (!isPercussive) {
