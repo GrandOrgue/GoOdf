@@ -27,7 +27,6 @@ GUIButton::GUIButton() : GUIElement() {
 	m_dispLabelColour.setSelectedColorIndex(9); // (GoColor, default: Dark Red)
 	m_dispLabelFontSize = GoFontSize();
 	m_dispLabelFont = wxFont(wxFontInfo(7).FaceName(wxT("Arial")));
-	// m_displLabelFontName = wxEmptyString; // (string, default: empty)
 	m_dispLabelText = wxEmptyString; // (string, default: Name of the button)
 	m_dispKeyLabelOnLeft = true; // (boolean, default: true)
 	m_dispImageNum = 1; // (integer 1- type dependent, default: see below) Builtin bitmap set to use. GrandOrgue has 6 for drawstops and 5 for pistons. The default is 3 (piston) or 4 (drawstops) for read-only buttons, otherwise the default is 1.
@@ -62,7 +61,6 @@ GUIButton::~GUIButton() {
 }
 
 void GUIButton::write(wxTextFile *outFile) {
-	// GUIElement::write(outFile);
 	if (m_type.Contains(wxT("Divisional")) || m_type.Contains(wxT("General")) || m_type.IsSameAs(wxT("ReversiblePiston"))) {
 		if (!m_displayAsPiston)
 			outFile->AddLine(wxT("DisplayAsPiston=N"));
@@ -189,16 +187,16 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 			m_dispImageNum = imageNbr;
 	}
 	int btnRow = static_cast<int>(cfg->ReadLong("DispButtonRow", 1));
-	if (btnRow > -1 && btnRow < 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraButtonRows)
+	if (btnRow > -1 && btnRow <= 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraButtonRows)
 		m_dispButtonRow = btnRow;
 	int btnCol = static_cast<int>(cfg->ReadLong("DispButtonCol", 1));
-	if (btnCol > 0 && btnCol < getOwningPanel()->getDisplayMetrics()->m_dispButtonCols)
+	if (btnCol > 0 && btnCol <= getOwningPanel()->getDisplayMetrics()->m_dispButtonCols)
 		m_dispButtonCol = btnCol;
 	int stopRow = static_cast<int>(cfg->ReadLong("DispDrawstopRow", 1));
-	if (stopRow > 0 && stopRow < 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopRows)
+	if (stopRow > 0 && stopRow <= 99 + getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopRows)
 		m_dispDrawstopRow = stopRow;
 	int stopCol = static_cast<int>(cfg->ReadLong("DispDrawstopCol", 1));
-	if (stopCol > 0 && stopCol < (stopRow > 99 ? getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols : getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols))
+	if (stopCol > 0 && stopCol <= (stopRow > 99 ? getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols : getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols))
 		m_dispDrawstopCol = stopCol;
 	wxString image_on = cfg->Read("ImageOn", wxEmptyString);
 	m_imageOn = GOODF_functions::checkIfFileExist(image_on);
