@@ -63,12 +63,16 @@ namespace GOODF_functions {
 			stringToReturn.Replace(::wxGetApp().m_frame->m_organ->getOdfRoot(), wxT(""));
 			if (stringToReturn.StartsWith(wxFILE_SEP_PATH))
 				stringToReturn.erase(0, 1);
+			else if (stringToReturn.StartsWith(wxT("./")) || stringToReturn.StartsWith(wxT(".\\")))
+				stringToReturn.erase(0, 2);
 		}
 		return stringToReturn;
 	}
 
 	inline wxString checkIfFileExist(wxString relativePath) {
 		if (relativePath != wxEmptyString) {
+			if (relativePath.StartsWith(wxT("./")) || relativePath.StartsWith(wxT(".\\")))
+				relativePath.erase(0, 2);
 			wxString fullFilePath = ::wxGetApp().m_frame->m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
 			wxFileName theFile = wxFileName(fullFilePath, wxPATH_DOS);
 			if (theFile.FileExists()) {
