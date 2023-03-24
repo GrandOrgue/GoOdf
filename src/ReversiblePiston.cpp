@@ -40,21 +40,21 @@ void ReversiblePiston::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("ObjectType=STOP"));
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_stop->getOwningManual()));
 		outFile->AddLine(wxT("ManualNumber=") + manId);
-		wxString objId = GOODF_functions::number_format(m_stop->getOwningManual()->getIndexOfStop(m_stop));
+		wxString objId = GOODF_functions::number_format(m_stop->getOwningManual()->getIndexOfStop(m_stop) + 1);
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_coupler) {
 		outFile->AddLine(wxT("ObjectType=COUPLER"));
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_coupler->getOwningManual()));
 		outFile->AddLine(wxT("ManualNumber=") + manId);
-		wxString objId = GOODF_functions::number_format(m_coupler->getOwningManual()->getIndexOfCoupler(m_coupler));
+		wxString objId = GOODF_functions::number_format(m_coupler->getOwningManual()->getIndexOfCoupler(m_coupler) + 1);
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_switch) {
 		outFile->AddLine(wxT("ObjectType=SWITCH"));
-		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switch));
+		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switch) + 1);
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	} else if (m_tremulant) {
 		outFile->AddLine(wxT("ObjectType=TREMULANT"));
-		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(m_tremulant));
+		wxString objId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(m_tremulant) + 1);
 		outFile->AddLine(wxT("ObjectNumber=") + objId);
 	}
 }
