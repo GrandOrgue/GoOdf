@@ -55,8 +55,8 @@ void Stop::write(wxTextFile *outFile) {
 				outFile->AddLine(rankId + wxT("=") + refId);
 				if (rankRef.m_firstPipeNumber != 1)
 					outFile->AddLine(rankId + wxT("FirstPipeNumber=") + wxString::Format(wxT("%i"), rankRef.m_firstPipeNumber));
-				if (rankRef.m_pipeCount != rankRef.m_rankReference->getNumberOfLogicalPipes())
-					outFile->AddLine(rankId + wxT("FirstPipeNumber=") + wxString::Format(wxT("%i"), rankRef.m_firstPipeNumber));
+				if (rankRef.m_pipeCount != (rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1)))
+					outFile->AddLine(rankId + wxT("PipeCount=") + wxString::Format(wxT("%i"), rankRef.m_pipeCount));
 				if (rankRef.m_firstAccessibleKeyNumber != 1)
 					outFile->AddLine(rankId + wxT("FirstAccessibleKeyNumber=") + wxString::Format(wxT("%i"), rankRef.m_firstAccessibleKeyNumber));
 				counter++;
