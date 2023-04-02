@@ -38,7 +38,7 @@ GUIEnclosure::GUIEnclosure(Enclosure *enclosure) : GUIElement(), m_enclosure(enc
 	m_tileOffsetX = 0;
 	m_tileOffsetY = 0;
 	m_mouseRectLeft = 0;
-	m_mouseRectTop = 0;
+	m_mouseRectTop = 13;
 	m_mouseRectWidth = 0;
 	m_mouseRectHeight = 0;
 	m_mouseAxisStart = 0;
@@ -110,23 +110,23 @@ void GUIEnclosure::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TileOffsetY=") + wxString::Format(wxT("%i"), m_tileOffsetY));
 	if (m_mouseRectLeft != 0)
 		outFile->AddLine(wxT("MouseRectLeft=") + wxString::Format(wxT("%i"), m_mouseRectLeft));
-	if (m_mouseRectTop != 0)
+	if (m_mouseRectTop != 13)
 		outFile->AddLine(wxT("MouseRectTop=") + wxString::Format(wxT("%i"), m_mouseRectTop));
-	if (m_mouseRectWidth != m_width)
+	if (m_mouseRectWidth != (m_width - m_mouseRectLeft))
 		outFile->AddLine(wxT("MouseRectWidth=") + wxString::Format(wxT("%i"), m_mouseRectWidth));
-	if (m_mouseRectHeight != m_height)
+	if (m_mouseRectHeight != (m_height - m_mouseRectTop - 3))
 		outFile->AddLine(wxT("MouseRectHeight=") + wxString::Format(wxT("%i"), m_mouseRectHeight));
-	if (m_mouseAxisStart != m_mouseRectHeight)
+	if (m_mouseAxisStart != (m_mouseRectHeight / 3))
 		outFile->AddLine(wxT("MouseAxisStart=") + wxString::Format(wxT("%i"), m_mouseAxisStart));
-	if (m_mouseAxisEnd != (m_mouseAxisStart - m_mouseRectHeight))
+	if (m_mouseAxisEnd != (m_mouseRectHeight / 3 * 2))
 		outFile->AddLine(wxT("MouseAxisEnd=") + wxString::Format(wxT("%i"), m_mouseAxisEnd));
 	if (m_textRectLeft != 0)
 		outFile->AddLine(wxT("TextRectLeft=") + wxString::Format(wxT("%i"), m_textRectLeft));
 	if (m_textRectTop != 0)
 		outFile->AddLine(wxT("TextRectTop=") + wxString::Format(wxT("%i"), m_textRectTop));
-	if (m_textRectWidth != m_width)
+	if (m_textRectWidth != (m_width - m_textRectLeft))
 		outFile->AddLine(wxT("TextRectWidth=") + wxString::Format(wxT("%i"), m_textRectWidth));
-	if (m_textRectHeight != m_height)
+	if (m_textRectHeight != (m_height - m_textRectTop))
 		outFile->AddLine(wxT("TextRectHeight=") + wxString::Format(wxT("%i"), m_textRectHeight));
 	if (m_textBreakWidth != m_textRectWidth)
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
@@ -203,86 +203,90 @@ void GUIEnclosure::read(wxFileConfig *cfg) {
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
 	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));
-	if (posX > -1 && posX < thePanelWidth)
+	if (posX > -1 && posX <= thePanelWidth)
 		setPosX(posX);
 	int posY = static_cast<int>(cfg->ReadLong("PositionY", -1));
-	if (posY > -1 && posY < thePanelHeight)
+	if (posY > -1 && posY <= thePanelHeight)
 		setPosY(posY);
 	int encWidth = static_cast<int>(cfg->ReadLong("Width", -1));
-	if (encWidth > -1 && encWidth < thePanelWidth) {
+	if (encWidth > -1 && encWidth <= thePanelWidth) {
 		setWidth(encWidth);
 	} else {
 		setWidth(m_bitmapWidth);
 	}
 	int encHeight = static_cast<int>(cfg->ReadLong("Height", -1));
-	if (encHeight > -1 && encHeight < thePanelHeight) {
+	if (encHeight > -1 && encHeight <= thePanelHeight) {
 		setHeight(encHeight);
 	} else {
 		setHeight(m_bitmapHeight);
 	}
 	int tileX = static_cast<int>(cfg->ReadLong("TileOffsetX", -1));
-	if (tileX > -1 && tileX < getBitmapWidth() + 1) {
+	if (tileX > -1 && tileX < getBitmapWidth()) {
 		setTileOffsetX(tileX);
 	}
 	int tileY = static_cast<int>(cfg->ReadLong("TileOffsetY", -1));
-	if (tileY > -1 && tileY < getBitmapHeight() + 1) {
+	if (tileY > -1 && tileY < getBitmapHeight()) {
 		setTileOffsetY(tileY);
 	}
 	int mouseRectLeft = static_cast<int>(cfg->ReadLong("MouseRectLeft", -1));
-	if (mouseRectLeft > -1 && mouseRectLeft < getWidth() + 1) {
+	if (mouseRectLeft > -1 && mouseRectLeft < getWidth()) {
 		setMouseRectLeft(mouseRectLeft);
 	}
 	int mouseRectTop = static_cast<int>(cfg->ReadLong("MouseRectTop", -1));
-	if (mouseRectTop > -1 && mouseRectTop < getHeight() + 1) {
+	if (mouseRectTop > -1 && mouseRectTop < getHeight()) {
 		setMouseRectTop(mouseRectTop);
+	} else {
+		setMouseRectTop(13);
 	}
 	int mouseRectWidth = static_cast<int>(cfg->ReadLong("MouseRectWidth", -1));
-	if (mouseRectWidth > -1 && mouseRectWidth < getWidth() + 1) {
+	if (mouseRectWidth > 0 && mouseRectWidth <= (getWidth() - m_mouseRectLeft)) {
 		setMouseRectWidth(mouseRectWidth);
 	} else {
-		setMouseRectWidth(getWidth());
+		setMouseRectWidth(getWidth() - m_mouseRectLeft);
 	}
 	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", -1));
-	if (mouseRectHeight > -1 && mouseRectHeight < getHeight() + 1) {
+	if (mouseRectHeight > 0 && mouseRectHeight <= (getHeight() - m_mouseRectTop)) {
 		setMouseRectHeight(mouseRectHeight);
 	} else {
-		setMouseRectHeight(getHeight());
+		setMouseRectHeight(getHeight() - m_mouseRectTop - 3);
 	}
 	int mouseAxisStart = static_cast<int>(cfg->ReadLong("MouseAxisStart", -1));
-	if (mouseAxisStart > - 1 && mouseAxisStart < getMouseRectHeight() + 1) {
+	if (mouseAxisStart > -1 && mouseAxisStart <= m_mouseRectHeight) {
 		setMouseAxisStart(mouseAxisStart);
 	} else {
-		setMouseAxisStart(getHeight());
+		setMouseAxisStart(m_mouseRectHeight / 3);
 	}
 	int mouseAxisEnd = static_cast<int>(cfg->ReadLong("MouseAxisEnd", -1));
-	if (mouseAxisEnd > -1 && mouseAxisEnd < getMouseRectHeight() + 1) {
+	if (mouseAxisEnd >= m_mouseAxisStart && mouseAxisEnd <= m_mouseRectHeight) {
 		setMouseAxisEnd(mouseAxisEnd);
+	} else {
+		setMouseAxisEnd(m_mouseRectHeight / 3 * 2);
 	}
 	int textRectLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", -1));
-	if (textRectLeft > -1 && textRectLeft < getWidth() + 1) {
+	if (textRectLeft > -1 && textRectLeft < getWidth()) {
 		setTextRectLeft(textRectLeft);
 	}
 	int textRectTop = static_cast<int>(cfg->ReadLong("TextRectTop", -1));
-	if (textRectTop > -1 && textRectTop < getHeight() + 1) {
+	if (textRectTop > -1 && textRectTop < getHeight()) {
 		setTextRectTop(textRectTop);
 	}
 	int textRectWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", -1));
-	if (textRectWidth > -1 && textRectWidth < getWidth() + 1) {
+	if (textRectWidth > 0 && textRectWidth <= (getWidth() - m_textRectLeft)) {
 		setTextRectWidth(textRectWidth);
 	} else {
-		setTextRectWidth(getWidth());
+		setTextRectWidth(getWidth() - m_textRectLeft);
 	}
 	int textRectHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", -1));
-	if (textRectHeight > -1 && textRectHeight < getHeight() + 1) {
+	if (textRectHeight > 0 && textRectHeight <= (getHeight() - m_textRectTop)) {
 		setTextRectHeight(textRectHeight);
 	} else {
-		setTextRectHeight(getHeight());
+		setTextRectHeight(getHeight() - m_textRectTop);
 	}
 	int textBreakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", -1));
-	if (textBreakWidth > -1 && textBreakWidth < getTextRectWidth() + 1) {
+	if (textBreakWidth > -1 && textBreakWidth <= m_textRectWidth) {
 		setTextBreakWidth(textBreakWidth);
 	} else {
-		setTextBreakWidth(getWidth());
+		setTextBreakWidth(m_textRectWidth);
 	}
 }
 

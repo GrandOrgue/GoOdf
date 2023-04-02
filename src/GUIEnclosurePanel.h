@@ -61,7 +61,7 @@ private:
 	wxSpinCtrl *m_mouseRectWidthSpin; // (integer 0 - Width, default: Width)
 	wxSpinCtrl *m_mouseRectHeightSpin; // (integer 0 - Height, default: Height)
 	wxSpinCtrl *m_mouseAxisStartSpin;
-	//wxSpinCtrl *m_mouseAxisEndSpin;
+	wxSpinCtrl *m_mouseAxisEndSpin;
 	wxSpinCtrl *m_textRectLeftSpin; // (integer 0 - Height, default: 0)
 	wxSpinCtrl *m_textRectTopSpin; // (integer 0 - Height, default: 0)
 	wxSpinCtrl *m_textRectWidthSpin; // (integer 0 - Width, default: Width)
@@ -95,7 +95,7 @@ private:
 	void OnMouseRectWidthSpin(wxSpinEvent& event);
 	void OnMouseRectHeightSpin(wxSpinEvent& event);
 	void OnMouseAxisStartSpin(wxSpinEvent& event);
-	//void OnMouseAxisEndSpin(wxSpinEvent& event);
+	void OnMouseAxisEndSpin(wxSpinEvent& event);
 	void OnTextRectLeftSpin(wxSpinEvent& event);
 	void OnTextRectTopSpin(wxSpinEvent& event);
 	void OnTextRectWidthSpin(wxSpinEvent& event);

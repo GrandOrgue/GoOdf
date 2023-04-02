@@ -51,7 +51,7 @@ BEGIN_EVENT_TABLE(GUIEnclosurePanel, wxPanel)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_MOUSE_RECT_WIDTH_SPIN, GUIEnclosurePanel::OnMouseRectWidthSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_MOUSE_RECT_HEIGHT_SPIN, GUIEnclosurePanel::OnMouseRectHeightSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_MOUSE_AXIS_START_SPIN, GUIEnclosurePanel::OnMouseAxisStartSpin)
-//	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_MOUSE_AXIS_END_SPIN, GUIEnclosurePanel::OnMouseAxisEndSpin)
+	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_MOUSE_AXIS_END_SPIN, GUIEnclosurePanel::OnMouseAxisEndSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_TEXT_RECT_LEFT_SPIN, GUIEnclosurePanel::OnTextRectLeftSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_TEXT_RECT_TOP_SPIN, GUIEnclosurePanel::OnTextRectTopSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_TEXT_RECT_WIDTH_SPIN, GUIEnclosurePanel::OnTextRectWidthSpin)
@@ -438,7 +438,6 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		0
 	);
 	eleventh->Add(m_mouseAxisStartSpin, 0, wxEXPAND|wxALL, 5);
-/*
 	eleventh->AddStretchSpacer();
 	wxStaticText *mouseAxisEndText = new wxStaticText (
 		this,
@@ -459,7 +458,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		0
 	);
 	eleventh->Add(m_mouseAxisEndSpin, 0, wxEXPAND|wxALL, 5);
-*/
+
 	eleventh->AddStretchSpacer();
 	wxStaticText *textBreakText = new wxStaticText (
 		this,
@@ -712,43 +711,36 @@ void GUIEnclosurePanel::OnAddImagePathBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->setImage(path);
 			int width = img.GetWidth();
 			int height = img.GetHeight();
-			m_enclosure->setBitmapWidth(width);
-			m_enclosure->setBitmapHeight(height);
-			m_enclosure->setWidth(width);
-			m_enclosure->setHeight(height);
-			m_enclosure->setMouseRectWidth(width);
-			m_enclosure->setMouseRectHeight(height);
-			m_enclosure->setMouseAxisStart(height);
-			m_enclosure->setMouseAxisEnd(0);
-			m_enclosure->setTextRectWidth(width);
-			m_enclosure->setTextRectHeight(height);
-			m_enclosure->setTextBreakWidth(width);
-			UpdateSpinRanges();
-			UpdateDefaultSpinValues();
-			m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getRelativeImagePath());
+			if (m_bitmapBox->GetSelection() == 0) {
+				m_enclosure->setBitmapWidth(width);
+				m_enclosure->setBitmapHeight(height);
+				m_enclosure->setWidth(width);
+				m_enclosure->setHeight(height);
+				m_enclosure->setMouseRectWidth(width - m_enclosure->getMouseRectLeft());
+				m_enclosure->setMouseRectHeight(height - m_enclosure->getMouseRectTop() - 3);
+				m_enclosure->setMouseAxisStart(m_enclosure->getMouseRectHeight() / 3);
+				m_enclosure->setMouseAxisEnd(m_enclosure->getMouseRectHeight() / 3 * 2);
+				m_enclosure->setTextRectWidth(width - m_enclosure->getTextRectLeft());
+				m_enclosure->setTextRectHeight(height - m_enclosure->getTextRectTop());
+				m_enclosure->setTextBreakWidth(m_enclosure->getTextRectWidth());
+				UpdateSpinRanges();
+				UpdateDefaultSpinValues();
+				m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getRelativeImagePath());
+			} else {
+				if (width == m_enclosure->getBitmapWidth() && height == m_enclosure->getBitmapHeight()) {
+					m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getRelativeImagePath());
+				} else {
+					wxMessageDialog msg(this, wxT("Current bitmap size doesn't match the first bitmap! Please review/set first bitmap size correctly."), wxT("All bitmaps must be of same size!"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+					msg.ShowModal();
+				}
+			}
 		}
 	} else {
 		// the user has clicked cancel which returns an empty string
 		if (m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getImage() != wxEmptyString) {
 			wxMessageDialog msg(this, wxT("Image value is not empty! Do you want to empty it?"), wxT("Empty image value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 			if (msg.ShowModal() == wxID_YES) {
-				// then we empty the value in button and panel
 				m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->setImage(wxEmptyString);
-				int width = 0;
-				int height = 0;
-				m_enclosure->setBitmapWidth(width);
-				m_enclosure->setBitmapHeight(height);
-				m_enclosure->setWidth(width);
-				m_enclosure->setHeight(height);
-				m_enclosure->setMouseRectWidth(width);
-				m_enclosure->setMouseRectHeight(height);
-				m_enclosure->setMouseAxisStart(height);
-				m_enclosure->setMouseAxisEnd(0);
-				m_enclosure->setTextRectWidth(width);
-				m_enclosure->setTextRectHeight(height);
-				m_enclosure->setTextBreakWidth(width);
-				UpdateSpinRanges();
-				UpdateDefaultSpinValues();
 				m_imagePathField->SetValue(wxEmptyString);
 			}
 		}
@@ -811,10 +803,12 @@ void GUIEnclosurePanel::OnRemoveBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void GUIEnclosurePanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setWidth(m_widthSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setHeight(m_heightSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -827,43 +821,51 @@ void GUIEnclosurePanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUIEnclosurePanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectLeft(m_mouseRectLeftSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnMouseRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectTop(m_mouseRectTopSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnMouseRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectWidth(m_mouseRectWidthSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnMouseRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectHeight(m_mouseRectHeightSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnMouseAxisStartSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseAxisStart(m_mouseAxisStartSpin->GetValue());
+	UpdateSpinRanges();
 }
 
-/*
-void GUIEnclosurePanel::OnMouseAxisEndSpin(wxSpinEvent& event) {
-
-} */
+void GUIEnclosurePanel::OnMouseAxisEndSpin(wxSpinEvent& WXUNUSED(event)) {
+	m_enclosure->setMouseAxisEnd(m_mouseAxisEndSpin->GetValue());
+}
 
 void GUIEnclosurePanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectLeft(m_textRectLeftSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectTop(m_textRectTopSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectWidth(m_textRectWidthSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectHeight(m_textRectHeightSpin->GetValue());
+	UpdateSpinRanges();
 }
 
 void GUIEnclosurePanel::OnTextBreakWidthSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -879,24 +881,57 @@ void GUIEnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUIEnclosurePanel::UpdateSpinRanges() {
-	m_elementPosXSpin->SetRange(-1, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_enclosure->getWidth());
-	m_elementPosYSpin->SetRange(-1, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_enclosure->getHeight());
+	if (m_enclosure->getPosX() > m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+		m_enclosure->setPosX(m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	m_elementPosXSpin->SetRange(-1, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	if (m_enclosure->getPosY() > m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+		m_enclosure->setPosY(m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	m_elementPosYSpin->SetRange(-1, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	if (m_enclosure->getWidth() > m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+		m_enclosure->setWidth(m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
 	m_widthSpin->SetRange(0, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
+	if (m_enclosure->getHeight() > m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+		m_enclosure->setHeight(m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	m_heightSpin->SetRange(0, m_enclosure->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()); // panel height!
-	m_tileOffsetXSpin->SetRange(0, m_enclosure->getBitmapWidth());
-	m_tileOffsetYSpin->SetRange(0, m_enclosure->getBitmapHeight());
-	m_mouseRectLeftSpin->SetRange(0, m_enclosure->getWidth());
-	m_mouseRectTopSpin->SetRange(0, m_enclosure->getHeight());
-	m_mouseRectWidthSpin->SetRange(0, m_enclosure->getWidth());
-	m_mouseRectHeightSpin->SetRange(0, m_enclosure->getHeight());
+	if (m_enclosure->getTileOffsetX() > (m_enclosure->getBitmapWidth() - 1))
+		m_enclosure->setTileOffsetX(m_enclosure->getBitmapWidth() - 1);
+	m_tileOffsetXSpin->SetRange(0, m_enclosure->getBitmapWidth() - 1);
+	if (m_enclosure->getTileOffsetY() > (m_enclosure->getBitmapHeight() - 1))
+		m_enclosure->setTileOffsetY(m_enclosure->getBitmapHeight() - 1);
+	m_tileOffsetYSpin->SetRange(0, m_enclosure->getBitmapHeight() - 1);
+	if (m_enclosure->getMouseRectLeft() > (m_enclosure->getWidth() - 1))
+		m_enclosure->setMouseRectLeft(m_enclosure->getWidth() - 1);
+	m_mouseRectLeftSpin->SetRange(0, m_enclosure->getWidth() - 1);
+	if (m_enclosure->getMouseRectTop() > (m_enclosure->getHeight() - 1))
+		m_enclosure->setMouseRectTop(m_enclosure->getHeight() - 1);
+	m_mouseRectTopSpin->SetRange(0, m_enclosure->getHeight() - 1);
+	if (m_enclosure->getMouseRectWidth() > (m_enclosure->getWidth() - m_enclosure->getMouseRectLeft()))
+		m_enclosure->setMouseRectWidth(m_enclosure->getWidth() - m_enclosure->getMouseRectLeft());
+	m_mouseRectWidthSpin->SetRange(1, m_enclosure->getWidth() - m_enclosure->getMouseRectLeft());
+	if (m_enclosure->getMouseRectHeight() > (m_enclosure->getHeight() - m_enclosure->getMouseRectTop()))
+		m_enclosure->setMouseRectHeight(m_enclosure->getHeight() - m_enclosure->getMouseRectTop());
+	m_mouseRectHeightSpin->SetRange(1, m_enclosure->getHeight() - m_enclosure->getMouseRectTop());
+	if (m_enclosure->getMouseAxisStart() > m_enclosure->getMouseRectHeight())
+		m_enclosure->setMouseAxisStart(m_enclosure->getMouseRectHeight());
 	m_mouseAxisStartSpin->SetRange(0, m_enclosure->getMouseRectHeight());
-	//m_mouseAxisEndSpin->SetRange(0, (m_enclosure->getMouseAxisStart() - m_enclosure->getMouseRectHeight()));
-	m_textRectLeftSpin->SetRange(0, m_enclosure->getWidth());
-	m_textRectTopSpin->SetRange(0, m_enclosure->getHeight());
-	m_textRectWidthSpin->SetRange(0, m_enclosure->getWidth());
-	m_textRectHeightSpin->SetRange(0, m_enclosure->getHeight());
+	if (m_enclosure->getMouseAxisEnd() > m_enclosure->getMouseRectHeight())
+		m_enclosure->setMouseAxisEnd(m_enclosure->getMouseRectHeight());
+	m_mouseAxisEndSpin->SetRange(m_enclosure->getMouseAxisStart(), m_enclosure->getMouseRectHeight());
+	if (m_enclosure->getTextRectLeft() > (m_enclosure->getWidth() - 1))
+		m_enclosure->setTextRectLeft(m_enclosure->getWidth() - 1);
+	m_textRectLeftSpin->SetRange(0, m_enclosure->getWidth() - 1);
+	if (m_enclosure->getTextRectTop() > (m_enclosure->getHeight() - 1))
+		m_enclosure->setTextRectTop(m_enclosure->getHeight() - 1);
+	m_textRectTopSpin->SetRange(0, m_enclosure->getHeight() - 1);
+	if (m_enclosure->getTextRectWidth() > (m_enclosure->getWidth() - m_enclosure->getTextRectLeft()))
+		m_enclosure->setTextRectWidth(m_enclosure->getWidth() - m_enclosure->getTextRectLeft());
+	m_textRectWidthSpin->SetRange(1, m_enclosure->getWidth() - m_enclosure->getTextRectLeft());
+	if (m_enclosure->getTextRectHeight() > (m_enclosure->getHeight() - m_enclosure->getTextRectTop()))
+		m_enclosure->setTextRectHeight(m_enclosure->getHeight() - m_enclosure->getTextRectTop());
+	m_textRectHeightSpin->SetRange(1, m_enclosure->getHeight() - m_enclosure->getTextRectTop());
+	if (m_enclosure->getTextBreakWidth() > m_enclosure->getTextRectWidth())
+		m_enclosure->setTextBreakWidth(m_enclosure->getTextRectWidth());
 	m_textBreakWidthSpin->SetRange(0, m_enclosure->getTextRectWidth());
-
 }
 
 void GUIEnclosurePanel::UpdateDefaultSpinValues() {
@@ -911,7 +946,7 @@ void GUIEnclosurePanel::UpdateDefaultSpinValues() {
 	m_mouseRectWidthSpin->SetValue(m_enclosure->getMouseRectWidth());
 	m_mouseRectHeightSpin->SetValue(m_enclosure->getMouseRectHeight());
 	m_mouseAxisStartSpin->SetValue(m_enclosure->getMouseAxisStart());
-	m_enclosure->setMouseAxisEnd(m_enclosure->getMouseAxisStart() - m_enclosure->getMouseRectHeight());
+	m_mouseAxisEndSpin->SetValue(m_enclosure->getMouseAxisEnd());
 	m_textRectLeftSpin->SetValue(m_enclosure->getTextRectLeft());
 	m_textRectTopSpin->SetValue(m_enclosure->getTextRectTop());
 	m_textRectWidthSpin->SetValue(m_enclosure->getTextRectWidth());
@@ -955,10 +990,14 @@ void GUIEnclosurePanel::UpdateBuiltinBitmapValues() {
 	m_enclosure->setBitmapHeight(height);
 	m_enclosure->setWidth(width);
 	m_enclosure->setHeight(height);
-	m_enclosure->setMouseRectWidth(width);
-	m_enclosure->setMouseRectHeight(height);
-	m_enclosure->setMouseAxisStart(height);
-	m_enclosure->setMouseAxisEnd(0);
+	m_enclosure->setMouseRectLeft(0);
+	m_enclosure->setMouseRectTop(13);
+	m_enclosure->setMouseRectWidth(width - m_enclosure->getMouseRectLeft());
+	m_enclosure->setMouseRectHeight(height - m_enclosure->getMouseRectTop() - 3);
+	m_enclosure->setMouseAxisStart(m_enclosure->getMouseRectHeight() / 3);
+	m_enclosure->setMouseAxisEnd(m_enclosure->getMouseRectHeight() / 3 * 2);
+	m_enclosure->setTextRectLeft(0);
+	m_enclosure->setTextRectTop(0);
 	m_enclosure->setTextRectWidth(width);
 	m_enclosure->setTextRectHeight(height);
 	m_enclosure->setTextBreakWidth(width);
