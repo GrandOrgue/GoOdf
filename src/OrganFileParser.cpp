@@ -660,7 +660,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 					wxString elementType = m_organFile->Read("Type", wxEmptyString);
 					if (elementType.IsSameAs(wxT("Divisional"))) {
 						int manualIdx = static_cast<int>(m_organFile->ReadLong("Manual", -1));
-						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+						if (manualIdx >= 0 && manualIdx <= (int)m_organ->getNumberOfManuals()) {
 							if (!m_organ->doesHavePedals() && manualIdx > 0)
 								manualIdx -= 1;
 							Manual *man = m_organ->getOrganManualAt(manualIdx);
@@ -671,7 +671,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 						}
 					} else if (elementType.IsSameAs(wxT("Coupler"))) {
 						int manualIdx = static_cast<int>(m_organFile->ReadLong("Manual", -1));
-						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+						if (manualIdx >= 0 && manualIdx <= (int)m_organ->getNumberOfManuals()) {
 							if (!m_organ->doesHavePedals() && manualIdx > 0)
 								manualIdx -= 1;
 							Manual *man = m_organ->getOrganManualAt(manualIdx);
@@ -682,7 +682,7 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 						}
 					} else if (elementType.IsSameAs(wxT("Stop"))) {
 						int manualIdx = static_cast<int>(m_organFile->ReadLong("Manual", -1));
-						if (manualIdx >= 0 && manualIdx < (int)m_organ->getNumberOfManuals()) {
+						if (manualIdx >= 0 && manualIdx <= (int)m_organ->getNumberOfManuals()) {
 							if (!m_organ->doesHavePedals() && manualIdx > 0)
 								manualIdx -= 1;
 							Manual *man = m_organ->getOrganManualAt(manualIdx);

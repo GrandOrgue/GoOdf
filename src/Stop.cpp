@@ -95,9 +95,11 @@ void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manu
 				if (firstPipe > 0 && firstPipe <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
 					rankRef.m_firstPipeNumber = firstPipe;
 				}
-				int pipeCount = static_cast<int>(cfg->ReadLong(rankNbrStr + "PipeCount", rankRef.m_rankReference->getNumberOfLogicalPipes()));
+				int pipeCount = static_cast<int>(cfg->ReadLong(rankNbrStr + "PipeCount", rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1)));
 				if (pipeCount > -1 && pipeCount <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
 					rankRef.m_pipeCount = pipeCount;
+				} else {
+					rankRef.m_pipeCount = rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1);
 				}
 				int firstAccKey = static_cast<int>(cfg->ReadLong(rankNbrStr + "FirstAccessibleKeyNumber", 1));
 				if (firstAccKey > 0 && firstAccKey <= m_NumberOfAccessiblePipes) {

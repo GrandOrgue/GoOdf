@@ -846,6 +846,13 @@ void StopPanel::OnRankFirstPipeNumberSpin(wxSpinEvent& WXUNUSED(event)) {
 	if (m_referencedRanks->GetSelection() != wxNOT_FOUND) {
 		unsigned selected = (unsigned) m_referencedRanks->GetSelection();
 		m_stop->getRankReferenceAt(selected)->m_firstPipeNumber = m_firstPipeNumberSpin->GetValue();
+
+		// if first pipe is changed the available pipe count might have changed and needs to be adjusted
+		int maxPipes = m_stop->getRankAt(selected)->getNumberOfLogicalPipes() - (m_stop->getRankReferenceAt(selected)->m_firstPipeNumber - 1);
+		if (m_stop->getRankReferenceAt(selected)->m_pipeCount > maxPipes)
+			m_stop->getRankReferenceAt(selected)->m_pipeCount = maxPipes;
+		m_pipeCountSpin->SetRange(0, maxPipes);
+		m_pipeCountSpin->SetValue(m_stop->getRankReferenceAt(selected)->m_pipeCount);
 	}
 }
 
