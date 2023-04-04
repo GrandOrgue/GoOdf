@@ -96,7 +96,7 @@ void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manu
 					rankRef.m_firstPipeNumber = firstPipe;
 				}
 				int pipeCount = static_cast<int>(cfg->ReadLong(rankNbrStr + "PipeCount", rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1)));
-				if (pipeCount > -1 && pipeCount <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
+				if (pipeCount > -1 && pipeCount <= (rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1))) {
 					rankRef.m_pipeCount = pipeCount;
 				} else {
 					rankRef.m_pipeCount = rankRef.m_rankReference->getNumberOfLogicalPipes() - (rankRef.m_firstPipeNumber - 1);
