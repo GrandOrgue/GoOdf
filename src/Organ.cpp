@@ -1187,6 +1187,14 @@ void Organ::removePanel(GoPanel *panel) {
 	}
 }
 
+void Organ::panelDisplayMetricsUpdate(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			p.updateButtonRowsAndCols();
+		}
+	}
+}
+
 void Organ::populateSetterElements() {
 	if (m_setterElements.IsEmpty()) {
 		m_setterElements.Add(wxT("CrescendoA"));

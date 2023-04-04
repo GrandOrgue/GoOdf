@@ -74,7 +74,6 @@ public:
 	int m_dispPedalKeyWidth; // (integer 1-500, default: 7)
 	int m_dispManualHeight; // (integer 1-500, default: 32)
 	int m_dispManualKeyWidth; // (integer 1-500, default: 12)
-
 };
 
 #endif

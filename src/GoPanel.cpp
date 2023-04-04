@@ -574,3 +574,25 @@ void GoPanel::updateGuiElementsDisplayNames() {
 		e->updateDisplayName();
 	}
 }
+
+void GoPanel::updateButtonRowsAndCols() {
+	for (GUIElement* e : m_guiElements) {
+		GUIButton *btnElement = dynamic_cast<GUIButton*>(e);
+		if (btnElement) {
+			if (btnElement->getDispButtonCol() > m_displayMetrics.m_dispButtonCols) {
+				btnElement->setDispButtonCol(1);
+			}
+			if (btnElement->getDispButtonRow() > 99 + m_displayMetrics.m_dispExtraButtonRows) {
+				btnElement->setDispButtonRow(1);
+			}
+			if (btnElement->getDispDrawstopRow() < 100 && btnElement->getDispDrawstopCol() > m_displayMetrics.m_dispDrawstopCols) {
+				btnElement->setDispDrawstopCol(1);
+			} else if (btnElement->getDispDrawstopRow() > 99 && btnElement->getDispDrawstopCol() > 99 + m_displayMetrics.m_dispExtraDrawstopCols) {
+				btnElement->setDispDrawstopCol(1);
+			}
+			if (btnElement->getDispDrawstopRow() > 99 + m_displayMetrics.m_dispExtraDrawstopRows) {
+				btnElement->setDispDrawstopRow(1);
+			}
+		}
+	}
+}

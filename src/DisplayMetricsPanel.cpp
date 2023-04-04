@@ -20,6 +20,7 @@
 
 #include "DisplayMetricsPanel.h"
 #include "GoImages.h"
+#include "GOODF.h"
 #include "GOODFDef.h"
 
 // Event table
@@ -1205,10 +1206,12 @@ void DisplayMetricsPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 			m_drawstopCols->SetValue(m_displayMetrics->m_dispDrawstopCols);
 		}
 	}
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopRows = m_drawstopRows->GetValue();
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnDrawstopColsOffsetRadio(wxCommandEvent& event) {
@@ -1248,18 +1251,22 @@ void DisplayMetricsPanel::OnPairDrawstopColsRadio(wxCommandEvent& event) {
 
 void DisplayMetricsPanel::OnExtraDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraDrawstopRows = m_extraDrawstopRows->GetValue();
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnExtraDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraDrawstopCols = m_extraDrawstopCols->GetValue();
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnButtonColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispButtonCols = m_buttonCols->GetValue();
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnExtraButtonRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraButtonRows = m_extraButtonRows->GetValue();
+	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
 }
 
 void DisplayMetricsPanel::OnExtraPedalButtonRowRadio(wxCommandEvent& event) {

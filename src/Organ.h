@@ -157,6 +157,7 @@ public:
 	void addPanel(GoPanel panel);
 	void removePanelAt(unsigned index);
 	void removePanel(GoPanel *panel);
+	void panelDisplayMetricsUpdate(DisplayMetrics *metrics);
 
 	const wxArrayString& getSetterElements() const;
 	const wxArrayString& getOrganElements() const;

@@ -862,8 +862,8 @@ void GUIButtonPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUIButtonPanel::OnButtonRowSpin(wxSpinEvent& WXUNUSED(event)) {
-	// TODO: Logic checking if jump over impossible values
-	m_button->setDispButtonRow(m_buttonRowSpin->GetValue());
+	int rowValue = m_buttonRowSpin->GetValue();
+	m_button->setDispButtonRow(rowValue);
 }
 
 void GUIButtonPanel::OnButtonColSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -871,7 +871,14 @@ void GUIButtonPanel::OnButtonColSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void GUIButtonPanel::OnDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
+	int rowValue = m_drawstopRowSpin->GetValue();
 	m_button->setDispDrawstopRow(m_drawstopRowSpin->GetValue());
+	// depending on the row value the available number of columns might change
+	if (rowValue < 100) {
+		m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols);
+	} else {
+		m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols);
+	}
 }
 
 void GUIButtonPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -890,12 +897,12 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_button->setBitmapHeight(height);
 			m_button->setWidth(width);
 			m_button->setHeight(height);
-			m_button->setMouseRectWidth(width);
-			m_button->setMouseRectHeight(height);
+			m_button->setMouseRectWidth(width - m_button->getMouseRectLeft());
+			m_button->setMouseRectHeight(height - m_button->getMouseRectTop());
 			m_button->setMouseRadius(std::min(width, height) / 2);
-			m_button->setTextRectWidth(width);
-			m_button->setTextRectHeight(height);
-			m_button->setTextBreakWidth(width);
+			m_button->setTextRectWidth(width - m_button->getTextRectLeft());
+			m_button->setTextRectHeight(height - m_button->getTextRectTop());
+			m_button->setTextBreakWidth(width - (width < 50 ? 4 : 14));
 			UpdateSpinRanges();
 			UpdateDefaultSpinValues();
 			wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOn());
@@ -1162,28 +1169,30 @@ void GUIButtonPanel::SetupImageNbrBoxContent() {
 }
 
 void GUIButtonPanel::UpdateSpinRanges() {
-	m_elementPosXSpin->SetRange(-1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_button->getWidth());
-	m_elementPosYSpin->SetRange(-1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_button->getHeight());
-	m_widthSpin->SetRange(0, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
-	m_heightSpin->SetRange(0, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()); // panel height!
-	m_tileOffsetXSpin->SetRange(0, m_button->getBitmapWidth());
-	m_tileOffsetYSpin->SetRange(0, m_button->getBitmapHeight());
+	m_elementPosXSpin->SetRange(-1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	m_elementPosYSpin->SetRange(-1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	m_widthSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
+	m_heightSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()); // panel height!
+	m_tileOffsetXSpin->SetRange(0, m_button->getBitmapWidth() - 1);
+	m_tileOffsetYSpin->SetRange(0, m_button->getBitmapHeight() - 1);
 	m_mouseRectLeftSpin->SetRange(0, m_button->getWidth());
 	m_mouseRectTopSpin->SetRange(0, m_button->getHeight());
-	m_mouseRectWidthSpin->SetRange(0, m_button->getWidth());
-	m_mouseRectHeightSpin->SetRange(0, m_button->getHeight());
+	m_mouseRectWidthSpin->SetRange(1, m_button->getWidth() - m_button->getMouseRectLeft());
+	m_mouseRectHeightSpin->SetRange(1, m_button->getHeight() - m_button->getMouseRectTop());
 	m_mouseRadiusSpin->SetRange(0, (std::max(m_button->getMouseRectWidth(), m_button->getMouseRectHeight()) / 2));
 	m_textRectLeftSpin->SetRange(0, m_button->getWidth());
 	m_textRectTopSpin->SetRange(0, m_button->getHeight());
-	m_textRectWidthSpin->SetRange(0, m_button->getWidth());
-	m_textRectHeightSpin->SetRange(0, m_button->getHeight());
+	m_textRectWidthSpin->SetRange(1, m_button->getWidth() - m_button->getTextRectLeft());
+	m_textRectHeightSpin->SetRange(1, m_button->getHeight() - m_button->getTextRectTop());
 	m_textBreakWidthSpin->SetRange(0, m_button->getTextRectWidth());
 
-	// TODO: The ranges should be checked so that extra button and drawstop rows/cols be accounted for some start at 100!
-	m_buttonRowSpin->SetRange(0, 199);
+	m_buttonRowSpin->SetRange(0, 99 + m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraButtonRows);
 	m_buttonColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispButtonCols);
-	m_drawstopRowSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispDrawstopRows);
-	m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols);
+	m_drawstopRowSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopRows > 0 ? (99 + m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopRows) : 99);
+	if (m_drawstopRowSpin->GetValue() < 100)
+		m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols);
+	else
+		m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols);
 }
 
 void GUIButtonPanel::UpdateDefaultSpinValues() {
@@ -1247,10 +1256,10 @@ void GUIButtonPanel::UpdateBuiltinBitmapValues() {
 	m_button->setBitmapHeight(height);
 	m_button->setWidth(width);
 	m_button->setHeight(height);
-	m_button->setMouseRectWidth(width);
-	m_button->setMouseRectHeight(height);
+	m_button->setMouseRectWidth(width - m_button->getMouseRectLeft());
+	m_button->setMouseRectHeight(height - m_button->getMouseRectTop());
 	m_button->setMouseRadius(width / 2);
-	m_button->setTextRectWidth(width);
-	m_button->setTextRectHeight(height);
-	m_button->setTextBreakWidth(width);
+	m_button->setTextRectWidth(width - m_button->getTextRectLeft());
+	m_button->setTextRectHeight(height - m_button->getTextRectTop());
+	m_button->setTextBreakWidth(m_button->getTextRectWidth() - (m_button->getTextRectWidth() < 50 ? 4 : 14));
 }

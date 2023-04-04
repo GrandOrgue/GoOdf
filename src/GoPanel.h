@@ -79,6 +79,7 @@ public:
 	bool hasItemAsGuiElement(General *general);
 	void removeItemFromPanel(General *general);
 	void updateGuiElementsDisplayNames();
+	void updateButtonRowsAndCols();
 
 private:
 	wxString m_name;
