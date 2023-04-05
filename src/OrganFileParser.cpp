@@ -70,16 +70,62 @@ bool OrganFileParser::isOrganReady() {
 
 void OrganFileParser::readIniFile() {
 	m_organFile = new wxFileConfig(wxEmptyString, wxEmptyString, m_filePath, wxEmptyString, wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
-	if (m_organFile->HasGroup(wxT("Organ")))
+	if (m_organFile->HasGroup(wxT("Organ"))) {
 		m_fileIsOk = true;
-	else {
+		if (m_organFile->HasGroup(wxT("Panel000"))) {
+			m_isUsingOldPanelFormat = false;
+		} else {
+			m_isUsingOldPanelFormat = true;
+		}
+		trimKeyValues();
+	} else {
 		m_fileIsOk = false;
 		m_errorMessage = wxT("No [Organ] section could be found in file!");
 	}
-	if (m_organFile->HasGroup(wxT("Panel000"))) {
-		m_isUsingOldPanelFormat = false;
-	} else {
-		m_isUsingOldPanelFormat = true;
+}
+
+void OrganFileParser::trimKeyValues() {
+	wxString group;
+	long group_index;
+
+	m_organFile->SetPath("/");
+	bool has_group = m_organFile->GetFirstGroup(group, group_index);
+	while (has_group) {
+		m_organFile->SetPath(group);
+
+		wxString entry;
+		long entry_index;
+
+		bool has_entry = m_organFile->GetFirstEntry(entry, entry_index);
+		while (has_entry) {
+			wxString value = m_organFile->Read(entry, wxEmptyString);
+			bool valueIsChanged = false;
+			// remove comments from the key value
+			int semicolonPos = value.Find(wxT(";"));
+			if (semicolonPos != wxNOT_FOUND) {
+				value = value.substr(0, semicolonPos);
+				valueIsChanged = true;
+			}
+			// trim whitespace
+			if (value.StartsWith(wxT(" "))) {
+				value = value.Trim(false);
+				valueIsChanged = true;
+			}
+			if (value.EndsWith(wxT(" "))) {
+				value = value.Trim();
+				valueIsChanged = true;
+			}
+
+			if (valueIsChanged) {
+				m_organFile->DeleteEntry(entry, false);
+				m_organFile->Write(entry, value);
+			}
+
+			has_entry = m_organFile->GetNextEntry(entry, entry_index);
+		}
+
+		m_organFile->SetPath("/");
+		has_group = m_organFile->GetNextGroup(group, group_index);
 	}
 }
 

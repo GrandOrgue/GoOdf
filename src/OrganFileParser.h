@@ -61,6 +61,7 @@ private:
 	int m_setterElementsToParse;
 
 	void readIniFile();
+	void trimKeyValues();
 	void parseOrgan();
 
 	void parseOrganSection();
