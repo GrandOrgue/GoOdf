@@ -747,44 +747,7 @@ void GUILabelPanel::OnFreeYposRadio(wxCommandEvent& event) {
 void GUILabelPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 	int selected = m_dispImageNbrBox->GetSelection();
 	m_label->setDispImageNum(selected);
-	// we also update sizes depending on the selection
-	// index 0, 1, 3, 7, 10 size is 80 x 25
-	// index 2, 6, 9 size is 80 x 50
-	// index 4, 8, 11 size is 160 x 25
-	// index 5, 12 size is 200 x 50
-	if (selected == 0 || selected == 1 || selected == 3 || selected == 7 || selected == 10) {
-		m_label->setBitmapWidth(80);
-		m_label->setBitmapHeight(25);
-		m_label->setWidth(80);
-		m_label->setHeight(25);
-		m_label->setTextRectWidth(80);
-		m_label->setTextRectHeight(25);
-		m_label->setTextBreakWidth(80);
-	} else if (selected == 2 || selected == 6 || selected == 9) {
-		m_label->setBitmapWidth(80);
-		m_label->setBitmapHeight(50);
-		m_label->setWidth(80);
-		m_label->setHeight(50);
-		m_label->setTextRectWidth(80);
-		m_label->setTextRectHeight(50);
-		m_label->setTextBreakWidth(80);
-	} else if (selected == 4 || selected == 8 || selected == 11) {
-		m_label->setBitmapWidth(160);
-		m_label->setBitmapHeight(25);
-		m_label->setWidth(160);
-		m_label->setHeight(25);
-		m_label->setTextRectWidth(160);
-		m_label->setTextRectHeight(25);
-		m_label->setTextBreakWidth(160);
-	} else if (selected == 5 || selected == 12) {
-		m_label->setBitmapWidth(200);
-		m_label->setBitmapHeight(50);
-		m_label->setWidth(200);
-		m_label->setHeight(50);
-		m_label->setTextRectWidth(200);
-		m_label->setTextRectHeight(50);
-		m_label->setTextBreakWidth(200);
-	}
+	UpdateDefaultImageValues();
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
 }
@@ -821,9 +784,9 @@ void GUILabelPanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_label->setBitmapHeight(height);
 			m_label->setWidth(width);
 			m_label->setHeight(height);
-			m_label->setTextRectWidth(width);
-			m_label->setTextRectHeight(height);
-			m_label->setTextBreakWidth(width);
+			m_label->setTextRectWidth(width - m_label->getTextRectLeft());
+			m_label->setTextRectHeight(height - m_label->getTextRectTop());
+			m_label->setTextBreakWidth(m_label->getTextRectWidth());
 			UpdateSpinRanges();
 			UpdateDefaultSpinValues();
 			m_imagePathField->SetValue(m_label->getImage()->getRelativeImagePath());
@@ -837,15 +800,7 @@ void GUILabelPanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (msg.ShowModal() == wxID_YES) {
 				// then we empty the value in button and panel
 				m_label->getImage()->setImage(wxEmptyString);
-				int width = 0;
-				int height = 0;
-				m_label->setBitmapWidth(width);
-				m_label->setBitmapHeight(height);
-				m_label->setWidth(width);
-				m_label->setHeight(height);
-				m_label->setTextRectWidth(width);
-				m_label->setTextRectHeight(height);
-				m_label->setTextBreakWidth(width);
+				UpdateDefaultImageValues();
 				UpdateSpinRanges();
 				UpdateDefaultSpinValues();
 				m_imagePathField->SetValue(wxEmptyString);
@@ -889,33 +844,15 @@ void GUILabelPanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 void GUILabelPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	int value = m_widthSpin->GetValue();
 	m_label->setWidth(value);
-
-	// if width is changed TextRectWidth and TextBreakWidth spinctrls should update their max values
-	int textRectValue = m_textRectWidthSpin->GetValue();
-	m_textRectWidthSpin->SetRange(0, value);
-	if (textRectValue > value) {
-		m_label->setTextRectWidth(value);
-		m_textRectWidthSpin->SetValue(value);
-	}
-	int textBreakValue = m_textBreakWidthSpin->GetValue();
-	m_textBreakWidthSpin->SetRange(0, value);
-	if (textBreakValue > value) {
-		m_label->setTextBreakWidth(value);
-		m_textBreakWidthSpin->SetValue(value);
-	}
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUILabelPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	int value = m_heightSpin->GetValue();
 	m_label->setHeight(value);
-
-	// if height is changed TextRectHeight spin should update max values
-	int textHeightValue = m_textRectHeightSpin->GetValue();
-	m_textRectHeightSpin->SetRange(0, value);
-	if (textHeightValue > value) {
-		m_label->setTextRectHeight(value);
-		m_textRectHeightSpin->SetValue(value);
-	}
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUILabelPanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -928,14 +865,20 @@ void GUILabelPanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUILabelPanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectLeft(m_textRectLeftSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUILabelPanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectTop(m_textRectTopSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUILabelPanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectWidth(m_textRectWidthSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUILabelPanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -987,21 +930,26 @@ void GUILabelPanel::OnRemoveLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUILabelPanel::UpdateSpinRanges() {
-	m_dispXposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_label->getWidth());
-	m_dispYposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_label->getHeight());
-	m_elementPosXSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - m_label->getWidth());
-	m_elementPosYSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_label->getHeight());
-	m_widthSpin->SetRange(0, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
-	m_heightSpin->SetRange(0, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()); // panel height!
-	m_tileOffsetXSpin->SetRange(0, m_label->getBitmapWidth());
-	m_tileOffsetYSpin->SetRange(0, m_label->getBitmapHeight());
-	m_textRectLeftSpin->SetRange(0, m_label->getWidth());
-	m_textRectTopSpin->SetRange(0, m_label->getHeight());
-	m_textRectWidthSpin->SetRange(0, m_label->getWidth());
-	m_textRectHeightSpin->SetRange(0, m_label->getHeight());
+	m_dispXposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	m_dispYposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	m_elementPosXSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	m_elementPosYSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	m_widthSpin->SetRange(1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!
+	m_heightSpin->SetRange(1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()); // panel height!
+	m_tileOffsetXSpin->SetRange(0, m_label->getBitmapWidth() - 1);
+	m_tileOffsetYSpin->SetRange(0, m_label->getBitmapHeight() - 1);
+	m_textRectLeftSpin->SetRange(0, m_label->getWidth() - 1);
+	m_textRectTopSpin->SetRange(0, m_label->getHeight() - 1);
+	if (m_label->getTextRectWidth() > (m_label->getWidth() - m_label->getTextRectLeft()))
+		m_label->setTextRectWidth(m_label->getWidth() - m_label->getTextRectLeft());
+	m_textRectWidthSpin->SetRange(1, m_label->getWidth() - m_label->getTextRectLeft());
+	if (m_label->getTextRectHeight() > (m_label->getHeight() - m_label->getTextRectTop()))
+		m_label->setTextRectHeight(m_label->getHeight() - m_label->getTextRectTop());
+	m_textRectHeightSpin->SetRange(1, m_label->getHeight() - m_label->getTextRectTop());
+	if (m_label->getTextBreakWidth() > m_label->getTextRectWidth())
+		m_label->setTextBreakWidth(m_label->getTextRectWidth());
 	m_textBreakWidthSpin->SetRange(0, m_label->getTextRectWidth());
 
-	// TODO: The ranges should be checked so that extra button and drawstop rows/cols be accounted for some start at 100!
 	m_drawstopColSpin->SetRange(1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols);
 }
 
@@ -1020,6 +968,56 @@ void GUILabelPanel::UpdateDefaultSpinValues() {
 	m_textRectWidthSpin->SetValue(m_label->getTextRectWidth());
 	m_textRectHeightSpin->SetValue(m_label->getTextRectHeight());
 	m_textBreakWidthSpin->SetValue(m_label->getTextBreakWidth());
+}
+
+void GUILabelPanel::UpdateDefaultImageValues() {
+	int selected = m_dispImageNbrBox->GetSelection();
+	// update label sizes depending on the selection
+	// index 0, 1, 3, 7, 10 size is 80 x 25
+	// index 2, 6, 9 size is 80 x 50
+	// index 4, 8, 11 size is 160 x 25
+	// index 5, 12 size is 200 x 50
+	if (selected == 0 || selected == 1 || selected == 3 || selected == 7 || selected == 10) {
+		m_label->setBitmapWidth(80);
+		m_label->setBitmapHeight(25);
+		m_label->setWidth(80);
+		m_label->setHeight(25);
+		m_label->setTextRectLeft(1);
+		m_label->setTextRectTop(1);
+		m_label->setTextRectWidth(79);
+		m_label->setTextRectHeight(24);
+		m_label->setTextBreakWidth(79);
+	} else if (selected == 2 || selected == 6 || selected == 9) {
+		m_label->setBitmapWidth(80);
+		m_label->setBitmapHeight(50);
+		m_label->setWidth(80);
+		m_label->setHeight(50);
+		m_label->setTextRectLeft(1);
+		m_label->setTextRectTop(1);
+		m_label->setTextRectWidth(79);
+		m_label->setTextRectHeight(49);
+		m_label->setTextBreakWidth(79);
+	} else if (selected == 4 || selected == 8 || selected == 11) {
+		m_label->setBitmapWidth(160);
+		m_label->setBitmapHeight(25);
+		m_label->setWidth(160);
+		m_label->setHeight(25);
+		m_label->setTextRectLeft(1);
+		m_label->setTextRectTop(1);
+		m_label->setTextRectWidth(159);
+		m_label->setTextRectHeight(24);
+		m_label->setTextBreakWidth(159);
+	} else if (selected == 5 || selected == 12) {
+		m_label->setBitmapWidth(200);
+		m_label->setBitmapHeight(50);
+		m_label->setWidth(200);
+		m_label->setHeight(50);
+		m_label->setTextRectLeft(1);
+		m_label->setTextRectTop(1);
+		m_label->setTextRectWidth(199);
+		m_label->setTextRectHeight(49);
+		m_label->setTextBreakWidth(199);
+	}
 }
 
 wxString GUILabelPanel::GetPathForImageFile() {

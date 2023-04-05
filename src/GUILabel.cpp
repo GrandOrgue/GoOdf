@@ -40,11 +40,11 @@ GUILabel::GUILabel() {
 	m_height = 25;
 	m_tileOffsetX = 0;
 	m_tileOffsetY = 0;
-	m_textRectLeft = 0;
-	m_textRectTop = 0;
-	m_textRectWidth = 80;
-	m_textRectHeight = 25;
-	m_textBreakWidth = 80;
+	m_textRectLeft = 1;
+	m_textRectTop = 1;
+	m_textRectWidth = 79;
+	m_textRectHeight = 24;
+	m_textBreakWidth = 79;
 	m_bitmapWidth = 80;
 	m_bitmapHeight = 25;
 }
@@ -111,15 +111,15 @@ void GUILabel::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TileOffsetX=") + wxString::Format(wxT("%i"), m_tileOffsetX));
 	if (m_tileOffsetY != 0)
 		outFile->AddLine(wxT("TileOffsetY=") + wxString::Format(wxT("%i"), m_tileOffsetY));
-	if (m_textRectLeft != 0)
+	if (m_textRectLeft != 1)
 		outFile->AddLine(wxT("TextRectLeft=") + wxString::Format(wxT("%i"), m_textRectLeft));
-	if (m_textRectTop != 0)
+	if (m_textRectTop != 1)
 		outFile->AddLine(wxT("TextRectTop=") + wxString::Format(wxT("%i"), m_textRectTop));
-	if (m_textRectWidth != m_width)
+	if (m_textRectWidth != (m_width - m_textRectLeft))
 		outFile->AddLine(wxT("TextRectWidth=") + wxString::Format(wxT("%i"), m_textRectWidth));
-	if (m_textRectHeight != m_height)
+	if (m_textRectHeight != (m_height - m_textRectTop))
 		outFile->AddLine(wxT("TextRectHeight=") + wxString::Format(wxT("%i"), m_textRectHeight));
-	if (m_textBreakWidth != m_width)
+	if (m_textBreakWidth != m_textRectWidth)
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
@@ -129,11 +129,11 @@ void GUILabel::read(wxFileConfig *cfg) {
 	cfgBoolValue = cfg->Read("FreeYPlacement", wxEmptyString);
 	m_freeYPlacement = GOODF_functions::parseBoolean(cfgBoolValue, true);
 	int xValue = static_cast<int>(cfg->ReadLong("DispXpos", 0));
-	if (xValue > -1 && xValue < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+	if (xValue > -1 && xValue <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
 		m_dispXpos = xValue;
 	}
 	int yValue = static_cast<int>(cfg->ReadLong("DispYpos", 0));
-	if (yValue > -1 && yValue < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+	if (yValue > -1 && yValue <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
 		m_dispYpos = yValue;
 	}
 	cfgBoolValue = cfg->Read("DispAtTopOfDrawstopCol", wxEmptyString);
@@ -193,21 +193,21 @@ void GUILabel::read(wxFileConfig *cfg) {
 		m_image.setMask(fullMaskPath);
 	}
 	int pX = static_cast<int>(cfg->ReadLong("PositionX", -1));
-	if (pX > -1 && pX < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+	if (pX > -1 && pX <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
 		m_positionX = pX;
 	}
 	int pY = static_cast<int>(cfg->ReadLong("PositionY", -1));
-	if (pY > -1 && pY < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+	if (pY > -1 && pY <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
 		m_positionY = pY;
 	}
 	int width = static_cast<int>(cfg->ReadLong("Width", -1));
-	if (width > -1 && width < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
+	if (width > 0 && width <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()) {
 		m_width = width;
 	} else {
 		m_width = m_bitmapWidth;
 	}
 	int height = static_cast<int>(cfg->ReadLong("Height", -1));
-	if (height > -1 && height < getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
+	if (height > 0 && height <= getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue()) {
 		m_height = height;
 	} else {
 		m_height = m_bitmapHeight;
@@ -220,23 +220,23 @@ void GUILabel::read(wxFileConfig *cfg) {
 	if (tileY > -1 && tileY < m_bitmapHeight) {
 		m_tileOffsetY = tileY;
 	}
-	int textLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 0));
-	if (textLeft > -1 && textLeft <= m_width) {
+	int textLeft = static_cast<int>(cfg->ReadLong("TextRectLeft", 1));
+	if (textLeft > -1 && textLeft < m_width) {
 		m_textRectLeft = textLeft;
 	}
-	int textTop = static_cast<int>(cfg->ReadLong("TextRectTop", 0));
-	if (textTop > -1 && textTop <= m_height) {
+	int textTop = static_cast<int>(cfg->ReadLong("TextRectTop", 1));
+	if (textTop > -1 && textTop < m_height) {
 		m_textRectTop = textTop;
 	}
-	int textWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", getWidth()));
-	if (textWidth >= 0 && textWidth <= m_width) {
+	int textWidth = static_cast<int>(cfg->ReadLong("TextRectWidth", (m_width - m_textRectLeft)));
+	if (textWidth >= 0 && textWidth <= (m_width - m_textRectLeft)) {
 		m_textRectWidth = textWidth;
 	}
-	int textHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", getHeight()));
-	if (textHeight >= 0 && textHeight <= m_height) {
+	int textHeight = static_cast<int>(cfg->ReadLong("TextRectHeight", (m_height - m_textRectTop)));
+	if (textHeight >= 0 && textHeight <= (m_height - m_textRectTop)) {
 		m_textRectHeight = textHeight;
 	}
-	int breakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", getTextRectWidth()));
+	int breakWidth = static_cast<int>(cfg->ReadLong("TextBreakWidth", m_textRectWidth));
 	if (breakWidth >= 0 && breakWidth <= m_textRectWidth) {
 		m_textBreakWidth = breakWidth;
 	}
