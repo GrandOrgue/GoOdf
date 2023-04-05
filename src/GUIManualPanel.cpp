@@ -770,8 +770,8 @@ void GUIManualPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			key->BitmapWidth = width;
 			key->BitmapHeight = height;
 			key->Width = width;
-			key->MouseRectWidth = width;
-			key->MouseRectHeight = height;
+			key->MouseRectWidth = width - key->MouseRectLeft;
+			key->MouseRectHeight = height - key->MouseRectTop;
 
 			UpdateExistingSelectedKeyData();
 		}
@@ -790,8 +790,8 @@ void GUIManualPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 				key->Width = width;
 				key->MouseRectLeft = 0;
 				key->MouseRectTop = 0;
-				key->MouseRectWidth = width;
-				key->MouseRectHeight = height;
+				key->MouseRectWidth = 1;
+				key->MouseRectHeight = 1;
 				if (key->ImageOn.getMask() != wxEmptyString)
 					key->ImageOn.setMask(wxEmptyString);
 				if (key->ImageOff.getImage() != wxEmptyString)
@@ -1030,6 +1030,11 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 		m_widthSpin->SetValue(currentKey->Width);
 		m_offsetSpin->SetValue(currentKey->Offset);
 		m_offsetYSpin->SetValue(currentKey->YOffset);
+		// update ranges of mouse spin controls before trying to set values
+		m_mouseRectLeftSpin->SetRange(0, currentKey->Width - 1);
+		m_mouseRectTopSpin->SetRange(0, currentKey->BitmapHeight - 1);
+		m_mouseRectWidthSpin->SetRange(1, (currentKey->BitmapWidth - currentKey->MouseRectLeft));
+		m_mouseRectHeightSpin->SetRange(1, (currentKey->BitmapHeight - currentKey->MouseRectTop));
 		m_mouseRectLeftSpin->SetValue(currentKey->MouseRectLeft);
 		m_mouseRectTopSpin->SetValue(currentKey->MouseRectTop);
 		m_mouseRectWidthSpin->SetValue(currentKey->MouseRectWidth);
@@ -1037,15 +1042,17 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 		m_widthSpin->Enable();
 		m_offsetSpin->Enable();
 		m_offsetYSpin->Enable();
-		// update ranges of mouse spin controls
-		m_mouseRectLeftSpin->SetRange(0, currentKey->BitmapWidth - 1);
-		m_mouseRectTopSpin->SetRange(0, currentKey->BitmapHeight - 1);
-		m_mouseRectWidthSpin->SetRange(0, currentKey->Width);
-		m_mouseRectHeightSpin->SetRange(0, currentKey->BitmapHeight);
-		m_mouseRectLeftSpin->Enable();
-		m_mouseRectTopSpin->Enable();
-		m_mouseRectWidthSpin->Enable();
-		m_mouseRectHeightSpin->Enable();
+		if (currentKey->KeytypeIdentifier.StartsWith(wxT("Key"))) {
+			m_mouseRectLeftSpin->Enable();
+			m_mouseRectTopSpin->Enable();
+			m_mouseRectWidthSpin->Enable();
+			m_mouseRectHeightSpin->Enable();
+		} else {
+			m_mouseRectLeftSpin->Disable();
+			m_mouseRectTopSpin->Disable();
+			m_mouseRectWidthSpin->Disable();
+			m_mouseRectHeightSpin->Disable();
+		}
 	} else {
 		m_imageOnPathField->SetValue(wxEmptyString);
 		m_addImageOnBtn->Disable();
@@ -1060,8 +1067,8 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 		m_offsetYSpin->SetValue(0);
 		m_mouseRectLeftSpin->SetValue(0);
 		m_mouseRectTopSpin->SetValue(0);
-		m_mouseRectWidthSpin->SetValue(0);
-		m_mouseRectHeightSpin->SetValue(0);
+		m_mouseRectWidthSpin->SetValue(1);
+		m_mouseRectHeightSpin->SetValue(1);
 		m_widthSpin->Disable();
 		m_offsetSpin->Disable();
 		m_offsetYSpin->Disable();

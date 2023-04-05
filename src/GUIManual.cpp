@@ -67,9 +67,9 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MouseRectLeft=") + wxString::Format(wxT("%i"), key.MouseRectLeft));
 				if (key.MouseRectTop != 0)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MouseRectTop=") + wxString::Format(wxT("%i"), key.MouseRectTop));
-				if (key.MouseRectWidth != key.Width)
+				if (key.MouseRectWidth != (key.BitmapWidth - key.MouseRectLeft))
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MouseRectWidth=") + wxString::Format(wxT("%i"), key.MouseRectWidth));
-				if (key.MouseRectHeight != key.BitmapHeight)
+				if (key.MouseRectHeight != (key.BitmapHeight - key.MouseRectTop))
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MouseRectHeight=") + wxString::Format(wxT("%i"), key.MouseRectHeight));
 			} else {
 				if (key.ImageOn.getImage() != wxEmptyString)
@@ -113,10 +113,10 @@ void GUIManual::read(wxFileConfig *cfg) {
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
 	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));
-	if (posX > -1 && posX < thePanelWidth)
+	if (posX > -1 && posX <= thePanelWidth)
 		setPosX(posX);
 	int posY = static_cast<int>(cfg->ReadLong("PositionY", -1));
-	if (posY > -1 && posY < thePanelHeight)
+	if (posY > -1 && posY <= thePanelHeight)
 		setPosY(posY);
 	for (int i = 0; i < 3; i++) {
 		wxString typePrefix = wxEmptyString;
@@ -212,6 +212,8 @@ void GUIManual::read(wxFileConfig *cfg) {
 						if (cfgYoffset > -501 && cfgYoffset < 501) {
 							type->YOffset = cfgYoffset;
 						}
+						type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
+						type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
 					}
 				}
 			}
@@ -285,16 +287,16 @@ void GUIManual::read(wxFileConfig *cfg) {
 						type->MouseRectTop = keyMouseRectTop;
 					}
 					int keyMouseRectWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectWidth"), -1));
-					if (keyMouseRectWidth >= 0 && keyMouseRectWidth <= type->BitmapWidth) {
+					if (keyMouseRectWidth > 0 && keyMouseRectWidth <= (type->BitmapWidth - type->MouseRectLeft)) {
 						type->MouseRectWidth = keyMouseRectWidth;
 					} else {
-						type->MouseRectWidth = width;
+						type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
 					}
 					int keyMouseRectHeight = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectHeight"), -1));
-					if (keyMouseRectHeight >= 0 && keyMouseRectHeight <= type->BitmapHeight) {
+					if (keyMouseRectHeight > 0 && keyMouseRectHeight <= (type->BitmapHeight - type->MouseRectTop)) {
 						type->MouseRectHeight = keyMouseRectHeight;
 					} else {
-						type->MouseRectHeight = height;
+						type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
 					}
 				}
 			}
@@ -346,8 +348,8 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.YOffset = 0;
 	type.MouseRectLeft = 0;
 	type.MouseRectTop = 0;
-	type.MouseRectWidth = 0;
-	type.MouseRectHeight = 0;
+	type.MouseRectWidth = 1;
+	type.MouseRectHeight = 1;
 	type.BitmapWidth = 0;
 	type.BitmapHeight = 0;
 	m_keytypes.push_back(type);
