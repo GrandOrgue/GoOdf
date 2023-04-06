@@ -211,6 +211,14 @@ void OrganFileParser::parseOrganSection() {
 			}
 			m_organFile->SetPath("/Organ");
 		}
+	} else {
+		// We need to read the display metrics of panel 000 before any other elements that might be displayed!
+		// But the new style GUI elements must be read after all the structural elements have been processed,
+		// so that will be done at a later point in the parsing.
+		m_organFile->SetPath(wxT("/Panel000"));
+		m_organ->getOrganPanelAt(0)->read(m_organFile, wxT("Panel000"));
+		m_progressDlg->Update(12, wxT("Parsing [Panel000] base section"));
+		m_organFile->SetPath("/Organ");
 	}
 
 	// parse enclosures
@@ -445,12 +453,11 @@ void OrganFileParser::parseOrganSection() {
 	// parse panels that has images and gui elements but can also exist in old style version
 	int nbrPanels = static_cast<int>(m_organFile->ReadLong("NumberOfPanels", 0));
 	if (!m_isUsingOldPanelFormat) {
-		// For the new format there exist a [Panel000] as main panel that must be read first.
+		// For the new format there exist a [Panel000] as main panel that can have GUI elements that must be read.
 		// That panel is already created with the organ and it won't be included in the count of number of panels either.
 		// The check if that section exist in the .organ file has already been done.
 		m_organFile->SetPath(wxT("/Panel000"));
-		m_organ->getOrganPanelAt(0)->read(m_organFile, wxT("Panel000"));
-		m_progressDlg->Update(85, wxT("Parsing [Panel000] section"));
+		m_progressDlg->Update(85, wxT("Parsing [Panel000] GUI elements"));
 		parsePanelElements(m_organ->getOrganPanelAt(0), wxT("Panel000"));
 		m_organFile->SetPath("/Organ");
 	}
