@@ -638,7 +638,7 @@ void GUIEnclosurePanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 
 void GUIEnclosurePanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_enclosure->setDispLabelFont(m_labelFont->GetSelectedFont());
-	m_enclosure->setDispLabelFontSize(m_labelFont->GetFont().GetPointSize());
+	m_enclosure->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
 }
 
 void GUIEnclosurePanel::OnLabelColourChoice(wxCommandEvent& event) {
