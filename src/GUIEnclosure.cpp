@@ -73,11 +73,11 @@ void GUIEnclosure::write(wxTextFile *outFile) {
 			outFile->AddLine(wxT("DispLabelColour=") + m_dispLabelColour.getHtmlValue());
 		}
 	}
-	if (m_dispLabelFontSize.getSizeValue() != 7) {
-		if (m_dispLabelFontSize.getSelectedSizeIndex() > -1) {
+	if (!m_dispLabelFontSize.getSizeName().IsSameAs(wxT("NORMAL"))) {
+		if (m_dispLabelFontSize.getSelectedSizeIndex() < 3 ) {
 			outFile->AddLine(wxT("DispLabelFontSize=") + m_dispLabelFontSize.getSizeName());
 		} else {
-			outFile->AddLine(wxT("DispLabelFontSize=") + m_dispLabelFontSize.getSizeValue());
+			outFile->AddLine(wxT("DispLabelFontSize=") + wxString::Format(wxT("%i"), m_dispLabelFontSize.getSizeValue()));
 		}
 	}
 	if (m_dispLabelFont != wxFont(wxFontInfo(7).FaceName(wxT("Arial"))))
