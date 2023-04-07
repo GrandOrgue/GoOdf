@@ -99,6 +99,7 @@ public:
 	int getBitmapWidth();
 	void setBitmapHeight(int height);
 	int getBitmapHeight();
+	void setDefaultFont(wxFont &theFont);
 
 protected:
 	bool m_displayAsPiston;

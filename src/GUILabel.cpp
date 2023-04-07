@@ -88,13 +88,13 @@ void GUILabel::write(wxTextFile *outFile) {
 		}
 	}
 	if (!m_dispLabelFontSize.getSizeName().IsSameAs(wxT("NORMAL"))) {
-		if (m_dispLabelFontSize.getSelectedSizeIndex() > -1) {
+		if (m_dispLabelFontSize.getSelectedSizeIndex() < 3) {
 			outFile->AddLine(wxT("DispLabelFontSize=") + m_dispLabelFontSize.getSizeName());
 		} else {
-			outFile->AddLine(wxT("DispLabelFontSize=") + m_dispLabelFontSize.getSizeValue());
+			outFile->AddLine(wxT("DispLabelFontSize=") + wxString::Format(wxT("%i"), m_dispLabelFontSize.getSizeValue()));
 		}
 	}
-	if (m_dispLabelFont != wxFont(wxFontInfo(7).FaceName(wxT("Arial"))))
+	if (m_dispLabelFont.GetFaceName() != getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetFaceName())
 		outFile->AddLine(wxT("DispLabelFontName=") + m_dispLabelFont.GetFaceName());
 	outFile->AddLine(wxT("Name=") + m_name);
 	if (m_dispImageNum != 1 && m_image.getImage() == wxEmptyString)
@@ -428,4 +428,9 @@ int GUILabel::getBitmapHeight() {
 
 void GUILabel::setBitmapHeight(int height) {
 	m_bitmapHeight = height;
+}
+
+void GUILabel::setDefaultFont(wxFont &theFont) {
+	m_dispLabelFont = theFont;
+	m_dispLabelFontSize.setSizeValue(theFont.GetPointSize());
 }

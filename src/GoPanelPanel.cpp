@@ -381,18 +381,21 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 					GUIElement *choice = new GUIStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("Coupler")) {
 					GUIElement *choice = new GUICoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("Divisional")) {
 					GUIElement *choice = new GUIDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("Enclosure")) {
@@ -405,30 +408,35 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 					GUIElement *choice = new GUITremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("Switch")) {
 					GUIElement *choice = new GUISwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("ReversiblePiston")) {
 					GUIElement *choice = new GUIReversiblePiston(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("DivisionalCoupler")) {
 					GUIElement *choice = new GUIDivisionalCoupler(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
 				} else if (organElement.first == wxT("General")) {
 					GUIElement *choice = new GUIGeneral(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second));
 					choice->setOwningPanel(m_panel);
 					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
 					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
 				}
@@ -449,6 +457,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setType(setterType);
 				choice->setOwningPanel(m_panel);
 				choice->setDisplayName(setterType);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispGroupLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			} else if (setterType == wxT("SetterXXXDivisionalBank")) {
@@ -464,6 +473,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
 				choice->setDisplayName(typeName);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispGroupLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else if (setterType == wxT("Swell")) {
@@ -481,6 +491,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(generalName);
 				choice->setDisplayName(generalName);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(generalName);
 			} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
@@ -497,6 +508,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(divisionalName);
 				choice->setDisplayName(divisionalName);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(divisionalName);
 			} else if (setterType == wxT("SetterXXXDivisionalPrevBank")) {
@@ -512,6 +524,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
 				choice->setDisplayName(typeName);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else if (setterType == wxT("SetterXXXDivisionalNextBank")) {
@@ -527,6 +540,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(typeName);
 				choice->setDisplayName(typeName);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(typeName);
 			} else {
@@ -535,6 +549,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setOwningPanel(m_panel);
 				choice->setType(setterType);
 				choice->setDisplayName(setterType);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			}
@@ -550,6 +565,7 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 		GUIElement *label = new GUILabel();
 		label->setOwningPanel(m_panel);
 		label->setDisplayName(wxT("GUI Label"));
+		label->setDefaultFont(m_panel->getDisplayMetrics()->m_dispGroupLabelFont);
 		m_panel->addGuiElement(label);
 
 		::wxGetApp().m_frame->AddGuiElementToTree(wxT("GUI Label"));

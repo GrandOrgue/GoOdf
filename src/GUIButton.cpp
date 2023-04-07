@@ -82,7 +82,7 @@ void GUIButton::write(wxTextFile *outFile) {
 			outFile->AddLine(wxT("DispLabelFontSize=") + wxString::Format(wxT("%i"), m_dispLabelFontSize.getSizeValue()));
 		}
 	}
-	if (m_dispLabelFont != wxFont(wxFontInfo(7).FaceName(wxT("Arial"))))
+	if (m_dispLabelFont.GetFaceName() != getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetFaceName())
 		outFile->AddLine(wxT("DispLabelFontName=") + m_dispLabelFont.GetFaceName());
 	if (m_dispLabelText != wxEmptyString)
 		outFile->AddLine(wxT("DispLabelText=") + m_dispLabelText);
@@ -555,4 +555,9 @@ void GUIButton::setBitmapHeight(int height) {
 
 int GUIButton::getBitmapHeight() {
 	return m_bitmapHeight;
+}
+
+void GUIButton::setDefaultFont(wxFont &theFont) {
+	m_dispLabelFont = theFont;
+	m_dispLabelFontSize.setSizeValue(theFont.GetPointSize());
 }

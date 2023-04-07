@@ -40,6 +40,7 @@ public:
 	virtual void read(wxFileConfig *cfg);
 
 	virtual void updateDisplayName();
+	virtual void setDefaultFont(wxFont&);
 	wxString getType();
 	void setType(wxString type);
 	int getPosX();

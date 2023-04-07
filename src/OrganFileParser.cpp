@@ -497,6 +497,7 @@ void OrganFileParser::createGUITremulant(GoPanel *targetPanel, Tremulant *tremul
 	GUIElement *guiTrem = new GUITremulant(tremulant);
 	guiTrem->setOwningPanel(targetPanel);
 	guiTrem->setDisplayName(tremulant->getName());
+	guiTrem->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(guiTrem);
 
 	GUITremulant *tremElement = dynamic_cast<GUITremulant*>(guiTrem);
@@ -510,6 +511,7 @@ void OrganFileParser::createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch)
 	guiSwitch->setOwningPanel(targetPanel);
 	if (theSwitch)
 		guiSwitch->setDisplayName(theSwitch->getName());
+	guiSwitch->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(guiSwitch);
 
 	GUISwitch *switchElement = dynamic_cast<GUISwitch*>(guiSwitch);
@@ -522,6 +524,7 @@ void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
 	GUIElement *label = new GUILabel();
 	label->setOwningPanel(targetPanel);
 	label->setDisplayName(wxT("GUI Label"));
+	label->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispGroupLabelFont);
 	targetPanel->addGuiElement(label);
 
 	GUILabel *theLabel = dynamic_cast<GUILabel*>(label);
@@ -546,6 +549,7 @@ void OrganFileParser::createGUIPiston(GoPanel *targetPanel, ReversiblePiston *pi
 	GUIElement *revPiston = new GUIReversiblePiston(piston);
 	revPiston->setOwningPanel(targetPanel);
 	revPiston->setDisplayName(piston->getName());
+	revPiston->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(revPiston);
 
 	GUIReversiblePiston *thePiston = dynamic_cast<GUIReversiblePiston*>(revPiston);
@@ -558,6 +562,7 @@ void OrganFileParser::createGUIDivCplr(GoPanel *targetPanel, DivisionalCoupler *
 	GUIElement *divCoupler = new GUIDivisionalCoupler(div_cplr);
 	divCoupler->setOwningPanel(targetPanel);
 	divCoupler->setDisplayName(div_cplr->getName());
+	divCoupler->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(divCoupler);
 
 	GUIDivisionalCoupler *theDivCplr = dynamic_cast<GUIDivisionalCoupler*>(divCoupler);
@@ -571,6 +576,7 @@ void OrganFileParser::createGUIGeneral(GoPanel *targetPanel, General *general) {
 	gen->setOwningPanel(targetPanel);
 	if (general)
 		gen->setDisplayName(general->getName());
+	gen->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(gen);
 
 	GUIGeneral *theGeneral = dynamic_cast<GUIGeneral*>(gen);
@@ -582,6 +588,7 @@ void OrganFileParser::createGUIGeneral(GoPanel *targetPanel, General *general) {
 void OrganFileParser::createGUIDivisional(GoPanel *targetPanel, Divisional *divisional) {
 	GUIElement *guiDiv = new GUIDivisional(divisional);
 	guiDiv->setOwningPanel(targetPanel);
+	guiDiv->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(guiDiv);
 
 	GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
@@ -681,6 +688,7 @@ void OrganFileParser::createGUICoupler(GoPanel *targetPanel, Coupler *coupler) {
 	GUIElement *guiCplr = new GUICoupler(coupler);
 	guiCplr->setOwningPanel(targetPanel);
 	guiCplr->setDisplayName(coupler->getName());
+	guiCplr->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(guiCplr);
 
 	GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
@@ -693,6 +701,7 @@ void OrganFileParser::createGUIStop(GoPanel *targetPanel, Stop *stop) {
 	GUIElement *guiStop = new GUIStop(stop);
 	guiStop->setOwningPanel(targetPanel);
 	guiStop->setDisplayName(stop->getName());
+	guiStop->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispControlLabelFont);
 	targetPanel->addGuiElement(guiStop);
 
 	GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);

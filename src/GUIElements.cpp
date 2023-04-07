@@ -44,6 +44,10 @@ void GUIElement::updateDisplayName() {
 
 }
 
+void GUIElement::setDefaultFont(wxFont&) {
+
+}
+
 wxString GUIElement::getType() {
 	return m_type;
 }

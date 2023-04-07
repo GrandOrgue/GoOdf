@@ -797,7 +797,7 @@ void GUIButtonPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 
 void GUIButtonPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_button->setDispLabelFont(m_labelFont->GetSelectedFont());
-	m_button->setDispLabelFontSize(m_labelFont->GetFont().GetPointSize());
+	m_button->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
 }
 
 void GUIButtonPanel::OnLabelColourChoice(wxCommandEvent& event) {
