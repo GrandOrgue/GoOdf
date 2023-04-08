@@ -172,9 +172,11 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 		}
 	}
 	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
-	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(fontStr));
-	if (fontStr != wxEmptyString && labelFont.IsOk())
+	wxFont labelFont = wxFont(fontStr);
+	if (fontStr != wxEmptyString && labelFont.IsOk()) {
+		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
+	}
 	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
 	cfgBoolValue = cfg->Read("DisplayKeyLabelOnLeft", wxEmptyString);
 	m_dispKeyLabelOnLeft = GOODF_functions::parseBoolean(cfgBoolValue, true);
@@ -371,6 +373,7 @@ GoFontSize* GUIButton::getDispLabelFontSize() {
 
 void GUIButton::setDispLabelFontSize(int size) {
 	m_dispLabelFontSize.setSizeValue(size);
+	m_dispLabelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 }
 
 void GUIButton::setDispLabelFont(wxFont font) {

@@ -167,9 +167,11 @@ void GUILabel::read(wxFileConfig *cfg) {
 		}
 	}
 	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
-	wxFont labelFont(wxFontInfo(m_dispLabelFontSize.getSizeValue()).FaceName(fontStr));
-	if (fontStr != wxEmptyString && labelFont.IsOk())
+	wxFont labelFont = wxFont(fontStr);
+	if (fontStr != wxEmptyString && labelFont.IsOk()) {
+		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
+	}
 	m_name = cfg->Read("Name", wxEmptyString);
 	int imgNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));
 	if (imgNum > -1 && imgNum < 13) {
@@ -280,6 +282,7 @@ GoFontSize* GUILabel::getDispLabelFontSize() {
 
 void GUILabel::setDispLabelFontSize(int size) {
 	m_dispLabelFontSize.setSizeValue(size);
+	m_dispLabelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 }
 
 wxFont GUILabel::getDispLabelFont() {

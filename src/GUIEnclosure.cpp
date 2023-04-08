@@ -158,9 +158,11 @@ void GUIEnclosure::read(wxFileConfig *cfg) {
 		}
 	}
 	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
-	wxFont labelFont(wxFontInfo(getDispLabelFontSize()->getSizeValue()).FaceName(fontStr));
-	if (fontStr != wxEmptyString && labelFont.IsOk())
+	wxFont labelFont = wxFont(fontStr);
+	if (fontStr != wxEmptyString && labelFont.IsOk()) {
+		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
+	}
 	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
 	int encStyle = static_cast<int>(cfg->ReadLong("EnclosureStyle", 1));
 	if (encStyle > 0 && encStyle < 5) {
@@ -313,6 +315,7 @@ GoFontSize* GUIEnclosure::getDispLabelFontSize() {
 
 void GUIEnclosure::setDispLabelFontSize(int fontSize) {
 	m_dispLabelFontSize.setSizeValue(fontSize);
+	m_dispLabelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 }
 
 const wxString& GUIEnclosure::getDispLabelText() const {
