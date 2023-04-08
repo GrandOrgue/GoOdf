@@ -268,10 +268,10 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 		setMouseRectWidth(getWidth() - m_mouseRectLeft);
 	}
 	int mouseRectHeight = static_cast<int>(cfg->ReadLong("MouseRectHeight", -1));
-	if (mouseRectHeight > 0 && mouseRectHeight < (getHeight() - m_mouseRectTop)) {
+	if (mouseRectHeight > 0 && mouseRectHeight <= (getHeight() - m_mouseRectTop)) {
 		setMouseRectHeight(mouseRectHeight);
 	} else {
-		setMouseRectHeight(getHeight());
+		setMouseRectHeight(getHeight() - m_mouseRectTop);
 	}
 	int mouseRadius = static_cast<int>(cfg->ReadLong("MouseRadius", -1));
 	if (mouseRadius > -1 && mouseRadius <= std::max(m_mouseRectWidth, m_mouseRectHeight)) {
