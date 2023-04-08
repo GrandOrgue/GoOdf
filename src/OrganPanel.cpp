@@ -662,8 +662,16 @@ void OrganPanel::OnBrowseForInfoPath(wxCommandEvent& WXUNUSED(event)) {
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
-	if (fileDialog.ShowModal() == wxID_CANCEL)
+	if (fileDialog.ShowModal() == wxID_CANCEL) {
+		if (m_infoPathField->GetValue() != wxEmptyString) {
+			wxMessageDialog msg(this, wxT("Info file value is not empty! Do you want to empty it?"), wxT("Empty info file value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				m_currentOrgan->setInfoFilename(wxEmptyString);
+				m_infoPathField->SetValue(wxEmptyString);
+			}
+		}
 		return;
+	}
 
 	infoFilePath = fileDialog.GetPath();
 	m_currentOrgan->setInfoFilename(infoFilePath);
