@@ -111,6 +111,8 @@ private:
 
 	wxString GetPathForImageFile();
 	void UpdateExistingSelectedKeyData();
+	void SetupKeyChoiceAndMapping();
+	void UpdateAddedKeyTypes();
 };
 
 #endif

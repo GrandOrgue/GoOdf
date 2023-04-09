@@ -91,9 +91,9 @@ private:
 		second = DisplayKey999Note (integer 0 - 127, default: FirstAccessibleKeyMIDINoteNumber + 999)
 	*/
 
+	void validateKeyTypes();
 	void populateKeyTypes();
 	void populateKeyNumbers();
-	bool displayKeysHaveChanged();
 };
 
 #endif

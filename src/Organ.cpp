@@ -1003,7 +1003,7 @@ void Organ::removeDivisionalCoupler(DivisionalCoupler *divCplr) {
 					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 				}
 			}
-			it == m_DivisionalCouplers.erase(it);
+			it = m_DivisionalCouplers.erase(it);
 		} else {
 			++it;
 		}
@@ -1066,7 +1066,7 @@ void Organ::removeGeneral(General *general) {
 					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 				}
 			}
-			it == m_Generals.erase(it);
+			it = m_Generals.erase(it);
 		} else {
 			++it;
 		}
@@ -1129,7 +1129,7 @@ void Organ::removeReversiblePiston(ReversiblePiston *piston) {
 					::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 				}
 			}
-			it == m_ReversiblePistons.erase(it);
+			it = m_ReversiblePistons.erase(it);
 		} else {
 			++it;
 		}
@@ -1180,7 +1180,7 @@ void Organ::removePanel(GoPanel *panel) {
 	if (getIndexOfOrganPanel(panel) > 1) {
 		for (auto it = m_Panels.begin(); it != m_Panels.end();) {
 			if (&(*it) == panel)
-				it == m_Panels.erase(it);
+				it = m_Panels.erase(it);
 			else
 				++it;
 		}

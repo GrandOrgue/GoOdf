@@ -612,19 +612,10 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 	if (!m_availableKeyTypes->IsEmpty())
 		m_availableKeyTypes->Clear();
 	m_availableKeyTypes->InsertItems(m_manual->getAvailableKeytypes(), 0);
-	if (!m_availableKeyNumbers->IsEmpty())
-		m_availableKeyNumbers->Clear();
-	m_availableKeyNumbers->InsertItems(m_manual->getAvailableKeynumbers(), 0);
+
 	m_addKey->Disable();
 	m_removeKey->Disable();
-	if (!m_addedKeyTypes->IsEmpty())
-		m_addedKeyTypes->Clear();
-	wxArrayString keys;
-	for (unsigned i = 0; i < m_manual->getNumberOfKeytypes(); i++) {
-		keys.Add(m_manual->getKeytypeAt(i)->KeytypeIdentifier);
-	}
-	if (!keys.IsEmpty())
-		m_addedKeyTypes->InsertItems(keys, 0);
+	UpdateAddedKeyTypes();
 	m_imageOnPathField->SetValue(wxEmptyString);
 	m_addImageOnBtn->Disable();
 	m_maskOnPathField->SetValue(wxEmptyString);
@@ -643,14 +634,7 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 	m_displayKeysSpin->SetRange(1, m_manual->getManual()->getNumberOfAccessibleKeys());
 	m_displayKeysSpin->SetValue(m_manual->getNumberOfDisplayKeys());
 	m_firstNoteSpin->SetValue(m_manual->getDisplayFirstNote());
-	m_displayKeyChoice->Clear();
-	wxArrayString keyNbrs;
-	for (int i = 0; i < m_manual->getNumberOfDisplayKeys(); i++)
-		keyNbrs.Add(GOODF_functions::number_format(i + 1));
-	m_displayKeyChoice->Insert(keyNbrs, 0);
-	m_displayKeyChoice->Select(0);
-	m_backendMIDIkey->SetValue(m_manual->getDisplayKeyAt(0)->first);
-	m_frontendMIDIkey->SetValue(m_manual->getDisplayKeyAt(0)->second);
+	SetupKeyChoiceAndMapping();
 }
 
 void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
@@ -926,12 +910,18 @@ void GUIManualPanel::OnMouseRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUIManualPanel::OnDisplayKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setNumberOfDisplayKeys(m_displayKeysSpin->GetValue());
-	// TODO: this might affect added keys which should be deleted and the mapping display re-built
+	// this might have affect added keys and mapping
+	SetupKeyChoiceAndMapping();
+	UpdateAddedKeyTypes();
+	UpdateExistingSelectedKeyData();
 }
 
 void GUIManualPanel::OnFirstNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setDisplayFirstNote(m_firstNoteSpin->GetValue());
-	// TODO: same as method above!
+	// this might have affect added keys and mapping
+	SetupKeyChoiceAndMapping();
+	UpdateAddedKeyTypes();
+	UpdateExistingSelectedKeyData();
 }
 
 void GUIManualPanel::OnDisplayKeyChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -1078,4 +1068,32 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 		m_mouseRectHeightSpin->Disable();
 	}
 
+}
+
+void GUIManualPanel::SetupKeyChoiceAndMapping() {
+	// The available key number listbox should be updated
+	if (!m_availableKeyNumbers->IsEmpty())
+		m_availableKeyNumbers->Clear();
+	m_availableKeyNumbers->InsertItems(m_manual->getAvailableKeynumbers(), 0);
+
+	// The key mapping choice should be updated
+	m_displayKeyChoice->Clear();
+	wxArrayString keyNbrs;
+	for (int i = 0; i < m_manual->getNumberOfDisplayKeys(); i++)
+		keyNbrs.Add(GOODF_functions::number_format(i + 1));
+	m_displayKeyChoice->Insert(keyNbrs, 0);
+	m_displayKeyChoice->Select(0);
+	m_backendMIDIkey->SetValue(m_manual->getDisplayKeyAt(0)->first);
+	m_frontendMIDIkey->SetValue(m_manual->getDisplayKeyAt(0)->second);
+}
+
+void GUIManualPanel::UpdateAddedKeyTypes() {
+	if (!m_addedKeyTypes->IsEmpty())
+		m_addedKeyTypes->Clear();
+	wxArrayString keys;
+	for (unsigned i = 0; i < m_manual->getNumberOfKeytypes(); i++) {
+		keys.Add(m_manual->getKeytypeAt(i)->KeytypeIdentifier);
+	}
+	if (!keys.IsEmpty())
+		m_addedKeyTypes->InsertItems(keys, 0);
 }

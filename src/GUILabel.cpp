@@ -171,6 +171,10 @@ void GUILabel::read(wxFileConfig *cfg) {
 	if (fontStr != wxEmptyString && labelFont.IsOk()) {
 		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
+	} else {
+		labelFont = getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont;
+		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
+		setDispLabelFont(labelFont);
 	}
 	m_name = cfg->Read("Name", wxEmptyString);
 	int imgNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));

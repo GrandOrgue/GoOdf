@@ -176,6 +176,10 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 	if (fontStr != wxEmptyString && labelFont.IsOk()) {
 		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
+	} else {
+		labelFont = getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont;
+		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
+		setDispLabelFont(labelFont);
 	}
 	setDispLabelText(cfg->Read("DispLabelText", wxEmptyString));
 	cfgBoolValue = cfg->Read("DisplayKeyLabelOnLeft", wxEmptyString);

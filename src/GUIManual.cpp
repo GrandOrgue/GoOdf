@@ -98,14 +98,13 @@ void GUIManual::write(wxTextFile *outFile) {
 	if (m_displayKeys != m_manual->getNumberOfAccessibleKeys()) {
 		outFile->AddLine(wxT("DisplayKeys=") + wxString::Format(wxT("%i"), m_displayKeys));
 	}
-	if (displayKeysHaveChanged()) {
-		int index = 1;
-		for (std::pair<int, int>& key : m_displayKeyMapping) {
-			wxString keyId = wxT("DisplayKey") + GOODF_functions::number_format(index);
-			outFile->AddLine(keyId + wxT("=") + wxString::Format(wxT("%i"), key.first));
-			outFile->AddLine(keyId + wxT("Note=") + wxString::Format(wxT("%i"), key.second));
-			index++;
-		}
+
+	for (int i = 0; i < m_displayKeys; i++) {
+		wxString dispKeyNbr = wxT("DisplayKey") + GOODF_functions::number_format(i + 1);
+		if (getDisplayKeyAt(i)->first != m_displayFirstNote + i)
+			outFile->AddLine(dispKeyNbr + wxT("=") + wxString::Format(wxT("%i"), getDisplayKeyAt(i)->first));
+		if (getDisplayKeyAt(i)->second != m_displayFirstNote + i)
+			outFile->AddLine(dispKeyNbr + wxT("Note=") + wxString::Format(wxT("%i"), getDisplayKeyAt(i)->second));
 	}
 }
 
@@ -153,7 +152,9 @@ void GUIManual::read(wxFileConfig *cfg) {
 				noteName = wxT("B");
 
 			wxString keyType = typePrefix + noteName;
-
+			addKeytype(keyType);
+			KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
+			bool keepKeyType = false;
 			wxString keyImageOn = wxT("ImageOn_") + keyType;
 			wxString cfgImgOn = cfg->Read(keyImageOn, wxEmptyString);
 			if (cfgImgOn != wxEmptyString) {
@@ -163,14 +164,13 @@ void GUIManual::read(wxFileConfig *cfg) {
 					if (img.IsOk()) {
 						int width = img.GetWidth();
 						int height = img.GetHeight();
-						addKeytype(keyType);
-						KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
+
 						type->ImageOn.setImage(fullImgOnPath);
 						type->ImageOn.setOriginalWidth(width);
 						type->ImageOn.setOriginalHeight(height);
 						type->BitmapWidth = width;
 						type->BitmapHeight = height;
-
+						keepKeyType = true;
 						wxString keyImageOff = wxT("ImageOff_") + keyType;
 						wxString cfgImgOff = cfg->Read(keyImageOff, wxEmptyString);
 						if (cfgImgOff != wxEmptyString) {
@@ -195,39 +195,50 @@ void GUIManual::read(wxFileConfig *cfg) {
 								type->ImageOff.setMask(fullMaskOffPath);
 							}
 						}
-						wxString keyWidth = wxT("Width_") + keyType;
-						int cfgKeyWidth = static_cast<int>(cfg->ReadLong(keyWidth, -1));
-						if (cfgKeyWidth > -1 && cfgKeyWidth < 501) {
-							type->Width = cfgKeyWidth;
-						} else {
-							type->Width = width;
-						}
-						wxString keyOffset = wxT("Offset_") + keyType;
-						int cfgOffset = static_cast<int>(cfg->ReadLong(keyOffset, 0));
-						if (cfgOffset > -501 && cfgOffset < 501) {
-							type->Offset = cfgOffset;
-						}
-						wxString keyYoffset = wxT("YOffset_") + keyType;
-						int cfgYoffset = static_cast<int>(cfg->ReadLong(keyYoffset, 0));
-						if (cfgYoffset > -501 && cfgYoffset < 501) {
-							type->YOffset = cfgYoffset;
-						}
-						type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
-						type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
 					}
 				}
+			}
+
+			wxString keyWidth = wxT("Width_") + keyType;
+			int cfgKeyWidth = static_cast<int>(cfg->ReadLong(keyWidth, -1));
+			if (cfgKeyWidth > -1 && cfgKeyWidth < 501) {
+				type->Width = cfgKeyWidth;
+				keepKeyType = true;
+			} else {
+				type->Width = type->BitmapWidth;
+			}
+			wxString keyOffset = wxT("Offset_") + keyType;
+			int cfgOffset = static_cast<int>(cfg->ReadLong(keyOffset, -1000));
+			if (cfgOffset > -501 && cfgOffset < 501) {
+				keepKeyType = true;
+				type->Offset = cfgOffset;
+			}
+			wxString keyYoffset = wxT("YOffset_") + keyType;
+			int cfgYoffset = static_cast<int>(cfg->ReadLong(keyYoffset, -1000));
+			if (cfgYoffset > -501 && cfgYoffset < 501) {
+				type->YOffset = cfgYoffset;
+				keepKeyType = true;
+			}
+			type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
+			type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
+
+			if (!keepKeyType) {
+				m_keytypes.pop_back();
 			}
 		}
 	}
 	int dispKeys = static_cast<int>(cfg->ReadLong("DisplayKeys", m_manual->getNumberOfAccessibleKeys()));
 	if (dispKeys > 0 && dispKeys <= m_manual->getNumberOfAccessibleKeys()) {
-		m_displayKeys = dispKeys;
+		setNumberOfDisplayKeys(dispKeys);
 	} else {
-		m_displayKeys = m_manual->getNumberOfAccessibleKeys();
+		setNumberOfDisplayKeys(m_manual->getNumberOfAccessibleKeys());
 	}
 	for (int i = 0; i < m_displayKeys; i++) {
 		wxString keyStr = wxT("Key") + GOODF_functions::number_format(i + 1);
 		wxString keyImgOn = cfg->Read(keyStr + wxT("ImageOn"), wxEmptyString);
+		addKeytype(keyStr);
+		KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
+		bool keepKeyType = false;
 		if (keyImgOn != wxEmptyString) {
 			wxString fullImgOnPath = GOODF_functions::checkIfFileExist(keyImgOn);
 			if (fullImgOnPath != wxEmptyString) {
@@ -235,14 +246,13 @@ void GUIManual::read(wxFileConfig *cfg) {
 				if (img.IsOk()) {
 					int width = img.GetWidth();
 					int height = img.GetHeight();
-					addKeytype(keyStr);
-					KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
+
 					type->ImageOn.setImage(fullImgOnPath);
 					type->ImageOn.setOriginalWidth(width);
 					type->ImageOn.setOriginalHeight(height);
 					type->BitmapWidth = width;
 					type->BitmapHeight = height;
-
+					keepKeyType = true;
 					wxString keyImgOff = cfg->Read(keyStr + wxT("ImageOff"), wxEmptyString);
 					if (keyImgOff != wxEmptyString) {
 						wxString fullImgOffPath = GOODF_functions::checkIfFileExist(keyImgOff);
@@ -264,42 +274,54 @@ void GUIManual::read(wxFileConfig *cfg) {
 							type->ImageOff.setMask(fullMaskOffPath);
 						}
 					}
-					int keyWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("Width"), -1));
-					if (keyWidth > -1 && keyWidth < 501) {
-						type->Width = keyWidth;
-					} else {
-						type->Width = width;
-					}
-					int keyOffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("Offset"), 0));
-					if (keyOffset > -501 && keyOffset < 501) {
-						type->Offset = keyOffset;
-					}
-					int keyYoffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("YOffset"), 0));
-					if (keyYoffset > -501 && keyYoffset < 501) {
-						type->YOffset = keyYoffset;
-					}
-					int keyMouseRectLeft = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectLeft"), -1));
-					if (keyMouseRectLeft >= 0 && keyMouseRectLeft < type->BitmapWidth) {
-						type->MouseRectLeft = keyMouseRectLeft;
-					}
-					int keyMouseRectTop = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectTop"), -1));
-					if (keyMouseRectTop >= 0 && keyMouseRectTop < type->BitmapHeight) {
-						type->MouseRectTop = keyMouseRectTop;
-					}
-					int keyMouseRectWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectWidth"), -1));
-					if (keyMouseRectWidth > 0 && keyMouseRectWidth <= (type->BitmapWidth - type->MouseRectLeft)) {
-						type->MouseRectWidth = keyMouseRectWidth;
-					} else {
-						type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
-					}
-					int keyMouseRectHeight = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectHeight"), -1));
-					if (keyMouseRectHeight > 0 && keyMouseRectHeight <= (type->BitmapHeight - type->MouseRectTop)) {
-						type->MouseRectHeight = keyMouseRectHeight;
-					} else {
-						type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
-					}
 				}
 			}
+		}
+
+		int keyWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("Width"), -1));
+		if (keyWidth > -1 && keyWidth < 501) {
+			type->Width = keyWidth;
+			keepKeyType = true;
+		} else {
+			type->Width = type->BitmapWidth;
+		}
+		int keyOffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("Offset"), -1000));
+		if (keyOffset > -501 && keyOffset < 501) {
+			type->Offset = keyOffset;
+			keepKeyType = true;
+		}
+		int keyYoffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("YOffset"), -1000));
+		if (keyYoffset > -501 && keyYoffset < 501) {
+			type->YOffset = keyYoffset;
+			keepKeyType = true;
+		}
+		int keyMouseRectLeft = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectLeft"), -1));
+		if (keyMouseRectLeft >= 0 && keyMouseRectLeft < type->BitmapWidth) {
+			type->MouseRectLeft = keyMouseRectLeft;
+			keepKeyType = true;
+		}
+		int keyMouseRectTop = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectTop"), -1));
+		if (keyMouseRectTop >= 0 && keyMouseRectTop < type->BitmapHeight) {
+			type->MouseRectTop = keyMouseRectTop;
+			keepKeyType = true;
+		}
+		int keyMouseRectWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectWidth"), -1));
+		if (keyMouseRectWidth > 0 && keyMouseRectWidth <= (type->BitmapWidth - type->MouseRectLeft)) {
+			type->MouseRectWidth = keyMouseRectWidth;
+			keepKeyType = true;
+		} else {
+			type->MouseRectWidth = type->BitmapWidth - type->MouseRectLeft;
+		}
+		int keyMouseRectHeight = static_cast<int>(cfg->ReadLong(keyStr + wxT("MouseRectHeight"), -1));
+		if (keyMouseRectHeight > 0 && keyMouseRectHeight <= (type->BitmapHeight - type->MouseRectTop)) {
+			type->MouseRectHeight = keyMouseRectHeight;
+			keepKeyType = true;
+		} else {
+			type->MouseRectHeight = type->BitmapHeight - type->MouseRectTop;
+		}
+
+		if (!keepKeyType) {
+			m_keytypes.pop_back();
 		}
 	}
 	wxString cfgBoolValue = cfg->Read("DispKeyColourInverted", wxEmptyString);
@@ -312,16 +334,16 @@ void GUIManual::read(wxFileConfig *cfg) {
 	} else {
 		m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
 	}
-	for (int i = 0; i < m_displayKeys; i ++) {
+	for (int i = 0; i < m_displayKeys; i++) {
 		wxString dispKeyNbr = wxT("DisplayKey") + GOODF_functions::number_format(i + 1);
-		int backendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr, -1));
-		int frontendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr + wxT("Note"), -1));
+		int backendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr, m_displayFirstNote + i));
+		int frontendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr + wxT("Note"), m_displayFirstNote + i));
+		std::pair<int, int> *key_map = getDisplayKeyAt(i);
 		if (backendMidiKeyNbr >= 0 && backendMidiKeyNbr < 128) {
-			if (frontendMidiKeyNbr >= 0 && frontendMidiKeyNbr < 128) {
-				std::pair<int, int> *key_map = getDisplayKeyAt(i);
-				key_map->first = backendMidiKeyNbr;
-				key_map->second = frontendMidiKeyNbr;
-			}
+			key_map->first = backendMidiKeyNbr;
+		}
+		if (frontendMidiKeyNbr >= 0 && frontendMidiKeyNbr < 128) {
+			key_map->second = frontendMidiKeyNbr;
 		}
 	}
 }
@@ -343,15 +365,62 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.KeytypeIdentifier = identifier;
 	type.ImageOn = GoImage();
 	type.ImageOff = GoImage();
-	type.Width = 0;
+	int typeWidth = 0;
+	int typeHeight = 0;
+	if (type.KeytypeIdentifier.StartsWith(wxT("Key"))) {
+		// This is for numbered keys
+		int index = m_availableKeynumbers.Index(type.KeytypeIdentifier);
+		int key_nbr = m_displayFirstNote + index;
+		if (((key_nbr % 12) < 5 && !(key_nbr & 1)) || ((key_nbr % 12) >= 5 && (key_nbr & 1))) {
+			// It's a natural key
+			if (m_manual->isThePedal()) {
+				typeWidth = 7;
+				typeHeight = 40;
+			} else {
+				typeWidth = 12;
+				typeHeight = 32;
+			}
+		} else {
+			// It's a sharp
+			if (m_manual->isThePedal()) {
+				typeWidth = 7;
+				typeHeight = 18;
+			} else {
+				typeWidth = 6;
+				typeHeight = 19;
+			}
+		}
+	} else {
+		// This is for named key types so any that contain "is" is a sharp type
+		if (type.KeytypeIdentifier.Find(wxT("is")) == wxNOT_FOUND) {
+			// It's a natural key
+			if (m_manual->isThePedal()) {
+				typeWidth = 7;
+				typeHeight = 40;
+			} else {
+				typeWidth = 12;
+				typeHeight = 32;
+			}
+		} else {
+			// It's a sharp
+			if (m_manual->isThePedal()) {
+				typeWidth = 7;
+				typeHeight = 18;
+			} else {
+				typeWidth = 6;
+				typeHeight = 19;
+			}
+		}
+	}
+	type.Width = typeWidth;
 	type.Offset = 0;
 	type.YOffset = 0;
 	type.MouseRectLeft = 0;
 	type.MouseRectTop = 0;
-	type.MouseRectWidth = 1;
-	type.MouseRectHeight = 1;
-	type.BitmapWidth = 0;
-	type.BitmapHeight = 0;
+	type.MouseRectWidth = typeWidth;
+	type.MouseRectHeight = typeHeight;
+	type.BitmapWidth = typeWidth;
+	type.BitmapHeight = typeHeight;
 	m_keytypes.push_back(type);
 }
 
@@ -400,6 +469,9 @@ int GUIManual::getDisplayFirstNote() {
 
 void GUIManual::setDisplayFirstNote(int first) {
 	m_displayFirstNote = first;
+	populateKeyNumbers();
+	setupDefaultDisplayKeys();
+	validateKeyTypes();
 }
 
 int GUIManual::getNumberOfDisplayKeys() {
@@ -412,11 +484,25 @@ void GUIManual::setNumberOfDisplayKeys(int nbr) {
 	else
 		m_displayKeys = nbr;
 	populateKeyNumbers();
+	setupDefaultDisplayKeys();
+	validateKeyTypes();
 }
 
 std::pair<int, int>* GUIManual::getDisplayKeyAt(unsigned index) {
 	auto iterator = std::next(m_displayKeyMapping.begin(), index);
 	return &(*iterator);
+}
+
+void GUIManual::validateKeyTypes() {
+	// This function will check if the added keytypes are valid (still) and remove any non valid ones
+	std::list<KEYTYPE>::iterator it = m_keytypes.begin();
+	while (it != m_keytypes.end()) {
+		if (m_availableKeytypes.Index(it->KeytypeIdentifier) == wxNOT_FOUND && m_availableKeynumbers.Index(it->KeytypeIdentifier) == wxNOT_FOUND) {
+			it = m_keytypes.erase(it);
+		} else {
+			++it;
+		}
+	}
 }
 
 void GUIManual::populateKeyTypes() {
@@ -470,7 +556,6 @@ void GUIManual::populateKeyNumbers() {
 }
 
 void GUIManual::setupDefaultDisplayKeys() {
-	// int firstMIDInote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
 	if (!m_displayKeyMapping.empty())
 		m_displayKeyMapping.clear();
 	if (!defaultDisplayKeyMapping.empty())
@@ -479,20 +564,5 @@ void GUIManual::setupDefaultDisplayKeys() {
 		int value = m_displayFirstNote + i;
 		m_displayKeyMapping.push_back(std::make_pair(value, value));
 		defaultDisplayKeyMapping.push_back(std::make_pair(value, value));
-	}
-}
-
-bool GUIManual::displayKeysHaveChanged() {
-	if (m_displayKeyMapping.size() != defaultDisplayKeyMapping.size())
-		return true;
-	else {
-		unsigned index = 0;
-		for (std::pair<int, int>& key : defaultDisplayKeyMapping) {
-			if (key.first != getDisplayKeyAt(index)->first || key.second != getDisplayKeyAt(index)->second)
-				return true;
-
-			index++;
-		}
-		return false;
 	}
 }
