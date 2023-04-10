@@ -1195,6 +1195,51 @@ void Organ::panelDisplayMetricsUpdate(DisplayMetrics *metrics) {
 	}
 }
 
+void Organ::panelApplyButtonFontName(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			p.applyButtonFontName();
+			break;
+		}
+	}
+}
+
+void Organ::panelApplyButtonFontSize(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			p.applyButtonFontSize();
+			break;
+		}
+	}
+}
+
+void Organ::panelApplyLabelFontName(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			p.applyLabelFontName();
+			break;
+		}
+	}
+}
+
+void Organ::panelApplyLabelFontSize(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			p.applyLabelFontSize();
+			break;
+		}
+	}
+}
+
+GoPanel* Organ::getPanelOwningDisplayMetrics(DisplayMetrics *metrics) {
+	for (GoPanel &p : m_Panels) {
+		if (p.getDisplayMetrics() == metrics) {
+			return &p;
+		}
+	}
+	return NULL;
+}
+
 void Organ::populateSetterElements() {
 	if (m_setterElements.IsEmpty()) {
 		m_setterElements.Add(wxT("CrescendoA"));

@@ -158,6 +158,11 @@ public:
 	void removePanelAt(unsigned index);
 	void removePanel(GoPanel *panel);
 	void panelDisplayMetricsUpdate(DisplayMetrics *metrics);
+	void panelApplyButtonFontName(DisplayMetrics *metrics);
+	void panelApplyButtonFontSize(DisplayMetrics *metrics);
+	void panelApplyLabelFontName(DisplayMetrics *metrics);
+	void panelApplyLabelFontSize(DisplayMetrics *metrics);
+	GoPanel* getPanelOwningDisplayMetrics(DisplayMetrics *metrics);
 
 	const wxArrayString& getSetterElements() const;
 	const wxArrayString& getOrganElements() const;

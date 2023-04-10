@@ -80,6 +80,10 @@ public:
 	void removeItemFromPanel(General *general);
 	void updateGuiElementsDisplayNames();
 	void updateButtonRowsAndCols();
+	void applyButtonFontName();
+	void applyButtonFontSize();
+	void applyLabelFontName();
+	void applyLabelFontSize();
 
 private:
 	wxString m_name;

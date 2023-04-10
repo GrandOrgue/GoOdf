@@ -596,3 +596,44 @@ void GoPanel::updateButtonRowsAndCols() {
 		}
 	}
 }
+
+void GoPanel::applyButtonFontName() {
+	for (GUIElement* e : m_guiElements) {
+		GUIButton *btnElement = dynamic_cast<GUIButton*>(e);
+		if (btnElement) {
+			wxFont control_font = m_displayMetrics.m_dispControlLabelFont;
+			control_font.SetPointSize(btnElement->getDispLabelFontSize()->getSizeValue());
+			btnElement->setDispLabelFont(control_font);
+		}
+	}
+}
+
+void GoPanel::applyButtonFontSize() {
+	for (GUIElement* e : m_guiElements) {
+		GUIButton *btnElement = dynamic_cast<GUIButton*>(e);
+		if (btnElement) {
+			int font_size = m_displayMetrics.m_dispControlLabelFont.GetPointSize();
+			btnElement->setDispLabelFontSize(font_size);
+		}
+	}
+}
+
+void GoPanel::applyLabelFontName() {
+	for (GUIElement* e : m_guiElements) {
+		GUILabel *lblElement = dynamic_cast<GUILabel*>(e);
+		if (lblElement) {
+			wxFont label_font = m_displayMetrics.m_dispGroupLabelFont;
+			label_font.SetPointSize(lblElement->getDispLabelFontSize()->getSizeValue());
+			lblElement->setDispLabelFont(label_font);
+		}
+	}
+}
+void GoPanel::applyLabelFontSize() {
+	for (GUIElement* e : m_guiElements) {
+		GUILabel *lblElement = dynamic_cast<GUILabel*>(e);
+		if (lblElement) {
+			int font_size = m_displayMetrics.m_dispGroupLabelFont.GetPointSize();
+			lblElement->setDispLabelFontSize(font_size);
+		}
+	}
+}

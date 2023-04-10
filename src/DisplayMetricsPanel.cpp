@@ -22,6 +22,7 @@
 #include "GoImages.h"
 #include "GOODF.h"
 #include "GOODFDef.h"
+#include <wx/msgdlg.h>
 
 // Event table
 BEGIN_EVENT_TABLE(DisplayMetricsPanel, wxPanel)
@@ -1150,6 +1151,19 @@ void DisplayMetricsPanel::OnDrawstopInsetBgChange(wxCommandEvent& WXUNUSED(event
 
 void DisplayMetricsPanel::OnControlLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispControlLabelFont = m_controlLabelFont->GetSelectedFont();
+	GoPanel *owning_panel = ::wxGetApp().m_frame->m_organ->getPanelOwningDisplayMetrics(m_displayMetrics);
+	if (owning_panel) {
+		if (owning_panel->getNumberOfGuiElements() > 0) {
+			wxMessageDialog fontNameMsg(this, wxT("Do you want to apply this font name to all existing GUI Elements of button types?"), wxT("Apply font name to elements?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontNameMsg.ShowModal() == wxID_YES) {
+				::wxGetApp().m_frame->m_organ->panelApplyButtonFontName(m_displayMetrics);
+			}
+			wxMessageDialog fontSizeMsg(this, wxT("Do you want to apply this font size to all existing GUI Elements of button types?"), wxT("Apply font size to elements?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontSizeMsg.ShowModal() == wxID_YES) {
+				::wxGetApp().m_frame->m_organ->panelApplyButtonFontSize(m_displayMetrics);
+			}
+		}
+	}
 }
 
 void DisplayMetricsPanel::OnShortcutKeyLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
@@ -1176,6 +1190,19 @@ void DisplayMetricsPanel::OnShortcutKeyLabelColourPick(wxColourPickerEvent& even
 
 void DisplayMetricsPanel::OnGroupLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispGroupLabelFont = m_groupLabelFont->GetSelectedFont();
+	GoPanel *owning_panel = ::wxGetApp().m_frame->m_organ->getPanelOwningDisplayMetrics(m_displayMetrics);
+	if (owning_panel) {
+		if (owning_panel->getNumberOfGuiElements() > 0) {
+			wxMessageDialog fontNameMsg(this, wxT("Do you want to apply this font name to existing GUI Elements of label types?"), wxT("Apply font name to elements?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontNameMsg.ShowModal() == wxID_YES) {
+				::wxGetApp().m_frame->m_organ->panelApplyLabelFontName(m_displayMetrics);
+			}
+			wxMessageDialog fontSizeMsg(this, wxT("Do you want to apply this font size to existing GUI Elements of label types?"), wxT("Apply font size to elements?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontSizeMsg.ShowModal() == wxID_YES) {
+				::wxGetApp().m_frame->m_organ->panelApplyLabelFontSize(m_displayMetrics);
+			}
+		}
+	}
 }
 
 void DisplayMetricsPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {

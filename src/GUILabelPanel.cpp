@@ -684,8 +684,29 @@ void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
-	m_label->setDispLabelFont(m_labelFont->GetSelectedFont());
-	m_label->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
+	if (m_labelFont->GetSelectedFont().GetFaceName() != m_label->getDispLabelFont().GetFaceName()) {
+		m_label->setDispLabelFont(m_labelFont->GetSelectedFont());
+	} else if (m_label->getDispLabelFont().GetFaceName() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetFaceName()) {
+		wxMessageDialog fontNameMsg(this, wxT("Do you want to revert to display metrics default?"), wxT("Revert to default font name?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (fontNameMsg.ShowModal() == wxID_YES) {
+			wxFont dispFont = m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont;
+			dispFont.SetPointSize(m_label->getDispLabelFontSize()->getSizeValue());
+			m_label->setDispLabelFont(dispFont);
+			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
+		}
+	}
+	if (m_labelFont->GetSelectedFont().GetPointSize() != m_label->getDispLabelFontSize()->getSizeValue()) {
+		m_label->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
+	} else if (m_label->getDispLabelFontSize()->getSizeValue() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetPointSize()) {
+		wxMessageDialog fontSizeMsg(this, wxT("Do you want to revert to current display metrics size value?"), wxT("Revert to current default size?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (fontSizeMsg.ShowModal() == wxID_YES) {
+			m_label->setDispLabelFontSize(m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetPointSize());
+			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
+		}
+	}
+
+	// m_label->setDispLabelFont(m_labelFont->GetSelectedFont());
+	// m_label->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
 }
 
 void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {
