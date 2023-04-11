@@ -124,6 +124,15 @@ bool GOODF::OnInit() {
 	wxBitmap label10 = wxBITMAP_PNG_FROM_DATA(label10);
 	// wxBitmap label11 = wxBITMAP_PNG_FROM_DATA(label11); Same style as 10 but 160x25
 	// wxBitmap label12 = wxBITMAP_PNG_FROM_DATA(label12); Same style as 10 but 200x50
+	wxBitmap label13 = wxBITMAP_PNG_FROM_DATA(label13);
+	wxImage labelImage = label13.ConvertToImage();
+	label13 = wxBitmap(labelImage.Scale(80, 25));
+	wxBitmap label14 = wxBITMAP_PNG_FROM_DATA(label14);
+	labelImage = label14.ConvertToImage();
+	label14 = wxBitmap(labelImage.Scale(80, 25));
+	wxBitmap label15 = wxBITMAP_PNG_FROM_DATA(label15);
+	labelImage = label15.ConvertToImage();
+	label15 = wxBitmap(labelImage.Scale(80, 25));
 	m_labelBitmaps.push_back(wxNullBitmap);
 	m_labelBitmaps.push_back(label1);
 	m_labelBitmaps.push_back(label3);
@@ -137,6 +146,9 @@ bool GOODF::OnInit() {
 	m_labelBitmaps.push_back(label10);
 	m_labelBitmaps.push_back(label10);
 	m_labelBitmaps.push_back(label10);
+	m_labelBitmaps.push_back(label13);
+	m_labelBitmaps.push_back(label14);
+	m_labelBitmaps.push_back(label15);
 
 	// Show the frame
 	m_frame->Show(true);

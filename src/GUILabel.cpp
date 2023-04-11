@@ -179,8 +179,24 @@ void GUILabel::read(wxFileConfig *cfg) {
 	}
 	m_name = cfg->Read("Name", wxEmptyString);
 	int imgNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));
-	if (imgNum > -1 && imgNum < 13) {
+	if (imgNum > -1 && imgNum < 16) {
 		m_dispImageNum = imgNum;
+		if (imgNum == 0 || imgNum == 1 || imgNum == 3 || imgNum == 7 || imgNum == 10) {
+			setBitmapWidth(80);
+			setBitmapHeight(25);
+		} else if (imgNum == 2 || imgNum == 6 || imgNum == 9) {
+			setBitmapWidth(80);
+			setBitmapHeight(50);
+		} else if (imgNum == 4 || imgNum == 8 || imgNum == 11) {
+			setBitmapWidth(160);
+			setBitmapHeight(25);
+		} else if (imgNum == 5 || imgNum == 12) {
+			setBitmapWidth(200);
+			setBitmapHeight(50);
+		} else if (imgNum > 12 && imgNum < 16) {
+			setBitmapWidth(400);
+			setBitmapHeight(50);
+		}
 	}
 	wxString img = cfg->Read("Image", wxEmptyString);
 	wxString fullImgPath = GOODF_functions::checkIfFileExist(img);

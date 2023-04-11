@@ -999,6 +999,7 @@ void GUILabelPanel::UpdateDefaultImageValues() {
 	// index 2, 6, 9 size is 80 x 50
 	// index 4, 8, 11 size is 160 x 25
 	// index 5, 12 size is 200 x 50
+	// index 13 to 15 is 400 x 50 and tile reasonably well by default
 	if (selected == 0 || selected == 1 || selected == 3 || selected == 7 || selected == 10) {
 		m_label->setBitmapWidth(80);
 		m_label->setBitmapHeight(25);
@@ -1039,6 +1040,16 @@ void GUILabelPanel::UpdateDefaultImageValues() {
 		m_label->setTextRectWidth(199);
 		m_label->setTextRectHeight(49);
 		m_label->setTextBreakWidth(199);
+	} else if (selected > 12 && selected < 16) {
+		m_label->setBitmapWidth(400);
+		m_label->setBitmapHeight(50);
+		m_label->setWidth(400);
+		m_label->setHeight(50);
+		m_label->setTextRectLeft(1);
+		m_label->setTextRectTop(1);
+		m_label->setTextRectWidth(399);
+		m_label->setTextRectHeight(49);
+		m_label->setTextBreakWidth(399);
 	}
 }
 
