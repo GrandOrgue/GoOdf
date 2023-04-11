@@ -74,6 +74,7 @@ private:
 	GUILabel *m_label;
 
 	wxArrayString m_colors;
+	wxString m_lastUsedImagePath;
 
 	void OnLabelTextChange(wxCommandEvent& event);
 	void OnLabelFontChange(wxFontPickerEvent& event);

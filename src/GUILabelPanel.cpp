@@ -66,6 +66,7 @@ GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 	m_label = NULL;
 	GoColor col;
 	m_colors = col.getColorNames();
+	m_lastUsedImagePath = wxEmptyString;
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *labelText = new wxStaticText (
@@ -1043,12 +1044,12 @@ void GUILabelPanel::UpdateDefaultImageValues() {
 
 wxString GUILabelPanel::GetPathForImageFile() {
 	wxString imageFilePath;
-	wxString defaultPath = wxEmptyString;
+	wxString defaultPath = m_lastUsedImagePath;
 	if (m_label->getImage()->getImage() != wxEmptyString) {
 		wxFileName filePath = wxFileName(m_label->getImage()->getImage());
 		if (filePath.FileExists())
 			defaultPath = filePath.GetPath();
-	} else {
+	} else if (defaultPath == wxEmptyString) {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
 	}
 	if (defaultPath == wxEmptyString)
@@ -1067,5 +1068,7 @@ wxString GUILabelPanel::GetPathForImageFile() {
 		return wxEmptyString;
 
 	imageFilePath = fileDialog.GetPath();
+	wxFileName selectedFile = wxFileName(imageFilePath);
+	m_lastUsedImagePath = selectedFile.GetPath();
 	return imageFilePath;
 }
