@@ -62,7 +62,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_fileMenu->Append(ID_NEW_ORGAN, wxT("&New Organ\tAlt-N"), wxT("Create a new organ"));
 	m_fileMenu->Append(ID_READ_ORGAN, wxT("Open file\tCtrl+O"), wxT("Open existing .organ file"));
 	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tAlt-X"), wxT("Quit this program"));
-	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF"), wxT("Write the .organ file"));
+	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF\tCtrl+S"), wxT("Write the .organ file"));
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();
@@ -308,8 +308,6 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	m_organ->writeOrgan(odfFile);
 
 	odfFile->Write(wxTextFileType_Dos, wxCSConv("ISO-8859-1"));
-	wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ has been written!"), wxT("ODF file written"), wxOK|wxCENTRE);
-	msg.ShowModal();
 	odfFile->Close();
 	delete odfFile;
 }
