@@ -2,14 +2,14 @@
 
 GOODF is a tool for creating organ definition files for GrandOrgue. Editing of existing .organ files is implemented since version 0.4. Opening complex .organ files can take a little while for the software to process, so please be patient if you try it.
 
-The software is currently mainly tested on Linux, but building for Windows is possible.
+The software is currently mainly tested on Linux, but building for Windows is possible and crossbuilds are released here on GitHub.
 
 ## Current status
 GOODF is hosted on Github. The repository can be found at [https://github.com/larspalo/GOODF](https://github.com/larspalo/GOODF).
 
-Creation of a usable odf for GrandOrgue with the software fully works, though it's possible that some bugs still exist. It's still recommended to create the structural elements of the organ first - starting with setting the very base path where the .organ file is expected to reside.
+Creation of an usable odf for GrandOrgue with GOODF fully works, though it's possible that some bugs still exist. It's still recommended to create the structural elements of the organ first - starting with setting the very base path where the .organ file is expected to reside.
 
-Note that the only way to "save" any work done on an organ is by writing out the ODF (from file menu in the software). Since version 0.4 it's possible to also read/edit already existing .organ files. **However**, since this is a very new feature **be very careful with this!** It's likely that some bugs exist that could potentially destroy an ODF file. **Always work on copies or on files you don't mind having destroyed!** Also note that GOODF always will convert older type of .organ files to conform to the new panel format - *which means that older .organ files will be modified*! **Again, work on copies** as it's better to be safe than sorry. **You have been warned!** All that said, if you encounter problems that are repeatable, please report them as issues at https://github.com/larspalo/GOODF/issues so that the software might be improved.
+Note that the way to "save" the work done on an organ is by writing out the ODF (from file menu in the software or Ctrl+S). Since version 0.4 it's possible to also read/edit already existing .organ files. **However**, **be very mindful when using this feature!** It's possible that some bugs still exist that could potentially corrupt an ODF file. **Always work on copies or on files you don't mind having destroyed!** Also note that GOODF always will convert older type of .organ files to conform to the new panel format - *which means that older .organ files will be modified*! To ensure correct reading of (numerical) values from the .organ files, any leading or trailing whitespace as well as comments on the same line as a key/value pair will be stripped, even in the read source file! **Again, work on copies** as it's better to be safe than sorry. **You have been warned!** All that said, if you encounter problems that are repeatable, please report them as issues at https://github.com/larspalo/GOODF/issues so that the software might be improved.
 
 ## Future plans
 Next step will be testing the ability to read existing .organ files thoroughly so that it works really well without any bugs. Graphical rendering of panels with the possibility to adjust GUI element positioning is also a possible future improvement.
