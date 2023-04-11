@@ -33,7 +33,7 @@ GUILabel::GUILabel() {
 	m_dispLabelColour.setSelectedColorIndex(1);
 	m_dispLabelFontSize.setSelectedSizeIndex(1);
 	m_dispLabelFont = wxFont(wxFontInfo(7).FaceName(wxT("Arial")));
-	m_name = wxT("New Label");
+	m_name = wxEmptyString;
 	m_dispImageNum = 1;
 	m_image = GoImage();
 	m_width = 80;
@@ -96,7 +96,8 @@ void GUILabel::write(wxTextFile *outFile) {
 	}
 	if (m_dispLabelFont.GetFaceName() != getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetFaceName())
 		outFile->AddLine(wxT("DispLabelFontName=") + m_dispLabelFont.GetFaceName());
-	outFile->AddLine(wxT("Name=") + m_name);
+	if (m_name != wxEmptyString)
+		outFile->AddLine(wxT("Name=") + m_name);
 	if (m_dispImageNum != 1 && m_image.getImage() == wxEmptyString)
 		outFile->AddLine(wxT("DispImageNum=") + wxString::Format(wxT("%i"), m_dispImageNum));
 	if (m_image.getImage() != wxEmptyString)
