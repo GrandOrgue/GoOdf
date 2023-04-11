@@ -29,7 +29,7 @@
 </head>
 <body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
 GUI elements</h1>
-<p>Other GUI elements include manuals,Enclosures, buttons, and
+<p>Other GUI elements include manuals, enclosures, buttons, and
 drawstops. All of these elements can be displayed on a panel using
 images internal to GrandOrgue, or with fully custom images.</p>
 <h2 class="western">Enclosures</h2>
@@ -51,9 +51,10 @@ to allow a line break so that the name fits within the stop’s
 DisplayImage.</font></p>
 <p><font color="#000000"><b>Labelfont: </b><span style="font-weight: normal">this
 is a pulldown of all available fonts. You only need to specify if you
-want a different font than you set as the </span><b>Control Label
-Font</b> <span style="font-weight: normal">in the DisplayMetrics
-window</span></font></p>
+want a different font than default font for enclosures, a different font than the
+</span><b>Control Label Font</b> <span style="font-weight: normal">in the DisplayMetrics
+window for any button derived type, or different font than the <b>Group Label Font</b>
+for any label type.</span></font></p>
 <p><font color="#000000"><b>DisplayLabelColour</b><span style="font-weight: normal">:
 Select the colour for the text from the pulldown or select Custom
 Color and then click on the color sample to the right to pop up a
@@ -168,13 +169,13 @@ a minimum you need to add 14 keys from the leftmost panel-- a full
 octave plus the beginning key (normally FirstC), and the last key
 (normally LastC for a 61 note keyboard) Use this scheme if your
 custom keys are the same for each octave. Otherwise you can add up to
-61 keys from the center panel if you have different images for each
-octave.</p>
-<p><b>ImageOn</b>(string, default: implementation dependent bitmap)
+display keys number of keys from the center panel if you have different
+images for each octave.</p>
+<p><b>ImageOn</b> (string, default: implementation dependent bitmap)
 Bitmap for the specified key type, if the key is pressed. The bitmap
 may contain a mask. (one of these is needed for each of the User
 added keys.</p>
-<p><b>ImageOff</b>(string, default: implementation dependent bitmap)
+<p><b>ImageOff</b> (string, default: implementation dependent bitmap)
 Bitmap for the specified key type, if the key is not pressed. The
 bitmap may contain a mask. 
 </p>
@@ -184,11 +185,11 @@ corresponding On bitmap. If empty, no external mask is loaded.
 <p><b>MaskOff </b>(string, default: corresponding on mask) Mask for
 the corresponding Off bitmap. If empty, no external mask is loaded. 
 </p>
-<p><b>Width</b>(integer 0 - 500, default: implementation dependent)
+<p><b>Width</b> (integer 0 - 500, default: implementation dependent)
 This value is added to the x position of the current key to determine
 the position of the next key. (one of these is needed for each of the
 User added keys.)</p>
-<p>Offset (integer -500 - 500, default: implementation dependent)
+<p><b>Offset</b> (integer -500 - 500, default: implementation dependent)
 This value can be used to adjust the display of the current key, e.g.
 to place a sharp key overlapped with the previous key. (one of these
 is needed for each of the User added keys.)</p>
@@ -218,7 +219,7 @@ that a wood background is used for the keys.
 FirstAccessibleKeyMIDINoteNumber) Display the first key as the
 following note. 
 </p>
-<p><b>(Nbr of) Display Keys</b>(integer 1 - NumberOfAccessibleKeys,
+<p><b>(Nbr of) Display Keys</b> (integer 1 - NumberOfAccessibleKeys,
 default: NumberOfAccessibleKeys) number of keys to display. 
 </p>
 <p><b>DisplayKey </b>(integer 0 - 127, default: FirstAccessibleKey
@@ -227,17 +228,18 @@ The number in the key is between 1 and DisplayKeys.
 <p>The following two parameters are set individually for each
 DisplayKey number, that is, for each key on the keyboard</p>
 <p><b>Maps to back-end MIDI </b>contains the midi number of the
-back-end key(from the manual object) , that is connected to this GUI
-key. 
+back-end key (from the manual object), that is connected to this GUI
+key.
 </p>
 <p><b>Maps to front-end MIDI </b>contains the midi number of the
-displayed front-end GUI key. 
+displayed front-end GUI key. (Can be used for instance to force the
+display of the key as a sharp)
 </p>
 <p><br/>
 <br/>
 
 </p>
-<h3 class="western">Pistons and Drawstops:</h3>
+<h3 class="western">Pistons, Drawstops (all kinds):</h3>
 <p>These use the same GUI element parameter window, so we can discuss
 them together:</p>
 <p><img src="images/goodfhelp26_html_7169ce2156d82140.png" name="Image36" align="left" width="1260" height="934">

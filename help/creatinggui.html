@@ -5,9 +5,7 @@
 	<title>Creating Your Organ GUI</title>
 	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
 	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2023-03-17T13:47:22.378856345"/>
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
+	<meta name="changed" content="2023-04-10T21:40:48.681473632"/>
 	<meta name="created" content="00:00:00">
 	<style type="text/css">
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -33,7 +31,7 @@ GrandOrgue you follow the following steps:</p>
 <p>You will have created manuals as objects earlier. For each manual,
 edit its parameters:</p>
 <p><b>Number of accessible keys</b> 32 for pedals and 61 for
-manuals,, typically</p>
+manuals, typically by default.</p>
 <p><b>MIDI input number</b> 1 for pedal, 2 for the first
 manual(typically Choir or Great), and so on</p>
 <p>You will have created enclosures, stops, couplers and tremulants.</p>
@@ -57,7 +55,9 @@ object.</p>
 set the Main panel Displaymetrics, by clicking on that Item in the
 object tree. You will see the following window:</p>
 <p><img src="images/goodfhelp8_html_3a7ecb1c29e41d5d.png" name="Image14" align="left" width="1260" height="934" border="0"/>
-<br clear="left"/>
+<br/>
+<br/>
+
 </p>
 <p>It is here that you set the size of your panel with <b>Horizontal
 panelsize</b>, and <b>Vertical panelsize</b>. Also you use the
@@ -93,7 +93,11 @@ for buttons, and to set the position of buttons relative to keyboards
 and to extra stop rows.</p>
 <p>You can set Default fonts here. The <b>Control Label Font</b> is
 used for Stops, Tremulants, Switches, buttons, and couplers. The
-<b>Group Label Font </b>is used for labels.</p>
+<b>Group Label Font </b>is used for labels.  If you set these fonts
+and font sizes before you create your GUIelements, They will inherit
+the font and size, so you won’t need to enter the font and size
+separately for each element unless you want a different font for one
+or more special elements.</p>
 <h2 class="western">Placing your elements.</h2>
 <p>The manuals will organize their own position if you don’t change
 their default parameters, which is what you want unless you are
@@ -114,12 +118,14 @@ GUI element. You need to exit each data entry block with a tab or a
 mouse click in order for the number to stick. If you don’t do this
 you number won’t take, and you will find yourself doing lots of
 rework.</p>
-<h2 class="western">drawstops and buttons:</h2>
+<h2 class="western">Drawstops and buttons:</h2>
 <p><font color="#000000">Each Stop, Switch, and Tremulant GUI element
 is configured by clicking on it in the object tree at the left of the
 GOODF window to bring up its parameter window which looks like this:</font></p>
 <p><img src="images/goodfhelp8_html_7169ce2156d82140.png" name="Image15" align="left" width="1260" height="934" border="0"/>
-<br clear="left"/>
+<br/>
+<br/>
+
 </p>
 <p><font color="#000000">The following parameters should usually be
 changed:</font></p>
@@ -133,7 +139,7 @@ DisplayImage.</font></p>
 is a pulldown of all available fonts. You only need to specify if you
 want a different font than you set as the </span><b>Control Label
 Font</b> <span style="font-weight: normal">in the DisplayMetrics
-window</span></font></p>
+window.</span></font></p>
 <p><font color="#000000"><b>DisplayLabelColour</b><span style="font-weight: normal">:
 Select the colour for the text from the pulldown or select Custom
 Color and then click on the color sample to the right to pop up a
@@ -165,7 +171,18 @@ custom drawstop images include the name of the stop, set
 to zero to keep your graphic from being overwritten by the
 </span><b>DisplayLabelText.</b> <span style="font-weight: normal">Otherwise
 this parameter sets the maximum length of text for a drawstop before
-it is wrapped to the next line</span></font></p>
+it is wrapped to the next line.</span></font></p>
+<p><font color="#000000">If you want to change the font for all your
+buttons and labels, you can return the the displaymetrics window and
+change the font and font size there. (Note that when reading from an
+existing ODF, the font size on the displaymetrics window will all
+default back to 7 point, since the font size you’ve chosen before
+cannot be saved to the ODF) Once you have selected the new font and
+font size, a popup window will ask if you want to apply the new font
+to all the button elements (drawstops and buttons), or Labels, if
+that’s the font you changed.  In each case this will be followed by
+a second popup window asking if you want to apply the new font size
+to these GUI elements.</font></p>
 <h2 class="western">Labels</h2>
 <p><font color="#000000"><span style="font-weight: normal">You can
 use labels to add an Organ Name label, or to label the stop columns
@@ -173,7 +190,7 @@ with the manual they are controlling. To that end, the Labels can be
 positioned at the top or bottom of the Columns by setting </span><b>Free
 X pos</b> <span style="font-weight: normal">and </span><b>Free Y pos</b>
 <span style="font-weight: normal">to no. This enables the
-</span><b>DispDrawstopCo</b><span style="font-weight: normal">l data
+</span><b>DispDrawstopCol</b><span style="font-weight: normal"> data
 entry, to select the stop column; the </span><b>At top of drawstop
 columns</b> <span style="font-weight: normal">to select top or bottom
 location; and </span><b>Span Column to right</b><span style="font-weight: normal">,

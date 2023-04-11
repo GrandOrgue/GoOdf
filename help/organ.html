@@ -43,10 +43,6 @@ This string should be unique, as setting files for organs with the
 same ChurchName are considered compatible. GrandOrgue will not load a
 settings file if the ChurchName does not match. 
 </p>
-<p><br/>
-<br/>
-
-</p>
 <p><b>ChurchAddress </b>(string, required) informational text
 displayed in the property dialog 
 </p>
@@ -62,9 +58,10 @@ displayed in the property dialog
 <p><b>RecordingDetails </b>(string, required) informational text
 displayed in the property dialog 
 </p>
-<p>I<b>nfoFilename </b>(string, not required) relative path to an
+<p><b>InfoFilename </b>(string, not required) relative path to an
 HTML file with more information about the organ. This setting is
-currently not supported for organ packages. 
+currently not supported for organ packages. Empty the field by opening
+the file dialog and then pressing cancel.
 </p>
 <p><b>Divisionals Store Intermanual Couplers </b>(Boolean, required)
 determines if divisionals store/change the state of associated
@@ -93,8 +90,12 @@ change.
 <p><b>Gain </b>(float -120 - 40, default: 0) Amplitude scale factor
 in dB applied to the whole organ. 0 means no change. 
 </p>
-<p><b>Pitch Tuning </b>(float -1200-1200, default: 0) Re-tune the
+<p><b>Pitch Tuning </b>(float -1800-1800, default: 0) Re-tune the
 whole organ the specified number of cents. 
+</p>
+<p><b>Pitch Correction </b>(float -1800-1800, default: 0) Re-tune the
+whole organ the specified number of cents when another temperament than
+original temperament is chosen. 
 </p>
 <p><b>Tracker Delay</b>(integer 0 - 10000, default: 0) Delay
 introduced by the tracker applied to the whole organ. 
