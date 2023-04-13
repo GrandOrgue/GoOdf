@@ -19,6 +19,7 @@
  */
 
 #include "Tremulant.h"
+#include "GOODF.h"
 
 Tremulant::Tremulant() : Drawstop() {
 	tremType = wxT("Synth");
@@ -69,6 +70,8 @@ void Tremulant::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	} else if (typeValue.IsSameAs(wxT("Wave"), false)) {
 		tremType = typeValue;
 	}
+	if (name == wxEmptyString)
+		name = wxString::Format(wxT("Tremulant %i"), ((int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants() + 1));
 }
 
 int Tremulant::getAmpModDepth() {
