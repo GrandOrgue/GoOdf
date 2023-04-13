@@ -171,8 +171,8 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 		for (int i = 0; i < nbrStops; i++) {
 			cfg->SetPath(wxT("/") + manId);
 			wxString stopNbr = wxT("Stop") + GOODF_functions::number_format(i + 1);
-			wxString stopIdx = cfg->Read(stopNbr, wxEmptyString);
-			wxString stopGroup = wxT("Stop") + stopIdx;
+			int stopIdx = static_cast<int>(cfg->ReadLong(stopNbr, 0));
+			wxString stopGroup = wxT("Stop") + GOODF_functions::number_format(stopIdx);
 			cfg->SetPath("/");
 			if (cfg->HasGroup(stopGroup)) {
 				cfg->SetPath(wxT("/") + stopGroup);
@@ -201,8 +201,8 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 		for (int i = 0; i < nbrDivisionals; i++) {
 			cfg->SetPath(wxT("/") + manId);
 			wxString divNbr = wxT("Divisional") + GOODF_functions::number_format(i + 1);
-			wxString divIdx = cfg->Read(divNbr, wxEmptyString);
-			wxString divGroup = wxT("Divisional") + divIdx;
+			int divIdx = static_cast<int>(cfg->ReadLong(divNbr, 0));
+			wxString divGroup = wxT("Divisional") + GOODF_functions::number_format(divIdx);
 			cfg->SetPath("/");
 			if (cfg->HasGroup(divGroup)) {
 				cfg->SetPath(wxT("/") + divGroup);
@@ -236,8 +236,8 @@ void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString ma
 		for (int i = 0; i < nbrCouplers; i++) {
 			cfg->SetPath(wxT("/") + manId);
 			wxString couplerNbr = wxT("Coupler") + GOODF_functions::number_format(i + 1);
-			wxString cplrIdx = cfg->Read(couplerNbr, wxEmptyString);
-			wxString couplerGroup = wxT("Coupler") + cplrIdx;
+			int cplrIdx = static_cast<int>(cfg->ReadLong(couplerNbr, 0));
+			wxString couplerGroup = wxT("Coupler") + GOODF_functions::number_format(cplrIdx);
 			cfg->SetPath("/");
 			if (cfg->HasGroup(couplerGroup)) {
 				cfg->SetPath(wxT("/") + couplerGroup);
