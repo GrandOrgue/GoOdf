@@ -57,7 +57,7 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOn=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeMaskPath()));
 				if (key.ImageOff.getMask() != wxEmptyString)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOff=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
-				if (key.Width != key.BitmapWidth)
+				if (key.Width != key.BitmapWidth || keyNbrOverrideBaseKeyWidth(&key))
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Width=") + wxString::Format(wxT("%i"), key.Width));
 				if (key.Offset != 0)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Offset=") + wxString::Format(wxT("%i"), key.Offset));
@@ -367,10 +367,10 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.ImageOff = GoImage();
 	int typeWidth = 0;
 	int typeHeight = 0;
-	if (type.KeytypeIdentifier.StartsWith(wxT("Key"))) {
+	int index = m_availableKeynumbers.Index(type.KeytypeIdentifier);
+	if (type.KeytypeIdentifier.StartsWith(wxT("Key")) && index > -1) {
 		// This is for numbered keys
-		int index = m_availableKeynumbers.Index(type.KeytypeIdentifier);
-		int key_nbr = m_displayFirstNote + index;
+		int key_nbr = getDisplayKeyAt((unsigned) index)->second;
 		if (((key_nbr % 12) < 5 && !(key_nbr & 1)) || ((key_nbr % 12) >= 5 && (key_nbr & 1))) {
 			// It's a natural key
 			if (m_manual->isThePedal()) {
@@ -552,6 +552,92 @@ void GUIManual::populateKeyNumbers() {
 	for (int i = 0; i < m_displayKeys; i++) {
 		wxString keyId = wxT("Key") + GOODF_functions::number_format(i + 1);
 		m_availableKeynumbers.Add(keyId);
+	}
+}
+
+int GUIManual::baseKeyTypeExistAtIndex(wxString keyNbrType) {
+	// This function searches if a number key type will override any base keytype and return that index (or -1 if not found)
+	int returnIndex = -1;
+	if (keyNbrType.StartsWith(wxT("Key"))) {
+		int keyNbrIdx = getIndexOfKeyNumber(keyNbrType);
+		if (keyNbrIdx > -1){
+			int keyMidiNumber = m_displayFirstNote + keyNbrIdx;
+			wxString base_key_str = wxEmptyString;
+			int restFromDivision = keyMidiNumber % 12;
+			switch (restFromDivision) {
+				case 0:
+					base_key_str = wxT("C");
+					break;
+				case 1:
+					base_key_str = wxT("Cis");
+					break;
+				case 2:
+					base_key_str = wxT("D");
+					break;
+				case 3:
+					base_key_str = wxT("Dis");
+					break;
+				case 4:
+					base_key_str = wxT("E");
+					break;
+				case 5:
+					base_key_str = wxT("F");
+					break;
+				case 6:
+					base_key_str = wxT("Fis");
+					break;
+				case 7:
+					base_key_str = wxT("G");
+					break;
+				case 8:
+					base_key_str = wxT("Gis");
+					break;
+				case 9:
+					base_key_str = wxT("A");
+					break;
+				case 10:
+					base_key_str = wxT("Ais");
+					break;
+				case 11:
+					base_key_str = wxT("B");
+					break;
+				default:
+					base_key_str = wxEmptyString;
+			}
+			if (base_key_str != wxEmptyString) {
+				wxString searchedKeyType = wxEmptyString;
+				if (keyNbrIdx == 0) {
+					searchedKeyType = wxT("First") + base_key_str;
+				} else if (keyNbrIdx == (int) (m_availableKeynumbers.size() - 1)) {
+					searchedKeyType = wxT("Last") + base_key_str;
+				} else {
+					searchedKeyType = base_key_str;
+				}
+				int foundIdx = 0;
+				for (KEYTYPE& key : m_keytypes) {
+					if (key.KeytypeIdentifier.IsSameAs(searchedKeyType)) {
+						returnIndex = foundIdx;
+						break;
+					}
+					foundIdx++;
+				}
+			}
+		}
+		return returnIndex;
+	} else {
+		return returnIndex;
+	}
+}
+
+bool GUIManual::keyNbrOverrideBaseKeyWidth(KEYTYPE *key) {
+	int possibleOverride = baseKeyTypeExistAtIndex(key->KeytypeIdentifier);
+	if (possibleOverride > -1 && possibleOverride < (int) m_keytypes.size()) {
+		if (key->Width != getKeytypeAt((unsigned) possibleOverride)->Width)
+			return true;
+		else
+			return false;
+	} else {
+		return false;
 	}
 }
 

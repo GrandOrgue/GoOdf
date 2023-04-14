@@ -95,6 +95,8 @@ private:
 	void validateKeyTypes();
 	void populateKeyTypes();
 	void populateKeyNumbers();
+	int baseKeyTypeExistAtIndex(wxString keyNbrType);
+	bool keyNbrOverrideBaseKeyWidth(KEYTYPE *key);
 };
 
 #endif
