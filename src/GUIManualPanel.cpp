@@ -1037,6 +1037,10 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 			m_mouseRectTopSpin->Enable();
 			m_mouseRectWidthSpin->Enable();
 			m_mouseRectHeightSpin->Enable();
+			m_displayKeyChoice->SetSelection(m_manual->getIndexOfKeyNumber(currentKey->KeytypeIdentifier));
+			// we need to notify the choice that selection has changed
+			wxCommandEvent evt(wxEVT_CHOICE, ID_GUIMANUALPANEL_DISP_KEY_CHOICE);
+			wxPostEvent(this, evt);
 		} else {
 			m_mouseRectLeftSpin->Disable();
 			m_mouseRectTopSpin->Disable();

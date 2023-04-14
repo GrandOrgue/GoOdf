@@ -72,6 +72,7 @@ public:
 	void setNumberOfDisplayKeys(int nbr);
 	std::pair<int, int>* getDisplayKeyAt(unsigned index);
 	void setupDefaultDisplayKeys();
+	int getIndexOfKeyNumber(wxString keytype);
 
 private:
 	Manual *m_manual;

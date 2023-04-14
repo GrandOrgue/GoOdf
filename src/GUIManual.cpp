@@ -566,3 +566,7 @@ void GUIManual::setupDefaultDisplayKeys() {
 		defaultDisplayKeyMapping.push_back(std::make_pair(value, value));
 	}
 }
+
+int GUIManual::getIndexOfKeyNumber(wxString keytype) {
+	return m_availableKeynumbers.Index(keytype);
+}
