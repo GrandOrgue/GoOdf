@@ -54,6 +54,7 @@ END_EVENT_TABLE()
 GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	// Start with an empty organ
 	m_organ = new Organ();
+	m_organHasBeenSaved = false;
 
 	// Create a file menu
 	m_fileMenu = new wxMenu();
@@ -293,7 +294,7 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	}
 	wxString fullFileName = m_organPanel->getOdfPath() + wxFILE_SEP_PATH + m_organPanel->getOdfName() + wxT(".organ");
 	wxTextFile *odfFile = new wxTextFile(fullFileName);
-	if (odfFile->Exists()) {
+	if (odfFile->Exists() && !m_organHasBeenSaved) {
 		wxMessageDialog dlg(this, wxT("ODF file already exist. Do you want to overwrite it?"), wxT("Existing ODF file"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 		if (dlg.ShowModal() == wxID_YES) {
 			odfFile->Open(fullFileName);
@@ -308,8 +309,13 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	m_organ->writeOrgan(odfFile);
 
 	odfFile->Write(wxTextFileType_Dos, wxCSConv("ISO-8859-1"));
+	if (!m_organHasBeenSaved) {
+		wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ has been written!"), wxT("ODF file written"), wxOK|wxCENTRE);
+		msg.ShowModal();
+	}
 	odfFile->Close();
 	delete odfFile;
+	m_organHasBeenSaved = true;
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
@@ -325,6 +331,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 	}
 	m_organ = new Organ();
 	removeAllItemsFromTree();
+	m_organHasBeenSaved = false;
 
 	wxString organFilePath;
 
@@ -411,6 +418,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		}
 		m_organ = new Organ();
 		removeAllItemsFromTree();
+		m_organHasBeenSaved = false;
 		SetupOrganMainPanel();
 		m_organPanel->setCurrentOrgan(m_organ);
 		m_organPanel->setOdfPath(wxEmptyString);
@@ -1223,6 +1231,7 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 			m_organ = NULL;
 		}
 		m_organ = new Organ();
+		m_organHasBeenSaved = false;
 
 		removeAllItemsFromTree();
 		SetupOrganMainPanel();

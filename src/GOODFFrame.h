@@ -120,6 +120,8 @@ private:
 	GUILabelPanel *m_guiLabelPanel;
 	GUIManualPanel *m_guiManualPanel;
 
+	bool m_organHasBeenSaved;
+
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnAddNewEnclosure(wxCommandEvent& event);
 	void OnAddNewTremulant(wxCommandEvent& event);
