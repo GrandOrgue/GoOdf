@@ -66,7 +66,7 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_compile_options(-g -Wall -Wextra -pedantic)
 else()
-  add_compile_options(-O3 -mmmx -msse -msse2 -msse3 -mssse3 -mfpmath=sse -ffast-math)
+  add_compile_options(-O3 -ffast-math)
 endif()
 
 # Copy/create icons and resources to the build
