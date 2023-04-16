@@ -280,7 +280,7 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 				a.cuePoint = cuePoint;
 			if (relEnd > -2 && relEnd < 158760001)
 				a.releaseEnd = relEnd;
-			for (int i = 0; i > loops; i++) {
+			for (int i = 0; i < loops; i++) {
 				Loop l;
 				wxString loopId = wxT("Loop") + GOODF_functions::number_format(i + 1);
 				int loopStart = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("Start"), 0));
@@ -293,6 +293,7 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 					l.end = loopEnd;
 				else
 					l.end = l.start + 1;
+				a.addNewLoop(l);
 			}
 			m_attacks.push_back(a);
 		} else if (mainAtkStr.StartsWith(wxT("REF")) || mainAtkStr.IsSameAs(wxT("DUMMY"), false)) {

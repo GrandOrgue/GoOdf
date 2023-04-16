@@ -44,6 +44,9 @@ Attack::Attack(const Attack& att) {
 	attackStart = att.attackStart;
 	cuePoint = att.cuePoint;
 	releaseEnd = att.releaseEnd;
+	for (Loop l: att.m_loops) {
+		addNewLoop(l);
+	}
 }
 
 Attack::~Attack() {
