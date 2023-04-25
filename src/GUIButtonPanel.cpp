@@ -921,7 +921,7 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_button->setMouseRadius(std::min(width, height) / 2);
 			m_button->setTextRectWidth(width - m_button->getTextRectLeft());
 			m_button->setTextRectHeight(height - m_button->getTextRectTop());
-			m_button->setTextBreakWidth(width - (width < 50 ? 4 : 14));
+			m_button->setTextBreakWidth(m_button->getTextRectWidth() - (m_button->getTextRectWidth() < 50 ? 4 : 14));
 			UpdateSpinRanges();
 			UpdateDefaultSpinValues();
 			wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOn());
