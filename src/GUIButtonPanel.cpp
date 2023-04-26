@@ -1041,10 +1041,14 @@ void GUIButtonPanel::OnAddMaskOffBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void GUIButtonPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setWidth(m_widthSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setHeight(m_heightSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1057,10 +1061,14 @@ void GUIButtonPanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUIButtonPanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectLeft(m_mouseRectLeftSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnMouseRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectTop(m_mouseRectTopSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnMouseRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1077,14 +1085,20 @@ void GUIButtonPanel::OnMouseRadiusSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void GUIButtonPanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectLeft(m_textRectLeftSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectTop(m_textRectTopSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectWidth(m_textRectWidthSpin->GetValue());
+	UpdateSpinRanges();
+	UpdateDefaultSpinValues();
 }
 
 void GUIButtonPanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1196,13 +1210,25 @@ void GUIButtonPanel::UpdateSpinRanges() {
 	m_tileOffsetYSpin->SetRange(0, m_button->getBitmapHeight() - 1);
 	m_mouseRectLeftSpin->SetRange(0, m_button->getWidth());
 	m_mouseRectTopSpin->SetRange(0, m_button->getHeight());
+	if (m_button->getMouseRectWidth() > (m_button->getWidth() - m_button->getMouseRectLeft()))
+		m_button->setMouseRectWidth(m_button->getWidth() - m_button->getMouseRectLeft());
 	m_mouseRectWidthSpin->SetRange(1, m_button->getWidth() - m_button->getMouseRectLeft());
+	if (m_button->getMouseRectHeight() > (m_button->getHeight() - m_button->getMouseRectTop()))
+		m_button->setMouseRectHeight(m_button->getHeight() - m_button->getMouseRectTop());
 	m_mouseRectHeightSpin->SetRange(1, m_button->getHeight() - m_button->getMouseRectTop());
+	if (m_button->getMouseRadius() > (std::max(m_button->getMouseRectWidth(), m_button->getMouseRectHeight()) / 2))
+		m_button->setMouseRadius(std::max(m_button->getMouseRectWidth(), m_button->getMouseRectHeight()) / 2);
 	m_mouseRadiusSpin->SetRange(0, (std::max(m_button->getMouseRectWidth(), m_button->getMouseRectHeight()) / 2));
 	m_textRectLeftSpin->SetRange(0, m_button->getWidth());
 	m_textRectTopSpin->SetRange(0, m_button->getHeight());
+	if (m_button->getTextRectWidth() > (m_button->getWidth() - m_button->getTextRectLeft()))
+		m_button->setTextRectWidth(m_button->getWidth() - m_button->getTextRectLeft());
 	m_textRectWidthSpin->SetRange(1, m_button->getWidth() - m_button->getTextRectLeft());
+	if (m_button->getTextRectHeight() > (m_button->getHeight() - m_button->getTextRectTop()))
+		m_button->setTextRectHeight(m_button->getHeight() - m_button->getTextRectTop());
 	m_textRectHeightSpin->SetRange(1, m_button->getHeight() - m_button->getTextRectTop());
+	if (m_button->getTextBreakWidth() > m_button->getTextRectWidth())
+		m_button->setTextBreakWidth(m_button->getTextRectWidth());
 	m_textBreakWidthSpin->SetRange(0, m_button->getTextRectWidth());
 
 	m_buttonRowSpin->SetRange(0, 99 + m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraButtonRows);
