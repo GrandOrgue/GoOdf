@@ -99,6 +99,7 @@ private:
 	void OnAddTremulantPipesBtn(wxCommandEvent& event);
 	void OnExpandTreeBtn(wxCommandEvent& event);
 	void OnAddReleaseSamplesBtn(wxCommandEvent& event);
+	void OnTreeKeyboardInput(wxTreeEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();

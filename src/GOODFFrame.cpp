@@ -60,10 +60,10 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_fileMenu = new wxMenu();
 
 	// Add file menu items
-	m_fileMenu->Append(ID_NEW_ORGAN, wxT("&New Organ\tAlt-N"), wxT("Create a new organ"));
+	m_fileMenu->Append(ID_NEW_ORGAN, wxT("&New Organ\tCtrl+N"), wxT("Create a new organ"));
 	m_fileMenu->Append(ID_READ_ORGAN, wxT("Open file\tCtrl+O"), wxT("Open existing .organ file"));
-	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tAlt-X"), wxT("Quit this program"));
-	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF\tCtrl+S"), wxT("Write the .organ file"));
+	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF\tCtrl+S"), wxT("Write/Save the .organ file"));
+	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tCtrl+Q"), wxT("Quit this program"));
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();

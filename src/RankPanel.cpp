@@ -58,6 +58,7 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_BUTTON(ID_RANK_ADD_TREMULANT_PIPES_BTN, RankPanel::OnAddTremulantPipesBtn)
 	EVT_BUTTON(ID_RANK_EXPAND_TREE_BTN, RankPanel::OnExpandTreeBtn)
 	EVT_BUTTON(ID_RANK_ADD_RELEASES_BTN, RankPanel::OnAddReleaseSamplesBtn)
+	EVT_TREE_KEY_DOWN(ID_RANK_PIPE_TREE, RankPanel::OnTreeKeyboardInput)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -775,11 +776,11 @@ void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 
 	if (m_pipeTreeCtrl->GetItemParent(selectedItem) == m_tree_rank_root) {
 		// for a pipe selection
-		mnu.Append(ID_PIPE_MENU_ADD_ATTACK, "Add new attack from...");
-		mnu.Append(ID_PIPE_MENU_ADD_RELEASE, "Add new release from...");
-		mnu.Append(ID_PIPE_MENU_CREATE_REFERENCE, "Borrow pipe...");
-		mnu.Append(ID_PIPE_MENU_CLEAR_PIPE, "Reset this pipe");
-		mnu.Append(ID_PIPE_MENU_EDIT_PIPE, "Edit pipe properties");
+		mnu.Append(ID_PIPE_MENU_ADD_ATTACK, "Add new attack from...\tCtrl+A");
+		mnu.Append(ID_PIPE_MENU_ADD_RELEASE, "Add new release from...\tCtrl+R");
+		mnu.Append(ID_PIPE_MENU_CREATE_REFERENCE, "Borrow pipe...\tCtrl+B");
+		mnu.Append(ID_PIPE_MENU_CLEAR_PIPE, "Reset this pipe\tDel");
+		mnu.Append(ID_PIPE_MENU_EDIT_PIPE, "Edit pipe properties\tCtrl+E");
 		showMenu = true;
 	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Attack(s)") ||
 		(m_pipeTreeCtrl->GetItemParent(m_pipeTreeCtrl->GetItemParent(selectedItem)) == m_tree_rank_root &&
@@ -788,13 +789,13 @@ void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 		)
 	) {
 		// for an attack
-		mnu.Append(ID_PIPE_MENU_EDIT_ATTACK, "Edit attack properties");
-		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_ATTACK, "Delete attack");
+		mnu.Append(ID_PIPE_MENU_EDIT_ATTACK, "Edit attack properties\tCtrl+E");
+		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_ATTACK, "Delete attack\tDel");
 		showMenu = true;
 	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Release(s)")) {
 		// for a release
-		mnu.Append(ID_PIPE_MENU_EDIT_RELEASE, "Edit release properties");
-		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_RELEASE, "Delete release");
+		mnu.Append(ID_PIPE_MENU_EDIT_RELEASE, "Edit release properties\tCtrl+E");
+		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_RELEASE, "Delete release\tDel");
 		showMenu = true;
 	}
 
@@ -1338,5 +1339,80 @@ void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 		RebuildPipeTree();
 		UpdatePipeTree();
+	}
+}
+
+void RankPanel::OnTreeKeyboardInput(wxTreeEvent& event) {
+	wxTreeItemId selectedItem = m_pipeTreeCtrl->GetSelection();
+	if (m_pipeTreeCtrl->GetItemParent(selectedItem) == m_tree_rank_root) {
+		// for a pipe selection
+		switch(event.GetKeyCode()) {
+			case 'A':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnAddNewAttack();
+				else
+					event.Skip();
+				break;
+			case 'R':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnAddNewRelease();
+				else
+					event.Skip();
+				break;
+			case WXK_DELETE:
+				OnClearPipe();
+				break;
+			case 'B':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnCreateReference();
+				else
+					event.Skip();
+				break;
+			case 'E':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnEditPipe();
+				else
+					event.Skip();
+				break;
+			default:
+				event.Skip();
+		}
+	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Attack(s)") ||
+		(m_pipeTreeCtrl->GetItemParent(m_pipeTreeCtrl->GetItemParent(selectedItem)) == m_tree_rank_root &&
+			m_pipeTreeCtrl->GetItemText(selectedItem) != wxT("Attack(s)") &&
+			m_pipeTreeCtrl->GetItemText(selectedItem) != wxT("Release(s)")
+		)
+	) {
+		// for an attack
+		switch(event.GetKeyCode()) {
+			case WXK_DELETE:
+				OnRemoveSelectedAttack();
+				break;
+			case 'E':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnEditAttack();
+				else
+					event.Skip();
+				break;
+			default:
+				event.Skip();
+		}
+	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Release(s)")) {
+		// for a release
+		switch(event.GetKeyCode()) {
+			case WXK_DELETE:
+				OnRemoveSelectedRelease();
+				break;
+			case 'E':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnEditRelease();
+				else
+					event.Skip();
+				break;
+			default:
+				event.Skip();
+		}
+	} else {
+		event.Skip();
 	}
 }
