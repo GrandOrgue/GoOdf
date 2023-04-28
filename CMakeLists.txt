@@ -147,6 +147,7 @@ set(APP_SRC
   src/GUIElements.cpp
   src/GUIButton.cpp
   src/GUIManual.cpp
+  src/ManualKeyCopyDialog.cpp
   src/GUIStop.cpp
   src/GUICoupler.cpp
   src/GUIDivisional.cpp

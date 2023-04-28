@@ -21,6 +21,7 @@
 #include "GUIManualPanel.h"
 #include "GOODFFunctions.h"
 #include "GOODF.h"
+#include "ManualKeyCopyDialog.h"
 #include <wx/statline.h>
 #include <wx/stdpaths.h>
 #include <algorithm>
@@ -39,6 +40,7 @@ BEGIN_EVENT_TABLE(GUIManualPanel, wxPanel)
 	EVT_LISTBOX(ID_GUIMANUALPANEL_KEY_NUMBERS_BOX, GUIManualPanel::OnAvailableKeyNumbersChoice)
 	EVT_BUTTON(ID_GUIMANUALPANEL_ADD_KEY_BTN, GUIManualPanel::OnAddKeyBtn)
 	EVT_BUTTON(ID_GUIMANUALPANEL_REMOVE_KEY_BTN, GUIManualPanel::OnRemoveKeyBtn)
+	EVT_BUTTON(ID_GUIMANUALPANEL_COPY_KEY_BTN, GUIManualPanel::OnCopyKeyBtn)
 	EVT_LISTBOX(ID_GUIMANUALPANEL_ADDED_KEYS_BOX, GUIManualPanel::OnAddedKeysChoice)
 	EVT_BUTTON(ID_GUIMANUALPANEL_IMAGE_ON_BTN, GUIManualPanel::OnAddImageOnBtn)
 	EVT_BUTTON(ID_GUIMANUALPANEL_MASK_ON_BTN, GUIManualPanel::OnAddMaskOnBtn)
@@ -220,6 +222,16 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 		0
 	);
 	thirdRowThirdCol->Add(m_removeKey, 0, wxALL, 5);
+	thirdRowThirdCol->AddStretchSpacer();
+	m_copyKey = new wxButton(
+		this,
+		ID_GUIMANUALPANEL_COPY_KEY_BTN,
+		wxT("Copy key attributes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		0
+	);
+	thirdRowThirdCol->Add(m_copyKey, 0, wxALL, 5);
 	thirdRowThirdCol->AddStretchSpacer();
 	thirdRow->Add(thirdRowThirdCol, 0, wxGROW);
 	wxBoxSizer *thirdRowFourthCol = new wxBoxSizer(wxVERTICAL);
@@ -615,6 +627,7 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 
 	m_addKey->Disable();
 	m_removeKey->Disable();
+	m_copyKey->Disable();
 	UpdateAddedKeyTypes();
 	m_imageOnPathField->SetValue(wxEmptyString);
 	m_addImageOnBtn->Disable();
@@ -726,6 +739,10 @@ void GUIManualPanel::OnRemoveKeyBtn(wxCommandEvent& WXUNUSED(event)) {
 			selectedIndex--;
 		}
 		m_addedKeyTypes->SetSelection(selectedIndex);
+		if (m_addedKeyTypes->GetCount() > 1)
+			m_copyKey->Enable();
+		else
+			m_copyKey->Disable();
 		// we need to notify the listBox that selection has changed
 		wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
 		wxPostEvent(this, evt);
@@ -736,9 +753,36 @@ void GUIManualPanel::OnRemoveKeyBtn(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
+void GUIManualPanel::OnCopyKeyBtn(wxCommandEvent& WXUNUSED(event)) {
+	ManualKeyCopyDialog copyDlg(m_manual, m_addedKeyTypes->GetSelection(), this);
+	if (copyDlg.ShowModal() == wxID_OK) {
+		wxArrayInt selectedTargetKeys;
+		if (copyDlg.GetSelectedKeys(selectedTargetKeys)) {
+			// Now we have targets to copy properties to
+			KEYTYPE *sourceKey = m_manual->getKeytypeAt((unsigned) m_addedKeyTypes->GetSelection());
+			for (int i : selectedTargetKeys) {
+				KEYTYPE *targetKey = m_manual->getKeytypeAt((unsigned) i);
+				targetKey->BitmapHeight = sourceKey->BitmapHeight;
+				targetKey->BitmapWidth = sourceKey->BitmapWidth;
+				targetKey->ImageOff = sourceKey->ImageOff;
+				targetKey->ImageOn = sourceKey->ImageOn;
+				targetKey->MouseRectHeight = sourceKey->MouseRectHeight;
+				targetKey->MouseRectLeft = sourceKey->MouseRectLeft;
+				targetKey->MouseRectTop = sourceKey->MouseRectTop;
+				targetKey->MouseRectWidth = sourceKey->MouseRectWidth;
+				targetKey->Offset = sourceKey->Offset;
+				targetKey->Width = sourceKey->Width;
+				targetKey->YOffset = sourceKey->YOffset;
+			}
+		}
+	}
+}
+
 void GUIManualPanel::OnAddedKeysChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_addImageOnBtn->Enable();
 	m_removeKey->Enable();
+	if (m_addedKeyTypes->GetCount() > 1)
+		m_copyKey->Enable();
 	UpdateExistingSelectedKeyData();
 }
 

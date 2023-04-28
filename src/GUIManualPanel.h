@@ -47,6 +47,7 @@ private:
 	wxListBox *m_availableKeyNumbers;
 	wxButton *m_addKey;
 	wxButton *m_removeKey;
+	wxButton *m_copyKey;
 	wxListBox *m_addedKeyTypes;
 
 	// for each selected (added) key type next members will items fill with existing data and also allow adjustments
@@ -87,6 +88,7 @@ private:
 	void OnAvailableKeyNumbersChoice(wxCommandEvent& event);
 	void OnAddKeyBtn(wxCommandEvent& event);
 	void OnRemoveKeyBtn(wxCommandEvent& event);
+	void OnCopyKeyBtn(wxCommandEvent& event);
 	void OnAddedKeysChoice(wxCommandEvent& event);
 
 	void OnAddImageOnBtn(wxCommandEvent& event);
