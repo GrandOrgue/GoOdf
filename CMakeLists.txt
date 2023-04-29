@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name and info
 project(
   GOODF
-  VERSION 0.4.3
+  VERSION 0.5.0
   DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
@@ -163,6 +163,7 @@ set(APP_SRC
   src/GUILabelPanel.cpp
   src/GUIManualPanel.cpp
   src/OrganFileParser.cpp
+  src/CopyElementAttributesDialog.cpp
 )
 
 # add the executable

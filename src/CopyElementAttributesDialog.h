@@ -1,5 +1,5 @@
 /*
- * ManualKeyCopyDialog.h is part of GOODF.
+ * CopyElementAttributesDialog.h is part of GOODF.
  * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
@@ -18,40 +18,41 @@
  * You can contact the author on larspalo(at)yahoo.se
  */
 
-#ifndef MANUALKEYCOPYDIALOG_H
-#define MANUALKEYCOPYDIALOG_H
+#ifndef COPYELEMENTATTRIBUTESDIALOG_H
+#define COPYELEMENTATTRIBUTESDIALOG_H
 
 #include <wx/wx.h>
-#include "GUIManual.h"
+#include "GoPanel.h"
+#include <vector>
 
-class ManualKeyCopyDialog : public wxDialog {
-	DECLARE_CLASS(ManualKeyCopyDialog)
+class CopyElementAttributesDialog : public wxDialog {
+	DECLARE_CLASS(CopyElementAttributesDialog)
 	DECLARE_EVENT_TABLE()
 
 public:
 	// Constructors
-	ManualKeyCopyDialog(GUIManual *man, int sourceIndex);
-	ManualKeyCopyDialog(
-		GUIManual *man,
-		int sourceIndex,
+	CopyElementAttributesDialog(GoPanel *sourcePanel, int sourceElementIndex);
+	CopyElementAttributesDialog(
+		GoPanel *sourcePanel,
+		int sourceElementIndex,
 		wxWindow* parent,
 		wxWindowID id = wxID_ANY,
-		const wxString& caption = wxT("Manual Key Copy Dialog"),
+		const wxString& caption = wxT("Copy GUI Element Attributes Dialog"),
 		const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize,
 		long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
 	);
 
-	~ManualKeyCopyDialog();
+	~CopyElementAttributesDialog();
 
 	// Initialize our variables
-	void Init(GUIManual *man, int sourceIndex);
+	void Init(GoPanel *sourcePanel, int sourceElementIndex);
 
 	// Creation
 	bool Create(
 		wxWindow* parent,
 		wxWindowID id = wxID_ANY,
-		const wxString& caption = wxT("Manual Key Copy Dialog"),
+		const wxString& caption = wxT("Copy GUI Element Attributes Dialog"),
 		const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize,
 		long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
@@ -61,16 +62,28 @@ public:
 	void CreateControls();
 
 	// Accessors
-	bool GetSelectedKeys(wxArrayInt& selectedKeys);
+	GoPanel* GetSelectedTargetPanel();
+	bool GetSelectedElementIndices(wxArrayInt& selectedElements);
 
 private:
-	int m_sourceKeyIndex;
-	GUIManual *m_manual;
-	wxArrayString m_keyStrings;
-	wxListBox *m_availableKeys;
+	int m_sourceElementIndex;
+	GoPanel *m_sourcePanel;
+	wxChoice *m_panelChoice;
+	wxListBox *m_availableElements;
+
+	// m_panelList contain all available panels in the organ to choose as target container
+	wxArrayString m_panelList;
+
+	// the GUI Elements that match the source element type will be stored as string (display name)
+	// and the actual index that element has on the panel in the vector
+	wxArrayString m_matchingElementsList;
+	std::vector<int> m_referenceElementIdx;
 
 	// Event methods
-	void OnKeyChoice(wxCommandEvent& event);
+	void OnPanelChoice(wxCommandEvent& event);
+	void OnElementChoice(wxCommandEvent& event);
+
+	void updateAvailableGuiElements();
 };
 
 #endif

@@ -123,6 +123,7 @@ private:
 	bool m_organHasBeenSaved;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
+	void OnOrganTreeRightClicked(wxTreeEvent& event);
 	void OnAddNewEnclosure(wxCommandEvent& event);
 	void OnAddNewTremulant(wxCommandEvent& event);
 	void OnAddNewWindchestgroup(wxCommandEvent& event);

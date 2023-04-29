@@ -29,6 +29,7 @@
 #include "Enclosure.h"
 #include "Windchestgroup.h"
 #include "OrganFileParser.h"
+#include "CopyElementAttributesDialog.h"
 
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
@@ -39,6 +40,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
+	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
 	EVT_BUTTON(ID_ADD_ENCLOSURE_BTN, GOODFFrame::OnAddNewEnclosure)
 	EVT_BUTTON(ID_ADD_TREMULANT_BTN, GOODFFrame::OnAddNewTremulant)
 	EVT_BUTTON(ID_ADD_WINDCHEST_BTN, GOODFFrame::OnAddNewWindchestgroup)
@@ -948,6 +950,215 @@ void GOODFFrame::OnOrganTreeSelectionChanged(wxTreeEvent& event) {
 			}
 		}
 
+	}
+}
+
+void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
+	wxTreeItemId selected;
+	selected = m_organTreeCtrl->GetSelection();
+	wxTreeItemId clickedId = event.GetItem();
+	if (clickedId != selected || clickedId == tree_organ) {
+		event.Skip();
+		return;
+	}
+	wxTreeItemId parentId = m_organTreeCtrl->GetItemParent(clickedId);
+	if (parentId == tree_organ) {
+		event.Skip();
+		return;
+	}
+	wxTreeItemId grandParentId = m_organTreeCtrl->GetItemParent(parentId);
+	if (grandParentId != tree_organ && m_organTreeCtrl->GetItemParent(grandParentId) == tree_panels) {
+		int selectedIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(parentId, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(parentId, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(parentId, cookie);
+			if (clickedId == currentId)
+				selectedIndex = i;
+		}
+
+		int thePanelIndex = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+		wxTreeItemId currentComparisonPanel = m_organTreeCtrl->GetLastChild(tree_panels);
+		while (currentComparisonPanel.IsOk()) {
+			thePanelIndex--;
+			if (currentComparisonPanel == grandParentId)
+				break;
+
+			currentComparisonPanel = m_organTreeCtrl->GetPrevSibling(currentComparisonPanel);
+		}
+
+		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("GUI Elements")) && thePanelIndex > -1) {
+			// This is a specific GUI Element so we create the Copy Gui Element Attributes dialog
+			CopyElementAttributesDialog copyElementDlg(m_organ->getOrganPanelAt(thePanelIndex), selectedIndex, this);
+			if (copyElementDlg.ShowModal() == wxID_OK) {
+				GoPanel *targetPanel = copyElementDlg.GetSelectedTargetPanel();
+				wxArrayInt selectedTargetElements;
+				if (copyElementDlg.GetSelectedElementIndices(selectedTargetElements)) {
+					// we have some targets to copy to but we also need to get the actual source element
+
+					// Test if the source a button type
+					GUIButton *btnElement = dynamic_cast<GUIButton*>(m_organ->getOrganPanelAt(thePanelIndex)->getGuiElementAt(selectedIndex));
+					if (btnElement) {
+						for (unsigned i = 0; i < selectedTargetElements.size(); i++) {
+							GUIButton *targetBtn = dynamic_cast<GUIButton*>(targetPanel->getGuiElementAt(selectedTargetElements[i]));
+							if (targetBtn) {
+								// we copy images and display attributes but not any position type of information
+								targetBtn->setWidth(btnElement->getWidth());
+								targetBtn->setHeight(btnElement->getHeight());
+								targetBtn->setDispImageNum(btnElement->getDispImageNum());
+								targetBtn->setImageOn(btnElement->getImageOn());
+								targetBtn->setImageOff(btnElement->getImageOff());
+								targetBtn->setMaskOn(btnElement->getMaskOn());
+								targetBtn->setMaskOff(btnElement->getMaskOff());
+								targetBtn->setBitmapWidth(btnElement->getBitmapWidth());
+								targetBtn->setBitmapHeight(btnElement->getBitmapHeight());
+								targetBtn->setDispLabelFont(btnElement->getDispLabelFont());
+								targetBtn->setDispLabelFontSize(btnElement->getDispLabelFontSize()->getSizeValue());
+								targetBtn->setMouseRectLeft(btnElement->getMouseRectLeft());
+								targetBtn->setMouseRectTop(btnElement->getMouseRectTop());
+								targetBtn->setMouseRectWidth(btnElement->getMouseRectWidth());
+								targetBtn->setMouseRectHeight(btnElement->getMouseRectHeight());
+								targetBtn->setMouseRadius(btnElement->getMouseRadius());
+								targetBtn->setTextRectLeft(btnElement->getTextRectLeft());
+								targetBtn->setTextRectTop(btnElement->getTextRectTop());
+								targetBtn->setTextRectWidth(btnElement->getTextRectWidth());
+								targetBtn->setTextRectHeight(btnElement->getTextRectHeight());
+								targetBtn->setTextBreakWidth(btnElement->getTextBreakWidth());
+								targetBtn->setDispLabelColour(*(btnElement->getDispLabelColour()));
+								targetBtn->setDisplayAsPiston(btnElement->isDisplayAsPiston());
+								targetBtn->setDispKeyLabelOnLeft(btnElement->isDispKeyLabelOnLeft());
+							}
+						}
+						return;
+					}
+
+					// test if it's an enclosure type
+					GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(m_organ->getOrganPanelAt(thePanelIndex)->getGuiElementAt(selectedIndex));
+					if (encElement) {
+						for (unsigned i = 0; i < selectedTargetElements.size(); i++) {
+							GUIEnclosure *targetEnclosure = dynamic_cast<GUIEnclosure*>(targetPanel->getGuiElementAt(selectedTargetElements[i]));
+							if (targetEnclosure) {
+								targetEnclosure->setDispLabelColour(*(encElement->getDispLabelColour()));
+								targetEnclosure->setDispLabelFontSize(encElement->getDispLabelFontSize()->getSizeValue());
+								targetEnclosure->setDispLabelFont(encElement->getDispLabelFont());
+								targetEnclosure->setEnclosureStyle(encElement->getEnclosureStyle());
+								if (targetEnclosure->getNumberOfBitmaps() > 0) {
+									int lastExistingBmpIdx = targetEnclosure->getNumberOfBitmaps() - 1;
+									while (lastExistingBmpIdx >= 0) {
+										targetEnclosure->removeBitmapAt(lastExistingBmpIdx);
+										lastExistingBmpIdx--;
+									}
+								}
+								for (unsigned j = 0; j < encElement->getNumberOfBitmaps(); j++) {
+									targetEnclosure->addBitmap(*(encElement->getBitmapAtIndex(j)));
+								}
+								targetEnclosure->setWidth(encElement->getWidth());
+								targetEnclosure->setHeight(encElement->getHeight());
+								targetEnclosure->setTileOffsetX(encElement->getTileOffsetX());
+								targetEnclosure->setTileOffsetY(encElement->getTileOffsetY());
+								targetEnclosure->setMouseRectLeft(encElement->getMouseRectLeft());
+								targetEnclosure->setMouseRectTop(encElement->getMouseRectTop());
+								targetEnclosure->setMouseRectWidth(encElement->getMouseRectWidth());
+								targetEnclosure->setMouseRectHeight(encElement->getMouseRectHeight());
+								targetEnclosure->setMouseAxisStart(encElement->getMouseAxisStart());
+								targetEnclosure->setMouseAxisEnd(encElement->getMouseAxisEnd());
+								targetEnclosure->setTextRectLeft(encElement->getTextRectLeft());
+								targetEnclosure->setTextRectTop(encElement->getTextRectTop());
+								targetEnclosure->setTextRectWidth(encElement->getTextRectWidth());
+								targetEnclosure->setTextRectHeight(encElement->getTextRectHeight());
+								targetEnclosure->setTextBreakWidth(encElement->getTextBreakWidth());
+								targetEnclosure->setBitmapWidth(encElement->getBitmapWidth());
+								targetEnclosure->setBitmapHeight(encElement->getBitmapHeight());
+							}
+						}
+						return;
+					}
+
+					// test if it's a label type
+					GUILabel *labelElement = dynamic_cast<GUILabel*>(m_organ->getOrganPanelAt(thePanelIndex)->getGuiElementAt(selectedIndex));
+					if (labelElement) {
+						for (unsigned i = 0; i < selectedTargetElements.size(); i++) {
+							GUILabel *targetLabel = dynamic_cast<GUILabel*>(targetPanel->getGuiElementAt(selectedTargetElements[i]));
+							if (targetLabel) {
+								targetLabel->setDispLabelColour(*(labelElement->getDispLabelColour()));
+								targetLabel->setDispLabelFontSize(labelElement->getDispLabelFontSize()->getSizeValue());
+								targetLabel->setDispLabelFont(labelElement->getDispLabelFont());
+								targetLabel->setDispImageNum(labelElement->getDispImageNum());
+								targetLabel->getImage()->setImage(labelElement->getImage()->getImage());
+								targetLabel->getImage()->setMask(labelElement->getImage()->getMask());
+								targetLabel->setWidth(labelElement->getWidth());
+								targetLabel->setHeight(labelElement->getHeight());
+								targetLabel->setTileOffsetX(labelElement->getTileOffsetX());
+								targetLabel->setTileOffsetY(labelElement->getTileOffsetY());
+								targetLabel->setTextRectLeft(labelElement->getTextRectLeft());
+								targetLabel->setTextRectTop(labelElement->getTextRectTop());
+								targetLabel->setTextRectWidth(labelElement->getTextRectWidth());
+								targetLabel->setTextRectHeight(labelElement->getTextRectHeight());
+								targetLabel->setTextBreakWidth(labelElement->getTextBreakWidth());
+								targetLabel->setBitmapWidth(labelElement->getBitmapWidth());
+								targetLabel->setBitmapHeight(labelElement->getBitmapHeight());
+							}
+						}
+						return;
+					}
+
+					// test if if's a manual type
+					GUIManual *manElement = dynamic_cast<GUIManual*>(m_organ->getOrganPanelAt(thePanelIndex)->getGuiElementAt(selectedIndex));
+					if (manElement) {
+						for (unsigned i = 0; i < selectedTargetElements.size(); i++) {
+							GUIManual *targetMan = dynamic_cast<GUIManual*>(targetPanel->getGuiElementAt(selectedTargetElements[i]));
+							if (targetMan) {
+								// we copy images and display attributes but not any position type of information
+								targetMan->setDispKeyColourInverted(manElement->getDispKeyColourInverted());
+								targetMan->setDispKeyColurWooden(manElement->getDispKeyColourWooden());
+
+								// if any keytypes already exist in target we remove them first
+								if (targetMan->getNumberOfKeytypes() > 0) {
+									int lastExistingKeyIdx = targetMan->getNumberOfKeytypes() - 1;
+									while (lastExistingKeyIdx >= 0) {
+										targetMan->removeKeytypeAt(lastExistingKeyIdx);
+										lastExistingKeyIdx--;
+									}
+								}
+
+								// then we add the new ones from the source manual
+								for (unsigned j = 0; j < manElement->getNumberOfKeytypes(); j++) {
+									KEYTYPE *currentKey = manElement->getKeytypeAt(j);
+									if (currentKey->KeytypeIdentifier.StartsWith(wxT("Key"))) {
+										// We need to make sure that the target manual doesn't get a key number that it cannot contain
+										if (targetMan->getAvailableKeynumbers().Index(currentKey->KeytypeIdentifier) == wxNOT_FOUND) {
+											// so if that key number is not available for the target we skip this keytype
+											continue;
+										}
+									}
+
+									targetMan->addKeytype(currentKey->KeytypeIdentifier);
+									KEYTYPE *targetKey = targetMan->getKeytypeAt(targetMan->getNumberOfKeytypes() - 1);
+									targetKey->ImageOn = currentKey->ImageOn;
+									targetKey->ImageOff = currentKey->ImageOff;
+									targetKey->Width = currentKey->Width;
+									targetKey->Offset = currentKey->Offset;
+									targetKey->YOffset = currentKey->YOffset;
+									targetKey->MouseRectLeft = currentKey->MouseRectLeft;
+									targetKey->MouseRectTop = currentKey->MouseRectTop;
+									targetKey->MouseRectWidth = currentKey->MouseRectWidth;
+									targetKey->MouseRectHeight = currentKey->MouseRectHeight;
+									targetKey->BitmapWidth = currentKey->BitmapWidth;
+									targetKey->BitmapHeight = currentKey->BitmapHeight;
+								}
+							}
+						}
+						return;
+					}
+				}
+			}
+		}
+	} else {
+		event.Skip();
 	}
 }
 

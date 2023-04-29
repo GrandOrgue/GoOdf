@@ -614,7 +614,8 @@ void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure)
 		m_removeBitmapBtn->Enable();
 		m_enclosure->setEnclosureStyle(1);
 		m_enclosureStyleBox->SetSelection(0);
-		// m_enclosureStyleBox->Disable();
+		m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(0)->getRelativeImagePath());
+		m_maskPathField->SetValue(m_enclosure->getBitmapAtIndex(0)->getRelativeMaskPath());
 	} else {
 		// no bitmaps existing so enclosure style is enabled and remove bitmap button disabled
 		if (!m_bitmapBox->IsEmpty()) {
