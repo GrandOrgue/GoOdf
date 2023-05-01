@@ -1400,13 +1400,13 @@ void GOODFFrame::AddDivisionalItemToTree() {
 }
 
 void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfWindchestgroups() < 50) {
+	if (m_organ->getNumberOfWindchestgroups() < 999) {
 		Windchestgroup newWindchest;
 		m_organ->addWindchestgroup(newWindchest);
 
 		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName()));
 	} else {
-		wxMessageDialog msg(this, wxT("Organ cannot have more than 50 windchests!"), wxT("Too many windchests"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 windchests!"), wxT("Too many windchests"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
 	}
 }

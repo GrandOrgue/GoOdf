@@ -287,7 +287,7 @@ void OrganFileParser::parseOrganSection() {
 
 	// parse windchests
 	int nbrWindchests = static_cast<int>(m_organFile->ReadLong("NumberOfWindchestGroups", 0));
-	if (nbrWindchests > 0 && nbrWindchests < 51) {
+	if (nbrWindchests > 0 && nbrWindchests < 1000) {
 		for (int i = 0; i < nbrWindchests; i++) {
 			m_organFile->SetPath("/");
 			wxString windchestGroupName = wxT("WindchestGroup") + GOODF_functions::number_format(i + 1);
