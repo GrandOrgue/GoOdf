@@ -322,6 +322,7 @@ void OrganFileParser::parseOrganSection() {
 	// parse manuals which contain the stops, couplers and divisionals
 	// also they can have tremulant and switch references, but the couplers
 	// needs to be parsed after all manuals have been added to the organ
+	// and then the divisionals need to be added after the couplers
 	int nbrManuals = static_cast<int>(m_organFile->ReadLong("NumberOfManuals", 0));
 	if (nbrManuals > 0 && nbrManuals < 17) {
 		if (m_organ->doesHavePedals())
@@ -363,6 +364,20 @@ void OrganFileParser::parseOrganSection() {
 				man->readCouplers(m_organFile, m_isUsingOldPanelFormat, manGroupName);
 			}
 		}
+
+		for (int i = 0; i < nbrManuals; i++) {
+			m_organFile->SetPath("/");
+			int manIdxNbr = i;
+			if (!m_organ->doesHavePedals())
+				manIdxNbr += 1;
+			wxString manGroupName = wxT("Manual") + GOODF_functions::number_format(manIdxNbr);
+			m_progressDlg->Update(66, wxT("Parsing divisionals for [") + manGroupName + wxT("]"));
+			if (m_organFile->HasGroup(manGroupName) && i < (int) m_organ->getNumberOfManuals()) {
+				m_organFile->SetPath(wxT("/") + manGroupName);
+				Manual *man = m_organ->getOrganManualAt(i);
+				man->readDivisionals(m_organFile, m_isUsingOldPanelFormat, manGroupName);
+			}
+		}
 		m_organFile->SetPath("/Organ");
 	}
 
@@ -372,7 +387,7 @@ void OrganFileParser::parseOrganSection() {
 		for (int i = 0; i < nbrPistons; i++) {
 			m_organFile->SetPath("/");
 			wxString pistonGroupName = wxT("ReversiblePiston") + GOODF_functions::number_format(i + 1);
-			m_progressDlg->Update(66, wxT("Parsing [") + pistonGroupName + wxT("] section"));
+			m_progressDlg->Update(68, wxT("Parsing [") + pistonGroupName + wxT("] section"));
 			if (m_organFile->HasGroup(pistonGroupName)) {
 				m_organFile->SetPath(wxT("/") + pistonGroupName);
 				ReversiblePiston p;

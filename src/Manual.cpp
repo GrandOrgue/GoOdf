@@ -165,8 +165,6 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 	}
 	int nbrStops = static_cast<int>(cfg->ReadLong("NumberOfStops", 0));
 
-	int nbrDivisionals = static_cast<int>(cfg->ReadLong("NumberOfDivisionals", 0));
-
 	if (nbrStops > 0 && nbrStops < 1000) {
 		for (int i = 0; i < nbrStops; i++) {
 			cfg->SetPath(wxT("/") + manId);
@@ -191,36 +189,6 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 					GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);
 					if (stopElement) {
 						stopElement->read(cfg, false);
-					}
-				}
-			}
-		}
-	}
-
-	if (nbrDivisionals > 0 && nbrDivisionals < 1000) {
-		for (int i = 0; i < nbrDivisionals; i++) {
-			cfg->SetPath(wxT("/") + manId);
-			wxString divNbr = wxT("Divisional") + GOODF_functions::number_format(i + 1);
-			int divIdx = static_cast<int>(cfg->ReadLong(divNbr, 0));
-			wxString divGroup = wxT("Divisional") + GOODF_functions::number_format(divIdx);
-			cfg->SetPath("/");
-			if (cfg->HasGroup(divGroup)) {
-				cfg->SetPath(wxT("/") + divGroup);
-				Divisional d;
-				d.read(cfg, useOldPanelFormat, this);
-				::wxGetApp().m_frame->m_organ->addDivisional(d, true);
-				addDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(::wxGetApp().m_frame->m_organ->getNumberOfDivisionals() - 1));
-				if (d.isDisplayed()) {
-					// we must also create a GUI element for that divisional from this group information
-					int lastDivIdx = m_divisionals.size() - 1;
-					GUIElement *guiDiv = new GUIDivisional(getDivisionalAt(lastDivIdx));
-					guiDiv->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
-					guiDiv->setDisplayName(d.getName());
-					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiDiv);
-
-					GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
-					if (divElement) {
-						divElement->read(cfg, true);
 					}
 				}
 			}
@@ -261,7 +229,39 @@ void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString ma
 			}
 		}
 	}
+}
 
+void Manual::readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
+	int nbrDivisionals = static_cast<int>(cfg->ReadLong("NumberOfDivisionals", 0));
+	if (nbrDivisionals > 0 && nbrDivisionals < 1000) {
+		for (int i = 0; i < nbrDivisionals; i++) {
+			cfg->SetPath(wxT("/") + manId);
+			wxString divNbr = wxT("Divisional") + GOODF_functions::number_format(i + 1);
+			int divIdx = static_cast<int>(cfg->ReadLong(divNbr, 0));
+			wxString divGroup = wxT("Divisional") + GOODF_functions::number_format(divIdx);
+			cfg->SetPath("/");
+			if (cfg->HasGroup(divGroup)) {
+				cfg->SetPath(wxT("/") + divGroup);
+				Divisional d;
+				d.read(cfg, useOldPanelFormat, this);
+				::wxGetApp().m_frame->m_organ->addDivisional(d, true);
+				addDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(::wxGetApp().m_frame->m_organ->getNumberOfDivisionals() - 1));
+				if (d.isDisplayed()) {
+					// we must also create a GUI element for that divisional from this group information
+					int lastDivIdx = m_divisionals.size() - 1;
+					GUIElement *guiDiv = new GUIDivisional(getDivisionalAt(lastDivIdx));
+					guiDiv->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiDiv->setDisplayName(d.getName());
+					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiDiv);
+
+					GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
+					if (divElement) {
+						divElement->read(cfg, true);
+					}
+				}
+			}
+		}
+	}
 }
 
 wxString Manual::getName() {

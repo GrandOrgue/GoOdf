@@ -41,6 +41,7 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId);
 	void readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId);
+	void readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId);
 
 	wxString getName();
 	void setName(wxString name);
