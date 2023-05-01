@@ -153,9 +153,9 @@ GoImagePanel::GoImagePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
-		0,
-		0,
-		0
+		1,
+		1,
+		1
 	);
 	fifthRow->Add(m_widthSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(fifthRow, 0, wxGROW);
@@ -174,9 +174,9 @@ GoImagePanel::GoImagePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
-		0,
-		0,
-		0
+		1,
+		1,
+		1
 	);
 	sixthRow->Add(m_heightSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(sixthRow, 0, wxGROW);
@@ -365,9 +365,9 @@ void GoImagePanel::UpdateControlValues() {
 	m_posXSpin->SetValue(m_image->getPositionX());
 	m_posYSpin->SetRange(0, m_image->getOwningPanelHeight());
 	m_posYSpin->SetValue(m_image->getPositionY());
-	m_widthSpin->SetRange(0, m_image->getOwningPanelWidth());
+	m_widthSpin->SetRange(1, m_image->getOwningPanelWidth());
 	m_widthSpin->SetValue(m_image->getWidth());
-	m_heightSpin->SetRange(0, m_image->getOwningPanelHeight());
+	m_heightSpin->SetRange(1, m_image->getOwningPanelHeight());
 	m_heightSpin->SetValue(m_image->getHeight());
 	m_tileOffsetXSpin->SetRange(0, m_image->getOriginalWidth());
 	m_tileOffsetXSpin->SetValue(m_image->getTileOffsetX());

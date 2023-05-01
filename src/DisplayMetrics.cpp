@@ -198,13 +198,13 @@ void DisplayMetrics::read(wxFileConfig *cfg) {
 	wxString vertSize = cfg->Read("DispScreenSizeVert", wxEmptyString);
 	if (vertSize != wxEmptyString) {
 		if (vertSize.IsSameAs(wxT("SMALL"), false)) {
-			m_dispScreenSizeVert.setSelectedNameIndex(0, true);
+			m_dispScreenSizeVert.setSelectedNameIndex(0, false);
 		} else if (vertSize.IsSameAs(wxT("MEDIUM"), false)) {
-			m_dispScreenSizeVert.setSelectedNameIndex(1, true);
+			m_dispScreenSizeVert.setSelectedNameIndex(1, false);
 		} else if (vertSize.IsSameAs(wxT("MEDIUM LARGE"), false)) {
-			m_dispScreenSizeVert.setSelectedNameIndex(2, true);
+			m_dispScreenSizeVert.setSelectedNameIndex(2, false);
 		} else if (vertSize.IsSameAs(wxT("LARGE"), false)) {
-			m_dispScreenSizeVert.setSelectedNameIndex(3, true);
+			m_dispScreenSizeVert.setSelectedNameIndex(3, false);
 		} else {
 			// The value is not a matching string so we try to convert it into a number
 			long value = -1;

@@ -31,8 +31,8 @@ GoImage::GoImage() {
 	m_owningPanelHeight = 0;
 	m_positionX = 0;
 	m_positionY = 0;
-	m_width = 0;
-	m_height = 0;
+	m_width = 1;
+	m_height = 1;
 	m_tileOffsetX = 0;
 	m_tileOffsetY = 0;
 }
@@ -80,14 +80,14 @@ bool GoImage::read(wxFileConfig *cfg) {
 			setOriginalWidth(width);
 			setOriginalHeight(height);
 			int imgWidth = static_cast<int>(cfg->ReadLong("Width", width));
-			if (imgWidth > -1 && imgWidth < getOwningPanelWidth()) {
+			if (imgWidth > 0 && imgWidth <= getOwningPanelWidth()) {
 				// the width value read is in valid range
 				setWidth(imgWidth);
 			} else {
 				setWidth(width);
 			}
 			int imgHeight = static_cast<int>(cfg->ReadLong("Height", height));
-			if (imgHeight > -1 && imgHeight < getOwningPanelHeight()) {
+			if (imgHeight > 0 && imgHeight <= getOwningPanelHeight()) {
 				setHeight(imgHeight);
 			} else {
 				setHeight(height);
@@ -106,11 +106,11 @@ bool GoImage::read(wxFileConfig *cfg) {
 			}
 		}
 		int posX = static_cast<int>(cfg->ReadLong("PositionX", 0));
-		if (posX > -1 && posX < m_owningPanelWidth) {
+		if (posX > -1 && posX <= m_owningPanelWidth) {
 			setPositionX(posX);
 		}
 		int posY = static_cast<int>(cfg->ReadLong("PositionY", 0));
-		if (posY > -1 && posY < m_owningPanelHeight) {
+		if (posY > -1 && posY <= m_owningPanelHeight) {
 			setPositionY(posY);
 		}
 		int tileOffsetX = static_cast<int>(cfg->ReadLong("TileOffsetX", 0));
