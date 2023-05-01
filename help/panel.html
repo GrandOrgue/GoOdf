@@ -3,41 +3,16 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Panels</title>
-	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
-	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2023-03-17T13:55:59.629403039"/>
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<style type="text/css">
-		@page { size: 8.5in 11in; margin: 0.79in }
-		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
-		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
-		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
-		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
-		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
-		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
-		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
-		a:link { color: #000080; text-decoration: underline }
-		a:visited { color: #800000; text-decoration: underline }
-	</style>
 </head>
-<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
-Panels</h1>
+<body lang="en-US">
+<h1>Panels</h1>
 <p>A Panel is a resize-able floating window in GrandOrgue. The main
 panel is required and normally has , at a minimum, the keyboards,
 stops, couplers, and expression elements. The entry window in GOODF
 lets you select the objects for which GUI elements will be created</p>
-<h2 class="western">Panel window</h2>
+<h2>Panel window</h2>
 <p><img src="images/goodfhelp23_html_e35ae37cf7508d22.png" name="Image29" align="left" width="1260" height="934">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
 <p>Lists of available objects appear here, ones you’ve created on
 the left, and built in objects on the right. You can select one or
@@ -47,21 +22,17 @@ manuals will be added from the bottom up in the order in which you
 create their GUI elements.</p>
 <p>It is also possible to add on ore more Label GUI element(s) by
 clicking that button. Labels are further defined by editing them
-directly. See <a href="#24.Labels.|outline">Labels</a></p>
+directly. See <a href="label.html">Labels</a></p>
 <p>Images can be placed as well by clicking the ‘Add image to
 panel’ button. In this case a new editing window appears
-immediately, but you can also edit the images directly. See <a href="#25.Images|outline">Images</a>.</p>
-<h2 class="western">Display metrics window</h2>
+immediately, but you can also edit the images directly. See <a href="image.html">Images</a>.</p>
+<h2>Display metrics window</h2>
 <p>The Display Metrics window is used to define the graphical
 characteristics of the panel. It includes the ability to set fonts,
 panel size, element locations and sizes, an background patterns and
 colors.</p>
 <p><img src="images/goodfhelp23_html_de59c0a0f1b03a7a.png" name="Image20" align="left" width="925" height="741">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
 <p>The layout of any panel is described by a layout model. The
 available space is split vertically into three columns: The left and
@@ -69,11 +40,7 @@ the right column contain drawstops laid out via a mesh. The middle
 row is vertically divided: 
 </p>
 <p><img src="images/goodfhelp23_html_5e028c8e166f1b1a.png" name="Image19" align="left" width="699" height="460">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
 <p>At the bottom, the pedal and its buttons are placed (if present).
 Above, an extra row of buttons may follow. The next row contains the
@@ -107,8 +74,8 @@ the picture, but this region surrounds the Drawstop rows and columns.</p>
 <p><b>Control Label Font </b>(string, required) Name of the font for
 drawstop and Combination button labels. Can be over-ridden for
 individual elements later.</p>
-<p><font color="#000000"><b>Shortcut KeyLabel Font </b>(string,
-required) Name of the font for keyboard labels </font>
+<p><b>Shortcut KeyLabel Font </b>(string,
+required) Name of the font for keyboard labels.
 </p>
 <p><b>Shortcut Key Label Colour </b>(color, required) Color for
 shortcut labels 
@@ -170,34 +137,34 @@ above extra button and drawstop rows</p>
 drawstop block above or below the extra piston block. 
 </p>
 <p><b>Drawstop Width </b>(integer 1-150, default: 78) Drawstop width
-used for layout calculation 
+used for layout calculation.
 </p>
 <p><b>Drawstop Height </b>(integer 1-150, default: 69) Drawstop
-height used for layout calculation 
+height used for layout calculation.
 </p>
 <p><b>Piston Width </b>(integer 1-150, default: 44) Piston width used
-for layout calculation 
+for layout calculation.
 </p>
 <p><b>Piston Height </b>(integer 1-150, default: 40) Piston height
-used for layout calculation 
+used for layout calculation.
 </p>
 <p><b>Enclosure Width </b>(integer 1-150, default: 52) Enclosure
-width used for layout calculation 
+width used for layout calculation.
 </p>
-<p><b>Enclosure Height</b><span style="font-weight: normal">(integer
-1-150, default: 63) Enclosure height used for layout calculation </span>
+<p><b>Enclosure Height</b>(integer
+1-150, default: 63) Enclosure height used for layout calculation.
 </p>
 <p><b>Pedal Height </b>(integer 1-500, default: 40) Pedal height used
-for layout calculation 
+for layout calculation.
 </p>
 <p><b>Pedal Key Width </b>(integer 1-500, default: 7) Width of one
-pedal key used for layout calculation 
+pedal key used for layout calculation.
 </p>
 <p><b>Manual Height </b>(integer 1-500, default: 32) Manual height
-used for layout calculation 
+used for layout calculation.
 </p>
 <p><b>Manual Key Width </b>(integer 1-500, default: 12) Width of one
-manual key used for layout calculation 
+manual key used for layout calculation.
 </p>
 </body>
 </html>

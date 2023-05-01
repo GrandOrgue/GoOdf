@@ -3,31 +3,13 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Creating Your Organ GUI</title>
-	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
-	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2023-04-10T21:40:48.681473632"/>
-	<meta name="created" content="00:00:00">
-	<style type="text/css">
-		@page { size: 8.5in 11in; margin: 0.79in }
-		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
-		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
-		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
-		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
-		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
-		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
-		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
-		a:link { color: #000080; text-decoration: underline }
-		a:visited { color: #800000; text-decoration: underline }
-	</style>
 </head>
-<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
-Creating Your Organ GUI</h1>
+<body lang="en-US">
+<h1>Creating Your Organ GUI</h1>
 <p>To create a simple Organ GUI, using the main panel only, without
 generals or divisionals, using graphical elements internal to
 GrandOrgue you follow the following steps:</p>
-<h2 class="western">Organize your manuals.</h2>
+<h2>Organize your manuals.</h2>
 <p>You will have created manuals as objects earlier. For each manual,
 edit its parameters:</p>
 <p><b>Number of accessible keys</b> 32 for pedals and 61 for
@@ -35,10 +17,10 @@ manuals, typically by default.</p>
 <p><b>MIDI input number</b> 1 for pedal, 2 for the first
 manual(typically Choir or Great), and so on</p>
 <p>You will have created enclosures, stops, couplers and tremulants.</p>
-<p><font color="#000000">If you have a pedal, it must be the first
+<p>If you have a pedal, it must be the first
 manual you create, and you must check the <b>This manual is the pedal</b>
-box</font></p>
-<h2 class="western">Create Panel details</h2>
+box.</p>
+<h2>Create Panel details</h2>
 <p>If you now click on the Main Panel object in the object tree at
 the left of the GOODF window, you will see all of those elements in
 the <b>Available Organ Elements</b> list. If you have a pedal click
@@ -55,9 +37,6 @@ object.</p>
 set the Main panel Displaymetrics, by clicking on that Item in the
 object tree. You will see the following window:</p>
 <p><img src="images/goodfhelp8_html_3a7ecb1c29e41d5d.png" name="Image14" align="left" width="1260" height="934" border="0"/>
-<br/>
-<br/>
-
 </p>
 <p>It is here that you set the size of your panel with <b>Horizontal
 panelsize</b>, and <b>Vertical panelsize</b>. Also you use the
@@ -83,8 +62,8 @@ useful when you are using two columns for one manual’s stops.</p>
 pair half a row below a second column, as is often seen in large
 organ consoles. With <b>Outer Up</b> ensures that this offset is such
 that the outermost columns are offset up, that is, columns 1 and 4 if
-4 columns are defined will be offset up. With <b>Outer Up </b><span style="font-weight: normal">set
-to no, the inner column (2,3) are offset up.</span></p>
+4 columns are defined will be offset up. With <b>Outer Up </b>set
+to no, the inner column (2,3) are offset up.</p>
 <p><b>Extra Drawstop</b> columns, allows you to enter the number of
 drawstop columns you want above the manuals. Similarly for <b>Extra
 Drawstop</b> Rows. The extra columns begin their numbering with 100.</p>
@@ -98,7 +77,7 @@ and font sizes before you create your GUIelements, They will inherit
 the font and size, so you won’t need to enter the font and size
 separately for each element unless you want a different font for one
 or more special elements.</p>
-<h2 class="western">Placing your elements.</h2>
+<h2>Placing your elements.</h2>
 <p>The manuals will organize their own position if you don’t change
 their default parameters, which is what you want unless you are
 creating your own manual graphics. The same is true for expression
@@ -107,72 +86,69 @@ bottom up, and they appear in the order in which you created their
 GUI elements. Also make sure that the Panel has its <b>Has Pedal</b>
 radio button properly configured.</p>
 <p>What remains , then is placing Stops, Switches,
-Tremulants,Couplers, Labels, and general and divisional buttons. <span style="font-weight: normal">At
+Tremulants,Couplers, Labels, and general and divisional buttons. At
 the moment manuals appear from the bottom up in the order in which
 you add their GUI element to the Panel. If you make a mistake you can
 delete the manual GUI elements and re-add them in the correct order.
-Note, if you have a Pedal, it must be added before the other manuals.</span></p>
+Note, if you have a Pedal, it must be added before the other manuals.</p>
 <p>Remember as you are placing the elements that it is not enough to
 enter a number or numbers in a data entry box, then click on the next
 GUI element. You need to exit each data entry block with a tab or a
 mouse click in order for the number to stick. If you don’t do this
 you number won’t take, and you will find yourself doing lots of
 rework.</p>
-<h2 class="western">Drawstops and buttons:</h2>
-<p><font color="#000000">Each Stop, Switch, and Tremulant GUI element
+<h2>Drawstops and buttons:</h2>
+<p>Each Stop, Switch, and Tremulant GUI element
 is configured by clicking on it in the object tree at the left of the
-GOODF window to bring up its parameter window which looks like this:</font></p>
+GOODF window to bring up its parameter window which looks like this:</p>
 <p><img src="images/goodfhelp8_html_7169ce2156d82140.png" name="Image15" align="left" width="1260" height="934" border="0"/>
-<br/>
-<br/>
-
 </p>
-<p><font color="#000000">The following parameters should usually be
-changed:</font></p>
-<p><font color="#000000"><b>DisplayLabelText</b>: If you don’t
+<p>The following parameters should usually be
+changed:</p>
+<p><b>DisplayLabelText</b>: If you don’t
 enter anything here the name of the Stop, Tremulant, or Switch
 entered when you created it will automatically apply. You may however
 want to add a different name, put the name in ALL CAPS, or add spaces
 to allow a line break so that the name fits within the stop’s
-DisplayImage.</font></p>
-<p><font color="#000000"><b>Labelfont: </b><span style="font-weight: normal">this
+DisplayImage.</p>
+<p><b>Labelfont: </b>this
 is a pulldown of all available fonts. You only need to specify if you
-want a different font than you set as the </span><b>Control Label
-Font</b> <span style="font-weight: normal">in the DisplayMetrics
-window.</span></font></p>
-<p><font color="#000000"><b>DisplayLabelColour</b><span style="font-weight: normal">:
+want a different font than you set as the <b>Control Label
+Font</b> in the DisplayMetrics
+window.</p>
+<p><b>DisplayLabelColour</b>:
 Select the colour for the text from the pulldown or select Custom
 Color and then click on the color sample to the right to pop up a
 color selector window. You can pick one of the predefined colors from
 this window, or click on the + sign in this window to define a new
-custom color which can then be selected. </span></font>
+custom color which can then be selected. 
 </p>
-<p><font color="#000000"><b>DisplayImageNum</b><span style="font-weight: normal">:
+<p><b>DisplayImageNum</b>:
 This is a pulldown that shows the available Images built into
-GrandOrgue for drawstops.</span></font></p>
-<p><font color="#000000"><b>PositionY DisplayDrawstopRow</b> <span style="font-weight: normal">and
-</span><b>DisplayDrawstopColumn</b> <span style="font-weight: normal">set
+GrandOrgue for drawstops.</p>
+<p><b>PositionY DisplayDrawstopRow</b> and
+<b>DisplayDrawstopColumn</b> set
 the Row and column for the drawstop. These are only active if
-</span><b>PositionX </b><span style="font-weight: normal">and
-</span><b>PositionY</b> <span style="font-weight: normal">are set to
--1. </span></font>
+<b>PositionX </b>and
+<b>PositionY</b> are set to
+-1. 
 </p>
-<p><font color="#000000"><span style="font-weight: normal">Custom
+<p>Custom
 drawstops and locations are easy to create. At a minimum you need to
 have an image for the stop being on, and an image for it off. You can
 browse for these images. The dimensions for stops may need to be
 changed to allow proper spacing of rows and columns. Also note that
-if you want a custom location, you need to set </span><b>PositionX
-</b><span style="font-weight: normal">and </span><b>PositionY</b> <span style="font-weight: normal">to
-values other than -1.</span></font></p>
-<p><font color="#000000"><span style="font-weight: normal">If your
+if you want a custom location, you need to set <b>PositionX
+</b>and <b>PositionY</b> to
+values other than -1.</p>
+<p>If your
 custom drawstop images include the name of the stop, set
-</span><b>TextBreakWidth</b> <span style="font-weight: normal">equal
+<b>TextBreakWidth</b> equal
 to zero to keep your graphic from being overwritten by the
-</span><b>DisplayLabelText.</b> <span style="font-weight: normal">Otherwise
+<b>DisplayLabelText.</b> Otherwise
 this parameter sets the maximum length of text for a drawstop before
-it is wrapped to the next line.</span></font></p>
-<p><font color="#000000">If you want to change the font for all your
+it is wrapped to the next line.</p>
+<p>If you want to change the font for all your
 buttons and labels, you can return the the displaymetrics window and
 change the font and font size there. (Note that when reading from an
 existing ODF, the font size on the displaymetrics window will all
@@ -182,32 +158,28 @@ font size, a popup window will ask if you want to apply the new font
 to all the button elements (drawstops and buttons), or Labels, if
 that’s the font you changed.  In each case this will be followed by
 a second popup window asking if you want to apply the new font size
-to these GUI elements.</font></p>
-<h2 class="western">Labels</h2>
-<p><font color="#000000"><span style="font-weight: normal">You can
+to these GUI elements.</p>
+<h2>Labels</h2>
+<p>You can
 use labels to add an Organ Name label, or to label the stop columns
 with the manual they are controlling. To that end, the Labels can be
-positioned at the top or bottom of the Columns by setting </span><b>Free
-X pos</b> <span style="font-weight: normal">and </span><b>Free Y pos</b>
-<span style="font-weight: normal">to no. This enables the
-</span><b>DispDrawstopCol</b><span style="font-weight: normal"> data
-entry, to select the stop column; the </span><b>At top of drawstop
-columns</b> <span style="font-weight: normal">to select top or bottom
-location; and </span><b>Span Column to right</b><span style="font-weight: normal">,
+positioned at the top or bottom of the Columns by setting <b>Free
+X pos</b> and <b>Free Y pos</b>
+to no. This enables the
+<b>DispDrawstopCol</b> data
+entry, to select the stop column; the <b>At top of drawstop
+columns</b> to select top or bottom
+location; and <b>Span Column to right</b>,
 if you have paired drawstop columns and you want the label centered
-above two paired columns.</span></font></p>
-<p><font color="#000000"><b>DispImageNum</b> <span style="font-weight: normal">is
+above two paired columns.</p>
+<p><b>DispImageNum</b> is
 a pulldown that shows the built in label graphics from GrandOrgue.
-Note that if you select one the </span><b>Width</b> <span style="font-weight: normal">and
-</span><b>Height</b> <span style="font-weight: normal">boxes are
+Note that if you select one the <b>Width</b> and
+<b>Height</b> boxes are
 filled in with the correct number of pixels. Some labels are bigger
 than others in one or more dimensions. You can also specify your own
 image for a label and manually set its position, the same as you
-could for the control elements in the Panel's</span> <span style="font-weight: normal">Displaymetrics
-window.</span></font></p>
-<p><br/>
-<br/>
-
-</p>
+could for the control elements in the Panel's Displaymetrics
+window.</p>
 </body>
 </html>

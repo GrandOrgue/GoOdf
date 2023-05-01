@@ -171,7 +171,7 @@ void CopyElementAttributesDialog::OnPanelChoice(wxCommandEvent& WXUNUSED(event))
 	updateAvailableGuiElements();
 }
 
-void CopyElementAttributesDialog::OnElementChoice(wxCommandEvent& event) {
+void CopyElementAttributesDialog::OnElementChoice(wxCommandEvent& WXUNUSED(event)) {
 	wxArrayInt selections;
 	int count = m_availableElements->GetSelections(selections);
 	if (count > 0) {

@@ -3,39 +3,18 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Working with samples</title>
-	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
-	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2023-03-17T14:15:25.131845557"/>
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<style type="text/css">
-		@page { size: 8.5in 11in; margin: 0.79in }
-		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
-		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
-		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
-		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
-		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
-		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
-		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
-		a:link { color: #000080; text-decoration: underline }
-		a:visited { color: #800000; text-decoration: underline }
-	</style>
 </head>
-<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
-Working with samples</h1>
+<body lang="en-US">
+<h1>Working with samples</h1>
 <p>If you are concerned about your Organ GUI, it may be better to
 define the stops or ranks, but not load samples until after the GUI
 is complete and as you expect. This will allow GrandOrgue to quickly
 load and display the GUI without loading any pipes. Of course, if
 you’ve already loaded the pipes, then you can select <i>Don’t
-Load </i><span style="font-variant: normal"><span style="font-style: normal">In
-the GrandOrgue setting </span></span><span style="font-variant: normal"><span style="font-style: normal"><b>Load
-Stereo Samples in</b></span></span><span style="font-variant: normal"><span style="font-style: normal">:
-pulldown to get the same behavior.</span></span></p>
+Load </i>In
+the GrandOrgue setting <b>Load
+Stereo Samples in</b>:
+pulldown to get the same behavior.</p>
 <p>Samples are used to create one or more ranks. To import samples,
 you first need to create a rank object (either internal to an already
 defined stop, or external as an independent rank.) If you are only
@@ -48,27 +27,19 @@ make sure you have properly set the Location of the Organ file (top
 line) in the [Organ] object.</p>
 <p>Shown here is the GOODF window when you create and select a rank</p>
 <p><img src="images/goodfhelp6_html_46da3bb5b3de5c9f.png" name="Image5" align="left" width="1260" height="934">
-  <br clear="left"/>
 </img>
-<br clear="left"/>
 </p>
 <p>First Understand how your samples are organized. Then follow one
 of the procedures below. (Read through all the procedures, since
 steps performed in the first procedure are assumed in subsequent
 procedures unless otherwise noted) :</p>
-<h2 class="western">One sample per note</h2>
-<p><br/>
-<br/>
-
-</p>
+<h2>One sample per note</h2>
 <p>In the easiest case there is only one sample per note, and the
 release sample is included in the attack sample. The Midi note number
 is contained in the sample name. In this case you would use the
 following procedure:</p>
 <p><img src="images/goodfhelp6_html_3d0a059d423f262b.png" name="Image6" align="left" width="160" height="397">
-  <br clear="left"/>
 </img>
-<br clear="left"/>
 </p>
 <p>Set the <b>First Midi Note</b> to the number in the name of the
 sample. Typically 36, since this is normally the lowest note on a
@@ -88,45 +59,35 @@ Make sure this directory is in a relative location to the .organ file
 you are going to create that will be its final location. Normally you
 place the samples in a subdirectory of the
 GrandOrgue/Organs/<i>organname</i>/ or in the /Organ
-packages/<i>organnumber/ </i><span style="font-variant: normal"><span style="font-style: normal">.</span></span></p>
+packages/<i>organnumber/ </i>.</p>
 <p>When you select the directory and click open, you should then be
 able to click the Expand the pipe tree button, and see the Attack(s)
 populated with filenames.</p>
-<p><br/>
-<br/>
-
-</p>
-<h2 class="western">One sample per note with multiple release and
+<h2>One sample per note with multiple release and
 tremulant samples all in the same directory.</h2>
-<p><br/>
-<br/>
-
-</p>
 <p>A very common occurrence is to have a single attack sample, then
 multiple separate release samples in subsidiary directories where the
 directories are are named rel0180, rel0400, … , rel9999. There may
 also be a subdirectory with tremulant samples.</p>
 <p><img src="images/goodfhelp6_html_680dd68d6b22e6ab.png" name="Image7" align="left" width="175" height="319">
-  <br clear="left"/>
 </img>
-<br clear="left"/>
 </p>
 <p>In this scenarios repeat the steps above, but make sure the <b>Load
 release in attack</b> check box is unchecked, and the Extract
 <b>MaxKeyPressTime from foldername</b> checkbox is checked. Make sure
-the <b>Release subfolder prefix</b> <span style="font-weight: normal">is
-set correctly </span>If there are tremulant samples make sure the
-<b>Tremulant folder prefix</b> <span style="font-weight: normal">is
-set correctly. Now when you press the </span><b>Create new pipes by
-midi nbr from… </b><span style="font-weight: normal">button, you
+the <b>Release subfolder prefix</b> is
+set correctly If there are tremulant samples make sure the
+<b>Tremulant folder prefix</b> is
+set correctly. Now when you press the <b>Create new pipes by
+midi nbr from… </b>button, you
 should see the pipes populated with an attack, and multiple releases,
 or in the case of the existence of a Trem, two attack samples. (Be
 wary of directories labeled ‘trem’ since many Hauptwerk sample
 sets do not store the tremulant samples here, but instead a small
-number of .wav files that define a simulated tremulant.)</span></p>
-<p><span style="font-weight: normal">When the samples are imported
-you should be able to use the </span><b>Expand the pipe tree</b>
-<span style="font-weight: normal">button and see that each pipe has
+number of .wav files that define a simulated tremulant.)</p>
+<p>When the samples are imported
+you should be able to use the <b>Expand the pipe tree</b>
+button and see that each pipe has
 at least one normal attack, and a tremmed attack if there was a trem
 directory. You should see multiple release files, both normal and
 tremmed. You can right click on the pipeXXX to add more samples or on
@@ -134,80 +95,60 @@ individual samples to view or change their properties. Note that when
 imported using this method the normal attacks and releases will show
 ‘Play when wave tremulant is off’ and the tremmed attack and
 release samples will show ‘play when wave tremulant is on’ when
-right clicking on the sample:</span></p>
-<p style="font-weight: normal">more information on editing pipes and
+right clicking on the sample:</p>
+<p>more information on editing pipes and
 samples in in the next section</p>
-<p><br/>
-<br/>
-
-</p>
 <p><img src="images/goodfhelp6_html_53900cbec7e0bc15.png" name="Image8" align="left" width="457" height="426">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
-<h2 class="western">Odd sample configurations</h2>
+<h2>Odd sample configurations</h2>
 <p><img src="images/goodfhelp6_html_2f6333c9b507b278.png" name="Image9" align="left" width="117" height="334">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
-<p style="font-weight: normal">Odd sample configurations occur when
+<p>Odd sample configurations occur when
 release samples do not include the release time (they may, for
 example have directories named S,M,L for short, medium, long.)
 Tremmed samples may be in a completely different directory structure
 rather than in a subdirectory under the non tremmed attacks. In these
 sort of cases the samples must be imported and edited manually.
 Typically this process begins by clearing the release and trem folder
-prefixes in the rank window, then using the C<b>reate new pipes by
+prefixes in the rank window, then using the <b>Create new pipes by
 MIDI nbr from…</b> button to import the non tremmed attack samples.
 </p>
-<p style="font-weight: normal">Next import the three normal release
+<p>Next import the three normal release
 sample directories one by one using the <b>Add (only) releases from …</b>
 button Next import the Tremulant attack samples by using the <b>Add
-tremulant samples from …</b> button. Finally add the tremmed
-releases one by one using the <b>Add (only) releases from … </b>button.</p>
-<p style="font-weight: normal">Your pipe tree should now look
+tremulant samples from…</b> button. Finally add the tremmed
+releases one by one using the <b>Add (only) releases from… </b>button.</p>
+<p>Your pipe tree should now look
 something like this:</p>
 <p><img src="images/goodfhelp6_html_bf4cb80c9e9ee987.png" name="Image10" align="left" width="323" height="418">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
-<p style="font-weight: normal">You next need to edit the samples in
+<p>You next need to edit the samples in
 the pipe trees to correct their properties For example all the non
 tremmed samples (attack and release)will be configured as ‘No, not
 affected by wave tremulants’, and must be changed to ‘Play when
 wave tremulant is off’.</p>
-<p style="font-weight: normal">While the tremmed attacks will be
+<p>While the tremmed attacks will be
 properly configured as ‘play when wave tremulant is on’, the
 tremmed releases will need to be changed to this</p>
-<p style="font-weight: normal">Finally, all the releases except the
+<p>Finally, all the releases except the
 longest will need to have their MAX key press time: value set. You
 may need to guess at the correct number, or you may find it by
 parsing any existing organ definition files that use these samples in
 either GrandOrgue or Hauptwerk. There are open source programs to
 look into the internals of both these ODF formats and allow easy
 navigation to the data you want.</p>
-<p><span style="font-weight: normal">Some sample sets may employ
+<p>Some sample sets may employ
 multiple attacks as well as releases. The attack sample is chosen
 either by the velocity in the Midi message to the manual key
 controlling that pipe, by the time since that note was last released,
-or randomly. See <a href="#20.Pipes|outline">Pipes</a> for more
-information.</span></p>
-<h2 class="western">Editing shortcuts</h2>
+or randomly. See <a href="pipe.html">Pipes</a> for more
+information.</p>
+<h2>Editing shortcuts</h2>
 <p><img src="images/goodfhelp6_html_8592c993c43c679e.png" name="Image11" align="left" width="962" height="487">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
 <p>The window above pops up when you right click on a release sample
 in the expanded pipe tree. It is possible to change all the samples
@@ -218,7 +159,7 @@ this button will become active. When you press it it will apply your
 changes not only to the selected release (or attack) sample, but also
 to all the samples that were loaded from the same directory or
 subdirectory.</p>
-<h2 class="western">Borrowing Pipes</h2>
+<h2>Borrowing Pipes</h2>
 <p>In many organs there may be rank of pipes that includes enough
 pipes for 16,8,and 4 foot stops. Alternatively, you may want to use
 the same rank on multiple manuals. You can do this by defining a
@@ -229,15 +170,7 @@ tab. You can see we start with the 13<sup>th</sup> note in the rank,
 borrow 61 pipes, and assign them starting with key 1 of the stop’s
 associated manual:</p>
 <p><img src="images/goodfhelp6_html_9c63f7a4d1928ebb.png" name="Image16" align="left" width="1260" height="934">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
-</p>
-<p><br/>
-<br/>
-
 </p>
 <p>However there is another way to borrow pipes that doesn’t need
 external ranks. You can borrow from a rank internal to another stop
@@ -247,19 +180,11 @@ following window pops up allowing you to select the manual, the stop
 within the manual, and the starting pipe and the number of pipes to
 borrow</p>
 <p><img src="images/goodfhelp6_html_d73c5af806822477.png" name="Image17" align="left" width="520" height="420" border="0"/>
-<br clear="left"/>
 </p>
 <p>When you click create reference, the expanded pipe tree shows the
 borrowed pipes, specifying in order, the manual number, the stop
 number, and the pipe number:</p>
-<p><br/>
-<br/>
-
-</p>
 <p><img src="images/goodfhelp6_html_68ed7a48200dd518.png" name="Image18" align="left" width="211" height="347" border="0"/>
-<br/>
-<br/>
-
 </p>
 </body>
 </html>

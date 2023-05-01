@@ -3,45 +3,19 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Introduction</title>
-	<meta name="generator" content="LibreOffice 7.4.5.1 (Linux)"/>
-	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2023-03-17T12:21:29.965698302"/>
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<meta name="created" content="00:00:00">
-	<style type="text/css">
-		@page { size: 8.5in 11in; margin: 0.79in }
-		p { line-height: 115%; margin-bottom: 0.1in; background: transparent; background: transparent }
-		h2 { margin-top: 0.14in; margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt; font-weight: bold }
-		h2.cjk { font-family: "Unifont"; font-size: 16pt; font-weight: bold }
-		h2.ctl { font-family: "FreeSans"; font-size: 16pt; font-weight: bold }
-		h1 { margin-bottom: 0.08in; background: transparent; background: transparent; page-break-after: avoid }
-		h1.western { font-family: "Liberation Sans", sans-serif; font-size: 18pt; font-weight: bold }
-		h1.cjk { font-family: "Unifont"; font-size: 18pt; font-weight: bold }
-		h1.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
-		a:link { color: #000080; text-decoration: underline }
-		a:visited { color: #800000; text-decoration: underline }
-	</style>
 </head>
-<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><h1 class="western">
-Introduction</h1>
+<body lang="en-US">
+<h1>Introduction</h1>
 <p>This page provides a brief description of the objects that define
 an ODF. For more information on how to use these objects see the
 <a href="gettingstarted.html">Getting Started </a>page. Objects are
 separated into functional objects, GUI objects, and pipes.</p>
-<h2 class="western">Functional objects</h2>
+<h2>Functional objects</h2>
 <p>GOODF creates and organizes objects to create a .organ file that
 can be loaded by GrandOrgue. The objects appear in a tree view on the
 left side of the GOODF window as shown in the picture:</p>
 <p><img src="images/goodfhelp3_html_be5e16cd930f637f.png" name="Image2" align="left" width="206" height="561">
-  <br clear="left"/>
 </img>
-<br/>
-<br/>
-
 </p>
 <p>The following bullets describe the available objects and their
 relationship to one another. There are also links to a complete
@@ -82,7 +56,7 @@ description of all the parameters associated with each object:</p>
 	pipes mounted on a windchestgroup. Enclosures are referenced by one
 	or more windchestgroups. Enclosures are controlled by Swell Pedals
 	or sliders added to a Panel.</p>
-	<li><p><a href="tremulant.html#12.Tremulants%7Coutline">Tremulants</a>
+	<li><p><a href="tremulant.html">Tremulants</a>
 	are a mechanism to introduce a slow periodic variation in pitch and
 	amplitude to the sound of a rank of pipes. Tremulants are referenced
 	by windchestgroups and by manuals.</p>
@@ -90,12 +64,12 @@ description of all the parameters associated with each object:</p>
 	the same sound. Ranks are not directly controlled, but can be
 	referenced by stops. Ranks can also be defined within a stop as
 	subsidiary to it.</p>
-	<li><p><a href="#20.Pipes|outline">Pipes</a> are the individual
+	<li><p><a href="pipe.html">Pipes</a> are the individual
 	sound samples used to create a rank. Pipes are referenced by ranks,
 	and can include attack samples, release samples, and tremulant
 	samples. Some editing of individual and group of pipe sample
 	parameters can be had by right clicking in the expanded pipe tree.
-	See <a href="usinggoodf.html#5.Using%20GoODF%7Coutline">Using GOODF</a>
+	See <a href="usinggoodf.html">Using GOODF</a>
 	for more information on working with samples</p>
 	<li><p><a href="switch.html">Switches</a> are objects used to
 	control other objects using combinational logic. Switches can be
@@ -118,7 +92,7 @@ description of all the parameters associated with each object:</p>
 	referenced by nor do they reference a manual. They can reference
 	stops, couplers, tremulants, and switches.</p>
 </ul>
-<h2 class="western">GUI Elements</h2>
+<h2>GUI Elements</h2>
 <p>GUI objects can be created from many of the functional objects
 above and displayed on one or more panels. GUI objects can use
 graphical elements built into the GrandOrgue software, or can use
@@ -164,17 +138,13 @@ For more information on how to create GUI Objects and Panels, see
 	<li><p><a href="label.html">Labels</a> are separate GUI elements
 	that can be placed on the panel</p>
 </ul>
-<p><br/>
-<br/>
-
-</p>
-<h2 class="western"><a name="20.Pipes|outline"></a>Pipes</h2>
+<h2>Pipes</h2>
 <p>Each rank object (either internal to a stop, or separately
 defined) references one or more pipes. Each pipe has one or more .wav
 file samples associated with it. Alternatively A pipe in a rank can
 borrow one or more pipes from another stop (or more correctly from a
 rank internally defined by a stop object). It cannot borrow from
-another rank. 
+another rank.
 </p>
 <p>Pipe samples are generally stored in a directory structure with
 each sample labeled with its midi note number. In this case these
@@ -201,10 +171,6 @@ the following variations:</p>
 	found in the Using<a href="usinggoodf.html"> GOODF section</a>. More
 	information can be found in <a href="pipe.html">pipes</a>.</p>
 </ul>
-<p><br/>
-<br/>
-
-</p>
 <p>Recording and preparing the sample files is outside the scope of
 GOODF. However other software to assist with this is available, as
 are web based tutorials on the sampling process, noise reduction, and
