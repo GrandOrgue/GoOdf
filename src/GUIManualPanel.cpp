@@ -405,7 +405,7 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
-		0,
+		-500,
 		500,
 		0
 	);
