@@ -289,6 +289,9 @@ void GoPanelPanel::setPanel(GoPanel *panel) {
 		m_manualChoice->Insert(availableManuals, 0);
 	}
 	ShouldCombinationControlsBeEnabled();
+	if (!m_manualChoice->IsEmpty())
+		m_manualChoice->SetSelection(0);
+	m_combinationNumberSpin->SetValue(1);
 }
 
 void GoPanelPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
@@ -494,6 +497,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(generalName);
+				m_combinationNumberSpin->SetValue(combinationNbr);
 			} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
 				// we need to get both manual (three X) and the divisional number YYY
 				int targetManual = 0;
@@ -511,6 +515,8 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(divisionalName);
+				m_manualChoice->SetSelection(targetManual);
+				m_combinationNumberSpin->SetValue(combinationNbr);
 			} else if (setterType == wxT("SetterXXXDivisionalPrevBank")) {
 				// we need to get the manual
 				int targetManual = 0;
@@ -553,6 +559,9 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			}
+			m_setterElementsChoice->SetSelection(selectedIndex);
+			wxCommandEvent evt(wxEVT_LISTBOX, ID_PANEL_SETTER_ELEMENTS_CHOICE);
+			wxPostEvent(this, evt);
 		}
 	} else {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -584,24 +593,28 @@ void GoPanelPanel::ShouldCombinationControlsBeEnabled() {
 		if (setterType == wxT("GeneralXX")) {
 			m_manualChoice->Disable();
 			m_combinationNumberSpin->SetRange(1, 50);
-			m_combinationNumberSpin->SetValue(1);
+			// m_combinationNumberSpin->SetValue(1);
 			m_combinationNumberSpin->Enable();
 		} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
 			m_manualChoice->Enable();
+			/*
 			if (!m_manualChoice->IsEmpty())
 				m_manualChoice->SetSelection(0);
+			*/
 			m_combinationNumberSpin->SetRange(0, 999);
-			m_combinationNumberSpin->SetValue(0);
+			// m_combinationNumberSpin->SetValue(0);
 			m_combinationNumberSpin->Enable();
 		} else if (setterType == wxT("SetterXXXDivisionalBank") ||
 			setterType == wxT("SetterXXXDivisionalNextBank") ||
 			setterType == wxT("SetterXXXDivisionalPrevBank")) {
 			// only manual selection should be enabled
 			m_manualChoice->Enable();
+			/*
 			if (!m_manualChoice->IsEmpty())
 				m_manualChoice->SetSelection(0);
+			*/
 			m_combinationNumberSpin->SetRange(0, 999);
-			m_combinationNumberSpin->SetValue(0);
+			// m_combinationNumberSpin->SetValue(0);
 			m_combinationNumberSpin->Disable();
 		} else {
 			m_manualChoice->Disable();
