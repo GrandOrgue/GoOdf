@@ -204,7 +204,9 @@ void CopyElementAttributesDialog::updateAvailableGuiElements() {
 	for (int i = 0; i < nbrGuiElements; i++) {
 		if (currentTargetPanel == m_sourcePanel && i == m_sourceElementIndex)
 			continue;
-		if (currentTargetPanel->getGuiElementAt(i)->getType() == m_sourcePanel->getGuiElementAt(m_sourceElementIndex)->getType()) {
+		wxString sourceType = m_sourcePanel->getGuiElementAt(m_sourceElementIndex)->getType();
+		wxString targetType = currentTargetPanel->getGuiElementAt(i)->getType();
+		if (targetType == sourceType || targetType.StartsWith(sourceType.Mid(0, 5))) {
 			m_matchingElementsList.Add(currentTargetPanel->getGuiElementAt(i)->getDisplayName());
 			m_referenceElementIdx.push_back(i);
 		}

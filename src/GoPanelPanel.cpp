@@ -593,28 +593,17 @@ void GoPanelPanel::ShouldCombinationControlsBeEnabled() {
 		if (setterType == wxT("GeneralXX")) {
 			m_manualChoice->Disable();
 			m_combinationNumberSpin->SetRange(1, 50);
-			// m_combinationNumberSpin->SetValue(1);
 			m_combinationNumberSpin->Enable();
 		} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
 			m_manualChoice->Enable();
-			/*
-			if (!m_manualChoice->IsEmpty())
-				m_manualChoice->SetSelection(0);
-			*/
 			m_combinationNumberSpin->SetRange(0, 999);
-			// m_combinationNumberSpin->SetValue(0);
 			m_combinationNumberSpin->Enable();
 		} else if (setterType == wxT("SetterXXXDivisionalBank") ||
 			setterType == wxT("SetterXXXDivisionalNextBank") ||
 			setterType == wxT("SetterXXXDivisionalPrevBank")) {
 			// only manual selection should be enabled
 			m_manualChoice->Enable();
-			/*
-			if (!m_manualChoice->IsEmpty())
-				m_manualChoice->SetSelection(0);
-			*/
 			m_combinationNumberSpin->SetRange(0, 999);
-			// m_combinationNumberSpin->SetValue(0);
 			m_combinationNumberSpin->Disable();
 		} else {
 			m_manualChoice->Disable();
