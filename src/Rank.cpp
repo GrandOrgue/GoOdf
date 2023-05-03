@@ -1407,7 +1407,7 @@ void Rank::exactlyMatchMidiNumber(wxArrayString &fileList, int midiNbr) {
 				// we need to check what is after this matching number too
 				for (int currentIndex = posAfterMatch; currentIndex < (int) file_name.Len(); currentIndex++) {
 					wxUniChar currentChar = file_name.GetChar(currentIndex);
-					if (currentChar == '.') {
+					if (currentChar == '-' || currentChar == '_' || currentChar == '.') {
 						break;
 					}
 					if (wxIsdigit(currentChar)) {
