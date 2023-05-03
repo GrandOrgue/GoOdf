@@ -130,6 +130,7 @@ protected:
 	void onlyAddWaveFiles(wxArrayString &source, wxArrayString &selection);
 	wxString getOnlyFileName(wxString path);
 	void setupPipeProperties(Pipe &pipe);
+	void exactlyMatchMidiNumber(wxArrayString &fileList, int midiNbr);
 };
 
 #endif

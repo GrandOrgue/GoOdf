@@ -21,6 +21,7 @@
 #include "Rank.h"
 #include "GOODF.h"
 #include "GOODFFunctions.h"
+#include <wx/unichar.h>
 
 Rank::Rank() {
 	name = wxT("New Rank");
@@ -408,6 +409,9 @@ void Rank::readPipes(
 		// remove any file that's not ending with .wav or .wv
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
+		// make sure to exactly match the MIDI number
+		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
@@ -452,6 +456,9 @@ void Rank::readPipes(
 
 				// remove any file that's not ending with .wav or .wv
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+				// make sure to exactly match the MIDI number
+				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -517,6 +524,9 @@ void Rank::readPipes(
 
 				onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
+				// make sure to exactly match the MIDI number
+				exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+
 				// if there are any matching attacks we add them
 				if (!pipeAttacksToAdd.IsEmpty()) {
 					for (unsigned k = 0; k < pipeAttacksToAdd.GetCount(); k++) {
@@ -574,6 +584,9 @@ void Rank::readPipes(
 
 					pipeReleases.Sort();
 					onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+					// make sure to exactly match the MIDI number
+					exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 					// if there are any matching releases we add them
 					if (!pipeReleasesToAdd.IsEmpty()) {
@@ -706,6 +719,9 @@ void Rank::addToPipes(
 		// remove any file that's not ending with .wav or .wv
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
+		// make sure to exactly match the MIDI number
+		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
@@ -750,6 +766,9 @@ void Rank::addToPipes(
 
 				// remove any file that's not ending with .wav or .wv
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+				// make sure to exactly match the MIDI number
+				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -815,6 +834,9 @@ void Rank::addToPipes(
 
 				onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
+				// make sure to exactly match the MIDI number
+				exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+
 				// if there are any matching attacks we add them
 				if (!pipeAttacksToAdd.IsEmpty()) {
 					for (unsigned k = 0; k < pipeAttacksToAdd.GetCount(); k++) {
@@ -872,6 +894,9 @@ void Rank::addToPipes(
 
 					pipeReleases.Sort();
 					onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+					// make sure to exactly match the MIDI number
+					exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 					// if there are any matching releases we add them
 					if (!pipeReleasesToAdd.IsEmpty()) {
@@ -990,6 +1015,9 @@ void Rank::addTremulantToPipes(
 		// remove any file that's not ending with .wav or .wv
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
+		// make sure to exactly match the MIDI number
+		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
@@ -1033,6 +1061,9 @@ void Rank::addTremulantToPipes(
 
 				// remove any file that's not ending with .wav or .wv
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+				// make sure to exactly match the MIDI number
+				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -1117,6 +1148,9 @@ void Rank::addReleasesToPipes() {
 
 		// remove any file that's not ending with .wav or .wv
 		onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
+
+		// make sure to exactly match the MIDI number
+		exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
 
 		// if there are any matching attacks we add them
 		if (!pipeReleasesToAdd.IsEmpty()) {
@@ -1339,6 +1373,54 @@ void Rank::setupPipeProperties(Pipe &pipe) {
 	pipe.windchest = this->windchest;
 	pipe.minVelocityVolume = this->minVelocityVolume;
 	pipe.maxVelocityVolume = this->maxVelocityVolume;
+}
+
+void Rank::exactlyMatchMidiNumber(wxArrayString &fileList, int midiNbr) {
+	// incoming fileList contains full paths to candidate files
+	// but in this function we're interested only in the file name
+	// we get it by converting path to wxFileName and then extracting the name part
+	if (!fileList.IsEmpty()) {
+		for (int i = fileList.size() - 1; i >= 0; i--) {
+			wxFileName whole_path(fileList[i]);
+			wxString file_name = whole_path.GetFullName();
+			bool isAnExactMatch = true;
+			wxString nbrStr = wxString::Format(wxT("%i"), midiNbr);
+			int matching_position = file_name.Find(nbrStr);
+
+			if (matching_position > 0) {
+				// the number is not in the beginning, the only valid number occuring before this is a 0
+				for (int currentIndex = matching_position - 1; currentIndex >= 0; currentIndex--) {
+					wxUniChar currentChar = file_name.GetChar(currentIndex);
+					if (currentChar == '0' || wxIsalpha(currentChar)) {
+						continue;
+					} else {
+						isAnExactMatch = false;
+					}
+				}
+			} else if (matching_position != 0) {
+				// if matching position is negative (wxNOT_FOUND) then this file is not a match
+				isAnExactMatch = false;
+			}
+
+			if (isAnExactMatch && matching_position + nbrStr.Len() < file_name.Len() - 1) {
+				int posAfterMatch = matching_position + nbrStr.Len();
+				// we need to check what is after this matching number too
+				for (int currentIndex = posAfterMatch; currentIndex < (int) file_name.Len(); currentIndex++) {
+					wxUniChar currentChar = file_name.GetChar(currentIndex);
+					if (currentChar == '.') {
+						break;
+					}
+					if (wxIsdigit(currentChar)) {
+						isAnExactMatch = false;
+					}
+				}
+			}
+
+			if (!isAnExactMatch) {
+				fileList.RemoveAt(i);
+			}
+		}
+	}
 }
 
 void Rank::updatePipeRelativePaths() {
