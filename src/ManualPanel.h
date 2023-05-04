@@ -32,6 +32,7 @@ public:
 	~ManualPanel();
 
 	void setManual(Manual *manual);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -60,6 +61,7 @@ private:
 
 	Manual *m_manual;
 	wxArrayString m_mapKeys;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnPedalCheckbox(wxCommandEvent& event);
@@ -82,6 +84,7 @@ private:
 	void OnMidiKeyMapKeyChoice(wxCommandEvent& event);
 	void OnMidiKeyMapValueSpin(wxSpinEvent& event);
 	void OnRemoveManualBtn(wxCommandEvent& event);
+	void DoRemoveManual();
 	void UpdateReferencedTremulants();
 	void UpdateReferencedSwitches();
 

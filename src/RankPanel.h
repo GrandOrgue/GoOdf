@@ -35,6 +35,7 @@ public:
 	void setRank(Rank *rank);
 	void setNameFieldValue(wxString name);
 	void disableNameFieldInput();
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -75,6 +76,7 @@ private:
 	Rank *m_rank;
 	wxArrayString availableWindchests;
 	wxTreeItemId m_tree_rank_root;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnWindchestChoice(wxCommandEvent& event);
@@ -88,6 +90,7 @@ private:
 	void OnRetuningSelection(wxCommandEvent& event);
 	void OnReadPipesBtn(wxCommandEvent& event);
 	void OnRemoveRankBtn(wxCommandEvent& event);
+	void DoRemoveRank();
 	void OnClearPipesBtn(wxCommandEvent& event);
 	void OnPipeTreeItemRightClick(wxTreeEvent &evt);
 	void OnPopupMenuClick(wxCommandEvent &evt);

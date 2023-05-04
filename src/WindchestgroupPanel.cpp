@@ -39,6 +39,7 @@ END_EVENT_TABLE()
 
 WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxID_ANY) {
 	m_windchest = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -206,6 +207,10 @@ void WindchestgroupPanel::setWindchest(Windchestgroup *windchest) {
 	m_removeReferencedTremulant->Disable();
 }
 
+void WindchestgroupPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void WindchestgroupPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -251,22 +256,31 @@ void WindchestgroupPanel::OnRemoveReferencedTremulant(wxCommandEvent& WXUNUSED(e
 }
 
 void WindchestgroupPanel::OnRemoveWindchestBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this windchestgroup?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// first remove all possible references to this windchest from ranks
-		unsigned numberOfRanks = ::wxGetApp().m_frame->m_organ->getNumberOfRanks();
-		for (unsigned i = 0; i < numberOfRanks; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->getWindchest() == m_windchest) {
-				::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->setWindchest(NULL);
-			}
-			// also remove any possible reference in any pipe of this rank
-			for (Pipe p : ::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->m_pipes) {
-				if (p.windchest == m_windchest)
-					p.windchest = NULL;
-			}
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this windchestgroup?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveWindchest();
+			m_isFirstRemoval = false;
 		}
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	} else {
+		DoRemoveWindchest();
 	}
+}
+
+void WindchestgroupPanel::DoRemoveWindchest() {
+	// first remove all possible references to this windchest from ranks
+	unsigned numberOfRanks = ::wxGetApp().m_frame->m_organ->getNumberOfRanks();
+	for (unsigned i = 0; i < numberOfRanks; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->getWindchest() == m_windchest) {
+			::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->setWindchest(NULL);
+		}
+		// also remove any possible reference in any pipe of this rank
+		for (Pipe p : ::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->m_pipes) {
+			if (p.windchest == m_windchest)
+				p.windchest = NULL;
+		}
+	}
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
 void WindchestgroupPanel::OnEnclosureListboxSelection(wxCommandEvent& WXUNUSED(event)) {

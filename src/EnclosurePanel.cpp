@@ -39,6 +39,7 @@ EnclosurePanel::EnclosurePanel(wxWindow *parent) : wxPanel (
 	) {
 
 	m_enclosure = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -104,6 +105,10 @@ void EnclosurePanel::setEnclosure(Enclosure *enclosure) {
 	m_ampMinLvlSpin->SetValue(m_enclosure->getAmpMinimumLevel());
 }
 
+void EnclosurePanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void EnclosurePanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -118,24 +123,33 @@ void EnclosurePanel::OnAmpMinLvlChange(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void EnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this enclosure?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references to this enclosure in any windchest first
-		unsigned numberOfWindchests = ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups();
-		for (unsigned i = 0; i < numberOfWindchests; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->hasEnclosureReference(m_enclosure)) {
-				::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeEnclosureReference(m_enclosure);
-			}
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this enclosure?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveEnclosure();
+			m_isFirstRemoval = false;
 		}
-		// remove any gui element that reference this enclosure
-		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
-		for (unsigned i = 0; i < numberOfPanels; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_enclosure)) {
-				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_enclosure);
-				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
-			}
-		}
-		// then remove this item from the organ
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	} else {
+		DoRemoveEnclosure();
 	}
+}
+
+void EnclosurePanel::DoRemoveEnclosure() {
+	// remove all possible references to this enclosure in any windchest first
+	unsigned numberOfWindchests = ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups();
+	for (unsigned i = 0; i < numberOfWindchests; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->hasEnclosureReference(m_enclosure)) {
+			::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeEnclosureReference(m_enclosure);
+		}
+	}
+	// remove any gui element that reference this enclosure
+	unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+	for (unsigned i = 0; i < numberOfPanels; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_enclosure)) {
+			::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_enclosure);
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
+	// then remove this item from the organ
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }

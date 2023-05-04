@@ -84,6 +84,8 @@ public:
 	void applyButtonFontSize();
 	void applyLabelFontName();
 	void applyLabelFontSize();
+	void setIsGuiElementFirstRemoval(bool value);
+	bool getIsGuiElementFirstRemoval();
 
 private:
 	wxString m_name;
@@ -92,6 +94,7 @@ private:
 	std::list<GoImage> m_images;
 	DisplayMetrics m_displayMetrics;
 	std::list<GUIElement*> m_guiElements;
+	bool m_isGuiElementFirstRemoval;
 
 };
 

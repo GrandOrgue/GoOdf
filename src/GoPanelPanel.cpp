@@ -53,6 +53,7 @@ END_EVENT_TABLE()
 
 GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 	m_panel = NULL;
+	m_isFirstRemoval = true;
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *panelNameText = new wxStaticText (
@@ -294,6 +295,10 @@ void GoPanelPanel::setPanel(GoPanel *panel) {
 	m_combinationNumberSpin->SetValue(1);
 }
 
+void GoPanelPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void GoPanelPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -336,12 +341,17 @@ void GoPanelPanel::OnNewImageBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void GoPanelPanel::OnRemovePanelBtn(wxCommandEvent& WXUNUSED(event)) {
 	// The main panel may not be removed! Should be impossible, but checking anyway...
-	if (::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_panel) > 1) {
-		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this panel?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-		if (msg.ShowModal() == wxID_YES) {
-			// then remove this panel
-			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	if (m_isFirstRemoval) {
+		if (::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_panel) > 1) {
+			wxMessageDialog msg(this, wxT("Are you really sure you want to delete this panel?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// then remove this panel
+				::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+				m_isFirstRemoval = false;
+			}
 		}
+	} else if (::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_panel) > 1) {
+		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }
 

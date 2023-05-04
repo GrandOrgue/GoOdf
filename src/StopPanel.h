@@ -34,6 +34,7 @@ public:
 
 	void setStop(Stop *stop);
 	void internalRankLogicalPipesChanged(int value);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -75,6 +76,7 @@ private:
 	wxPanel *m_stopPanel;
 	RankPanel *m_internalRankPanel;
 	wxPanel *m_referencedRanksPanel;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

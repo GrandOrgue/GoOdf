@@ -53,6 +53,7 @@ END_EVENT_TABLE()
 
 TremulantPanel::TremulantPanel(wxWindow *parent) : wxPanel(parent) {
 	m_tremulant = NULL;
+	m_isFirstRemoval = true;
 	functionChoices.Add(wxT("Input"));
 	functionChoices.Add(wxT("And"));
 	functionChoices.Add(wxT("Nand"));
@@ -458,6 +459,10 @@ void TremulantPanel::setTremulant(Tremulant *tremulant) {
 	m_removeReferencedSwitch->Disable();
 }
 
+void TremulantPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void TremulantPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -561,39 +566,48 @@ void TremulantPanel::OnAmpModDepthChange(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void TremulantPanel::OnRemoveTremulantBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this tremulant?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references to this tremulant in any windchest first
-		unsigned numberOfWindchests = ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups();
-		for (unsigned i = 0; i < numberOfWindchests; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->hasTremulantReference(m_tremulant))
-				::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeTremulantReference(m_tremulant);
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this tremulant?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveTremulant();
+			m_isFirstRemoval = false;
 		}
-		// also remove any references from the manuals
-		unsigned numberOfManuals = ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
-		for (unsigned i = 0; i < numberOfManuals; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->hasTremulantReference(m_tremulant)) {
-				::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->removeTremulant(m_tremulant);
-			}
-		}
-		// if any panel has a GUI element for this tremulant it should be removed too
-		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
-		for (unsigned i = 0; i < numberOfPanels; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_tremulant)) {
-				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_tremulant);
-				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
-			}
-		}
-		// the tremulant can also exist in generals
-		unsigned numberOfGenerals = ::wxGetApp().m_frame->m_organ->getNumberOfGenerals();
-		for (unsigned i = 0; i < numberOfGenerals; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->hasTremulant(m_tremulant)) {
-				::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->removeTremulant(m_tremulant);
-			}
-		}
-		// then remove this tremulant
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	} else {
+		DoRemoveTremulant();
 	}
+}
+
+void TremulantPanel::DoRemoveTremulant() {
+	// remove all possible references to this tremulant in any windchest first
+	unsigned numberOfWindchests = ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups();
+	for (unsigned i = 0; i < numberOfWindchests; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->hasTremulantReference(m_tremulant))
+			::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(i)->removeTremulantReference(m_tremulant);
+	}
+	// also remove any references from the manuals
+	unsigned numberOfManuals = ::wxGetApp().m_frame->m_organ->getNumberOfManuals();
+	for (unsigned i = 0; i < numberOfManuals; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->hasTremulantReference(m_tremulant)) {
+			::wxGetApp().m_frame->m_organ->getOrganManualAt(i)->removeTremulant(m_tremulant);
+		}
+	}
+	// if any panel has a GUI element for this tremulant it should be removed too
+	unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+	for (unsigned i = 0; i < numberOfPanels; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_tremulant)) {
+			::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_tremulant);
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
+	// the tremulant can also exist in generals
+	unsigned numberOfGenerals = ::wxGetApp().m_frame->m_organ->getNumberOfGenerals();
+	for (unsigned i = 0; i < numberOfGenerals; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->hasTremulant(m_tremulant)) {
+			::wxGetApp().m_frame->m_organ->getOrganGeneralAt(i)->removeTremulant(m_tremulant);
+		}
+	}
+	// then remove this tremulant
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
 void TremulantPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {

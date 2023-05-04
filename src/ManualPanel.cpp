@@ -52,6 +52,7 @@ END_EVENT_TABLE()
 
 ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 	m_manual = NULL;
+	m_isFirstRemoval = true;
 	for (unsigned i = 0; i < 127; i++) {
 		wxString key = wxT("MIDIKey") + GOODF_functions::number_format(i);
 		m_mapKeys.Add(key);
@@ -422,6 +423,10 @@ void ManualPanel::setManual(Manual *manual) {
 	m_midiKeyMapValue->SetValue(m_manual->getMidiKeyMapValue(m_midiKeyMapKeys->GetString(m_midiKeyMapKeys->GetCurrentSelection())));
 }
 
+void ManualPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void ManualPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -589,33 +594,42 @@ void ManualPanel::OnMidiKeyMapValueSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void ManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this manual?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// remove all stops, couplers and divisionals that this manual "own" from the organ first
-		// the remove methods for stops, couplers and divisionals will also remove any existing gui representations of them
-		for (unsigned i = 0; i < m_manual->getNumberOfStops(); i++) {
-			::wxGetApp().m_frame->m_organ->removeStop(m_manual->getStopAt(i));
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this manual?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveManual();
+			m_isFirstRemoval = false;
 		}
-		for (unsigned i = 0; i < m_manual->getNumberOfCouplers(); i++) {
-			::wxGetApp().m_frame->m_organ->removeCoupler(m_manual->getCouplerAt(i));
-		}
-		for (unsigned i = 0; i < m_manual->getNumberOfDivisionals(); i++) {
-			::wxGetApp().m_frame->m_organ->removeDivisional(m_manual->getDivisionalAt(i));
-		}
-		// if any gui element is referencing this manual it should be removed too
-		unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
-		for (unsigned i = 0; i < numberOfPanels; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_manual)) {
-				::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_manual);
-				::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
-			}
-		}
-		// check if this manual was the pedal
-		if (m_manual->isThePedal())
-			::wxGetApp().m_frame->m_organ->setHasPedals(false);
-		// then finally remove this manual
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	} else {
+		DoRemoveManual();
 	}
+}
+
+void ManualPanel::DoRemoveManual() {
+	// remove all stops, couplers and divisionals that this manual "own" from the organ first
+	// the remove methods for stops, couplers and divisionals will also remove any existing gui representations of them
+	for (unsigned i = 0; i < m_manual->getNumberOfStops(); i++) {
+		::wxGetApp().m_frame->m_organ->removeStop(m_manual->getStopAt(i));
+	}
+	for (unsigned i = 0; i < m_manual->getNumberOfCouplers(); i++) {
+		::wxGetApp().m_frame->m_organ->removeCoupler(m_manual->getCouplerAt(i));
+	}
+	for (unsigned i = 0; i < m_manual->getNumberOfDivisionals(); i++) {
+		::wxGetApp().m_frame->m_organ->removeDivisional(m_manual->getDivisionalAt(i));
+	}
+	// if any gui element is referencing this manual it should be removed too
+	unsigned numberOfPanels = ::wxGetApp().m_frame->m_organ->getNumberOfPanels();
+	for (unsigned i = 0; i < numberOfPanels; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->hasItemAsGuiElement(m_manual)) {
+			::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->removeItemFromPanel(m_manual);
+			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
+		}
+	}
+	// check if this manual was the pedal
+	if (m_manual->isThePedal())
+		::wxGetApp().m_frame->m_organ->setHasPedals(false);
+	// then finally remove this manual
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
 void ManualPanel::UpdateReferencedTremulants() {

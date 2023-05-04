@@ -49,6 +49,7 @@ END_EVENT_TABLE()
 
 SwitchPanel::SwitchPanel(wxWindow *parent) : wxPanel(parent) {
 	m_switch = NULL;
+	m_isFirstRemoval = true;
 	functionChoices.Add(wxT("Input"));
 	functionChoices.Add(wxT("And"));
 	functionChoices.Add(wxT("Nand"));
@@ -339,6 +340,10 @@ void SwitchPanel::setSwitch(GoSwitch *sw) {
 	m_removeReferencedSwitch->Disable();
 }
 
+void SwitchPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void SwitchPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -410,17 +415,26 @@ void SwitchPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 }
 
 void SwitchPanel::OnRemoveSwitchBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this switch?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references to this switch in any tremulant first
-		unsigned numberOfTremulants = ::wxGetApp().m_frame->m_organ->getNumberOfTremulants();
-		for (unsigned i = 0; i < numberOfTremulants; i++) {
-			if (::wxGetApp().m_frame->m_organ->getOrganTremulantAt(i)->hasSwitchReference(m_switch))
-				::wxGetApp().m_frame->m_organ->getOrganTremulantAt(i)->removeSwitchReference(m_switch);
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this switch?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveSwitch();
+			m_isFirstRemoval = false;
 		}
-		// then remove this switch
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	} else {
+		DoRemoveSwitch();
 	}
+}
+
+void SwitchPanel::DoRemoveSwitch() {
+	// remove all possible references to this switch in any tremulant first
+	unsigned numberOfTremulants = ::wxGetApp().m_frame->m_organ->getNumberOfTremulants();
+	for (unsigned i = 0; i < numberOfTremulants; i++) {
+		if (::wxGetApp().m_frame->m_organ->getOrganTremulantAt(i)->hasSwitchReference(m_switch))
+			::wxGetApp().m_frame->m_organ->getOrganTremulantAt(i)->removeSwitchReference(m_switch);
+	}
+	// then remove this switch
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
 void SwitchPanel::UpdateReferencedSwitches() {

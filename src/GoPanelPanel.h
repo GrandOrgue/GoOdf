@@ -31,6 +31,7 @@ public:
 	~GoPanelPanel();
 
 	void setPanel(GoPanel *panel);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -51,6 +52,7 @@ private:
 	GoPanel *m_panel;
 	wxArrayString organElementChoices;
 	wxArrayString availableManuals;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnGroupChange(wxCommandEvent& event);

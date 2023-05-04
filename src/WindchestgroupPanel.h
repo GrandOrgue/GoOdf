@@ -30,6 +30,7 @@ public:
 	~WindchestgroupPanel();
 
 	void setWindchest(Windchestgroup *windchest);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -46,6 +47,7 @@ private:
 	wxButton *removeWindchestBtn;
 
 	Windchestgroup *m_windchest;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnAddReferencedEnclosure(wxCommandEvent& event);
@@ -53,6 +55,7 @@ private:
 	void OnAddReferencedTremulant(wxCommandEvent& event);
 	void OnRemoveReferencedTremulant(wxCommandEvent& event);
 	void OnRemoveWindchestBtn(wxCommandEvent& event);
+	void DoRemoveWindchest();
 	void OnEnclosureListboxSelection(wxCommandEvent& event);
 	void OnTremulantListboxSelection(wxCommandEvent& event);
 	void UpdateReferencedEnclosures();

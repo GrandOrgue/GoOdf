@@ -31,6 +31,7 @@ public:
 	~TremulantPanel();
 
 	void setTremulant(Tremulant *tremulant);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -61,6 +62,7 @@ private:
 	wxArrayString functionChoices;
 	wxArrayString gcStateChoices;
 	wxArrayString tremTypeChoices;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);
@@ -75,6 +77,7 @@ private:
 	void OnStopRateChange(wxSpinEvent& event);
 	void OnAmpModDepthChange(wxSpinEvent& event);
 	void OnRemoveTremulantBtn(wxCommandEvent& event);
+	void DoRemoveTremulant();
 	void OnAddSwitchReferenceBtn(wxCommandEvent& event);
 	void OnRemoveSwitchReferenceBtn(wxCommandEvent& event);
 	void OnSwitchListboxSelection(wxCommandEvent& event);

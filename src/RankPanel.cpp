@@ -63,6 +63,7 @@ END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	m_rank = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -578,6 +579,10 @@ void RankPanel::disableNameFieldInput() {
 	m_nameField->Disable();
 }
 
+void RankPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void RankPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -745,14 +750,23 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void RankPanel::OnRemoveRankBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this rank?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// remove all possible references in stops first
-		::wxGetApp().m_frame->m_organ->removeReferenceToRankInStops(m_rank);
-
-		// then remove this rank
-		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this rank?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			DoRemoveRank();
+			m_isFirstRemoval = false;
+		}
+	} else {
+		DoRemoveRank();
 	}
+}
+
+void RankPanel::DoRemoveRank() {
+	// remove all possible references in stops first
+	::wxGetApp().m_frame->m_organ->removeReferenceToRankInStops(m_rank);
+
+	// then remove this rank
+	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
 void RankPanel::OnClearPipesBtn(wxCommandEvent& WXUNUSED(event)) {

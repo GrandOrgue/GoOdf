@@ -39,6 +39,7 @@ END_EVENT_TABLE()
 
 ReversiblePistonPanel::ReversiblePistonPanel(wxWindow *parent) : wxPanel(parent) {
 	m_piston = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -293,6 +294,10 @@ void ReversiblePistonPanel::setReversiblePiston(ReversiblePiston *piston) {
 	useSelectedBtn->Disable();
 }
 
+void ReversiblePistonPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void ReversiblePistonPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -371,8 +376,13 @@ void ReversiblePistonPanel::OnUseSelectedBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ReversiblePistonPanel::OnRemovePistonBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this reversible piston?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this reversible piston?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+			m_isFirstRemoval = false;
+		}
+	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

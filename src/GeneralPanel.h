@@ -31,6 +31,7 @@ public:
 	~GeneralPanel();
 
 	void setGeneral(General *general);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -84,6 +85,7 @@ private:
 	wxButton *removeGeneralBtn;
 
 	General *m_general;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

@@ -31,6 +31,7 @@ public:
 	~SwitchPanel();
 
 	void setSwitch(GoSwitch *sw);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -55,6 +56,7 @@ private:
 	GoSwitch *m_switch;
 	wxArrayString functionChoices;
 	wxArrayString gcStateChoices;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnFunctionChange(wxCommandEvent& event);
@@ -64,6 +66,7 @@ private:
 	void OnStoreInDivisionalChange(wxCommandEvent& event);
 	void OnStoreInGeneralChange(wxCommandEvent& event);
 	void OnRemoveSwitchBtn(wxCommandEvent& event);
+	void DoRemoveSwitch();
 	void UpdateReferencedSwitches();
 	void OnAddSwitchReferenceBtn(wxCommandEvent& event);
 	void OnRemoveSwitchReferenceBtn(wxCommandEvent& event);

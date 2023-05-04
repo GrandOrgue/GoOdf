@@ -31,6 +31,7 @@ public:
 	~EnclosurePanel();
 
 	void setEnclosure(Enclosure *enclosure);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -40,10 +41,12 @@ private:
 	wxButton *removeEnclosureBtn;
 
 	Enclosure *m_enclosure;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnAmpMinLvlChange(wxSpinEvent& event);
 	void OnRemoveEnclosureBtn(wxCommandEvent& event);
+	void DoRemoveEnclosure();
 
 };
 

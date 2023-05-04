@@ -874,9 +874,14 @@ void GUIEnclosurePanel::OnTextBreakWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void GUIEnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this element?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// then remove this item from the owning panel
+	if (m_enclosure->getOwningPanel()->getIsGuiElementFirstRemoval()) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this element?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			m_enclosure->getOwningPanel()->setIsGuiElementFirstRemoval(false);
+			// then remove this item from the owning panel
+			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+		}
+	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

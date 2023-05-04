@@ -30,6 +30,7 @@ public:
 	~ReversiblePistonPanel();
 
 	void setReversiblePiston(ReversiblePiston *piston);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -47,6 +48,7 @@ private:
 	wxButton *removePistonBtn;
 
 	ReversiblePiston *m_piston;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

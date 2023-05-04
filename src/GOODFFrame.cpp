@@ -1206,51 +1206,139 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 		}
 
 		if (parentId == tree_enclosures) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeEnclosureAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_tremulants) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeTremulantAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_windchestgrps) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeWindchestgroupAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_switches) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeSwitchAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_reversiblePistons) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeReversiblePistonAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_divisionalCouplers) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeDivisionalCouplerAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_generals) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeGeneralAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_ranks) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeRankAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Stops"))) {
@@ -1270,8 +1358,19 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			Stop *s = m_organ->getOrganManualAt(theManualIndex)->getStopAt(selectedIndex);
 			m_organ->removeStop(s);
 			m_organ->getOrganManualAt(theManualIndex)->removeStop(s);
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = theManual;
+			}
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(theManual);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Couplers"))) {
@@ -1291,8 +1390,19 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			Coupler *c = m_organ->getOrganManualAt(theManualIndex)->getCouplerAt(selectedIndex);
 			m_organ->removeCoupler(c);
 			m_organ->getOrganManualAt(theManualIndex)->removeCoupler(c);
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = theManual;
+			}
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(theManual);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Divisionals"))) {
@@ -1312,20 +1422,53 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			Divisional *d = m_organ->getOrganManualAt(theManualIndex)->getDivisionalAt(selectedIndex);
 			m_organ->removeDivisional(d);
 			m_organ->getOrganManualAt(theManualIndex)->removeDivisional(d);
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = theManual;
+			}
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(theManual);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_manuals) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removeManualAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (parentId == tree_panels) {
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = parentId;
+			}
 			m_organ->removePanelAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(parentId);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Images"))) {
@@ -1344,9 +1487,19 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 
 			GoImage *img = m_organ->getOrganPanelAt(thePanelIndex)->getImageAt(selectedIndex);
 			m_organ->getOrganPanelAt(thePanelIndex)->removeImage(img);
-
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = thePanel;
+			}
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(thePanel);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("GUI Elements"))) {
@@ -1363,8 +1516,19 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			}
 			// if thePanelIndex is positive it now contains the panel index
 			m_organ->getOrganPanelAt(thePanelIndex)->removeGuiElementAt(selectedIndex);
+			wxTreeItemId nextToSelect;
+			if (numChildrens > 1) {
+				// there's more than one child to the parent so we select the other lower (or higher if it was the first)
+				if (selectedIndex > 0) {
+					nextToSelect = m_organTreeCtrl->GetPrevSibling(selected);
+				} else {
+					nextToSelect = m_organTreeCtrl->GetNextSibling(selected);
+				}
+			} else {
+				nextToSelect = thePanel;
+			}
 			m_organTreeCtrl->Delete(selected);
-			m_organTreeCtrl->SelectItem(thePanel);
+			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
 	}
 }

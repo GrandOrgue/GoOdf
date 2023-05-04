@@ -31,6 +31,7 @@ public:
 	~DivisionalPanel();
 
 	void setDivisional(Divisional *divisional);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -76,6 +77,7 @@ private:
 	wxButton *removeDivisionalBtn;
 
 	Divisional *m_divisional;
+	bool m_isFirstRemoval;
 	
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

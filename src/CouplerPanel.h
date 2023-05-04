@@ -31,6 +31,7 @@ public:
 	~CouplerPanel();
 
 	void setCoupler(Coupler *coupler);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -74,6 +75,7 @@ private:
 	wxArrayString gcStateChoices;
 	wxArrayString couplerTypes;
 	wxArrayString availableManuals;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

@@ -65,6 +65,7 @@ END_EVENT_TABLE()
 
 CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 	m_coupler = NULL;
+	m_isFirstRemoval = true;
 	functionChoices.Add(wxT("Input"));
 	functionChoices.Add(wxT("And"));
 	functionChoices.Add(wxT("Nand"));
@@ -651,6 +652,10 @@ void CouplerPanel::setCoupler(Coupler *coupler) {
 	m_numberOfKeysSpin->SetValue(m_coupler->getNumberOfKeys());
 }
 
+void CouplerPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void CouplerPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -802,10 +807,15 @@ void CouplerPanel::OnNumberOfKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void CouplerPanel::OnRemoveCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this coupler?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// reference to this coupler are removed from the manual and any generals
-		// and when the organ remove this coupler any gui representations will be removed too
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this coupler?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			// reference to this coupler are removed from the manual and any generals
+			// and when the organ remove this coupler any gui representations will be removed too
+			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+			m_isFirstRemoval = false;
+		}
+	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

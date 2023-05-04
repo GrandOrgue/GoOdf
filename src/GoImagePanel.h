@@ -31,6 +31,7 @@ public:
 	~GoImagePanel();
 
 	void setImage(GoImage *image);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -49,6 +50,7 @@ private:
 	wxButton *removeImageBtn;
 
 	GoImage *m_image;
+	bool m_isFirstRemoval;
 
 	void OnAddImageBtn(wxCommandEvent& event);
 	void OnAddMaskBtn(wxCommandEvent& event);

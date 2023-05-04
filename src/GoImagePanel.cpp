@@ -40,6 +40,7 @@ END_EVENT_TABLE()
 
 GoImagePanel::GoImagePanel(wxWindow *parent) : wxPanel(parent) {
 	m_image = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
@@ -249,6 +250,10 @@ void GoImagePanel::setImage(GoImage *image) {
 	UpdateControlValues();
 }
 
+void GoImagePanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString imageFilePath;
 	wxString defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
@@ -341,9 +346,14 @@ void GoImagePanel::OnTileOffsetYSpin(wxSpinEvent& event) {
 }
 
 void GoImagePanel::OnRemoveImageBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this image?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
-		// then remove this item from the owning panel
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this image?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
+			// then remove this item from the owning panel
+			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+			m_isFirstRemoval = false;
+		}
+	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

@@ -73,6 +73,7 @@ END_EVENT_TABLE()
 
 GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 	m_general = NULL;
+	m_isFirstRemoval = true;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -699,6 +700,10 @@ void GeneralPanel::setGeneral(General *general) {
 	m_currentDivCplrIsOff->Disable();
 }
 
+void GeneralPanel::setIsFirstRemoval(bool value) {
+	m_isFirstRemoval = value;
+}
+
 void GeneralPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);
@@ -1134,10 +1139,15 @@ void GeneralPanel::UpdateReferencedDivCplrs() {
 }
 
 void GeneralPanel::OnRemoveGeneralBtn(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog msg(this, wxT("Are you really sure you want to delete this general?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (msg.ShowModal() == wxID_YES) {
+	if (m_isFirstRemoval) {
+		wxMessageDialog msg(this, wxT("Are you really sure you want to delete this general?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (msg.ShowModal() == wxID_YES) {
 
-		// then remove this general
+			// then remove this general
+			::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
+			m_isFirstRemoval = false;
+		}
+	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
 }

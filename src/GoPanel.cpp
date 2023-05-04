@@ -33,6 +33,7 @@ GoPanel::GoPanel() {
 	m_name = wxT("New Panel");
 	m_group = wxEmptyString;
 	m_hasPedals = false;
+	m_isGuiElementFirstRemoval = true;
 }
 
 GoPanel::~GoPanel() {
@@ -636,4 +637,11 @@ void GoPanel::applyLabelFontSize() {
 			lblElement->setDispLabelFontSize(font_size);
 		}
 	}
+}
+
+void GoPanel::setIsGuiElementFirstRemoval(bool value) {
+	m_isGuiElementFirstRemoval = value;
+}
+bool GoPanel::getIsGuiElementFirstRemoval() {
+	return m_isGuiElementFirstRemoval;
 }

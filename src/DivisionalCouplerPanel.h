@@ -30,6 +30,7 @@ public:
 	~DivisionalCouplerPanel();
 
 	void setDivisionalCoupler(DivisionalCoupler *divCplr);
+	void setIsFirstRemoval(bool value);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -58,6 +59,7 @@ private:
 	DivisionalCoupler *m_divCplr;
 	wxArrayString functionChoices;
 	wxArrayString gcStateChoices;
+	bool m_isFirstRemoval;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);
