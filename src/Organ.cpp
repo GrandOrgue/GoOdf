@@ -1251,6 +1251,7 @@ void Organ::populateSetterElements() {
 		m_setterElements.Add(wxT("CrescendoCurrent"));
 		m_setterElements.Add(wxT("CrescendoLabel"));
 		m_setterElements.Add(wxT("Current"));
+		m_setterElements.Add(wxT("CurrFileName"));
 		m_setterElements.Add(wxT("Delete"));
 		m_setterElements.Add(wxT("Full"));
 		m_setterElements.Add(wxT("GC"));
@@ -1270,11 +1271,13 @@ void Organ::populateSetterElements() {
 		m_setterElements.Add(wxT("L7"));
 		m_setterElements.Add(wxT("L8"));
 		m_setterElements.Add(wxT("L9"));
+		m_setterElements.Add(wxT("LoadFile"));
 		// m_setterElements.Add(wxT("Label")); This would be for old style panels and is replaced by SequencerLabel now
 		m_setterElements.Add(wxT("M100"));
 		m_setterElements.Add(wxT("M10"));
 		m_setterElements.Add(wxT("M1"));
 		m_setterElements.Add(wxT("Next"));
+		m_setterElements.Add(wxT("NextFile"));
 		m_setterElements.Add(wxT("P1"));
 		m_setterElements.Add(wxT("P10"));
 		m_setterElements.Add(wxT("P100"));
@@ -1286,8 +1289,11 @@ void Organ::populateSetterElements() {
 		m_setterElements.Add(wxT("PitchP10"));
 		m_setterElements.Add(wxT("PitchP100"));
 		m_setterElements.Add(wxT("Prev"));
+		m_setterElements.Add(wxT("PrevFile"));
+		m_setterElements.Add(wxT("RefreshFiles"));
 		m_setterElements.Add(wxT("Regular"));
 		m_setterElements.Add(wxT("Save"));
+		m_setterElements.Add(wxT("SaveFile"));
 		m_setterElements.Add(wxT("Scope"));
 		m_setterElements.Add(wxT("Scoped"));
 		m_setterElements.Add(wxT("Set"));

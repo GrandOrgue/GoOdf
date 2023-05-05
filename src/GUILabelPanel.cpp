@@ -600,6 +600,10 @@ GUILabelPanel::~GUILabelPanel() {
 void GUILabelPanel::setLabel(GUILabel *label) {
 	m_label = label;
 	m_labelTextField->SetValue(m_label->getName());
+	if (m_label->getType().IsSameAs(wxT("Label")))
+		m_labelTextField->Enable();
+	else
+		m_labelTextField->Disable();
 	m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
 	if (m_label->getDispLabelColour()->getSelectedColorIndex() == 0) {
 		// it's a custom color
@@ -705,9 +709,6 @@ void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
 		}
 	}
-
-	// m_label->setDispLabelFont(m_labelFont->GetSelectedFont());
-	// m_label->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
 }
 
 void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {

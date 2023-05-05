@@ -138,8 +138,8 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 		NULL,
 		wxLB_EXTENDED
 	);
-	organElementsCol->Add(m_organElementsChoice, 1, wxALL, 5);
-	choiceRow->Add(organElementsCol, 1, wxGROW);
+	organElementsCol->Add(m_organElementsChoice, 1, wxEXPAND|wxALL, 5);
+	choiceRow->Add(organElementsCol, 1, wxEXPAND);
 
 	wxBoxSizer *setterElementsCol = new wxBoxSizer(wxVERTICAL);
 	wxStaticText *setterElementsText = new wxStaticText (
@@ -154,9 +154,9 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	setterElementsCol->Add(m_setterElementsChoice, 1, wxALL, 5);
-	choiceRow->Add(setterElementsCol, 1, wxGROW);
-	panelSizer->Add(choiceRow, 1, wxGROW);
+	setterElementsCol->Add(m_setterElementsChoice, 1, wxEXPAND|wxALL, 5);
+	choiceRow->Add(setterElementsCol, 1, wxEXPAND);
+	panelSizer->Add(choiceRow, 1, wxEXPAND);
 
 	wxBoxSizer *buttonRow = new wxBoxSizer(wxHORIZONTAL);
 	m_labelElementBtn = new wxButton(
@@ -218,6 +218,9 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 	combinationRow->Add(m_combinationNumberSpin, 0, wxEXPAND|wxALL, 5);
 	combinationRow->AddStretchSpacer();
 	panelSizer->Add (combinationRow, 0, wxGROW);
+
+	wxStaticLine *buttonDivider = new wxStaticLine(this);
+	panelSizer->Add(buttonDivider, 0, wxEXPAND);
 
 	wxBoxSizer *bottomRow = new wxBoxSizer(wxHORIZONTAL);
 	bottomRow->AddStretchSpacer();
@@ -460,6 +463,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 			wxString setterType = ::wxGetApp().m_frame->m_organ->getSetterElements().Item(selectedIndex);
 			// depending on setter type, different gui elements are needed
 			if (setterType == wxT("CrescendoLabel") ||
+				setterType == wxT("CurrFileName") ||
 				setterType == wxT("GeneralLabel") ||
 				setterType == wxT("PitchLabel") ||
 				setterType == wxT("SequencerLabel") ||
