@@ -41,6 +41,10 @@ void GUIDivisional::write(wxTextFile *outFile) {
 		wxString divId = wxT("Divisional=") + GOODF_functions::number_format(divisionalNbr);
 		outFile->AddLine(divId);
 	}
+	if (m_positionX != -1)
+		outFile->AddLine(wxT("PositionX=") + wxString::Format(wxT("%i"), m_positionX));
+	if (m_positionY != -1)
+		outFile->AddLine(wxT("PositionY=") + wxString::Format(wxT("%i"), m_positionY));
 	GUIButton::write(outFile);
 }
 
