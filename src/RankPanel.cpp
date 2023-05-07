@@ -31,6 +31,7 @@
 #include "AttackDialog.h"
 #include "StopPanel.h"
 #include "PipeBorrowingDialog.h"
+#include <algorithm>
 
 // Event table
 BEGIN_EVENT_TABLE(RankPanel, wxPanel)
@@ -658,9 +659,10 @@ void RankPanel::OnLogicalPipeSpin(wxSpinEvent& WXUNUSED(event)) {
 			while (pipesToRemove > 0) {
 				m_rank->removePipeBack();
 				m_pipeTreeCtrl->Delete(m_pipeTreeCtrl->GetLastChild(m_tree_rank_root));
-				m_rank->m_pipes.pop_back();
 				pipesToRemove--;
 			}
+			RebuildPipeTree();
+			UpdatePipeTree();
 		} else {
 			m_numberOfLogicalPipesSpin->SetValue(pipesAlreadyInRank);
 		}
@@ -1093,7 +1095,7 @@ void RankPanel::OnCreateReference() {
 			if (followingPipesFromDialog > 0) {
 				// limit of max pipes to reference can be either from how many were available in source
 				// or how many pipes we actually have in this target rank
-				pipesToRef += pipesAboveThis > followingPipesFromDialog ? followingPipesFromDialog : pipesAboveThis;
+				pipesToRef += std::min(followingPipesFromDialog, pipesAboveThis);
 			}
 			for (int i = 0; i < pipesToRef; i++) {
 				wxString refString = wxT("REF:") + GOODF_functions::number_format(manId) + wxT(":") + GOODF_functions::number_format(stopId) + wxT(":") + GOODF_functions::number_format(pipeId + i);
