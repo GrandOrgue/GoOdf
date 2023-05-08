@@ -41,6 +41,8 @@ private:
 	wxRadioButton *m_keyColorInvertedNo;
 	wxRadioButton *m_keyColorWoodYes;
 	wxRadioButton *m_keyColorWoodNo;
+	wxRadioButton *m_forceWriteWidthYes;
+	wxRadioButton *m_forceWriteWidthNo;
 	wxSpinCtrl *m_elementPosXSpin;
 	wxSpinCtrl *m_elementPosYSpin;
 	wxListBox *m_availableKeyTypes;
@@ -82,6 +84,7 @@ private:
 
 	void OnKeyColorInvertedRadio(wxCommandEvent& event);
 	void OnKeyColorWoodRadio(wxCommandEvent& event);
+	void OnForceWriteWidthRadio(wxCommandEvent& event);
 	void OnPositionXSpin(wxSpinEvent& event);
 	void OnPositionYSpin(wxSpinEvent& event);
 	void OnAvailableKeyTypesChoice(wxCommandEvent& event);

@@ -42,6 +42,7 @@ struct KEYTYPE {
 	int MouseRectHeight;
 	int BitmapWidth;
 	int BitmapHeight;
+	bool ForceWritingWidth;
 };
 
 class GUIManual : public GUIElement {

@@ -57,7 +57,7 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOn=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeMaskPath()));
 				if (key.ImageOff.getMask() != wxEmptyString)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOff=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
-				if (key.Width != key.BitmapWidth || keyNbrOverrideBaseKeyWidth(&key))
+				if (key.Width != key.BitmapWidth || keyNbrOverrideBaseKeyWidth(&key) || key.ForceWritingWidth)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Width=") + wxString::Format(wxT("%i"), key.Width));
 				if (key.Offset != 0)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Offset=") + wxString::Format(wxT("%i"), key.Offset));
@@ -80,7 +80,7 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(wxT("MaskOn_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOn.getRelativeMaskPath()));
 				if (key.ImageOff.getMask() != wxEmptyString)
 					outFile->AddLine(wxT("MaskOff_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
-				if (key.Width != key.BitmapWidth)
+				if (key.Width != key.BitmapWidth || key.ForceWritingWidth)
 					outFile->AddLine(wxT("Width_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.Width));
 				if (key.Offset != 0)
 					outFile->AddLine(wxT("Offset_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.Offset));
@@ -203,6 +203,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 			int cfgKeyWidth = static_cast<int>(cfg->ReadLong(keyWidth, -1));
 			if (cfgKeyWidth > -1 && cfgKeyWidth < 501) {
 				type->Width = cfgKeyWidth;
+				type->ForceWritingWidth = true;
 				keepKeyType = true;
 			} else {
 				type->Width = type->BitmapWidth;
@@ -281,6 +282,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 		int keyWidth = static_cast<int>(cfg->ReadLong(keyStr + wxT("Width"), -1));
 		if (keyWidth > -1 && keyWidth < 501) {
 			type->Width = keyWidth;
+			type->ForceWritingWidth = true;
 			keepKeyType = true;
 		} else {
 			type->Width = type->BitmapWidth;
@@ -421,6 +423,7 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.MouseRectHeight = typeHeight;
 	type.BitmapWidth = typeWidth;
 	type.BitmapHeight = typeHeight;
+	type.ForceWritingWidth = false;
 	m_keytypes.push_back(type);
 }
 

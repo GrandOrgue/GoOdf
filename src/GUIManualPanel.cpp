@@ -34,6 +34,8 @@ BEGIN_EVENT_TABLE(GUIManualPanel, wxPanel)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_COLOR_INVERTED_NO, GUIManualPanel::OnKeyColorInvertedRadio)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_COLOR_WOOD_YES, GUIManualPanel::OnKeyColorWoodRadio)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_COLOR_WOOD_NO, GUIManualPanel::OnKeyColorWoodRadio)
+	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_WRITE_WIDTH_YES, GUIManualPanel::OnForceWriteWidthRadio)
+	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_WRITE_WIDTH_NO, GUIManualPanel::OnForceWriteWidthRadio)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_X_SPIN, GUIManualPanel::OnPositionXSpin)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_Y_SPIN, GUIManualPanel::OnPositionYSpin)
 	EVT_LISTBOX(ID_GUIMANUALPANEL_KEY_TYPES_BOX, GUIManualPanel::OnAvailableKeyTypesChoice)
@@ -116,6 +118,31 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	m_keyColorWoodNo->SetValue(true);
 	firstRow->Add(m_keyColorWoodNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	firstRow->AddStretchSpacer();
+	wxStaticText *writeWidthText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Force writing width in odf: ")
+	);
+	firstRow->Add(writeWidthText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_forceWriteWidthYes = new wxRadioButton(
+		this,
+		ID_GUIMANUALPANEL_WRITE_WIDTH_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	firstRow->Add(m_forceWriteWidthYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_forceWriteWidthNo = new wxRadioButton(
+		this,
+		ID_GUIMANUALPANEL_WRITE_WIDTH_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_forceWriteWidthNo->SetValue(true);
+	firstRow->Add(m_forceWriteWidthNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
 
 	wxBoxSizer *positionRow = new wxBoxSizer(wxHORIZONTAL);
@@ -616,6 +643,9 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 		m_keyColorWoodYes->SetValue(true);
 	else
 		m_keyColorWoodNo->SetValue(true);
+	m_forceWriteWidthNo->SetValue(true);
+	m_forceWriteWidthYes->Disable();
+	m_forceWriteWidthNo->Disable();
 	m_elementPosXSpin->SetRange(-1, m_manual->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
 	m_elementPosYSpin->SetRange(-1, m_manual->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	m_elementPosXSpin->SetValue(m_manual->getPosX());
@@ -664,6 +694,20 @@ void GUIManualPanel::OnKeyColorWoodRadio(wxCommandEvent& event) {
 	} else {
 		m_manual->setDispKeyColurWooden(false);
 	}
+}
+
+void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
+	int selectedIndex = m_addedKeyTypes->GetSelection();
+	if (selectedIndex != wxNOT_FOUND) {
+		KEYTYPE *currentKey = m_manual->getKeytypeAt(selectedIndex);
+
+		if (event.GetId() == ID_GUIMANUALPANEL_WRITE_WIDTH_YES) {
+			currentKey->ForceWritingWidth = true;
+		} else {
+			currentKey->ForceWritingWidth = false;
+		}
+	}
+
 }
 
 void GUIManualPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1049,6 +1093,12 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 	int selectedIndex = m_addedKeyTypes->GetSelection();
 	if (selectedIndex != wxNOT_FOUND) {
 		KEYTYPE *currentKey = m_manual->getKeytypeAt(selectedIndex);
+		m_forceWriteWidthYes->Enable();
+		m_forceWriteWidthNo->Enable();
+		if (currentKey->ForceWritingWidth)
+			m_forceWriteWidthYes->SetValue(true);
+		else
+			m_forceWriteWidthNo->SetValue(true);
 		m_imageOnPathField->SetValue(currentKey->ImageOn.getRelativeImagePath());
 		if (m_imageOnPathField->GetValue() != wxEmptyString) {
 			m_addMaskOnBtn->Enable();
@@ -1097,6 +1147,9 @@ void GUIManualPanel::UpdateExistingSelectedKeyData() {
 			m_mouseRectHeightSpin->Disable();
 		}
 	} else {
+		m_forceWriteWidthNo->SetValue(true);
+		m_forceWriteWidthYes->Disable();
+		m_forceWriteWidthNo->Disable();
 		m_imageOnPathField->SetValue(wxEmptyString);
 		m_addImageOnBtn->Disable();
 		m_maskOnPathField->SetValue(wxEmptyString);
