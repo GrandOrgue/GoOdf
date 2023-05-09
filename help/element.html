@@ -95,14 +95,26 @@ are often used, perhaps 16 or 32.</p>
 <p>Manual GUI elements can be edited primarily to create custom
 manual GUI elements rather than using the images built into
 GrandOrgue. The manual GUI element editing window looks like this:</p>
-<p><img src="images/goodfhelp26_html_f7d19459420cb8b2.png" name="Image35" align="left" width="1260" height="934">
+<p><img src="images/goodfhelp26_html_f7d19459420cb8b2.png" name="Image35" align="left" width="1149" height="806">
 </img>
 </p>
 <p>Parameters are as follows:</p>
-<p><b>PositionX </b>(integer 0 - panel width, default: (-1)according
+<p><b>Key Colour Inverted </b>(Boolean, required) True means, the
+black keys are drawn in a light color while the white keys are drawn
+in a dark color. 
+</p>
+<p><b>Key Colour Wooden </b>(Boolean, default: false) True means,
+that a wood background is used for the keys. 
+</p>
+<p><b>Force writing width in odf</b> decides if the Width for a key should
+be written to the odf, even if by default it would not be. This can be useful
+for certain keyboard layouts that don't follow normal patterns. Also, if the
+key width value is specified in a read odf this value will be set to yes in 
+order to preserve the exact layout intended.</p>
+<p><b>PositionX </b>(integer 0 - panel width, default: (-1) according
 to layout model) Allow to override X position for manual. 
 </p>
-<p><b>PositionY </b>(integer 0 - panel height, default: (-1)according
+<p><b>PositionY </b>(integer 0 - panel height, default: (-1) according
 to layout model) Allow to override Y position for manual. 
 </p>
 <p>The Available keytypes are shown in two panels at the left. They
@@ -113,6 +125,11 @@ octave plus the beginning key (normally FirstC), and the last key
 custom keys are the same for each octave. Otherwise you can add up to
 display keys number of keys from the center panel if you have different
 images for each octave.</p>
+<p>The <b>Copy key attributes</b> button (will be enabled if an added key
+is chosen) makes it possible to copy all the properties of the currently
+selected key to other keys in the same manual and thus speed up the process
+to create the gui representation of the manual if many keys for instance
+share the same bitmaps and other properties.</p>
 <p><b>ImageOn</b> (string, default: implementation dependent bitmap)
 Bitmap for the specified key type, if the key is pressed. The bitmap
 may contain a mask. (one of these is needed for each of the User
@@ -135,7 +152,7 @@ User added keys.)</p>
 This value can be used to adjust the display of the current key, e.g.
 to place a sharp key overlapped with the previous key. (one of these
 is needed for each of the User added keys.)</p>
-<p><b>Yoffset </b>(integer 0 - 500, default: 0) This value is can be
+<p><b>Yoffset </b>(integer -500 - 500, default: 0) This value is can be
 used to adjust the Y coordinate of the current key. 
 </p>
 <p><b>MouseRectLeft </b>(integer 0 - key bitmap width - 1 , default:
@@ -149,13 +166,6 @@ bitmap width) width of the mouse rectangle
 </p>
 <p><b>MouseRectHeight </b>(integer 0 - key bitmap height, default:
 key bitmap height) height of the mouse rectangle 
-</p>
-<p><b>Key Colour Inverted </b>(Boolean, required) True means, the
-black keys are drawn in a light color while the white keys are drawn
-in a dark color. 
-</p>
-<p><b>Key Colour Wooden </b>(Boolean, default: false) True means,
-that a wood background is used for the keys. 
 </p>
 <p><b>FirstNote (MIDI nbr) </b>(integer 0 - 127, default:
 FirstAccessibleKeyMIDINoteNumber) Display the first key as the
@@ -175,7 +185,8 @@ key.
 </p>
 <p><b>Maps to front-end MIDI </b>contains the midi number of the
 displayed front-end GUI key. (Can be used for instance to force the
-display of the key as a sharp)
+display of the key as a sharp even when normal key layout would indicate
+that it should be displayed as a natural.)
 </p>
 <h3>Pistons, Drawstops (all kinds):</h3>
 <p>These use the same GUI element parameter window, so we can discuss
@@ -218,6 +229,24 @@ Otherwise ignored.
 <p><b>DispDrawstopCol </b>(drawstop column, default: 1) If displayed
 as drawstop, it contains the drawstop column according to the layout
 model. Otherwise ignored. 
+</p>
+
+<h3>Copy GUI Element properties:</h3>
+<p>Finally it's worth mentioning that it's possible to copy all properties
+from one GUI Element to other elements of the same type by right clicking on
+the source GUI Element that you wish to copy from. This brings up a dialog:</p>
+<p><img src="images/goodfhelp26_copy_gui_element_properties.png" align="left" width="1148" height="807">
+</img>
+</p>
+<p><b>Target panel</b> (Default to the same panel as the source element belongs to,
+but any other existing panel can be chosen) decides what elements are shown below as
+possible candidates to copy to.
+</p>
+<p>If there are matching types of elements on the panel, the listbox will be
+populated with possible targets. Multiple elements can be chosen.
+</p>
+<p>The copied attributes are: Font, Font size, Font color, (all types of) Images,
+Mouse and Text related properties. No positional properties will be copied.
 </p>
 </body>
 </html>

@@ -119,7 +119,7 @@ void CopyElementAttributesDialog::CreateControls() {
 		wxLB_EXTENDED
 	);
 	secondRow->Add(m_availableElements, 1, wxGROW|wxALL, 5);
-	mainSizer->Add(secondRow, 0, wxGROW|wxALL, 5);
+	mainSizer->Add(secondRow, 1, wxGROW|wxALL, 5);
 
 	wxStaticLine *bottomDivider = new wxStaticLine(this);
 	mainSizer->Add(bottomDivider, 0, wxEXPAND);
