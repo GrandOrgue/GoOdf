@@ -1163,13 +1163,13 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 }
 
 void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfEnclosures() < 50) {
+	if (m_organ->getNumberOfEnclosures() < 999) {
 		Enclosure newEnclosure;
 		m_organ->addEnclosure(newEnclosure);
 
 		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_enclosures, newEnclosure.getName()));
 	} else {
-		wxMessageDialog msg(this, wxT("Organ cannot have more than 50 enclosures!"), wxT("Too many enclosures"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 enclosures!"), wxT("Too many enclosures"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
 	}
 }

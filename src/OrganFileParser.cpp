@@ -223,7 +223,7 @@ void OrganFileParser::parseOrganSection() {
 
 	// parse enclosures
 	int nbrEnclosures = static_cast<int>(m_organFile->ReadLong("NumberOfEnclosures", 0));
-	if (nbrEnclosures > 0 && nbrEnclosures < 51) {
+	if (nbrEnclosures > 0 && nbrEnclosures < 1000) {
 		for (int i = 0; i < nbrEnclosures; i++) {
 			m_organFile->SetPath("/");
 			wxString enclosureGroupName = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
