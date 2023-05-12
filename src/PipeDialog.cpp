@@ -322,7 +322,7 @@ void PipeDialog::CreateControls() {
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		-1800,
-		1000,
+		1800,
 		0,
 		0.000001
 	);
