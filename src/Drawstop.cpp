@@ -42,7 +42,8 @@ void Drawstop::write(wxTextFile *outFile) {
 			// Only the first switch is relevant
 			outFile->AddLine(wxT("Function=") + function);
 			unsigned refIndex = ::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switches.front());
-			outFile->AddLine(wxT("Switch001=") +  wxString::Format(wxT("%u"), refIndex));
+			wxString formattedSwitch = GOODF_functions::number_format(refIndex);
+			outFile->AddLine(wxT("Switch001=") + formattedSwitch);
 		} else {
 			// The object can have multiple switches
 			outFile->AddLine(wxT("Function=") + function);
@@ -75,16 +76,21 @@ void Drawstop::write(wxTextFile *outFile) {
 void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 	Button::read(cfg, usingOldPanelFormat);
 	function = cfg->Read("Function", wxT("Input"));
-	// TODO: the switches should really only be available if the function is something else than "Input"
-	int nbrReferencedSwitches = static_cast<int>(cfg->ReadLong("SwitchCount", 0));
-	// handle switch references
-	for (int i = 0; i < nbrReferencedSwitches; i++) {
-		wxString swNbrId = wxT("Switch") + GOODF_functions::number_format(i + 1);
-		int swRefNbr = static_cast<int>(cfg->ReadLong(swNbrId, 0));
-		// if the number of the referenced switch is lower than the number of switches in the organ it's ok
-		if (swRefNbr > 0 && swRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
-			// but the index of the switch is actually one lower than in the organ file
-			addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+	if (!function.IsSameAs(wxT("Input"), false)) {
+		int nbrReferencedSwitches = static_cast<int>(cfg->ReadLong("SwitchCount", 0));
+		// For a NOT switch only one input can exist and it's not necessary to specify the SwitchCount
+		// but for reading we must set the count to one
+		if (function.IsSameAs(wxT("Not"), false))
+			nbrReferencedSwitches = 1;
+		// handle switch references
+		for (int i = 0; i < nbrReferencedSwitches; i++) {
+			wxString swNbrId = wxT("Switch") + GOODF_functions::number_format(i + 1);
+			int swRefNbr = static_cast<int>(cfg->ReadLong(swNbrId, 0));
+			// if the number of the referenced switch is lower than the number of switches in the organ it's ok
+			if (swRefNbr > 0 && swRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+				// but the index of the switch is actually one lower than in the organ file
+				addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+			}
 		}
 	}
 	wxString cfgBoolValue = cfg->Read("DefaultToEngaged", wxEmptyString);
