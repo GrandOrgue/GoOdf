@@ -614,6 +614,7 @@ void OrganFileParser::createGUIDivisional(GoPanel *targetPanel, Divisional *divi
 
 void OrganFileParser::createFromSetterElement(GoPanel *targetPanel, wxString elementType) {
 	if (elementType == wxT("CrescendoLabel") ||
+		elementType == wxT("CurrFileName") ||
 		elementType == wxT("GeneralLabel") ||
 		elementType == wxT("PitchLabel") ||
 		elementType == wxT("SequencerLabel") ||
@@ -647,7 +648,7 @@ void OrganFileParser::createFromSetterElement(GoPanel *targetPanel, wxString ele
 		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
 		e->setType(elementType);
 		e->setDisplayName(elementType);
-	} else if (elementType.StartsWith("General") && elementType.Len() == 9) {
+	} else if (elementType.StartsWith("General")) {
 		createGUIGeneral(targetPanel, NULL);
 		// the element type must be overridden
 		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);

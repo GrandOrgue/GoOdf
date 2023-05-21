@@ -512,6 +512,14 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				m_panel->addGuiElement(choice);
 				::wxGetApp().m_frame->AddGuiElementToTree(generalName);
 				m_combinationNumberSpin->SetValue(combinationNbr);
+			} else if (setterType == wxT("GeneralPrev") || setterType == wxT("GeneralNext")) {
+				GUIElement *choice = new GUIGeneral(NULL);
+				choice->setOwningPanel(m_panel);
+				choice->setType(setterType);
+				choice->setDisplayName(setterType);
+				choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
+				m_panel->addGuiElement(choice);
+				::wxGetApp().m_frame->AddGuiElementToTree(setterType);
 			} else if (setterType == wxT("SetterXXXDivisionalYYY")) {
 				// we need to get both manual (three X) and the divisional number YYY
 				int targetManual = 0;
