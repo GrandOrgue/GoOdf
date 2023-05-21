@@ -188,12 +188,26 @@ ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 
 	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
 	fifthRow->AddStretchSpacer();
+	wxStaticText *stopText = new wxStaticText(this, wxID_STATIC, wxT("Add"));
+	fifthRow->Add(stopText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_addStopSpin = new wxSpinCtrl(
+		this,
+		ID_ADD_STOP_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	fifthRow->Add(m_addStopSpin, 0, wxALL, 5);
 	m_addNewStop = new wxButton(
 		this,
 		ID_MANUAL_ADD_STOP_BTN,
-		wxT("Add new stop")
+		wxT("new stop(s)")
 	);
-	fifthRow->Add(m_addNewStop, 0, wxALIGN_CENTER|wxALL, 5);
+	fifthRow->Add(m_addNewStop, 0, wxALL, 5);
 	fifthRow->AddStretchSpacer();
 	m_addNewCoupler = new wxButton(
 		this,
@@ -384,6 +398,18 @@ void ManualPanel::setManual(Manual *manual) {
 	m_numberOfAccessibleKeysSpin->SetValue(m_manual->getNumberOfAccessibleKeys());
 	m_midiInputNumberSpin->SetValue(m_manual->getMidiInputNumber());
 
+	int totalNbrStops = ::wxGetApp().m_frame->m_organ->getNumberOfStops();
+	if (totalNbrStops < 999) {
+		m_addStopSpin->SetRange(1, 999 - totalNbrStops);
+		m_addStopSpin->SetValue(1);
+		m_addStopSpin->Enable();
+		m_addNewStop->Enable();
+	} else {
+		m_addStopSpin->SetRange(0, 1);
+		m_addStopSpin->SetValue(0);
+		m_addStopSpin->Disable();
+		m_addNewStop->Disable();
+	}
 	// Update/populate available tremulants
 	wxArrayString organTremulants;
 	if (!m_availableTremulants->IsEmpty())
@@ -478,15 +504,18 @@ void ManualPanel::OnMidiInputNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void ManualPanel::OnNewStopBtn(wxCommandEvent& WXUNUSED(event)) {
 	if (::wxGetApp().m_frame->m_organ->getNumberOfStops() < 999) {
-		Stop stop;
-		stop.setOwningManual(m_manual);
-		::wxGetApp().m_frame->m_organ->addStop(stop);
-		unsigned nbStops = ::wxGetApp().m_frame->m_organ->getNumberOfStops();
-		if (nbStops > 0)
-			m_manual->addStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(nbStops - 1));
+		int nbrToAdd = m_addStopSpin->GetValue();
+		for (int i = 0; i < nbrToAdd; i++) {
+			Stop stop;
+			stop.setOwningManual(m_manual);
+			::wxGetApp().m_frame->m_organ->addStop(stop);
+			unsigned nbStops = ::wxGetApp().m_frame->m_organ->getNumberOfStops();
+			if (nbStops > 0)
+				m_manual->addStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(nbStops - 1));
 
-		::wxGetApp().m_frame->AddStopItemToTree();
-
+			::wxGetApp().m_frame->AddStopItemToTree();
+		}
+		::wxGetApp().m_frame->SelectStopItemInTree(nbrToAdd);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 stops!"), wxT("Too many stops"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();

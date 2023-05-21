@@ -100,15 +100,47 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	addWindchest = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addWindSizer = new wxBoxSizer(wxVERTICAL);
-	wxButton *addWindchestBtn = new wxButton(addWindchest, ID_ADD_WINDCHEST_BTN, wxT("Create new windchest"));
-	addWindSizer->Add(addWindchestBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	wxBoxSizer *windchestRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *addWindText = new wxStaticText(addWindchest, wxID_STATIC, wxT("Add"));
+	windchestRow->Add(addWindText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	nbrWindchestSpin = new wxSpinCtrl(
+		addWindchest,
+		ID_ADD_WINDCHEST_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	windchestRow->Add(nbrWindchestSpin, 0, wxALL, 5);
+	addWindchestBtn = new wxButton(addWindchest, ID_ADD_WINDCHEST_BTN, wxT("new windchest(s)"));
+	windchestRow->Add(addWindchestBtn, 0, wxALL, 5);
+	addWindSizer->Add(windchestRow, 0);
 	addWindchest->SetSizer(addWindSizer);
 	addWindchest->Hide();
 
 	addEnclosure = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addEnclosureSizer = new wxBoxSizer(wxVERTICAL);
-	wxButton *addEnclosureBtn = new wxButton(addEnclosure, ID_ADD_ENCLOSURE_BTN, wxT("Create new enclosure"));
-	addEnclosureSizer->Add(addEnclosureBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	wxBoxSizer *enclosureRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *addEnclText = new wxStaticText(addEnclosure, wxID_STATIC, wxT("Add"));
+	enclosureRow->Add(addEnclText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	nbrEnclosureSpin = new wxSpinCtrl(
+		addEnclosure,
+		ID_ADD_ENCLOSURE_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	enclosureRow->Add(nbrEnclosureSpin, 0, wxALL, 5);
+	addEnclosureBtn = new wxButton(addEnclosure, ID_ADD_ENCLOSURE_BTN, wxT("new enclosure(s)"));
+	enclosureRow->Add(addEnclosureBtn, 0, wxALL, 5);
+	addEnclosureSizer->Add(enclosureRow, 0);
 	addEnclosure->SetSizer(addEnclosureSizer);
 	addEnclosure->Hide();
 
@@ -121,15 +153,47 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	addRank = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addRankSizer = new wxBoxSizer(wxVERTICAL);
-	wxButton *addRankBtn = new wxButton(addRank, ID_ADD_RANK_BTN, wxT("Create new rank"));
-	addRankSizer->Add(addRankBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	wxBoxSizer *rankRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *addRankText = new wxStaticText(addRank, wxID_STATIC, wxT("Add"));
+	rankRow->Add(addRankText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	nbrRankSpin = new wxSpinCtrl(
+		addRank,
+		ID_ADD_RANK_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	rankRow->Add(nbrRankSpin, 0, wxALL, 5);
+	addRankBtn = new wxButton(addRank, ID_ADD_RANK_BTN, wxT("new rank(s)"));
+	rankRow->Add(addRankBtn, 0, wxALL, 5);
+	addRankSizer->Add(rankRow, 0);
 	addRank->SetSizer(addRankSizer);
 	addRank->Hide();
 
 	addSwitch = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addSwitchSizer = new wxBoxSizer(wxVERTICAL);
-	wxButton *addSwitchBtn = new wxButton(addSwitch, ID_ADD_SWITCH_BTN, wxT("Create new switch"));
-	addSwitchSizer->Add(addSwitchBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	wxBoxSizer *switchRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *addSwitchText = new wxStaticText(addSwitch, wxID_STATIC, wxT("Add"));
+	switchRow->Add(addSwitchText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	nbrSwitchSpin = new wxSpinCtrl(
+		addSwitch,
+		ID_ADD_SWITCH_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	switchRow->Add(nbrSwitchSpin, 0, wxALL, 5);
+	addSwitchBtn = new wxButton(addSwitch, ID_ADD_SWITCH_BTN, wxT("new switch(es)"));
+	switchRow->Add(addSwitchBtn, 0, wxALL, 5);
+	addSwitchSizer->Add(switchRow, 0);
 	addSwitch->SetSizer(addSwitchSizer);
 	addSwitch->Hide();
 
@@ -464,6 +528,19 @@ void GOODFFrame::OnOrganTreeSelectionChanged(wxTreeEvent& event) {
 		}
 		if (selectedId == tree_windchestgrps) {
 			if (m_Splitter->GetWindow2() != addWindchest) {
+				int existingWindchests = m_organ->getNumberOfWindchestgroups();
+				if (existingWindchests < 999) {
+					int maxValue = 999 - existingWindchests;
+					nbrWindchestSpin->SetRange(1, maxValue);
+					nbrWindchestSpin->SetValue(1);
+					nbrWindchestSpin->Enable();
+					addWindchestBtn->Enable();
+				} else {
+					nbrWindchestSpin->SetRange(0, 1);
+					nbrWindchestSpin->SetValue(0);
+					nbrWindchestSpin->Disable();
+					addWindchestBtn->Disable();
+				}
 				int sashPos = m_Splitter->GetSashPosition();
 				m_Splitter->GetWindow2()->Hide();
 				m_Splitter->ReplaceWindow(m_Splitter->GetWindow2(), addWindchest);
@@ -475,6 +552,19 @@ void GOODFFrame::OnOrganTreeSelectionChanged(wxTreeEvent& event) {
 		}
 		if (selectedId == tree_enclosures) {
 			if (m_Splitter->GetWindow2() != addEnclosure) {
+				int existingEnclosures = m_organ->getNumberOfEnclosures();
+				if (existingEnclosures < 999) {
+					int maxValue = 999 - existingEnclosures;
+					nbrEnclosureSpin->SetRange(1, maxValue);
+					nbrEnclosureSpin->SetValue(1);
+					nbrEnclosureSpin->Enable();
+					addEnclosureBtn->Enable();
+				} else {
+					nbrEnclosureSpin->SetRange(0, 1);
+					nbrEnclosureSpin->SetValue(0);
+					nbrEnclosureSpin->Disable();
+					addEnclosureBtn->Disable();
+				}
 				int sashPos = m_Splitter->GetSashPosition();
 				m_Splitter->GetWindow2()->Hide();
 				m_Splitter->ReplaceWindow(m_Splitter->GetWindow2(), addEnclosure);
@@ -497,6 +587,19 @@ void GOODFFrame::OnOrganTreeSelectionChanged(wxTreeEvent& event) {
 		}
 		if (selectedId == tree_ranks) {
 			if (m_Splitter->GetWindow2() != addRank) {
+				int existingRanks = m_organ->getNumberOfRanks();
+				if (existingRanks < 999) {
+					int maxValue = 999 - existingRanks;
+					nbrRankSpin->SetRange(1, maxValue);
+					nbrRankSpin->SetValue(1);
+					nbrRankSpin->Enable();
+					addRankBtn->Enable();
+				} else {
+					nbrRankSpin->SetRange(0, 1);
+					nbrRankSpin->SetValue(0);
+					nbrRankSpin->Disable();
+					addRankBtn->Disable();
+				}
 				int sashPos = m_Splitter->GetSashPosition();
 				m_Splitter->GetWindow2()->Hide();
 				m_Splitter->ReplaceWindow(m_Splitter->GetWindow2(), addRank);
@@ -509,6 +612,19 @@ void GOODFFrame::OnOrganTreeSelectionChanged(wxTreeEvent& event) {
 
 		if (selectedId == tree_switches) {
 			if (m_Splitter->GetWindow2() != addSwitch) {
+				int existingSwitches = m_organ->getNumberOfSwitches();
+				if (existingSwitches < 999) {
+					int maxValue = 999 - existingSwitches;
+					nbrSwitchSpin->SetRange(1, maxValue);
+					nbrSwitchSpin->SetValue(1);
+					nbrSwitchSpin->Enable();
+					addSwitchBtn->Enable();
+				} else {
+					nbrSwitchSpin->SetRange(0, 1);
+					nbrSwitchSpin->SetValue(0);
+					nbrSwitchSpin->Disable();
+					addSwitchBtn->Disable();
+				}
 				int sashPos = m_Splitter->GetSashPosition();
 				m_Splitter->GetWindow2()->Hide();
 				m_Splitter->ReplaceWindow(m_Splitter->GetWindow2(), addSwitch);
@@ -1164,10 +1280,17 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 
 void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfEnclosures() < 999) {
-		Enclosure newEnclosure;
-		m_organ->addEnclosure(newEnclosure);
-
-		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_enclosures, newEnclosure.getName()));
+		int nbrToAdd = nbrEnclosureSpin->GetValue();
+		wxTreeItemId firstAdded;
+		for (int i = 0; i < nbrToAdd; i++) {
+			Enclosure newEnclosure;
+			m_organ->addEnclosure(newEnclosure);
+			if (i == 0)
+				firstAdded = m_organTreeCtrl->AppendItem(tree_enclosures, newEnclosure.getName());
+			else
+				m_organTreeCtrl->AppendItem(tree_enclosures, newEnclosure.getName());
+		}
+		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 enclosures!"), wxT("Too many enclosures"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
@@ -1539,9 +1662,27 @@ void GOODFFrame::AddStopItemToTree() {
 	wxTreeItemId divisionalChild = m_organTreeCtrl->GetLastChild(selectedManual);
 	wxTreeItemId couplerChild = m_organTreeCtrl->GetPrevSibling(divisionalChild);
 	wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
-	wxTreeItemId newStop = m_organTreeCtrl->AppendItem(stopChild, wxT("New Stop"));
+	m_organTreeCtrl->AppendItem(stopChild, wxT("New Stop"));
+}
+
+void GOODFFrame::SelectStopItemInTree(int nbrAdded) {
+	wxTreeItemId selectedManual = m_organTreeCtrl->GetSelection();
+	wxTreeItemId divisionalChild = m_organTreeCtrl->GetLastChild(selectedManual);
+	wxTreeItemId couplerChild = m_organTreeCtrl->GetPrevSibling(divisionalChild);
+	wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
+	wxTreeItemId lastStopInManual = m_organTreeCtrl->GetLastChild(stopChild);
+	wxTreeItemId stopToSelect;
+	if (nbrAdded > 1) {
+		wxTreeItemId currentItem = lastStopInManual;
+		for (int i = 1; i < nbrAdded; i++) {
+			stopToSelect = m_organTreeCtrl->GetPrevSibling(currentItem);
+			currentItem = stopToSelect;
+		}
+	} else {
+		stopToSelect = lastStopInManual;
+	}
 	m_organTreeCtrl->ExpandAllChildren(selectedManual);
-	m_organTreeCtrl->SelectItem(newStop);
+	m_organTreeCtrl->SelectItem(stopToSelect);
 }
 
 void GOODFFrame::AddCouplerItemToTree() {
@@ -1565,10 +1706,17 @@ void GOODFFrame::AddDivisionalItemToTree() {
 
 void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfWindchestgroups() < 999) {
-		Windchestgroup newWindchest;
-		m_organ->addWindchestgroup(newWindchest);
-
-		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName()));
+		int nbrToAdd = nbrWindchestSpin->GetValue();
+		wxTreeItemId firstAdded;
+		for (int i = 0; i < nbrToAdd; i++) {
+			Windchestgroup newWindchest;
+			m_organ->addWindchestgroup(newWindchest);
+			if (i == 0)
+				firstAdded = m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName());
+			else
+				m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName());
+		}
+		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 windchests!"), wxT("Too many windchests"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
@@ -1577,10 +1725,17 @@ void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
 
 void GOODFFrame::OnAddNewSwitch(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfSwitches() < 999) {
-		GoSwitch newSwitch;
-		m_organ->addSwitch(newSwitch);
-
-		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_switches, newSwitch.getName()));
+		int nbrToAdd = nbrSwitchSpin->GetValue();
+		wxTreeItemId firstAdded;
+		for (int i = 0; i < nbrToAdd; i++) {
+			GoSwitch newSwitch;
+			m_organ->addSwitch(newSwitch);
+			if (i == 0)
+				firstAdded = m_organTreeCtrl->AppendItem(tree_switches, newSwitch.getName());
+			else
+				m_organTreeCtrl->AppendItem(tree_switches, newSwitch.getName());
+		}
+		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 switches!"), wxT("Too many switches"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
@@ -1589,9 +1744,17 @@ void GOODFFrame::OnAddNewSwitch(wxCommandEvent& WXUNUSED(event)) {
 
 void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfRanks() < 999) {
-		Rank newRank;
-		m_organ->addRank(newRank);
-		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName()));
+		int nbrToAdd = nbrRankSpin->GetValue();
+		wxTreeItemId firstAdded;
+		for (int i = 0; i < nbrToAdd; i++) {
+			Rank newRank;
+			m_organ->addRank(newRank);
+			if (i == 0)
+				firstAdded = m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName());
+			else
+				m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName());
+		}
+		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 ranks!"), wxT("Too many ranks"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();

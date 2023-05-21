@@ -45,6 +45,7 @@ private:
 	wxSpinCtrl *m_numberOfAccessibleKeysSpin;
 	wxSpinCtrl *m_midiInputNumberSpin;
 	wxButton *m_addNewStop;
+	wxSpinCtrl *m_addStopSpin;
 	wxButton *m_addNewCoupler;
 	wxButton *m_addNewDivisional;
 	wxListBox *m_availableTremulants;

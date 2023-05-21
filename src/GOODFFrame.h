@@ -26,6 +26,7 @@
 #include "OrganPanel.h"
 #include <wx/treectrl.h>
 #include <wx/splitter.h>
+#include <wx/spinctrl.h>
 #include "EnclosurePanel.h"
 #include "TremulantPanel.h"
 #include "WindchestgroupPanel.h"
@@ -61,6 +62,7 @@ public:
 	void RemoveCurrentItemFromOrgan();
 
 	void AddStopItemToTree();
+	void SelectStopItemInTree(int nbrAdded);
 	void AddCouplerItemToTree();
 	void AddDivisionalItemToTree();
 	void AddImageItemToTree();
@@ -86,6 +88,14 @@ private:
 	wxPanel *addDivisionalCoupler;
 	wxPanel *addGeneral;
 	wxPanel *addPanel;
+	wxButton *addWindchestBtn;
+	wxButton *addEnclosureBtn;
+	wxButton *addRankBtn;
+	wxButton *addSwitchBtn;
+	wxSpinCtrl *nbrWindchestSpin;
+	wxSpinCtrl *nbrEnclosureSpin;
+	wxSpinCtrl *nbrRankSpin;
+	wxSpinCtrl *nbrSwitchSpin;
 	wxTreeCtrl *m_organTreeCtrl;
 	wxTreeItemId tree_organ;
 	wxTreeItemId tree_manuals;
