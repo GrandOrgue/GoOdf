@@ -77,6 +77,8 @@ private:
 	wxArrayString availableWindchests;
 	wxTreeItemId m_tree_rank_root;
 	bool m_isFirstRemoval;
+	int m_lastReferencedManual;
+	int m_lastReferencedStop;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnWindchestChoice(wxCommandEvent& event);

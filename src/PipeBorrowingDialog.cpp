@@ -235,6 +235,25 @@ bool PipeBorrowingDialog::IsSelectionOk() {
 	return m_manIsOk && m_stopIsOk;
 }
 
+void PipeBorrowingDialog::SetDefaultSelections(int manIdx, int stopIdx, int pipeNbr) {
+	if (manIdx < (int) m_manualChoice->GetCount()) {
+		m_selectedManualIndex = manIdx;
+		m_manualChoice->SetSelection(m_selectedManualIndex);
+		UpdateStopChoice();
+
+		if (stopIdx < (int) m_stopChoice->GetCount()) {
+			m_selectedStopIndex = stopIdx;
+			m_stopChoice->SetSelection(m_selectedStopIndex);
+			UpdatePipeSpin();
+
+			if (pipeNbr > 0 && pipeNbr <= m_pipeSpin->GetMax()) {
+				m_selectedPipeNbr = pipeNbr;
+				m_pipeSpin->SetValue(m_selectedPipeNbr);
+			}
+		}
+	}
+}
+
 void PipeBorrowingDialog::OnManualChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_selectedManualIndex = m_manualChoice->GetSelection();
 	UpdateStopChoice();

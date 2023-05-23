@@ -65,6 +65,8 @@ END_EVENT_TABLE()
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	m_rank = NULL;
 	m_isFirstRemoval = true;
+	m_lastReferencedManual = -1;
+	m_lastReferencedStop = -1;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -525,6 +527,8 @@ RankPanel::~RankPanel() {
 
 void RankPanel::setRank(Rank *rank) {
 	m_rank = rank;
+	m_lastReferencedManual = -1;
+	m_lastReferencedStop = -1;
 
 	// update/populate available windchests
 	if (!availableWindchests.IsEmpty())
@@ -1083,12 +1087,18 @@ void RankPanel::OnCreateReference() {
 	int pipesAboveThis = highestPipeIdx - pipeIndex;
 	PipeBorrowingDialog dlg(this);
 
+	if (m_lastReferencedManual > -1 && m_lastReferencedStop > -1) {
+		dlg.SetDefaultSelections(m_lastReferencedManual, m_lastReferencedStop, pipeIndex + 1);
+	}
+
 	if (dlg.ShowModal() == wxID_OK) {
 		if(dlg.IsSelectionOk()) {
 			int manId = dlg.GetSelectedManual();
+			m_lastReferencedManual = manId;
 			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
 				manId += 1;
-			int stopId = dlg.GetSelectedStop() + 1;
+			m_lastReferencedStop = dlg.GetSelectedStop();
+			int stopId = m_lastReferencedStop + 1;
 			int pipeId = dlg.GetSelectedPipe();
 			int pipesToRef = 1; // At least one REF should be made
 			int followingPipesFromDialog = dlg.GetFollowingPipes();

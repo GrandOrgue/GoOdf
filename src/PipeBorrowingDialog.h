@@ -64,6 +64,7 @@ public:
 	int GetSelectedPipe();
 	int GetFollowingPipes();
 	bool IsSelectionOk();
+	void SetDefaultSelections(int manIdx, int stopIdx, int pipeNbr);
 
 private:
 	int m_selectedManualIndex;
