@@ -61,7 +61,7 @@ GUIButton::~GUIButton() {
 }
 
 void GUIButton::write(wxTextFile *outFile) {
-	if (m_type.Contains(wxT("Divisional")) || m_type.Contains(wxT("General")) || m_type.IsSameAs(wxT("ReversiblePiston"))) {
+	if (m_type.Contains(wxT("Divisional")) || (m_type.Contains(wxT("General")) && !m_type.IsSameAs(wxT("GeneralPrev")) && !m_type.IsSameAs(wxT("GeneralNext"))) || m_type.IsSameAs(wxT("ReversiblePiston"))) {
 		if (!m_displayAsPiston)
 			outFile->AddLine(wxT("DisplayAsPiston=N"));
 	} else {

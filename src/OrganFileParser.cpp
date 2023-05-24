@@ -648,7 +648,7 @@ void OrganFileParser::createFromSetterElement(GoPanel *targetPanel, wxString ele
 		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
 		e->setType(elementType);
 		e->setDisplayName(elementType);
-	} else if (elementType.StartsWith("General")) {
+	} else if (elementType.StartsWith("General") && elementType.Len() == 9) {
 		createGUIGeneral(targetPanel, NULL);
 		// the element type must be overridden
 		GUIElement *e = targetPanel->getGuiElementAt(targetPanel->getNumberOfGuiElements() - 1);
