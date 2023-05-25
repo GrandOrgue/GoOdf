@@ -32,6 +32,7 @@
 #include "DivisionalCoupler.h"
 #include "ReversiblePiston.h"
 #include "General.h"
+#include "GUIManual.h"
 
 class GoPanel {
 public:
@@ -86,6 +87,7 @@ public:
 	void applyLabelFontSize();
 	void setIsGuiElementFirstRemoval(bool value);
 	bool getIsGuiElementFirstRemoval();
+	bool getIsGuiManualTheFirst(GUIManual *manual);
 
 private:
 	wxString m_name;

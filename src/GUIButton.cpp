@@ -29,7 +29,7 @@ GUIButton::GUIButton() : GUIElement() {
 	m_dispLabelFont = wxFont(wxFontInfo(7).FaceName(wxT("Arial")));
 	m_dispLabelText = wxEmptyString; // (string, default: Name of the button)
 	m_dispKeyLabelOnLeft = true; // (boolean, default: true)
-	m_dispImageNum = 1; // (integer 1- type dependent, default: see below) Builtin bitmap set to use. GrandOrgue has 6 for drawstops and 5 for pistons. The default is 3 (piston) or 4 (drawstops) for read-only buttons, otherwise the default is 1.
+	m_dispImageNum = 1; // (integer 1- type dependent, default: see below) Builtin bitmap set to use. GrandOrgue has 7 for drawstops and 5 for pistons. The default is 3 (piston) or 4 (drawstops) for read-only buttons, otherwise the default is 1.
 	m_dispButtonRow = 1; // (button row, default: 1)
 	m_dispButtonCol = 1; // (button column, default: 1)
 	m_dispDrawstopRow = 1; // (drawstop row, default: 1)

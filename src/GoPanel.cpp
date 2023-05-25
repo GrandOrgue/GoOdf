@@ -645,3 +645,19 @@ void GoPanel::setIsGuiElementFirstRemoval(bool value) {
 bool GoPanel::getIsGuiElementFirstRemoval() {
 	return m_isGuiElementFirstRemoval;
 }
+
+bool GoPanel::getIsGuiManualTheFirst(GUIManual *manual) {
+	bool isFirst = false;
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Manual")) {
+			GUIManual *man = dynamic_cast<GUIManual*>(e);
+			if (man) {
+				if (man == manual) {
+					isFirst = true;
+				}
+			}
+			break;
+		}
+	}
+	return isFirst;
+}

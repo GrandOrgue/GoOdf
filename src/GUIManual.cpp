@@ -29,6 +29,7 @@ GUIManual::GUIManual(Manual *manual) : GUIElement(), m_manual(manual) {
 	m_dispKeyColourWooden = false;
 	m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
 	m_displayKeys = m_manual->getNumberOfAccessibleKeys();
+	m_dispImageNum = 1;
 	populateKeyTypes();
 	populateKeyNumbers();
 	setupDefaultDisplayKeys();
@@ -93,6 +94,8 @@ void GUIManual::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("DispKeyColourInverted=Y"));
 	if (m_dispKeyColourWooden)
 		outFile->AddLine(wxT("DispKeyColourWooden=Y"));
+	if (m_dispImageNum != 1)
+		outFile->AddLine(wxT("DispImageNum=") + wxString::Format(wxT("%i"), m_dispImageNum));
 	if (m_displayFirstNote != m_manual->getFirstAccessibleKeyMIDINoteNumber())
 		outFile->AddLine(wxT("DisplayFirstNote=") + wxString::Format(wxT("%i"), m_displayFirstNote));
 	if (m_displayKeys != m_manual->getNumberOfAccessibleKeys()) {
@@ -330,6 +333,10 @@ void GUIManual::read(wxFileConfig *cfg) {
 	m_dispKeyColourInverted = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	cfgBoolValue = cfg->Read("DispKeyColourWooden", wxEmptyString);
 	m_dispKeyColourWooden = GOODF_functions::parseBoolean(cfgBoolValue, false);
+	int dispImageNum = static_cast<int>(cfg->ReadLong("DispImageNum", 1));
+	if (dispImageNum > 0 && dispImageNum < 3) {
+		setDispImageNum(dispImageNum);
+	}
 	int dispFirstNote = static_cast<int>(cfg->ReadLong("DisplayFirstNote", m_manual->getFirstAccessibleKeyMIDINoteNumber()));
 	if (dispFirstNote >= 0 && dispFirstNote < 128) {
 		m_displayFirstNote = dispFirstNote;
@@ -658,4 +665,12 @@ void GUIManual::setupDefaultDisplayKeys() {
 
 int GUIManual::getIndexOfKeyNumber(wxString keytype) {
 	return m_availableKeynumbers.Index(keytype);
+}
+
+int GUIManual::getDispImageNum() {
+	return m_dispImageNum;
+}
+
+void GUIManual::setDispImageNum(int nbr) {
+	m_dispImageNum = nbr;
 }

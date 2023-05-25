@@ -36,6 +36,7 @@ BEGIN_EVENT_TABLE(GUIManualPanel, wxPanel)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_COLOR_WOOD_NO, GUIManualPanel::OnKeyColorWoodRadio)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_WRITE_WIDTH_YES, GUIManualPanel::OnForceWriteWidthRadio)
 	EVT_RADIOBUTTON(ID_GUIMANUALPANEL_WRITE_WIDTH_NO, GUIManualPanel::OnForceWriteWidthRadio)
+	EVT_COMBOBOX(ID_GUIMANUALPANEL_IMAGE_NBR_BOX, GUIManualPanel::OnImageNumberChoice)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_X_SPIN, GUIManualPanel::OnPositionXSpin)
 	EVT_SPINCTRL(ID_GUIELEMENT_POS_Y_SPIN, GUIManualPanel::OnPositionYSpin)
 	EVT_LISTBOX(ID_GUIMANUALPANEL_KEY_TYPES_BOX, GUIManualPanel::OnAvailableKeyTypesChoice)
@@ -146,6 +147,22 @@ GUIManualPanel::GUIManualPanel(wxWindow *parent) : wxPanel(parent) {
 	panelSizer->Add(firstRow, 0, wxGROW);
 
 	wxBoxSizer *positionRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *imageNbrText = new wxStaticText(
+		this,
+		wxID_STATIC,
+		wxT("DispImageNum: ")
+	);
+	positionRow->Add(imageNbrText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_dispImageNbrBox = new wxBitmapComboBox(
+		this,
+		ID_GUIMANUALPANEL_IMAGE_NBR_BOX
+	);
+	for (unsigned i = 0; i < ::wxGetApp().m_defaultManualBitmaps.size(); i++) {
+		wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_defaultManualBitmaps[i]);
+	}
+	positionRow->Add(m_dispImageNbrBox, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	positionRow->AddStretchSpacer();
 	wxStaticText *posXText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -678,6 +695,7 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 	m_displayKeysSpin->SetValue(m_manual->getNumberOfDisplayKeys());
 	m_firstNoteSpin->SetValue(m_manual->getDisplayFirstNote());
 	SetupKeyChoiceAndMapping();
+	SetupImageNbrBoxContent();
 }
 
 void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
@@ -686,6 +704,7 @@ void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
 	} else {
 		m_manual->setDispKeyColourInverted(false);
 	}
+	SetupImageNbrBoxContent();
 }
 
 void GUIManualPanel::OnKeyColorWoodRadio(wxCommandEvent& event) {
@@ -694,6 +713,7 @@ void GUIManualPanel::OnKeyColorWoodRadio(wxCommandEvent& event) {
 	} else {
 		m_manual->setDispKeyColurWooden(false);
 	}
+	SetupImageNbrBoxContent();
 }
 
 void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
@@ -707,7 +727,10 @@ void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
 			currentKey->ForceWritingWidth = false;
 		}
 	}
+}
 
+void GUIManualPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
+	m_manual->setDispImageNum(m_dispImageNbrBox->GetSelection() + 1);
 }
 
 void GUIManualPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1202,4 +1225,53 @@ void GUIManualPanel::UpdateAddedKeyTypes() {
 	}
 	if (!keys.IsEmpty())
 		m_addedKeyTypes->InsertItems(keys, 0);
+}
+
+void GUIManualPanel::SetupImageNbrBoxContent() {
+	if (m_manual->getOwningPanel()->getHasPedals() && m_manual->getOwningPanel()->getIsGuiManualTheFirst(m_manual)) {
+		// this manual is displayed as a pedal
+		m_dispImageNbrBox->Clear();
+		if (!m_manual->getDispKeyColourInverted()) {
+			// this is the default display, which also is the same for wooden
+			for (unsigned i = 0; i < ::wxGetApp().m_defaultPedalBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_defaultPedalBitmaps[i]);
+			}
+		} else {
+			// this is an inverted display, which also is the same for inverted wooden
+			for (unsigned i = 0; i < ::wxGetApp().m_invertedPedalBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_invertedPedalBitmaps[i]);
+			}
+		}
+	} else {
+		// this manual is displayed as a manual
+		m_dispImageNbrBox->Clear();
+		if (!m_manual->getDispKeyColourInverted() && !m_manual->getDispKeyColourWooden()) {
+			// this is the default display
+			for (unsigned i = 0; i < ::wxGetApp().m_defaultManualBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_defaultManualBitmaps[i]);
+			}
+		} else if (m_manual->getDispKeyColourInverted() && !m_manual->getDispKeyColourWooden()) {
+			// this is a normal inverted display
+			for (unsigned i = 0; i < ::wxGetApp().m_invertedManualBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_invertedManualBitmaps[i]);
+			}
+		} else if (!m_manual->getDispKeyColourInverted() && m_manual->getDispKeyColourWooden()) {
+			// this is a wooden display
+			for (unsigned i = 0; i < ::wxGetApp().m_woodenManualBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_woodenManualBitmaps[i]);
+			}
+		} else if (m_manual->getDispKeyColourInverted() && m_manual->getDispKeyColourWooden()) {
+			// this is an inverted wooden display
+			for (unsigned i = 0; i < ::wxGetApp().m_invertedWoodenManualBitmaps.size(); i++) {
+				wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
+				m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_invertedWoodenManualBitmaps[i]);
+			}
+		}
+	}
+	m_dispImageNbrBox->SetSelection(m_manual->getDispImageNum() - 1);
 }

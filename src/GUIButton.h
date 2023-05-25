@@ -109,7 +109,7 @@ protected:
 	wxFont m_dispLabelFont; // this takes care of m_dispLabelFontName and point size input
 	wxString m_dispLabelText; // (string, default: Name of the button)
 	bool m_dispKeyLabelOnLeft; // (boolean, default: true)
-	int m_dispImageNum; // (integer 1- type dependent, default: see below) Builtin bitmap set to use. GrandOrgue has 6 for drawstops and 5 for pistons. The default is 3 (piston) or 4 (drawstops) for read-only buttons, otherwise the default is 1.
+	int m_dispImageNum; // (integer 1- type dependent, default: see below) Builtin bitmap set to use. GrandOrgue has 7 for drawstops and 5 for pistons. The default is 3 (piston) or 4 (drawstops) for read-only buttons, otherwise the default is 1.
 	int m_dispButtonRow; // (button row, default: 1)
 	int m_dispButtonCol; // (button column, default: 1)
 	int m_dispDrawstopRow; // (drawstop row, default: 1)

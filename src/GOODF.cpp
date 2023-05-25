@@ -72,6 +72,7 @@ bool GOODF::OnInit() {
 	wxBitmap drawstop4 = wxBITMAP_PNG_FROM_DATA(drawstop04off);
 	wxBitmap drawstop5 = wxBITMAP_PNG_FROM_DATA(drawstop05off);
 	wxBitmap drawstop6 = wxBITMAP_PNG_FROM_DATA(drawstop06off);
+	wxBitmap drawstop7 = wxBITMAP_PNG_FROM_DATA(drawstop07off);
 	wxImage drawstopImage = drawstop1.ConvertToImage();
 	drawstop1 = wxBitmap(drawstopImage.Scale(32, 32));
 	drawstopImage = drawstop2.ConvertToImage();
@@ -84,6 +85,8 @@ bool GOODF::OnInit() {
 	drawstop5 = wxBitmap(drawstopImage.Scale(32, 32));
 	drawstopImage = drawstop6.ConvertToImage();
 	drawstop6 = wxBitmap(drawstopImage.Scale(32, 32));
+	drawstopImage = drawstop7.ConvertToImage();
+	drawstop7 = wxBitmap(drawstopImage.Scale(32, 32));
 
 	m_drawstopBitmaps.push_back(drawstop1);
 	m_drawstopBitmaps.push_back(drawstop2);
@@ -91,6 +94,7 @@ bool GOODF::OnInit() {
 	m_drawstopBitmaps.push_back(drawstop4);
 	m_drawstopBitmaps.push_back(drawstop5);
 	m_drawstopBitmaps.push_back(drawstop6);
+	m_drawstopBitmaps.push_back(drawstop7);
 
 	wxBitmap piston1 = wxBITMAP_PNG_FROM_DATA(piston01off);
 	wxBitmap piston2 = wxBITMAP_PNG_FROM_DATA(piston02off);
@@ -149,6 +153,36 @@ bool GOODF::OnInit() {
 	m_labelBitmaps.push_back(label13);
 	m_labelBitmaps.push_back(label14);
 	m_labelBitmaps.push_back(label15);
+
+	wxBitmap defaultManual1 = wxBITMAP_PNG_FROM_DATA(ManualDefaultComposite01);
+	wxBitmap defaultManual2 = wxBITMAP_PNG_FROM_DATA(ManualDefaultComposite02);
+	m_defaultManualBitmaps.push_back(defaultManual1);
+	m_defaultManualBitmaps.push_back(defaultManual2);
+
+	wxBitmap invertedManual1 = wxBITMAP_PNG_FROM_DATA(ManualInvertedComposite01);
+	wxBitmap invertedManual2 = wxBITMAP_PNG_FROM_DATA(ManualInvertedComposite02);
+	m_invertedManualBitmaps.push_back(invertedManual1);
+	m_invertedManualBitmaps.push_back(invertedManual2);
+
+	wxBitmap woodenManual1 = wxBITMAP_PNG_FROM_DATA(ManualWoodenComposite01);
+	wxBitmap woodenManual2 = wxBITMAP_PNG_FROM_DATA(ManualWoodenComposite02);
+	m_woodenManualBitmaps.push_back(woodenManual1);
+	m_woodenManualBitmaps.push_back(woodenManual2);
+
+	wxBitmap invertedWoodenManual1 = wxBITMAP_PNG_FROM_DATA(ManualInvertedWoodenComposite01);
+	wxBitmap invertedWoodenManual2 = wxBITMAP_PNG_FROM_DATA(ManualInvertedWoodenComposite02);
+	m_invertedWoodenManualBitmaps.push_back(invertedWoodenManual1);
+	m_invertedWoodenManualBitmaps.push_back(invertedWoodenManual2);
+
+	wxBitmap defaultPedal1 = wxBITMAP_PNG_FROM_DATA(PedalDefaultComposite01);
+	wxBitmap defaultPedal2 = wxBITMAP_PNG_FROM_DATA(PedalDefaultComposite02);
+	m_defaultPedalBitmaps.push_back(defaultPedal1);
+	m_defaultPedalBitmaps.push_back(defaultPedal2);
+
+	wxBitmap invertedPedal1 = wxBITMAP_PNG_FROM_DATA(PedalInvertedComposite01);
+	wxBitmap invertedPedal2 = wxBITMAP_PNG_FROM_DATA(PedalInvertedComposite02);
+	m_invertedPedalBitmaps.push_back(invertedPedal1);
+	m_invertedPedalBitmaps.push_back(invertedPedal2);
 
 	// Show the frame
 	m_frame->Show(true);

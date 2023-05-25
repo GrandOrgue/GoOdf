@@ -74,6 +74,8 @@ public:
 	std::pair<int, int>* getDisplayKeyAt(unsigned index);
 	void setupDefaultDisplayKeys();
 	int getIndexOfKeyNumber(wxString keytype);
+	int getDispImageNum();
+	void setDispImageNum(int nbr);
 
 private:
 	Manual *m_manual;
@@ -92,6 +94,7 @@ private:
 		first = DisplayKey999 (integer 0 - 127, default: FirstAccessibleKeyMIDINoteNumber + 999) 999 is in the range 1 - DisplayKeys
 		second = DisplayKey999Note (integer 0 - 127, default: FirstAccessibleKeyMIDINoteNumber + 999)
 	*/
+	int m_dispImageNum;
 
 	void validateKeyTypes();
 	void populateKeyTypes();

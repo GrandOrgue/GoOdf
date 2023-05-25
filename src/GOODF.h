@@ -36,6 +36,12 @@ public:
 	std::vector<wxBitmap> m_drawstopBitmaps;
 	std::vector<wxBitmap> m_enclosureStyleBitmaps;
 	std::vector<wxBitmap> m_labelBitmaps;
+	std::vector<wxBitmap> m_defaultManualBitmaps;
+	std::vector<wxBitmap> m_invertedManualBitmaps;
+	std::vector<wxBitmap> m_woodenManualBitmaps;
+	std::vector<wxBitmap> m_invertedWoodenManualBitmaps;
+	std::vector<wxBitmap> m_defaultPedalBitmaps;
+	std::vector<wxBitmap> m_invertedPedalBitmaps;
 	wxHtmlHelpController *m_helpController;
 };
 

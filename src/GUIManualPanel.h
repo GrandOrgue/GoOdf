@@ -43,6 +43,7 @@ private:
 	wxRadioButton *m_keyColorWoodNo;
 	wxRadioButton *m_forceWriteWidthYes;
 	wxRadioButton *m_forceWriteWidthNo;
+	wxBitmapComboBox *m_dispImageNbrBox; // this should be filled with different images depending on the inverted and wooden booleans
 	wxSpinCtrl *m_elementPosXSpin;
 	wxSpinCtrl *m_elementPosYSpin;
 	wxListBox *m_availableKeyTypes;
@@ -85,6 +86,7 @@ private:
 	void OnKeyColorInvertedRadio(wxCommandEvent& event);
 	void OnKeyColorWoodRadio(wxCommandEvent& event);
 	void OnForceWriteWidthRadio(wxCommandEvent& event);
+	void OnImageNumberChoice(wxCommandEvent& event);
 	void OnPositionXSpin(wxSpinEvent& event);
 	void OnPositionYSpin(wxSpinEvent& event);
 	void OnAvailableKeyTypesChoice(wxCommandEvent& event);
@@ -118,6 +120,7 @@ private:
 	void UpdateExistingSelectedKeyData();
 	void SetupKeyChoiceAndMapping();
 	void UpdateAddedKeyTypes();
+	void SetupImageNbrBoxContent();
 };
 
 #endif
