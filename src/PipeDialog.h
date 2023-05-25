@@ -78,6 +78,7 @@ private:
 	wxRadioButton *m_isPercussiveYes;
 	wxRadioButton *m_isPercussiveNo;
 	wxSpinCtrl *m_harmonicNbrSpin;
+	wxStaticText *m_calculatedLength;
 	wxSpinCtrl *m_midiKeyNbrSpin; // -1 - 127
 	wxSpinCtrlDouble *m_midiPitchFractionSpin; // -1 as default (use value from sample), 0 - 100 as specified value in cents
 	wxSpinCtrlDouble *m_pitchCorrectionSpin;

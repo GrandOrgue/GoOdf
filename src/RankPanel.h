@@ -45,6 +45,7 @@ private:
 	wxSpinCtrl *m_numberOfLogicalPipesSpin; // 1 - 192
 	// wxSpinCtrl *m_trackerDelaySpin;
 	wxSpinCtrl *m_harmonicNumberSpin; // 1 - 1024, default 8, calculates 64 / rank_size
+	wxStaticText *m_calculatedLength;
 	wxSpinCtrlDouble *m_pitchCorrectionSpin; // -1800 - 1800
 	wxChoice *m_windchestChoice;
 	wxRadioButton *m_isPercussiveYes;

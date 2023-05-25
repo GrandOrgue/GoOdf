@@ -160,6 +160,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		8
 	);
 	thirdRow->Add(m_harmonicNumberSpin, 0, wxEXPAND|wxALL, 5);
+	m_calculatedLength = new wxStaticText(this, wxID_STATIC, wxEmptyString);
+	thirdRow->Add(m_calculatedLength, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	thirdRow->AddStretchSpacer();
 	wxStaticText *trackerDelayText = new wxStaticText (
 		this,
@@ -553,6 +555,7 @@ void RankPanel::setRank(Rank *rank) {
 	UpdatePipeTree();
 
 	m_harmonicNumberSpin->SetValue(m_rank->getHarmonicNumber());
+	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_rank->getHarmonicNumber()));
 	m_pitchCorrectionSpin->SetValue(m_rank->getPitchCorrection());
 	if (m_rank->isPercussive()) {
 		m_isPercussiveYes->SetValue(true);
@@ -679,7 +682,9 @@ void RankPanel::OnLogicalPipeSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void RankPanel::OnHarmonicNbrSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_rank->setHarmonicNumber(m_harmonicNumberSpin->GetValue());
+	int harmonicNbr = m_harmonicNumberSpin->GetValue();
+	m_rank->setHarmonicNumber(harmonicNbr);
+	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(harmonicNbr));
 }
 
 void RankPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {

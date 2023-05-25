@@ -91,6 +91,36 @@ namespace GOODF_functions {
 			return false;
 		return defaultValue;
 	}
+
+	inline int getGreatestCommonDivisor(int a, int b) {
+		if (a == 0)
+			return b;
+		return getGreatestCommonDivisor(b % a, a);
+	}
+
+	inline wxString getFootLengthSize(int nbr) {
+		int whole = 64 / nbr;
+		int rest = 64 % nbr;
+
+		if (rest == 0) {
+			return wxT("equals to ") + wxString::Format(wxT("%i"), whole) + wxT("'");
+		} else {
+			int gcd = getGreatestCommonDivisor(rest, nbr);
+			if (gcd != 0) {
+				int numerator = rest / gcd;
+				int denominator = nbr / gcd;
+				if (whole > 0)
+					return wxT("equals to ") + wxString::Format(wxT("%i %i/%i'"), whole, numerator, denominator);
+				else
+					return wxT("equals to ") + wxString::Format(wxT("%i/%i'"), numerator, denominator);
+			} else {
+				if (whole > 0)
+					return wxT("equals to ") + wxString::Format(wxT("%i %i/%i'"), whole, rest, nbr);
+				else
+					return wxT("equals to ") + wxString::Format(wxT("%i/%i'"), rest, nbr);
+			}
+		}
+	}
 }
 
 #endif

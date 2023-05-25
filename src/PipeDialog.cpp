@@ -211,6 +211,8 @@ void PipeDialog::CreateControls() {
 		8
 	);
 	thirdRow->Add(m_harmonicNbrSpin, 0, wxEXPAND|wxALL, 5);
+	m_calculatedLength = new wxStaticText(this, wxID_STATIC, wxEmptyString);
+	thirdRow->Add(m_calculatedLength, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	thirdRow->AddStretchSpacer();
 	wxStaticText *windchestText = new wxStaticText (
 		this,
@@ -543,6 +545,7 @@ void PipeDialog::OnPercussiveSelection(wxCommandEvent& event) {
 
 void PipeDialog::OnHarmonicNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->harmonicNumber = m_harmonicNbrSpin->GetValue();
+	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_currentPipe->harmonicNumber));
 }
 
 void PipeDialog::OnMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -628,6 +631,7 @@ void PipeDialog::TransferPipeValuesToWindow() {
 		m_isPercussiveNo->SetValue(true);
 	}
 	m_harmonicNbrSpin->SetValue(m_currentPipe->harmonicNumber);
+	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_currentPipe->harmonicNumber));
 	m_midiKeyNbrSpin->SetValue(m_currentPipe->midiKeyNumber);
 	float pitchFractionValue = m_currentPipe->midiPitchFraction;
 	if (pitchFractionValue < 0) {
