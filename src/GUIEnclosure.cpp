@@ -33,23 +33,23 @@ GUIEnclosure::GUIEnclosure(Enclosure *enclosure) : GUIElement(), m_enclosure(enc
 	m_dispLabelFont = wxFont(wxFontInfo(7).FaceName(wxT("Arial")));
 	m_dispLabelText = wxEmptyString;
 	m_enclosureStyle = 1;
-	m_width = 0;
-	m_height = 0;
+	m_width = 46;
+	m_height = 61;
 	m_tileOffsetX = 0;
 	m_tileOffsetY = 0;
 	m_mouseRectLeft = 0;
 	m_mouseRectTop = 13;
-	m_mouseRectWidth = 0;
-	m_mouseRectHeight = 0;
-	m_mouseAxisStart = 0;
-	m_mouseAxisEnd = 0;
+	m_mouseRectWidth = 46;
+	m_mouseRectHeight = 45;
+	m_mouseAxisStart = 15;
+	m_mouseAxisEnd = 30;
 	m_textRectLeft = 0;
 	m_textRectTop = 0;
-	m_textRectWidth = 0;
-	m_textRectHeight = 0;
-	m_textBreakWidth = 0;
-	m_bitmapWidth = 0;
-	m_bitmapHeight = 0;
+	m_textRectWidth = 46;
+	m_textRectHeight = 61;
+	m_textBreakWidth = 46;
+	m_bitmapWidth = 46;
+	m_bitmapHeight = 61;
 }
 
 GUIEnclosure::~GUIEnclosure() {

@@ -621,11 +621,9 @@ void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure)
 		if (!m_bitmapBox->IsEmpty()) {
 			m_bitmapBox->Clear();
 		}
-		// m_enclosureStyleBox->Enable();
 		m_addImagePathBtn->Disable();
 		m_addMaskPathBtn->Disable();
 		m_removeBitmapBtn->Disable();
-		UpdateBuiltinBitmapValues();
 	}
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
