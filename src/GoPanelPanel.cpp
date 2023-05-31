@@ -49,11 +49,13 @@ BEGIN_EVENT_TABLE(GoPanelPanel, wxPanel)
 	EVT_BUTTON(ID_PANEL_ELEMENT_CHOICE_BTN, GoPanelPanel::OnElementChoiceBtn)
 	EVT_BUTTON(ID_PANEL_LABEL_ELEMENT_BTN, GoPanelPanel::OnLabelBtn)
 	EVT_BUTTON(ID_PANEL_REMOVE_BTN, GoPanelPanel::OnRemovePanelBtn)
+	EVT_BUTTON(ID_PANEL_SHOW_PANEL_BTN, GoPanelPanel::OnShowPanelBtn)
 END_EVENT_TABLE()
 
 GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 	m_panel = NULL;
 	m_isFirstRemoval = true;
+	m_guiRepresentation = new GUIPanelRepresentation(this, wxT("Panel"));
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *panelNameText = new wxStaticText (
@@ -119,6 +121,12 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	secondRow->Add(m_addImageBtn, 0, wxALIGN_CENTER|wxALL, 5);
 	secondRow->AddStretchSpacer();
+	m_showPanelBtn = new wxButton(
+		this,
+		ID_PANEL_SHOW_PANEL_BTN,
+		wxT("Show panel layout")
+	);
+	secondRow->Add(m_showPanelBtn, 0, wxALIGN_CENTER|wxALL, 5);
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *choiceRow = new wxBoxSizer(wxHORIZONTAL);
@@ -242,6 +250,7 @@ GoPanelPanel::~GoPanelPanel() {
 
 void GoPanelPanel::setPanel(GoPanel *panel) {
 	m_panel = panel;
+	m_guiRepresentation->SetCurrentPanel(m_panel);
 	// if this is the main panel certain things cannot be done/changed
 	if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(0) == m_panel) {
 		m_nameField->SetValue(m_panel->getName());
@@ -597,6 +606,11 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
 	}
+}
+
+void GoPanelPanel::OnShowPanelBtn(wxCommandEvent& WXUNUSED(event)) {
+	m_guiRepresentation->SetTitle(m_panel->getName());
+	m_guiRepresentation->Show();
 }
 
 void GoPanelPanel::ShouldCombinationControlsBeEnabled() {

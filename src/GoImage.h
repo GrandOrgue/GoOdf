@@ -62,6 +62,7 @@ public:
 	wxString getRelativeMaskPath();
 	wxString getImageNameOnly();
 	wxString getMaskNameOnly();
+	wxBitmap getBitmap();
 
 private:
 	wxString m_imagePath; // full path to file

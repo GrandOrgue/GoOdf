@@ -25,6 +25,7 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include "wx/fs_zip.h"
+#include <wx/mstream.h>
 
 IMPLEMENT_APP(GOODF)
 
@@ -49,7 +50,8 @@ bool GOODF::OnInit() {
 	m_helpController->SetFrameParameters(wxT("%s"), wxDefaultSize, wxDefaultPosition);
 
 	// Load icons
-	wxImage::AddHandler(new wxPNGHandler);
+	// wxImage::AddHandler(new wxPNGHandler);
+	wxInitAllImageHandlers();
 	wxString iconPath = ResourceDir + wxFILE_SEP_PATH + wxT("icons") + wxFILE_SEP_PATH + wxT("hicolor");
 	wxString appsPath = wxT("apps");
 	wxString imgPath = appsPath + wxFILE_SEP_PATH + wxT("GOODF.png");
@@ -184,6 +186,137 @@ bool GOODF::OnInit() {
 	m_invertedPedalBitmaps.push_back(invertedPedal1);
 	m_invertedPedalBitmaps.push_back(invertedPedal2);
 
+	// Extract embedded wood jpg images into m_woodBitmaps vector
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood01_jpg, sizeof(Wood01_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood01_jpg, sizeof(Wood01_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood03_jpg, sizeof(Wood03_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood03_jpg, sizeof(Wood03_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood05_jpg, sizeof(Wood05_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood05_jpg, sizeof(Wood05_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood07_jpg, sizeof(Wood07_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood07_jpg, sizeof(Wood07_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood09_jpg, sizeof(Wood09_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood09_jpg, sizeof(Wood09_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood11_jpg, sizeof(Wood11_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood11_jpg, sizeof(Wood11_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood13_jpg, sizeof(Wood13_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood13_jpg, sizeof(Wood13_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood15_jpg, sizeof(Wood15_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood15_jpg, sizeof(Wood15_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood17_jpg, sizeof(Wood17_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood17_jpg, sizeof(Wood17_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood19_jpg, sizeof(Wood19_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood19_jpg, sizeof(Wood19_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood21_jpg, sizeof(Wood21_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood21_jpg, sizeof(Wood21_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood23_jpg, sizeof(Wood23_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood23_jpg, sizeof(Wood23_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood25_jpg, sizeof(Wood25_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood25_jpg, sizeof(Wood25_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood27_jpg, sizeof(Wood27_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood27_jpg, sizeof(Wood27_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood29_jpg, sizeof(Wood29_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood29_jpg, sizeof(Wood29_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood31_jpg, sizeof(Wood31_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood31_jpg, sizeof(Wood31_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood33_jpg, sizeof(Wood33_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood33_jpg, sizeof(Wood33_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood35_jpg, sizeof(Wood35_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood35_jpg, sizeof(Wood35_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood37_jpg, sizeof(Wood37_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood37_jpg, sizeof(Wood37_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood39_jpg, sizeof(Wood39_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood39_jpg, sizeof(Wood39_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood41_jpg, sizeof(Wood41_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood41_jpg, sizeof(Wood41_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood43_jpg, sizeof(Wood43_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood43_jpg, sizeof(Wood43_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood45_jpg, sizeof(Wood45_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood45_jpg, sizeof(Wood45_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood47_jpg, sizeof(Wood47_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood47_jpg, sizeof(Wood47_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood49_jpg, sizeof(Wood49_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood49_jpg, sizeof(Wood49_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood51_jpg, sizeof(Wood51_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood51_jpg, sizeof(Wood51_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood53_jpg, sizeof(Wood53_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood53_jpg, sizeof(Wood53_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood55_jpg, sizeof(Wood55_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood55_jpg, sizeof(Wood55_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood57_jpg, sizeof(Wood57_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood57_jpg, sizeof(Wood57_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood59_jpg, sizeof(Wood59_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood59_jpg, sizeof(Wood59_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood61_jpg, sizeof(Wood61_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood61_jpg, sizeof(Wood61_jpg)));
+	m_woodBitmaps.push_back(GetJpegBitmap(Wood63_jpg, sizeof(Wood63_jpg)));
+	m_woodBitmaps.push_back(GetJpeg90Bitmap(Wood63_jpg, sizeof(Wood63_jpg)));
+
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood01_jpg, sizeof(Wood01_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood01_jpg, sizeof(Wood01_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood03_jpg, sizeof(Wood03_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood03_jpg, sizeof(Wood03_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood05_jpg, sizeof(Wood05_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood05_jpg, sizeof(Wood05_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood07_jpg, sizeof(Wood07_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood07_jpg, sizeof(Wood07_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood09_jpg, sizeof(Wood09_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood09_jpg, sizeof(Wood09_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood11_jpg, sizeof(Wood11_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood11_jpg, sizeof(Wood11_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood13_jpg, sizeof(Wood13_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood13_jpg, sizeof(Wood13_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood15_jpg, sizeof(Wood15_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood15_jpg, sizeof(Wood15_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood17_jpg, sizeof(Wood17_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood17_jpg, sizeof(Wood17_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood19_jpg, sizeof(Wood19_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood19_jpg, sizeof(Wood19_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood21_jpg, sizeof(Wood21_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood21_jpg, sizeof(Wood21_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood23_jpg, sizeof(Wood23_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood23_jpg, sizeof(Wood23_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood25_jpg, sizeof(Wood25_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood25_jpg, sizeof(Wood25_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood27_jpg, sizeof(Wood27_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood27_jpg, sizeof(Wood27_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood29_jpg, sizeof(Wood29_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood29_jpg, sizeof(Wood29_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood31_jpg, sizeof(Wood31_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood31_jpg, sizeof(Wood31_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood33_jpg, sizeof(Wood33_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood33_jpg, sizeof(Wood33_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood35_jpg, sizeof(Wood35_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood35_jpg, sizeof(Wood35_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood37_jpg, sizeof(Wood37_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood37_jpg, sizeof(Wood37_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood39_jpg, sizeof(Wood39_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood39_jpg, sizeof(Wood39_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood41_jpg, sizeof(Wood41_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood41_jpg, sizeof(Wood41_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood43_jpg, sizeof(Wood43_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood43_jpg, sizeof(Wood43_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood45_jpg, sizeof(Wood45_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood45_jpg, sizeof(Wood45_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood47_jpg, sizeof(Wood47_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood47_jpg, sizeof(Wood47_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood49_jpg, sizeof(Wood49_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood49_jpg, sizeof(Wood49_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood51_jpg, sizeof(Wood51_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood51_jpg, sizeof(Wood51_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood53_jpg, sizeof(Wood53_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood53_jpg, sizeof(Wood53_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood55_jpg, sizeof(Wood55_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood55_jpg, sizeof(Wood55_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood57_jpg, sizeof(Wood57_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood57_jpg, sizeof(Wood57_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood59_jpg, sizeof(Wood59_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood59_jpg, sizeof(Wood59_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood61_jpg, sizeof(Wood61_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood61_jpg, sizeof(Wood61_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpegBitmap(Wood63_jpg, sizeof(Wood63_jpg), true));
+	m_scaledWoodBitmaps.push_back(GetJpeg90Bitmap(Wood63_jpg, sizeof(Wood63_jpg), true));
+
 	// Show the frame
 	m_frame->Show(true);
 
@@ -193,4 +326,20 @@ bool GOODF::OnInit() {
 
 int GOODF::OnExit() {
 	return wxApp::OnExit();
+}
+
+wxBitmap GOODF::GetJpegBitmap(const unsigned char *data, int length, bool doScale) {
+	wxMemoryInputStream is(data, length);
+	wxImage jpgImg(is, wxBITMAP_TYPE_JPEG);
+	if (doScale)
+		jpgImg.Rescale(32, 32);
+	return wxBitmap(jpgImg);
+}
+
+wxBitmap GOODF::GetJpeg90Bitmap(const unsigned char *data, int length, bool doScale) {
+	wxMemoryInputStream is(data, length);
+	wxImage jpgImg(is, wxBITMAP_TYPE_JPEG);
+	if (doScale)
+		jpgImg.Rescale(32, 32);
+	return wxBitmap(jpgImg.Rotate90());
 }

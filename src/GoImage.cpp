@@ -258,3 +258,13 @@ wxString GoImage::getMaskNameOnly() {
 		return wxEmptyString;
 	}
 }
+
+wxBitmap GoImage::getBitmap() {
+	wxImage img(m_imagePath);
+	if (img.IsOk()) {
+		wxBitmap bmp(m_imagePath, img.GetType());
+		return bmp;
+	} else {
+		return wxNullBitmap;
+	}
+}

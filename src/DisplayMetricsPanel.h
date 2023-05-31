@@ -25,13 +25,8 @@
 #include <wx/spinctrl.h>
 #include <wx/bmpcbox.h>
 #include "DisplayMetrics.h"
-#include <vector>
-#include <wx/mstream.h>
 #include <wx/clrpicker.h>
 #include <wx/fontpicker.h>
-
-#define JPEG_BITMAP(name) _getJpegBitmap(name ## _jpg, sizeof(name ## _jpg))
-#define JPEG90_BITMAP(name) _getJpeg90Bitmap(name ## _jpg, sizeof(name ## _jpg))
 
 class DisplayMetricsPanel : public wxPanel {
 public:
@@ -39,18 +34,6 @@ public:
 	~DisplayMetricsPanel();
 
 	void setDisplayMetrics(DisplayMetrics *displayMetrics);
-	inline wxBitmap _getJpegBitmap(const unsigned char *data, int length) {
-		wxMemoryInputStream is(data, length);
-		wxImage jpgImg(is, wxBITMAP_TYPE_JPEG);
-		jpgImg.Rescale(32, 32);
-		return wxBitmap(jpgImg);
-	}
-	inline wxBitmap _getJpeg90Bitmap(const unsigned char *data, int length) {
-		wxMemoryInputStream is(data, length);
-		wxImage jpgImg(is, wxBITMAP_TYPE_JPEG);
-		jpgImg.Rescale(32, 32);
-		return wxBitmap(jpgImg.Rotate90());
-	}
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -109,11 +92,8 @@ private:
 	wxSpinCtrl *m_manualKeyWidth; // (integer 1-500, default: 12)
 
 	DisplayMetrics *m_displayMetrics;
-	std::vector<wxBitmap> m_woodBitmaps;
 	wxArrayString m_panelSizes;
 	wxArrayString m_colors;
-
-	void SetupWoodBitmapVector();
 
 	void OnHorizontalSizeChoice(wxCommandEvent& event);
 	void OnHorizontalSizeChange(wxSpinEvent& event);
@@ -156,6 +136,8 @@ private:
 	void OnPedalKeyWidthSpin(wxSpinEvent& event);
 	void OnManualHeightSpin(wxSpinEvent& event);
 	void OnManualKeyWidthSpin(wxSpinEvent& event);
+
+	void SetupWoodBitmapBoxes();
 
 };
 

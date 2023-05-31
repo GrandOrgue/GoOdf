@@ -30,6 +30,8 @@ class GOODF : public wxApp {
 public:
 	virtual bool OnInit();
 	int OnExit();
+	wxBitmap GetJpegBitmap(const unsigned char *data, int length, bool doScale = false);
+	wxBitmap GetJpeg90Bitmap(const unsigned char *data, int length, bool doScale = false);
 	GOODFFrame *m_frame;
 	wxIconBundle m_icons;
 	std::vector<wxBitmap> m_buttonBitmaps;
@@ -42,6 +44,8 @@ public:
 	std::vector<wxBitmap> m_invertedWoodenManualBitmaps;
 	std::vector<wxBitmap> m_defaultPedalBitmaps;
 	std::vector<wxBitmap> m_invertedPedalBitmaps;
+	std::vector<wxBitmap> m_woodBitmaps;
+	std::vector<wxBitmap> m_scaledWoodBitmaps;
 	wxHtmlHelpController *m_helpController;
 };
 

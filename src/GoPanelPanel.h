@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #include "GoPanel.h"
+#include "GUIPanelRepresentation.h"
 
 class GoPanelPanel : public wxPanel {
 public:
@@ -48,6 +49,8 @@ private:
 	wxButton *m_removePanelBtn;
 	wxChoice *m_manualChoice;
 	wxSpinCtrl *m_combinationNumberSpin;
+	wxButton *m_showPanelBtn;
+	GUIPanelRepresentation *m_guiRepresentation;
 
 	GoPanel *m_panel;
 	wxArrayString organElementChoices;
@@ -64,6 +67,7 @@ private:
 	void OnRemovePanelBtn(wxCommandEvent& event);
 	void OnElementChoiceBtn(wxCommandEvent& event);
 	void OnLabelBtn(wxCommandEvent& event);
+	void OnShowPanelBtn(wxCommandEvent& event);
 	void ShouldCombinationControlsBeEnabled();
 
 };

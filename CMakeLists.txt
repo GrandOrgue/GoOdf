@@ -164,6 +164,7 @@ set(APP_SRC
   src/GUIManualPanel.cpp
   src/OrganFileParser.cpp
   src/CopyElementAttributesDialog.cpp
+  src/GUIPanelRepresentation.cpp
 )
 
 # add the executable

@@ -19,7 +19,6 @@
  */
 
 #include "DisplayMetricsPanel.h"
-#include "GoImages.h"
 #include "GOODF.h"
 #include "GOODFDef.h"
 #include <wx/msgdlg.h>
@@ -81,11 +80,11 @@ BEGIN_EVENT_TABLE(DisplayMetricsPanel, wxPanel)
 END_EVENT_TABLE()
 
 DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
-	SetupWoodBitmapVector();
 	GoPanelSize pSize;
 	m_panelSizes = pSize.getPanelSizeNames();
 	GoColor col;
 	m_colors = col.getColorNames();
+	m_displayMetrics = NULL;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
@@ -157,9 +156,9 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_DRAWSTOP_BACKGROUND
 	);
-	for (unsigned i = 0; i < m_woodBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
-		m_drawstopBackground->Append(woodNumber, m_woodBitmaps[i]);
+		m_drawstopBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
 	secondRow->Add(m_drawstopBackground, 1, wxEXPAND, 0);
 	wxStaticText *consoleBgText = new wxStaticText(
@@ -172,9 +171,9 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_CONSOLE_BACKGROUND
 	);
-	for (unsigned i = 0; i < m_woodBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
-		m_consoleBackground->Append(woodNumber, m_woodBitmaps[i]);
+		m_consoleBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
 	secondRow->Add(m_consoleBackground, 1, wxEXPAND, 0);
 	panelSizer->Add(secondRow, 1, wxEXPAND);
@@ -190,9 +189,9 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_KEYBOARD_HORIZONTAL
 	);
-	for (unsigned i = 0; i < m_woodBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
-		m_keyHorizBackground->Append(woodNumber, m_woodBitmaps[i]);
+		m_keyHorizBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
 	thirdRow->Add(m_keyHorizBackground, 1, wxEXPAND, 0);
 	wxStaticText *keyVertBgText = new wxStaticText (
@@ -205,9 +204,9 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_KEYBOARD_VERTICAL
 	);
-	for (unsigned i = 0; i < m_woodBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
-		m_keyVertBackground->Append(woodNumber, m_woodBitmaps[i]);
+		m_keyVertBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
 	thirdRow->Add(m_keyVertBackground, 1, wxEXPAND, 0);
 	wxStaticText *drawstopInsetBgText = new wxStaticText (
@@ -220,9 +219,9 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_DRAWSTOP_INSET
 	);
-	for (unsigned i = 0; i < m_woodBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
-		m_drawstopInsetBackground->Append(woodNumber, m_woodBitmaps[i]);
+		m_drawstopInsetBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
 	thirdRow->Add(m_drawstopInsetBackground, 1, wxEXPAND, 0);
 	panelSizer->Add(thirdRow, 0, wxGROW);
@@ -881,6 +880,7 @@ DisplayMetricsPanel::~DisplayMetricsPanel() {
 }
 
 void DisplayMetricsPanel::setDisplayMetrics(DisplayMetrics *displayMetrics) {
+	SetupWoodBitmapBoxes();
 	m_displayMetrics = displayMetrics;
 	m_screenSizeHorizChoice->SetSelection(m_displayMetrics->m_dispScreenSizeHoriz.getSelectedNameIndex());
 	m_screenSizeHorizSpin->SetValue(m_displayMetrics->m_dispScreenSizeHoriz.getNumericalValue());
@@ -1021,76 +1021,6 @@ void DisplayMetricsPanel::setDisplayMetrics(DisplayMetrics *displayMetrics) {
 	m_manualHeight->SetValue(m_displayMetrics->m_dispManualHeight);
 	m_manualKeyWidth->SetValue(m_displayMetrics->m_dispManualKeyWidth);
 
-}
-
-void DisplayMetricsPanel::SetupWoodBitmapVector() {
-	// Extract embedded wood jpg images into m_woodBitmaps vector
-	wxImage::AddHandler(new wxJPEGHandler);
-
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood01));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood01));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood03));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood03));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood05));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood05));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood07));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood07));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood09));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood09));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood11));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood11));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood13));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood13));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood15));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood15));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood17));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood17));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood19));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood19));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood21));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood21));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood23));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood23));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood25));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood25));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood27));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood27));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood29));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood29));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood31));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood31));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood33));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood33));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood35));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood35));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood37));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood37));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood39));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood39));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood41));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood41));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood43));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood43));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood45));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood45));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood47));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood47));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood49));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood49));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood51));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood51));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood53));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood53));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood55));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood55));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood57));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood57));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood59));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood59));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood61));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood61));
-	m_woodBitmaps.push_back(JPEG_BITMAP(Wood63));
-	m_woodBitmaps.push_back(JPEG90_BITMAP(Wood63));
 }
 
 void DisplayMetricsPanel::OnHorizontalSizeChoice(wxCommandEvent& event) {
@@ -1406,4 +1336,33 @@ void DisplayMetricsPanel::OnManualHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void DisplayMetricsPanel::OnManualKeyWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispManualKeyWidth = m_manualKeyWidth->GetValue();
+}
+
+void DisplayMetricsPanel::SetupWoodBitmapBoxes() {
+	m_drawstopBackground->Clear();
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
+		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
+		m_drawstopBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
+	}
+	m_consoleBackground->Clear();
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
+		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
+		m_consoleBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
+	}
+	m_keyHorizBackground->Clear();
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
+		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
+		m_keyHorizBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
+	}
+	m_keyVertBackground->Clear();
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
+		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
+		m_keyVertBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
+	}
+	m_drawstopInsetBackground->Clear();
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
+		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
+		m_drawstopInsetBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
+	}
+
 }
