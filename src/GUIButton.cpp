@@ -20,6 +20,7 @@
 
 #include "GUIButton.h"
 #include "GOODFFunctions.h"
+#include "GOODF.h"
 #include <algorithm>
 
 GUIButton::GUIButton() : GUIElement() {
@@ -313,6 +314,24 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 
 void GUIButton::updateDisplayName() {
 
+}
+
+wxBitmap GUIButton::getBitmap() {
+	if (m_imageOff == wxEmptyString) {
+		if (m_displayAsPiston) {
+			return ::wxGetApp().m_buttonBitmaps[m_dispImageNum - 1];
+		} else {
+			return ::wxGetApp().m_drawstopBitmaps[m_dispImageNum - 1];
+		}
+	} else {
+		wxImage img(m_imageOff);
+		if (img.IsOk()) {
+			wxBitmap bmp(m_imageOff, img.GetType());
+			return bmp;
+		} else {
+			return wxNullBitmap;
+		}
+	}
 }
 
 int GUIButton::getDispButtonCol() const {

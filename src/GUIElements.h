@@ -41,6 +41,7 @@ public:
 
 	virtual void updateDisplayName();
 	virtual void setDefaultFont(wxFont&);
+	virtual wxBitmap getBitmap();
 	wxString getType();
 	void setType(wxString type);
 	int getPosX();

@@ -374,6 +374,7 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.KeytypeIdentifier = identifier;
 	type.ImageOn = GoImage();
 	type.ImageOff = GoImage();
+	type.IsSharp = false;
 	int typeWidth = 0;
 	int typeHeight = 0;
 	int index = m_availableKeynumbers.Index(type.KeytypeIdentifier);
@@ -391,6 +392,7 @@ void GUIManual::addKeytype(wxString identifier) {
 			}
 		} else {
 			// It's a sharp
+			type.IsSharp = true;
 			if (m_manual->isThePedal()) {
 				typeWidth = 7;
 				typeHeight = 18;
@@ -412,6 +414,7 @@ void GUIManual::addKeytype(wxString identifier) {
 			}
 		} else {
 			// It's a sharp
+			type.IsSharp = true;
 			if (m_manual->isThePedal()) {
 				typeWidth = 7;
 				typeHeight = 18;

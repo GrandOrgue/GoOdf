@@ -36,6 +36,7 @@ public:
 	virtual void read(wxFileConfig *cfg, bool isPiston);
 
 	virtual void updateDisplayName();
+	virtual wxBitmap getBitmap();
 	int getDispButtonCol() const;
 	void setDispButtonCol(int dispButtonCol);
 	int getDispButtonRow() const;

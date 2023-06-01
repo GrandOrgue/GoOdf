@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include "GoPanel.h"
+#include <vector>
 
 class GUIPanelRepresentation : public wxDialog {
 public:
@@ -36,6 +37,36 @@ private:
 
 	wxPanel *m_windowPanel;
 	GoPanel *m_currentPanel;
+
+	int m_HackY;
+	int m_EnclosureY;
+	int m_CenterY;
+	int m_CenterWidth;
+
+	wxPoint GetDrawstopPosition(int row, int col);
+	wxPoint GetPushbuttonPosition(int row, int col);
+	unsigned GetEnclosuresWidth();
+	int GetEnclosureY();
+	int GetEnclosureX(int enclosureNbr);
+	int GetJambLeftRightWidth();
+	unsigned GetJambLeftRightHeight();
+	int GetJambLeftRightY();
+	int GetJambLeftX();
+	int GetJambRightX();
+	int GetJambTopDrawstop();
+	int GetJambTopPiston();
+	unsigned GetJambTopHeight();
+	unsigned GetJambTopWidth();
+	int GetJambTopX();
+	int GetJambTopY();
+	unsigned GetPistonTopHeight();
+	unsigned GetPistonWidth();
+	int GetPistonX();
+	int GetCenterWidth();
+	int GetCenterY();
+	int GetCenterX();
+	int GetHackY();
+	void UpdateLayout();
 
 	void OnPaintEvent(wxPaintEvent& event);
 	void DoPaintNow();

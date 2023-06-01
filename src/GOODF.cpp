@@ -75,6 +75,13 @@ bool GOODF::OnInit() {
 	wxBitmap drawstop5 = wxBITMAP_PNG_FROM_DATA(drawstop05off);
 	wxBitmap drawstop6 = wxBITMAP_PNG_FROM_DATA(drawstop06off);
 	wxBitmap drawstop7 = wxBITMAP_PNG_FROM_DATA(drawstop07off);
+	m_drawstopBitmaps.push_back(drawstop1);
+	m_drawstopBitmaps.push_back(drawstop2);
+	m_drawstopBitmaps.push_back(drawstop3);
+	m_drawstopBitmaps.push_back(drawstop4);
+	m_drawstopBitmaps.push_back(drawstop5);
+	m_drawstopBitmaps.push_back(drawstop6);
+	m_drawstopBitmaps.push_back(drawstop7);
 	wxImage drawstopImage = drawstop1.ConvertToImage();
 	drawstop1 = wxBitmap(drawstopImage.Scale(32, 32));
 	drawstopImage = drawstop2.ConvertToImage();
@@ -90,13 +97,13 @@ bool GOODF::OnInit() {
 	drawstopImage = drawstop7.ConvertToImage();
 	drawstop7 = wxBitmap(drawstopImage.Scale(32, 32));
 
-	m_drawstopBitmaps.push_back(drawstop1);
-	m_drawstopBitmaps.push_back(drawstop2);
-	m_drawstopBitmaps.push_back(drawstop3);
-	m_drawstopBitmaps.push_back(drawstop4);
-	m_drawstopBitmaps.push_back(drawstop5);
-	m_drawstopBitmaps.push_back(drawstop6);
-	m_drawstopBitmaps.push_back(drawstop7);
+	m_scaledDrawstopBitmaps.push_back(drawstop1);
+	m_scaledDrawstopBitmaps.push_back(drawstop2);
+	m_scaledDrawstopBitmaps.push_back(drawstop3);
+	m_scaledDrawstopBitmaps.push_back(drawstop4);
+	m_scaledDrawstopBitmaps.push_back(drawstop5);
+	m_scaledDrawstopBitmaps.push_back(drawstop6);
+	m_scaledDrawstopBitmaps.push_back(drawstop7);
 
 	wxBitmap piston1 = wxBITMAP_PNG_FROM_DATA(piston01off);
 	wxBitmap piston2 = wxBITMAP_PNG_FROM_DATA(piston02off);

@@ -43,6 +43,16 @@ struct KEYTYPE {
 	int BitmapWidth;
 	int BitmapHeight;
 	bool ForceWritingWidth;
+	bool IsSharp;
+};
+
+struct MANUAL_RENDER_INFO {
+	unsigned width;
+	unsigned height;
+	int y;
+	int x;
+	int keys_y;
+	int piston_y;
 };
 
 class GUIManual : public GUIElement {
@@ -76,6 +86,8 @@ public:
 	int getIndexOfKeyNumber(wxString keytype);
 	int getDispImageNum();
 	void setDispImageNum(int nbr);
+
+	MANUAL_RENDER_INFO m_renderInfo;
 
 private:
 	Manual *m_manual;

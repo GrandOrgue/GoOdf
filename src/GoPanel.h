@@ -33,6 +33,7 @@
 #include "ReversiblePiston.h"
 #include "General.h"
 #include "GUIManual.h"
+#include "GUIEnclosure.h"
 
 class GoPanel {
 public:
@@ -88,6 +89,12 @@ public:
 	void setIsGuiElementFirstRemoval(bool value);
 	bool getIsGuiElementFirstRemoval();
 	bool getIsGuiManualTheFirst(GUIManual *manual);
+	void updateGuiManuals();
+	unsigned getNumberOfManuals();
+	GUIManual* getGuiManualAt(unsigned index);
+	void updateGuiEnclosures();
+	unsigned getNumberOfEnclosures();
+	GUIEnclosure* getGuiEnclosureAt(unsigned index);
 
 private:
 	wxString m_name;
@@ -97,6 +104,8 @@ private:
 	DisplayMetrics m_displayMetrics;
 	std::list<GUIElement*> m_guiElements;
 	bool m_isGuiElementFirstRemoval;
+	std::list<GUIManual*> m_manuals;
+	std::list<GUIEnclosure*> m_enclosures;
 
 };
 

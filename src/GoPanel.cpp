@@ -182,6 +182,8 @@ DisplayMetrics* GoPanel::getDisplayMetrics() {
 
 void GoPanel::addGuiElement(GUIElement *element) {
 	m_guiElements.push_back(element);
+	updateGuiManuals();
+	updateGuiEnclosures();
 }
 
 void GoPanel::removeGuiElementAt(unsigned index) {
@@ -258,6 +260,7 @@ void GoPanel::removeItemFromPanel(Enclosure* enclosure) {
 			if (enc) {
 				if (enc->isReferencing(enclosure)) {
 					// erase and go to next
+					m_enclosures.remove(enc);
 					it = m_guiElements.erase(it);
 				} else {
 					// go to next
@@ -295,6 +298,7 @@ void GoPanel::removeItemFromPanel(Manual *manual) {
 			if (man) {
 				if (man->isReferencing(manual)) {
 					// erase and go to next
+					m_manuals.remove(man);
 					it = m_guiElements.erase(it);
 				} else {
 					// go to next
@@ -660,4 +664,56 @@ bool GoPanel::getIsGuiManualTheFirst(GUIManual *manual) {
 		}
 	}
 	return isFirst;
+}
+
+void GoPanel::updateGuiManuals() {
+	if (!m_manuals.empty())
+		m_manuals.clear();
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Manual")) {
+			GUIManual *man = dynamic_cast<GUIManual*>(e);
+			if (man) {
+				m_manuals.push_back(man);
+			}
+		}
+	}
+}
+
+unsigned GoPanel::getNumberOfManuals() {
+	return m_manuals.size();
+}
+
+GUIManual* GoPanel::getGuiManualAt(unsigned index) {
+	if (index < m_manuals.size()) {
+		auto iterator = std::next(m_manuals.begin(), index);
+		return (*iterator);
+	} else {
+		return NULL;
+	}
+}
+
+void GoPanel::updateGuiEnclosures() {
+	if (!m_enclosures.empty())
+		m_enclosures.clear();
+	for (GUIElement* e : m_guiElements) {
+		if (e->getType() == wxT("Enclosure") || e->getType() == wxT("Swell")) {
+			GUIEnclosure *enc = dynamic_cast<GUIEnclosure*>(e);
+			if (enc) {
+				m_enclosures.push_back(enc);
+			}
+		}
+	}
+}
+
+unsigned GoPanel::getNumberOfEnclosures() {
+	return m_enclosures.size();
+}
+
+GUIEnclosure* GoPanel::getGuiEnclosureAt(unsigned index) {
+	if (index < m_enclosures.size()) {
+		auto iterator = std::next(m_enclosures.begin(), index);
+		return (*iterator);
+	} else {
+		return NULL;
+	}
 }

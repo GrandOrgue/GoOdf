@@ -36,6 +36,7 @@ public:
 	wxIconBundle m_icons;
 	std::vector<wxBitmap> m_buttonBitmaps;
 	std::vector<wxBitmap> m_drawstopBitmaps;
+	std::vector<wxBitmap> m_scaledDrawstopBitmaps;
 	std::vector<wxBitmap> m_enclosureStyleBitmaps;
 	std::vector<wxBitmap> m_labelBitmaps;
 	std::vector<wxBitmap> m_defaultManualBitmaps;

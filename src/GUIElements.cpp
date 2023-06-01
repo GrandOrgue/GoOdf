@@ -48,6 +48,10 @@ void GUIElement::setDefaultFont(wxFont&) {
 
 }
 
+wxBitmap GUIElement::getBitmap() {
+	return wxNullBitmap;
+}
+
 wxString GUIElement::getType() {
 	return m_type;
 }

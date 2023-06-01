@@ -225,9 +225,9 @@ GUIButtonPanel::GUIButtonPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_GUIBUTTONPANEL_IMAGE_NBR_BOX
 	);
-	for (unsigned i = 0; i < ::wxGetApp().m_drawstopBitmaps.size(); i++) {
+	for (unsigned i = 0; i < ::wxGetApp().m_scaledDrawstopBitmaps.size(); i++) {
 		wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
-		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_drawstopBitmaps[i]);
+		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_scaledDrawstopBitmaps[i]);
 	}
 	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	wxStaticText *btnRowText = new wxStaticText (
@@ -1199,9 +1199,9 @@ void GUIButtonPanel::SetupImageNbrBoxContent() {
 	} else {
 		// if not displayed as piston the image num box should be filled with drawstops
 		m_dispImageNbrBox->Clear();
-		for (unsigned i = 0; i < ::wxGetApp().m_drawstopBitmaps.size(); i++) {
+		for (unsigned i = 0; i < ::wxGetApp().m_scaledDrawstopBitmaps.size(); i++) {
 			wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
-			m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_drawstopBitmaps[i]);
+			m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_scaledDrawstopBitmaps[i]);
 		}
 	}
 }
