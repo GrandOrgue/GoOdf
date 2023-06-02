@@ -72,6 +72,7 @@ private:
 	void DoPaintNow();
 	void RenderPanel(wxDC& dc);
 	void TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap, int tileOffsetX, int tileOffsetY);
+	wxString BreakTextLine(wxString text, int textBreakWidth, wxDC& dc);
 
 };
 

@@ -103,7 +103,7 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 							btnElement->getTextRectWidth(),
 							btnElement->getTextRectHeight()
 						);
-						dc.DrawLabel(btnElement->getDisplayName(), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+						dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 					}
 				} else {
 					if (btnElement->isDisplayAsPiston()) {
@@ -124,7 +124,7 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 								btnElement->getTextRectWidth(),
 								btnElement->getTextRectHeight()
 							);
-							dc.DrawLabel(btnElement->getDisplayName(), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+							dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 						}
 					} else {
 						wxPoint thePos = GetDrawstopPosition(btnElement->getDispDrawstopRow(), btnElement->getDispDrawstopCol());
@@ -144,7 +144,7 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 								btnElement->getTextRectWidth(),
 								btnElement->getTextRectHeight()
 							);
-							dc.DrawLabel(btnElement->getDisplayName(), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+							dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 						}
 					}
 				}
@@ -396,7 +396,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 		} else {
 			// this calculates the total width of a pedal
 			int startingMidiNbr = theManual->getDisplayFirstNote();
-			for (unsigned j = 0; j < theManual->getNumberOfDisplayKeys(); j++) {
+			for (int j = 0; j < theManual->getNumberOfDisplayKeys(); j++) {
 				int key_nbr = startingMidiNbr + j;
 				theManual->m_renderInfo.width += m_currentPanel->getDisplayMetrics()->m_dispPedalKeyWidth;
 				if (j && (key_nbr % 12 == 4 || key_nbr % 12 == 11))
@@ -418,4 +418,52 @@ void GUIPanelRepresentation::UpdateLayout() {
 	m_CenterY -= GetJambTopHeight();
 	if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveExtraRows)
 		m_CenterY -= 8;
+}
+
+wxString GUIPanelRepresentation::BreakTextLine(wxString text, int textBreakWidth, wxDC& dc) {
+	wxString string = text;
+	wxString str, line, work;
+	wxCoord cx, cy;
+
+	/* text.Length() + 1 iterations */
+	for (unsigned i = 0; i <= string.Length(); i++) {
+		bool maybreak = false;
+		if (string[i] == wxT(' ') || string[i] == wxT('\n')) {
+			if (work.length() < 2)
+				maybreak = false;
+			else
+				maybreak = true;
+		}
+		if (maybreak || i == string.Length()) {
+			if (!work.Length())
+				continue;
+			dc.GetTextExtent(line + wxT(' ') + work, &cx, &cy);
+			if (cx > textBreakWidth) {
+				if (!str.Length())
+					str = line;
+				else
+					str = str + wxT('\n') + line;
+				line = wxT("");
+			}
+
+			if (!line.Length())
+				line = work;
+			else
+				line = line + wxT(' ') + work;
+
+			work = wxT("");
+		} else {
+			if (string[i] == wxT(' ') || string[i] == wxT('\n')) {
+				if (work.Length() && work[work.Length() - 1] != wxT(' '))
+					work += wxT(' ');
+			} else
+				work += string[i];
+		}
+	}
+
+	if (!str.Length())
+		str = line;
+	else
+		str = str + wxT('\n') + line;
+	return str;
 }
