@@ -124,7 +124,26 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 								btnElement->getTextRectWidth(),
 								btnElement->getTextRectHeight()
 							);
-							dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+							wxString textToDisplay;
+							if (btnElement->getDispLabelText() != wxEmptyString)
+								textToDisplay = btnElement->getDispLabelText();
+							else
+								textToDisplay = btnElement->getDisplayName();
+							if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
+								wxString combinationNbr = textToDisplay.Mid(19);
+								long theNbr;
+								if (combinationNbr.ToLong(&theNbr)) {
+									theNbr += 1;
+									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+								}
+							} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
+								wxString combinationNbr = textToDisplay.Mid(7);
+								long theNbr;
+								if (combinationNbr.ToLong(&theNbr)) {
+									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+								}
+							}
+							dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 						}
 					} else {
 						wxPoint thePos = GetDrawstopPosition(btnElement->getDispDrawstopRow(), btnElement->getDispDrawstopCol());
