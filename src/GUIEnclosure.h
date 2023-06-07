@@ -40,6 +40,7 @@ public:
 
 	bool isReferencing(Enclosure *enclosure);
 	void updateDisplayName();
+	virtual wxBitmap getBitmap();
 
 	GoColor* getDispLabelColour();
 	void setDispLabelColour(const GoColor &dispLabelColour);

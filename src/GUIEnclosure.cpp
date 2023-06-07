@@ -301,6 +301,14 @@ void GUIEnclosure::updateDisplayName() {
 		setDisplayName(m_enclosure->getName());
 }
 
+wxBitmap GUIEnclosure::getBitmap() {
+	if (m_bitmaps.empty()) {
+		return ::wxGetApp().m_enclosureStyleBitmaps[m_enclosureStyle - 1];
+	} else {
+		return m_bitmaps.front().getBitmap();
+	}
+}
+
 GoColor* GUIEnclosure::getDispLabelColour() {
 	return &m_dispLabelColour;
 }

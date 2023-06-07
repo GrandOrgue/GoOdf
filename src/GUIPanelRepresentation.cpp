@@ -103,7 +103,26 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 							btnElement->getTextRectWidth(),
 							btnElement->getTextRectHeight()
 						);
-						dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+						wxString textToDisplay;
+						if (btnElement->getDispLabelText() != wxEmptyString)
+							textToDisplay = btnElement->getDispLabelText();
+						else
+							textToDisplay = btnElement->getDisplayName();
+						if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
+							wxString combinationNbr = textToDisplay.Mid(19);
+							long theNbr;
+							if (combinationNbr.ToLong(&theNbr)) {
+								theNbr += 1;
+								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+							}
+						} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
+							wxString combinationNbr = textToDisplay.Mid(7);
+							long theNbr;
+							if (combinationNbr.ToLong(&theNbr)) {
+								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+							}
+						}
+						dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 					}
 				} else {
 					if (btnElement->isDisplayAsPiston()) {
@@ -163,8 +182,84 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 								btnElement->getTextRectWidth(),
 								btnElement->getTextRectHeight()
 							);
-							dc.DrawLabel(BreakTextLine(btnElement->getDisplayName(), btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+							wxString textToDisplay;
+							if (btnElement->getDispLabelText() != wxEmptyString)
+								textToDisplay = btnElement->getDispLabelText();
+							else
+								textToDisplay = btnElement->getDisplayName();
+							if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
+								wxString combinationNbr = textToDisplay.Mid(19);
+								long theNbr;
+								if (combinationNbr.ToLong(&theNbr)) {
+									theNbr += 1;
+									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+								}
+							} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
+								wxString combinationNbr = textToDisplay.Mid(7);
+								long theNbr;
+								if (combinationNbr.ToLong(&theNbr)) {
+									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+								}
+							}
+							dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 						}
+					}
+				}
+				continue;
+			}
+			GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(guiElement);
+			if (encElement) {
+				if (encElement->getPosX() != -1) {
+					// the enclosure uses absolute pixel positioning
+					if (encElement->getWidth() > encElement->getBitmapWidth() || encElement->getHeight() > encElement->getBitmapHeight()) {
+						wxRect imgRect(encElement->getPosX(), encElement->getPosY(), encElement->getWidth(), encElement->getHeight());
+						TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
+					} else {
+						dc.DrawBitmap(theBmp, encElement->getPosX(), encElement->getPosY(), true);
+					}
+					if (encElement->getTextBreakWidth()) {
+						dc.SetFont(encElement->getDispLabelFont());
+						dc.SetBackgroundMode(wxTRANSPARENT);
+						dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
+						wxRect textRect(
+							encElement->getPosX() + encElement->getTextRectLeft(),
+							encElement->getPosY() + encElement->getTextRectTop(),
+							encElement->getTextRectWidth(),
+							encElement->getTextRectHeight()
+						);
+						dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+					}
+				} else {
+					// the enclosure uses the default layout model
+					int enclosureNumberOnPanel = -1;
+					for (unsigned j = 0; j < m_currentPanel->getNumberOfEnclosures(); j++) {
+						if (encElement == m_currentPanel->getGuiEnclosureAt(j)) {
+							enclosureNumberOnPanel = j;
+							break;
+						}
+					}
+					if (enclosureNumberOnPanel != -1) {
+						enclosureNumberOnPanel += 1;
+						if (encElement->getWidth() > encElement->getBitmapWidth() || encElement->getHeight() > encElement->getBitmapHeight()) {
+							wxRect imgRect(GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), encElement->getWidth(), encElement->getHeight());
+							TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
+						} else {
+							dc.DrawBitmap(theBmp, GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), true);
+						}
+						if (encElement->getTextBreakWidth()) {
+							dc.SetFont(encElement->getDispLabelFont());
+							dc.SetBackgroundMode(wxTRANSPARENT);
+							dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
+							wxRect textRect(
+								GetEnclosureX(enclosureNumberOnPanel) + encElement->getTextRectLeft(),
+								GetEnclosureY() + encElement->getTextRectTop(),
+								encElement->getTextRectWidth(),
+								encElement->getTextRectHeight()
+							);
+							dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+						}
+					} else {
+						continue;
 					}
 				}
 				continue;
