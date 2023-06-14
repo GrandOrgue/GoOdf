@@ -112,6 +112,7 @@ void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manu
 		// this stop uses an internal rank that must be read
 		m_usingInternalRank = true;
 		m_internalRank.read(cfg);
+		m_internalRank.setFirstMidiNoteNumber(m_owningManual->getFirstAccessibleKeyMIDINoteNumber());
 	}
 }
 

@@ -227,7 +227,7 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 							encElement->getTextRectWidth(),
 							encElement->getTextRectHeight()
 						);
-						dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+						dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
 					}
 				} else {
 					// the enclosure uses the default layout model
@@ -256,7 +256,7 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 								encElement->getTextRectWidth(),
 								encElement->getTextRectHeight()
 							);
-							dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+							dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
 						}
 					} else {
 						continue;

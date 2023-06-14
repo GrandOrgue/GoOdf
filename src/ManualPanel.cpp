@@ -508,6 +508,7 @@ void ManualPanel::OnNewStopBtn(wxCommandEvent& WXUNUSED(event)) {
 		for (int i = 0; i < nbrToAdd; i++) {
 			Stop stop;
 			stop.setOwningManual(m_manual);
+			stop.getInternalRank()->setFirstMidiNoteNumber(m_manual->getFirstAccessibleKeyMIDINoteNumber());
 			::wxGetApp().m_frame->m_organ->addStop(stop);
 			unsigned nbStops = ::wxGetApp().m_frame->m_organ->getNumberOfStops();
 			if (nbStops > 0)
