@@ -106,7 +106,7 @@ void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_m
 	m_coupleToSubsequentUpwardIntramanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	cfgBoolValue = cfg->Read("CoupleToSubsequentDownwardIntramanualCouplers", wxEmptyString);
 	m_coupleToSubsequentDownwardIntramanualCouplers = GOODF_functions::parseBoolean(cfgBoolValue, false);
-	wxString cplrType = cfg->Read("", wxT("Normal"));
+	wxString cplrType = cfg->Read("CouplerType", wxT("Normal"));
 	if (cplrType.IsSameAs(wxT("Normal"), false) || cplrType.IsSameAs(wxT("Bass"), false) || cplrType.IsSameAs(wxT("Melody"), false)) {
 		m_couplerType = cplrType;
 	}
