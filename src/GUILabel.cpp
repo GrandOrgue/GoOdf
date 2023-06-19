@@ -101,9 +101,9 @@ void GUILabel::write(wxTextFile *outFile) {
 	if (m_dispImageNum != 1 && m_image.getImage() == wxEmptyString)
 		outFile->AddLine(wxT("DispImageNum=") + wxString::Format(wxT("%i"), m_dispImageNum));
 	if (m_image.getImage() != wxEmptyString)
-		outFile->AddLine(wxT("Image=") + m_image.getRelativeImagePath());
+		outFile->AddLine(GOODF_functions::fixSeparator(wxT("Image=") + m_image.getRelativeImagePath()));
 	if (m_image.getMask() != wxEmptyString && m_image.getImage() != wxEmptyString)
-		outFile->AddLine(wxT("Mask=") + m_image.getRelativeMaskPath());
+		outFile->AddLine(GOODF_functions::fixSeparator(wxT("Mask=") + m_image.getRelativeMaskPath()));
 	if (m_width != m_bitmapWidth)
 		outFile->AddLine(wxT("Width=") + wxString::Format(wxT("%i"), m_width));
 	if (m_height != m_bitmapHeight)
