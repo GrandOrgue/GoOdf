@@ -61,6 +61,45 @@ void GUIPanelRepresentation::DoPaintNow() {
 }
 
 void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
+	// First draw the basic background of left jamb
+	wxRect rect = wxRect(0, 0, GetCenterX(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	wxBitmap stopBg = m_currentPanel->getDisplayMetrics()->getDrawstopBg();
+	TileBitmap(rect, dc, stopBg, 0, 0);
+
+	// Right jamb
+	rect = wxRect((GetCenterX() + GetCenterWidth()), 0, m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - (GetCenterX() + GetCenterWidth()), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	TileBitmap(rect, dc, stopBg, 0, 0);
+
+	// Console, middle part
+	rect = wxRect(GetCenterX(), 0, GetCenterWidth(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	wxBitmap consoleBg = m_currentPanel->getDisplayMetrics()->getConsoleBg();
+	TileBitmap(rect, dc, consoleBg, 0, 0);
+
+	// Inset for paired drawstops
+	if (m_currentPanel->getDisplayMetrics()->m_dispPairDrawstopCols) {
+		for (int i = 0; i < (m_currentPanel->getDisplayMetrics()->m_dispDrawstopCols >> 2); i++) {
+			rect = wxRect(i * (2 * m_currentPanel->getDisplayMetrics()->m_dispDrawstopWidth + 18) + GetJambLeftX() - 5, GetJambLeftRightY(), 2 * m_currentPanel->getDisplayMetrics()->m_dispDrawstopWidth + 10, GetJambLeftRightHeight());
+			wxBitmap insetBg = m_currentPanel->getDisplayMetrics()->getInsetBg();
+			TileBitmap(rect, dc, insetBg, 0, 0);
+
+			rect = wxRect(i * (2 * m_currentPanel->getDisplayMetrics()->m_dispDrawstopWidth + 18) + GetJambRightX() - 5, GetJambLeftRightY(), 2 * m_currentPanel->getDisplayMetrics()->m_dispDrawstopWidth + 10, GetJambLeftRightHeight());
+			TileBitmap(rect, dc, insetBg, 0, 0);
+		}
+	}
+
+	// Trim above extra rows
+	if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveExtraRows) {
+		rect = wxRect(GetCenterX(), GetCenterY(), GetCenterWidth(), 8);
+		wxBitmap keyVert = m_currentPanel->getDisplayMetrics()->getKeyVertBg();
+		TileBitmap(rect, dc, keyVert, 0, 0);
+	}
+
+	if (GetJambTopHeight() + GetPistonTopHeight()) {
+		rect = wxRect(GetCenterX(), GetJambTopY(), GetCenterWidth(), GetJambTopHeight() + GetPistonTopHeight());
+		wxBitmap keyHoriz = m_currentPanel->getDisplayMetrics()->getKeyHorizBg();
+		TileBitmap(rect, dc, keyHoriz, 0, 0);
+	}
+
 	if (m_currentPanel->getNumberOfImages() > 0) {
 		for (unsigned i = 0; i < m_currentPanel->getNumberOfImages(); i++) {
 			if (m_currentPanel->getImageAt(i)->getWidth() > m_currentPanel->getImageAt(i)->getOriginalWidth() || m_currentPanel->getImageAt(i)->getHeight() > m_currentPanel->getImageAt(i)->getOriginalHeight()) {
@@ -272,11 +311,16 @@ void GUIPanelRepresentation::TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap,
 	int w = bitmap.GetWidth();
 	int h = bitmap.GetHeight();
 
-	for (int i = rect.x - tileOffsetX; i < rect.x + rect.width; i += w) {
-		for (int j = rect.y - tileOffsetY; j < rect.y + rect.height; j+= h) {
-			dc.DrawBitmap(bitmap, i, j, true);
+	wxImage wholeImg(rect.width, rect.height);
+	wxImage bmp = bitmap.ConvertToImage();
+	for (int i = -tileOffsetX; i < rect.width; i += w) {
+		for (int j = -tileOffsetY; j < rect.height; j += h) {
+			wholeImg.Paste(bmp, i, j);
 		}
 	}
+	wxBitmap fullBmp = wxBitmap(wholeImg);
+
+	dc.DrawBitmap(fullBmp, rect.x, rect.y, true);
 }
 
 wxPoint GUIPanelRepresentation::GetDrawstopPosition(int row, int col) {
@@ -504,8 +548,9 @@ void GUIPanelRepresentation::UpdateLayout() {
 			int startingMidiNbr = theManual->getDisplayFirstNote();
 			for (int j = 0; j < theManual->getNumberOfDisplayKeys(); j++) {
 				int key_nbr = startingMidiNbr + j;
-				if (((key_nbr % 12) < 5 && !(key_nbr & 1)) || ((key_nbr % 12) >= 5 && (key_nbr & 1)))
+				if (((key_nbr % 12) < 5 && !(key_nbr & 1)) || ((key_nbr % 12) >= 5 && (key_nbr & 1))) {
 					theManual->m_renderInfo.width += m_currentPanel->getDisplayMetrics()->m_dispManualKeyWidth;
+				}
 			}
 		} else {
 			// this calculates the total width of a pedal
@@ -580,4 +625,8 @@ wxString GUIPanelRepresentation::BreakTextLine(wxString text, int textBreakWidth
 	else
 		str = str + wxT('\n') + line;
 	return str;
+}
+
+void GUIPanelRepresentation::DoUpdateLayout() {
+	UpdateLayout();
 }

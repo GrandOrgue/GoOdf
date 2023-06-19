@@ -365,6 +365,7 @@ void GoPanelPanel::OnRemovePanelBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else if (::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_panel) > 1) {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	m_guiRepresentation->DoUpdateLayout();
 }
 
 void GoPanelPanel::OnOrganElementChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -590,6 +591,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
 	}
+	m_guiRepresentation->DoUpdateLayout();
 }
 
 void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {

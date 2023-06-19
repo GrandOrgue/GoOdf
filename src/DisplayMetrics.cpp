@@ -20,6 +20,7 @@
 
 #include "DisplayMetrics.h"
 #include "GOODFFunctions.h"
+#include "GOODF.h"
 
 DisplayMetrics::DisplayMetrics() {
 	m_dispScreenSizeHoriz.setSelectedNameIndex(0, true);
@@ -323,4 +324,24 @@ void DisplayMetrics::read(wxFileConfig *cfg) {
 	int manualKeyWidth = static_cast<int>(cfg->ReadLong("DispManualKeyWidth", 12));
 	if (manualKeyWidth > 0 && manualKeyWidth < 501)
 		m_dispManualKeyWidth = manualKeyWidth;
+}
+
+wxBitmap DisplayMetrics::getDrawstopBg() {
+	return ::wxGetApp().m_woodBitmaps[m_dispDrawstopBackgroundImageNum - 1];
+}
+
+wxBitmap DisplayMetrics::getConsoleBg() {
+	return ::wxGetApp().m_woodBitmaps[m_dispConsoleBackgroundImageNum - 1];
+}
+
+wxBitmap DisplayMetrics::getKeyHorizBg() {
+	return ::wxGetApp().m_woodBitmaps[m_dispKeyHorizBackgroundImageNum - 1];
+}
+
+wxBitmap DisplayMetrics::getKeyVertBg() {
+	return ::wxGetApp().m_woodBitmaps[m_dispKeyVertBackgroundImageNum - 1];
+}
+
+wxBitmap DisplayMetrics::getInsetBg() {
+	return ::wxGetApp().m_woodBitmaps[m_dispDrawstopInsetBackgroundImageNum - 1];
 }

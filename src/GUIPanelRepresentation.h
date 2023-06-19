@@ -31,6 +31,7 @@ public:
 	~GUIPanelRepresentation();
 
 	void SetCurrentPanel(GoPanel *thePanel);
+	void DoUpdateLayout();
 
 private:
 	DECLARE_EVENT_TABLE()

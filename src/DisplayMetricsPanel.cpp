@@ -1339,27 +1339,32 @@ void DisplayMetricsPanel::OnManualKeyWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 }
 
 void DisplayMetricsPanel::SetupWoodBitmapBoxes() {
-	m_drawstopBackground->Clear();
+	if (!m_drawstopBackground->IsListEmpty())
+		m_drawstopBackground->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_drawstopBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	m_consoleBackground->Clear();
+	if (!m_consoleBackground->IsListEmpty())
+		m_consoleBackground->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_consoleBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	m_keyHorizBackground->Clear();
+	if (!m_keyHorizBackground->IsListEmpty())
+		m_keyHorizBackground->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_keyHorizBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	m_keyVertBackground->Clear();
+	if (!m_keyVertBackground->IsListEmpty())
+		m_keyVertBackground->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_keyVertBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	m_drawstopInsetBackground->Clear();
+	if (!m_drawstopInsetBackground->IsListEmpty())
+		m_drawstopInsetBackground->Clear();
 	for (unsigned i = 0; i < ::wxGetApp().m_scaledWoodBitmaps.size(); i++) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_drawstopInsetBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);

@@ -36,6 +36,12 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg);
 
+	wxBitmap getDrawstopBg();
+	wxBitmap getConsoleBg();
+	wxBitmap getKeyHorizBg();
+	wxBitmap getKeyVertBg();
+	wxBitmap getInsetBg();
+
 	GoPanelSize m_dispScreenSizeHoriz; // 100 - 4000, SMALL = 800, MEDIUM = 1007, MEDIUM LARGE = 1263, LARGE = 1583
 	GoPanelSize m_dispScreenSizeVert; // 100 - 4000, SMALL = 500, MEDIUM = 663, MEDIUM LARGE = 855, LARGE = 1095
 	int m_dispDrawstopBackgroundImageNum;
