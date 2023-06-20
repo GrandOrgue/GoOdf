@@ -68,6 +68,7 @@ public:
 	void AddImageItemToTree();
 	void AddGuiElementToTree(wxString title);
 	void RebuildPanelGuiElementsInTree(int panelIndex);
+	void PanelGUIPropertyIsChanged();
 
 	Organ *m_organ;
 

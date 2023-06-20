@@ -633,11 +633,13 @@ void GUIEnclosurePanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);
 	m_enclosure->setDispLabelText(m_labelTextField->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_enclosure->setDispLabelFont(m_labelFont->GetSelectedFont());
 	m_enclosure->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::OnLabelColourChoice(wxCommandEvent& event) {
@@ -648,6 +650,7 @@ void GUIEnclosurePanel::OnLabelColourChoice(wxCommandEvent& event) {
 			m_enclosure->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
 			m_labelColourPick->SetColour(m_enclosure->getDispLabelColour()->getColor());
 			m_labelColourPick->Disable();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -655,6 +658,7 @@ void GUIEnclosurePanel::OnLabelColourChoice(wxCommandEvent& event) {
 void GUIEnclosurePanel::OnLabelColourPick(wxColourPickerEvent& event) {
 	if (event.GetId() == ID_GUIENCLOSUREPANEL_COLOR_PICKER) {
 		m_enclosure->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
@@ -662,16 +666,19 @@ void GUIEnclosurePanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
 	// a value of -1 indicate that default display metric positioning is used
 	int value = m_elementPosXSpin->GetValue();
 	m_enclosure->setPosX(value);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
 	// a value of -1 indicate that default display metric positioning is used
 	int value = m_elementPosYSpin->GetValue();
 	m_enclosure->setPosY(value);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::OnEnclosureStyleChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_enclosure->setEnclosureStyle(m_enclosureStyleBox->GetSelection() + 1);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::OnBitmapChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -725,6 +732,7 @@ void GUIEnclosurePanel::OnAddImagePathBtn(wxCommandEvent& WXUNUSED(event)) {
 				UpdateSpinRanges();
 				UpdateDefaultSpinValues();
 				m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getRelativeImagePath());
+				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			} else {
 				if (width == m_enclosure->getBitmapWidth() && height == m_enclosure->getBitmapHeight()) {
 					m_imagePathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getRelativeImagePath());
@@ -796,6 +804,7 @@ void GUIEnclosurePanel::OnRemoveBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 			UpdateBuiltinBitmapValues();
 			UpdateSpinRanges();
 			UpdateDefaultSpinValues();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -882,6 +891,7 @@ void GUIEnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIEnclosurePanel::UpdateSpinRanges() {

@@ -686,6 +686,7 @@ void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);
 	m_label->setName(m_labelTextField->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
@@ -709,6 +710,7 @@ void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
 		}
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {
@@ -719,6 +721,7 @@ void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {
 			m_label->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
 			m_labelColourPick->SetColour(m_label->getDispLabelColour()->getColor());
 			m_labelColourPick->Disable();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -726,6 +729,7 @@ void GUILabelPanel::OnLabelColourChoice(wxCommandEvent& event) {
 void GUILabelPanel::OnLabelColourPick(wxColourPickerEvent& event) {
 	if (event.GetId() == ID_GUILABELPANEL_COLOR_PICKER) {
 		m_label->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
@@ -747,6 +751,7 @@ void GUILabelPanel::OnFreeXposRadio(wxCommandEvent& event) {
 		m_spanDrawstopColToRightNo->Enable();
 		m_drawstopColSpin->Enable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnFreeYposRadio(wxCommandEvent& event) {
@@ -765,6 +770,7 @@ void GUILabelPanel::OnFreeYposRadio(wxCommandEvent& event) {
 		m_atTopOfDrawstopColYes->Enable();
 		m_atTopOfDrawstopColNo->Enable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -773,10 +779,12 @@ void GUILabelPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 	UpdateDefaultImageValues();
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setDispDrawstopCol(m_drawstopColSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnAtTopOfDrawstopColRadio(wxCommandEvent& event) {
@@ -785,6 +793,7 @@ void GUILabelPanel::OnAtTopOfDrawstopColRadio(wxCommandEvent& event) {
 	} else {
 		m_label->setDispAtTopOfDrawstopCol(false);
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnSpanDrawstopColRightRadio(wxCommandEvent& event) {
@@ -793,6 +802,7 @@ void GUILabelPanel::OnSpanDrawstopColRightRadio(wxCommandEvent& event) {
 	} else {
 		m_label->setDispSpanDrawstopColToRight(false);
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -862,6 +872,7 @@ void GUILabelPanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -869,6 +880,7 @@ void GUILabelPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setWidth(value);
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -876,40 +888,48 @@ void GUILabelPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setHeight(value);
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTileOffsetX(m_tileOffsetXSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTileOffsetY(m_tileOffsetYSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectLeft(m_textRectLeftSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectTop(m_textRectTopSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectWidth(m_textRectWidthSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextRectHeight(m_textRectHeightSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnTextBreakWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setTextBreakWidth(m_textBreakWidthSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -922,6 +942,7 @@ void GUILabelPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
 	} else {
 		m_dispXposSpin->Enable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -934,14 +955,17 @@ void GUILabelPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
 	} else {
 		m_dispYposSpin->Enable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnDispXposSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setDispXpos(m_dispXposSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnDispYposSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_label->setDispYpos(m_dispYposSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::OnRemoveLabelBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -955,6 +979,7 @@ void GUILabelPanel::OnRemoveLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUILabelPanel::UpdateSpinRanges() {

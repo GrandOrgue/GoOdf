@@ -794,6 +794,7 @@ void GUIButtonPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);
 	m_button->setDispLabelText(m_labelTextField->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
@@ -817,6 +818,7 @@ void GUIButtonPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 			m_labelFont->SetSelectedFont(m_button->getDispLabelFont());
 		}
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnLabelColourChoice(wxCommandEvent& event) {
@@ -827,6 +829,7 @@ void GUIButtonPanel::OnLabelColourChoice(wxCommandEvent& event) {
 			m_button->getDispLabelColour()->setSelectedColorIndex(m_labelColourChoice->GetSelection());
 			m_labelColourPick->SetColour(m_button->getDispLabelColour()->getColor());
 			m_labelColourPick->Disable();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -834,6 +837,7 @@ void GUIButtonPanel::OnLabelColourChoice(wxCommandEvent& event) {
 void GUIButtonPanel::OnLabelColourPick(wxColourPickerEvent& event) {
 	if (event.GetId() == ID_GUIBUTTONPANEL_COLOR_PICKER) {
 		m_button->getDispLabelColour()->setColorValue(m_labelColourPick->GetColour());
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
@@ -864,6 +868,7 @@ void GUIButtonPanel::OnDisplayAsPistonRadio(wxCommandEvent& event) {
 		UpdateSpinRanges();
 		UpdateDefaultSpinValues();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnDisplayKeyLabelLeftRadio(wxCommandEvent& event) {
@@ -874,19 +879,23 @@ void GUIButtonPanel::OnDisplayKeyLabelLeftRadio(wxCommandEvent& event) {
 		m_displayKeyLabelLeftNo->SetValue(true);
 		m_button->setDispKeyLabelOnLeft(false);
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_button->setDispImageNum(m_dispImageNbrBox->GetSelection() + 1);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnButtonRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	int rowValue = m_buttonRowSpin->GetValue();
 	m_button->setDispButtonRow(rowValue);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnButtonColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setDispButtonCol(m_buttonColSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -898,10 +907,12 @@ void GUIButtonPanel::OnDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	} else {
 		m_drawstopColSpin->SetRange(1, m_button->getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols);
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setDispDrawstopCol(m_drawstopColSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -963,6 +974,7 @@ void GUIButtonPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
 				wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOff());
 				m_imageOffPathField->SetValue(relativePath);
 				m_addMaskOnBtn->Enable();
+				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			}
 		}
 	} else {
@@ -975,6 +987,7 @@ void GUIButtonPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
 				m_imageOffPathField->SetValue(wxEmptyString);
 				m_addMaskOnBtn->Disable();
 				m_addMaskOffBtn->Disable();
+				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			}
 		} else {
 			m_addMaskOnBtn->Disable();
@@ -1043,20 +1056,24 @@ void GUIButtonPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setWidth(m_widthSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setHeight(m_heightSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTileOffsetX(m_tileOffsetXSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTileOffsetY(m_tileOffsetYSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1087,26 +1104,31 @@ void GUIButtonPanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectLeft(m_textRectLeftSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectTop(m_textRectTopSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectWidth(m_textRectWidthSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextRectHeight(m_textRectHeightSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnTextBreakWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setTextBreakWidth(m_textBreakWidthSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1140,6 +1162,7 @@ void GUIButtonPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
 			m_drawstopColSpin->Enable();
 		}
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1173,6 +1196,7 @@ void GUIButtonPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
 			m_drawstopColSpin->Enable();
 		}
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::OnRemoveButtonBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1186,6 +1210,7 @@ void GUIButtonPanel::OnRemoveButtonBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIButtonPanel::SetupImageNbrBoxContent() {

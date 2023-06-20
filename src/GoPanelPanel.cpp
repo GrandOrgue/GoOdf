@@ -365,7 +365,6 @@ void GoPanelPanel::OnRemovePanelBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else if (::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_panel) > 1) {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
-	m_guiRepresentation->DoUpdateLayout();
 }
 
 void GoPanelPanel::OnOrganElementChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -643,4 +642,8 @@ void GoPanelPanel::ShouldCombinationControlsBeEnabled() {
 		m_manualChoice->Disable();
 		m_combinationNumberSpin->Disable();
 	}
+}
+
+void GoPanelPanel::updateRepresentationLayout() {
+	m_guiRepresentation->DoUpdateLayout();
 }

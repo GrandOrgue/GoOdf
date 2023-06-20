@@ -1907,6 +1907,10 @@ void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
 	}
 }
 
+void GOODFFrame::PanelGUIPropertyIsChanged() {
+	m_panelPanel->updateRepresentationLayout();
+}
+
 void GOODFFrame::removeAllItemsFromTree() {
 	m_organTreeCtrl->DeleteChildren(tree_manuals);
 	m_organTreeCtrl->DeleteChildren(tree_windchestgrps);

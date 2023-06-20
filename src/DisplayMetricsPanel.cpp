@@ -1031,6 +1031,7 @@ void DisplayMetricsPanel::OnHorizontalSizeChoice(wxCommandEvent& event) {
 		} else {
 			m_screenSizeHorizSpin->SetValue(m_displayMetrics->m_dispScreenSizeHoriz.getNumericalValue());
 			m_screenSizeHorizSpin->Disable();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -1038,6 +1039,7 @@ void DisplayMetricsPanel::OnHorizontalSizeChoice(wxCommandEvent& event) {
 void DisplayMetricsPanel::OnHorizontalSizeChange(wxSpinEvent& event) {
 	if (event.GetId() == ID_HORIZONTAL_SIZE_SPIN) {
 		m_displayMetrics->m_dispScreenSizeHoriz.setNumericalValue(m_screenSizeHorizSpin->GetValue());
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
@@ -1049,6 +1051,7 @@ void DisplayMetricsPanel::OnVerticalSizeChoice(wxCommandEvent& event) {
 		} else {
 			m_screenSizeVertSpin->SetValue(m_displayMetrics->m_dispScreenSizeVert.getNumericalValue());
 			m_screenSizeVertSpin->Disable();
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 		}
 	}
 }
@@ -1056,27 +1059,33 @@ void DisplayMetricsPanel::OnVerticalSizeChoice(wxCommandEvent& event) {
 void DisplayMetricsPanel::OnVerticalSizeChange(wxSpinEvent& event) {
 	if (event.GetId() == ID_VERTICAL_SIZE_SPIN) {
 		m_displayMetrics->m_dispScreenSizeVert.setNumericalValue(m_screenSizeVertSpin->GetValue());
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
 void DisplayMetricsPanel::OnDrawstopBackgroundChange(wxCommandEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopBackgroundImageNum = m_drawstopBackground->GetSelection() + 1;
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnConsoleBackgroundChange(wxCommandEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispConsoleBackgroundImageNum = m_consoleBackground->GetSelection() + 1;
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnKeyHorizontalChange(wxCommandEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispKeyHorizBackgroundImageNum = m_keyHorizBackground->GetSelection() + 1;
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnKeyVerticalChange(wxCommandEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispKeyVertBackgroundImageNum = m_keyVertBackground->GetSelection() + 1;
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopInsetBgChange(wxCommandEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopInsetBackgroundImageNum = m_drawstopInsetBackground->GetSelection() + 1;
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnControlLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
@@ -1164,11 +1173,13 @@ void DisplayMetricsPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 		}
 	}
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopRows = m_drawstopRows->GetValue();
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopColsOffsetRadio(wxCommandEvent& event) {
@@ -1181,6 +1192,7 @@ void DisplayMetricsPanel::OnDrawstopColsOffsetRadio(wxCommandEvent& event) {
 		m_drawstopOuterColOffsetUpYes->Disable();
 		m_drawstopOuterColOffsetUpNo->Disable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopOuterColOffsetUpRadio(wxCommandEvent& event) {
@@ -1189,6 +1201,7 @@ void DisplayMetricsPanel::OnDrawstopOuterColOffsetUpRadio(wxCommandEvent& event)
 	} else {
 		m_displayMetrics->m_dispDrawstopOuterColOffsetUp = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnPairDrawstopColsRadio(wxCommandEvent& event) {
@@ -1204,26 +1217,31 @@ void DisplayMetricsPanel::OnPairDrawstopColsRadio(wxCommandEvent& event) {
 	} else {
 		m_displayMetrics->m_dispPairDrawstopCols = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraDrawstopRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraDrawstopRows = m_extraDrawstopRows->GetValue();
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraDrawstopCols = m_extraDrawstopCols->GetValue();
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnButtonColSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispButtonCols = m_buttonCols->GetValue();
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraButtonRowSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispExtraButtonRows = m_extraButtonRows->GetValue();
 	::wxGetApp().m_frame->m_organ->panelDisplayMetricsUpdate(m_displayMetrics);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraPedalButtonRowRadio(wxCommandEvent& event) {
@@ -1240,6 +1258,7 @@ void DisplayMetricsPanel::OnExtraPedalButtonRowRadio(wxCommandEvent& event) {
 		m_extraPedalButtonRowOffsetRightYes->Disable();
 		m_extraPedalButtonRowOffsetRightNo->Disable();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraPedalButtonRowOffsetRadio(wxCommandEvent& event) {
@@ -1248,6 +1267,7 @@ void DisplayMetricsPanel::OnExtraPedalButtonRowOffsetRadio(wxCommandEvent& event
 	} else {
 		m_displayMetrics->m_dispExtraPedalButtonRowOffset = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraPedalButtonRowOffsetRightRadio(wxCommandEvent& event) {
@@ -1256,6 +1276,7 @@ void DisplayMetricsPanel::OnExtraPedalButtonRowOffsetRightRadio(wxCommandEvent& 
 	} else {
 		m_displayMetrics->m_dispExtraPedalButtonRowOffsetRight = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnButtonsAboveManualsRadio(wxCommandEvent& event) {
@@ -1264,6 +1285,7 @@ void DisplayMetricsPanel::OnButtonsAboveManualsRadio(wxCommandEvent& event) {
 	} else {
 		m_displayMetrics->m_dispButtonsAboveManuals = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnTrimAboveManualsRadio(wxCommandEvent& event) {
@@ -1272,6 +1294,7 @@ void DisplayMetricsPanel::OnTrimAboveManualsRadio(wxCommandEvent& event) {
 	} else {
 		m_displayMetrics->m_dispTrimAboveManuals = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnTrimBelowManualsRadio(wxCommandEvent& event) {
@@ -1280,6 +1303,7 @@ void DisplayMetricsPanel::OnTrimBelowManualsRadio(wxCommandEvent& event) {
 	} else {
 		m_displayMetrics->m_dispTrimBelowManuals = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnTrimAboveExtraRowsRadio(wxCommandEvent& event) {
@@ -1288,6 +1312,7 @@ void DisplayMetricsPanel::OnTrimAboveExtraRowsRadio(wxCommandEvent& event) {
 	} else {
 		m_displayMetrics->m_dispTrimAboveExtraRows = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnExtraDrawstopRowsAboveExtraButtonRowsRadio(wxCommandEvent& event) {
@@ -1296,46 +1321,57 @@ void DisplayMetricsPanel::OnExtraDrawstopRowsAboveExtraButtonRowsRadio(wxCommand
 	} else {
 		m_displayMetrics->m_dispExtraDrawstopRowsAboveExtraButtonRows = false;
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopWidth = m_drawstopWidth->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnDrawstopHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispDrawstopHeight = m_drawstopHeight->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnPistonWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispPistonWidth = m_pistonWidth->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnPistonHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispPistonHeight = m_pistonHeight->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnEnclosureWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispEnclosureWidth = m_enclosureWidth->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnEnclosureHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispEnclosureHeight = m_enclosureHeight->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnPedalHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispPedalHeight = m_pedalHeight->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnPedalKeyWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispPedalKeyWidth = m_pedalKeyWidth->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnManualHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispManualHeight = m_manualHeight->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::OnManualKeyWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispManualKeyWidth = m_manualKeyWidth->GetValue();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void DisplayMetricsPanel::SetupWoodBitmapBoxes() {
@@ -1369,5 +1405,4 @@ void DisplayMetricsPanel::SetupWoodBitmapBoxes() {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_drawstopInsetBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-
 }

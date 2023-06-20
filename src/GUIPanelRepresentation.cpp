@@ -628,5 +628,8 @@ wxString GUIPanelRepresentation::BreakTextLine(wxString text, int textBreakWidth
 }
 
 void GUIPanelRepresentation::DoUpdateLayout() {
+	m_windowPanel->SetSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	UpdateLayout();
+	DoPaintNow();
 }

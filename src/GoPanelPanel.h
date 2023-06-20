@@ -33,6 +33,7 @@ public:
 
 	void setPanel(GoPanel *panel);
 	void setIsFirstRemoval(bool value);
+	void updateRepresentationLayout();
 
 private:
 	DECLARE_EVENT_TABLE()
