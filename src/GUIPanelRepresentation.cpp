@@ -1,6 +1,6 @@
 /*
  * GUIPanelRepresentation.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo
+ * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,6 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 	// Manual backgrounds
 	for (unsigned i = 0; i < m_currentPanel->getNumberOfManuals(); i++) {
 		GUIManual *currentMan = m_currentPanel->getGuiManualAt(i);
-		// wxRect boundingRect = wxRect(currentMan->m_renderInfo.x, currentMan->m_renderInfo.y, currentMan->m_renderInfo.width, currentMan->m_renderInfo.height);
 		wxRect vRect = wxRect(GetCenterX(), currentMan->m_renderInfo.y, GetCenterWidth(), currentMan->m_renderInfo.height);
 		wxBitmap keyVert = m_currentPanel->getDisplayMetrics()->getKeyVertBg();
 		TileBitmap(vRect, dc, keyVert, 0, 0);
