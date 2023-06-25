@@ -39,6 +39,7 @@ public:
 	std::vector<wxBitmap> m_scaledDrawstopBitmaps;
 	std::vector<wxBitmap> m_enclosureStyleBitmaps;
 	std::vector<wxBitmap> m_labelBitmaps;
+	std::vector<wxBitmap> m_fullSizeLabelBmps;
 	std::vector<wxBitmap> m_defaultManualBitmaps;
 	std::vector<wxBitmap> m_invertedManualBitmaps;
 	std::vector<wxBitmap> m_woodenManualBitmaps;

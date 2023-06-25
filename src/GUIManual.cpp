@@ -21,7 +21,6 @@
 #include "GUIManual.h"
 #include "GOODFFunctions.h"
 #include "GOODF.h"
-#include <iostream>
 
 GUIManual::GUIManual(Manual *manual) : GUIElement(), m_manual(manual) {
 	m_type = wxT("Manual");

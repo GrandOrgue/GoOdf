@@ -20,6 +20,7 @@
 
 #include "GUILabel.h"
 #include "GOODFFunctions.h"
+#include "GOODF.h"
 
 GUILabel::GUILabel() {
 	m_type = wxT("Label");
@@ -457,4 +458,11 @@ void GUILabel::setBitmapHeight(int height) {
 void GUILabel::setDefaultFont(wxFont &theFont) {
 	m_dispLabelFont = theFont;
 	m_dispLabelFontSize.setSizeValue(theFont.GetPointSize());
+}
+
+wxBitmap GUILabel::getBitmap() {
+	if (m_image.getImage() == wxEmptyString)
+		return ::wxGetApp().m_fullSizeLabelBmps[m_dispImageNum];
+	else
+		return m_image.getBitmap();
 }

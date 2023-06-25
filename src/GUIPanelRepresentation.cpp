@@ -20,6 +20,7 @@
 
 #include "GUIPanelRepresentation.h"
 #include "GUIButton.h"
+#include "GUILabel.h"
 
 // Event table
 BEGIN_EVENT_TABLE(GUIPanelRepresentation, wxDialog)
@@ -334,6 +335,72 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 				}
 				continue;
 			}
+			GUILabel *labelElement = dynamic_cast<GUILabel*>(guiElement);
+			if (labelElement) {
+				int xPosToUse = 0;
+				if (labelElement->isFreeXPlacement()) {
+					// the label uses absolute x positioning either via m_dispXpos or m_positionX
+					if (labelElement->getPosX() >= 0)
+						xPosToUse = labelElement->getPosX();
+					else
+						xPosToUse = labelElement->getDispXpos();
+				} else {
+					// the label uses the default layout model for x positioning
+					int drawstopsPerJamb = m_currentPanel->getDisplayMetrics()->m_dispDrawstopCols / 2;
+					if (labelElement->isDispSpanDrawstopColToRight())
+						xPosToUse = 39;
+					if (labelElement->getDispDrawstopCol() <= drawstopsPerJamb)
+						xPosToUse = xPosToUse + (labelElement->getDispDrawstopCol() - 1) * 78 + 1;
+					else
+						xPosToUse = -(xPosToUse + (labelElement->getDispDrawstopCol() - 1 - drawstopsPerJamb) * 78 + 1);
+
+					if (xPosToUse >= 0)
+						xPosToUse = GetJambLeftX() + xPosToUse;
+					else
+						xPosToUse = GetJambRightX() - xPosToUse;
+				}
+
+				int yPosToUse = 0;
+				if (labelElement->isFreeYPlacement()) {
+					// the label uses absolute y positioning either via m_dispYpos or m_positionY
+					if (labelElement->getPosY() >= 0)
+						yPosToUse = labelElement->getPosY();
+					else
+						yPosToUse = labelElement->getDispYpos();
+				} else {
+					// the label uses default layout model for y positioning
+					yPosToUse = 1;
+					if (!labelElement->isDispAtTopOfDrawstopCol())
+						yPosToUse += -32;
+
+					if (yPosToUse >= 0)
+						yPosToUse = GetJambLeftRightY() + 1;
+					else
+						yPosToUse = GetJambLeftRightY() + 1 + GetJambLeftRightHeight() - 32;
+				}
+
+				if (theBmp.IsOk()) { // @suppress("Method cannot be resolved")
+					if (labelElement->getWidth() > labelElement->getBitmapWidth() || labelElement->getHeight() > labelElement->getBitmapHeight()) {
+						wxRect imgRect(xPosToUse, yPosToUse, labelElement->getWidth(), labelElement->getHeight());
+						TileBitmap(imgRect, dc, theBmp, labelElement->getTileOffsetX(), labelElement->getTileOffsetY());
+					} else {
+						dc.DrawBitmap(theBmp, xPosToUse, yPosToUse, true);
+					}
+				}
+
+				if (labelElement->getTextBreakWidth() && labelElement->getName() != wxEmptyString) {
+					dc.SetFont(labelElement->getDispLabelFont());
+					dc.SetBackgroundMode(wxTRANSPARENT);
+					dc.SetTextForeground(labelElement->getDispLabelColour()->getColor());
+					wxRect textRect(
+						xPosToUse + labelElement->getTextRectLeft(),
+						yPosToUse + labelElement->getTextRectTop(),
+						labelElement->getTextRectWidth(),
+						labelElement->getTextRectHeight()
+					);
+					dc.DrawLabel(BreakTextLine(labelElement->getName(), labelElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+				}
+			}
 		}
 	}
 }
@@ -516,10 +583,6 @@ int GUIPanelRepresentation::GetHackY() {
 }
 
 void GUIPanelRepresentation::UpdateLayout() {
-	/* This makes sure that the size is at least one
-	if (!m_Manuals.size())
-		m_Manuals.push_back(NULL); */
-
 	m_CenterY = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() - m_currentPanel->getDisplayMetrics()->m_dispPedalHeight;
 	m_CenterWidth = std::max(GetJambTopWidth(), GetPistonWidth());
 

@@ -163,6 +163,34 @@ bool GOODF::OnInit() {
 	m_labelBitmaps.push_back(label14);
 	m_labelBitmaps.push_back(label15);
 
+	wxBitmap label2 = wxBITMAP_PNG_FROM_DATA(label02);
+	wxBitmap label4 = wxBITMAP_PNG_FROM_DATA(label04);
+	wxBitmap label5 = wxBITMAP_PNG_FROM_DATA(label05);
+	wxBitmap label6 = wxBITMAP_PNG_FROM_DATA(label06);
+	wxBitmap label8 = wxBITMAP_PNG_FROM_DATA(label08);
+	wxBitmap label9 = wxBITMAP_PNG_FROM_DATA(label09);
+	wxBitmap label11 = wxBITMAP_PNG_FROM_DATA(label11);
+	wxBitmap label12 = wxBITMAP_PNG_FROM_DATA(label12);
+	wxBitmap fullLabel13 = wxBITMAP_PNG_FROM_DATA(label13);
+	wxBitmap fullLabel14 = wxBITMAP_PNG_FROM_DATA(label14);
+	wxBitmap fullLabel15 = wxBITMAP_PNG_FROM_DATA(label15);
+	m_fullSizeLabelBmps.push_back(wxNullBitmap);
+	m_fullSizeLabelBmps.push_back(label1);
+	m_fullSizeLabelBmps.push_back(label2);
+	m_fullSizeLabelBmps.push_back(label3);
+	m_fullSizeLabelBmps.push_back(label4);
+	m_fullSizeLabelBmps.push_back(label5);
+	m_fullSizeLabelBmps.push_back(label6);
+	m_fullSizeLabelBmps.push_back(label7);
+	m_fullSizeLabelBmps.push_back(label8);
+	m_fullSizeLabelBmps.push_back(label9);
+	m_fullSizeLabelBmps.push_back(label10);
+	m_fullSizeLabelBmps.push_back(label11);
+	m_fullSizeLabelBmps.push_back(label12);
+	m_fullSizeLabelBmps.push_back(fullLabel13);
+	m_fullSizeLabelBmps.push_back(fullLabel14);
+	m_fullSizeLabelBmps.push_back(fullLabel15);
+
 	wxBitmap defaultManual1 = wxBITMAP_PNG_FROM_DATA(ManualDefaultComposite01);
 	wxBitmap defaultManual2 = wxBITMAP_PNG_FROM_DATA(ManualDefaultComposite02);
 	m_defaultManualBitmaps.push_back(defaultManual1);

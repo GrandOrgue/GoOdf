@@ -85,6 +85,7 @@ public:
 	int getBitmapHeight();
 	void setBitmapHeight(int height);
 	void setDefaultFont(wxFont &theFont);
+	wxBitmap getBitmap();
 
 protected:
 	bool m_freeXPlacement; // (boolean, default: true)
