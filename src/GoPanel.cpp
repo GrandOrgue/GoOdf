@@ -128,6 +128,7 @@ bool GoPanel::getHasPedals() {
 
 void GoPanel::setHasPedals(bool hasPedals) {
 	m_hasPedals = hasPedals;
+	updateGuiManuals();
 }
 
 unsigned GoPanel::getNumberOfImages() {
@@ -191,6 +192,8 @@ void GoPanel::removeGuiElementAt(unsigned index) {
 	std::advance(it, index);
 	delete *it;
 	m_guiElements.erase(it);
+	updateGuiManuals();
+	updateGuiEnclosures();
 }
 
 int GoPanel::getNumberOfGuiElements() {
@@ -275,6 +278,7 @@ void GoPanel::removeItemFromPanel(Enclosure* enclosure) {
 			++it;
 		}
 	}
+	updateGuiEnclosures();
 }
 
 bool GoPanel::hasItemAsGuiElement(Manual *manual) {
@@ -313,6 +317,7 @@ void GoPanel::removeItemFromPanel(Manual *manual) {
 			++it;
 		}
 	}
+	updateGuiManuals();
 }
 
 bool GoPanel::hasItemAsGuiElement(Stop *stop) {
@@ -658,6 +663,8 @@ bool GoPanel::getIsGuiManualTheFirst(GUIManual *manual) {
 			if (man) {
 				if (man == manual) {
 					isFirst = true;
+					if (m_hasPedals)
+						man->setDisplayAsPedal(true);
 				}
 			}
 			break;
@@ -669,11 +676,18 @@ bool GoPanel::getIsGuiManualTheFirst(GUIManual *manual) {
 void GoPanel::updateGuiManuals() {
 	if (!m_manuals.empty())
 		m_manuals.clear();
+	bool isFirst = true;
 	for (GUIElement* e : m_guiElements) {
 		if (e->getType() == wxT("Manual")) {
 			GUIManual *man = dynamic_cast<GUIManual*>(e);
 			if (man) {
 				m_manuals.push_back(man);
+				if (isFirst) {
+					if (m_hasPedals) {
+						man->setDisplayAsPedal(true);
+					}
+					isFirst = false;
+				}
 			}
 		}
 	}

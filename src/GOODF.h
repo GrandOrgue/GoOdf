@@ -45,6 +45,20 @@ public:
 	std::vector<wxBitmap> m_invertedWoodenManualBitmaps;
 	std::vector<wxBitmap> m_defaultPedalBitmaps;
 	std::vector<wxBitmap> m_invertedPedalBitmaps;
+
+	std::vector<wxBitmap> m_manualKeyBmps01;
+	std::vector<wxBitmap> m_invertedManualKeysBmps01;
+	std::vector<wxBitmap> m_woodenManualKeysBmps01;
+	std::vector<wxBitmap> m_invertedManualWoodenKeysBmps01;
+	std::vector<wxBitmap> m_pedalKeysBmps01;
+	std::vector<wxBitmap> m_invertedPedalKeysBmps01;
+	std::vector<wxBitmap> m_manualKeyBmps02;
+	std::vector<wxBitmap> m_invertedManualKeysBmps02;
+	std::vector<wxBitmap> m_woodenManualKeysBmps02;
+	std::vector<wxBitmap> m_invertedManualWoodenKeysBmps02;
+	std::vector<wxBitmap> m_pedalKeysBmps02;
+	std::vector<wxBitmap> m_invertedPedalKeysBmps02;
+
 	std::vector<wxBitmap> m_woodBitmaps;
 	std::vector<wxBitmap> m_scaledWoodBitmaps;
 	wxHtmlHelpController *m_helpController;

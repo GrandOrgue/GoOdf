@@ -21,6 +21,7 @@
 #include "GUIManual.h"
 #include "GOODFFunctions.h"
 #include "GOODF.h"
+#include <iostream>
 
 GUIManual::GUIManual(Manual *manual) : GUIElement(), m_manual(manual) {
 	m_type = wxT("Manual");
@@ -30,9 +31,11 @@ GUIManual::GUIManual(Manual *manual) : GUIElement(), m_manual(manual) {
 	m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
 	m_displayKeys = m_manual->getNumberOfAccessibleKeys();
 	m_dispImageNum = 1;
+	m_displayedAsPedal = false;
 	populateKeyTypes();
 	populateKeyNumbers();
 	setupDefaultDisplayKeys();
+	updateKeyInfo();
 }
 
 GUIManual::~GUIManual() {
@@ -114,6 +117,24 @@ void GUIManual::write(wxTextFile *outFile) {
 void GUIManual::read(wxFileConfig *cfg) {
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+	int dispFirstNote = static_cast<int>(cfg->ReadLong("DisplayFirstNote", m_manual->getFirstAccessibleKeyMIDINoteNumber()));
+	if (dispFirstNote >= 0 && dispFirstNote < 128) {
+		m_displayFirstNote = dispFirstNote;
+	} else {
+		m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
+	}
+	for (int i = 0; i < m_displayKeys; i++) {
+		wxString dispKeyNbr = wxT("DisplayKey") + GOODF_functions::number_format(i + 1);
+		int backendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr, m_displayFirstNote + i));
+		int frontendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr + wxT("Note"), m_displayFirstNote + i));
+		std::pair<int, int> *key_map = getDisplayKeyAt(i);
+		if (backendMidiKeyNbr >= 0 && backendMidiKeyNbr < 128) {
+			key_map->first = backendMidiKeyNbr;
+		}
+		if (frontendMidiKeyNbr >= 0 && frontendMidiKeyNbr < 128) {
+			key_map->second = frontendMidiKeyNbr;
+		}
+	}
 	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));
 	if (posX > -1 && posX <= thePanelWidth)
 		setPosX(posX);
@@ -288,7 +309,15 @@ void GUIManual::read(wxFileConfig *cfg) {
 			type->ForceWritingWidth = true;
 			keepKeyType = true;
 		} else {
-			type->Width = type->BitmapWidth;
+			// Check if this key is overriding an existing general key type
+			int baseTypeIdx = baseKeyTypeExistAtIndex(keyStr);
+			if (baseTypeIdx > -1) {
+				KEYTYPE *baseKey = getKeytypeAt(baseTypeIdx);
+				type->Width = baseKey->Width;
+				type->BitmapWidth = baseKey->BitmapWidth;
+				type->BitmapHeight = baseKey->BitmapHeight;
+			} else
+				type->Width = type->BitmapWidth;
 		}
 		int keyOffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("Offset"), -1000));
 		if (keyOffset > -501 && keyOffset < 501) {
@@ -337,24 +366,8 @@ void GUIManual::read(wxFileConfig *cfg) {
 	if (dispImageNum > 0 && dispImageNum < 3) {
 		setDispImageNum(dispImageNum);
 	}
-	int dispFirstNote = static_cast<int>(cfg->ReadLong("DisplayFirstNote", m_manual->getFirstAccessibleKeyMIDINoteNumber()));
-	if (dispFirstNote >= 0 && dispFirstNote < 128) {
-		m_displayFirstNote = dispFirstNote;
-	} else {
-		m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
-	}
-	for (int i = 0; i < m_displayKeys; i++) {
-		wxString dispKeyNbr = wxT("DisplayKey") + GOODF_functions::number_format(i + 1);
-		int backendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr, m_displayFirstNote + i));
-		int frontendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr + wxT("Note"), m_displayFirstNote + i));
-		std::pair<int, int> *key_map = getDisplayKeyAt(i);
-		if (backendMidiKeyNbr >= 0 && backendMidiKeyNbr < 128) {
-			key_map->first = backendMidiKeyNbr;
-		}
-		if (frontendMidiKeyNbr >= 0 && frontendMidiKeyNbr < 128) {
-			key_map->second = frontendMidiKeyNbr;
-		}
-	}
+
+	updateKeyInfo();
 }
 
 bool GUIManual::isReferencing(Manual *man) {
@@ -435,6 +448,8 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.BitmapHeight = typeHeight;
 	type.ForceWritingWidth = false;
 	m_keytypes.push_back(type);
+
+	updateKeyInfo();
 }
 
 unsigned GUIManual::getNumberOfKeytypes() {
@@ -450,6 +465,8 @@ void GUIManual::removeKeytypeAt(unsigned index) {
 	std::list<KEYTYPE>::iterator it = m_keytypes.begin();
 	std::advance(it, index);
 	m_keytypes.erase(it);
+
+	updateKeyInfo();
 }
 
 const wxArrayString& GUIManual::getAvailableKeytypes() {
@@ -466,6 +483,7 @@ bool GUIManual::getDispKeyColourInverted() {
 
 void GUIManual::setDispKeyColourInverted(bool inverted) {
 	m_dispKeyColourInverted = inverted;
+	updateKeyInfo();
 }
 
 bool GUIManual::getDispKeyColourWooden() {
@@ -474,6 +492,7 @@ bool GUIManual::getDispKeyColourWooden() {
 
 void GUIManual::setDispKeyColurWooden(bool wooden) {
 	m_dispKeyColourWooden = wooden;
+	updateKeyInfo();
 }
 
 int GUIManual::getDisplayFirstNote() {
@@ -485,6 +504,7 @@ void GUIManual::setDisplayFirstNote(int first) {
 	populateKeyNumbers();
 	setupDefaultDisplayKeys();
 	validateKeyTypes();
+	updateKeyInfo();
 }
 
 int GUIManual::getNumberOfDisplayKeys() {
@@ -499,6 +519,7 @@ void GUIManual::setNumberOfDisplayKeys(int nbr) {
 	populateKeyNumbers();
 	setupDefaultDisplayKeys();
 	validateKeyTypes();
+	updateKeyInfo();
 }
 
 std::pair<int, int>* GUIManual::getDisplayKeyAt(unsigned index) {
@@ -574,7 +595,7 @@ int GUIManual::baseKeyTypeExistAtIndex(wxString keyNbrType) {
 	if (keyNbrType.StartsWith(wxT("Key"))) {
 		int keyNbrIdx = getIndexOfKeyNumber(keyNbrType);
 		if (keyNbrIdx > -1){
-			int keyMidiNumber = m_displayFirstNote + keyNbrIdx;
+			int keyMidiNumber = getDisplayKeyAt(keyNbrIdx)->second;
 			wxString base_key_str = wxEmptyString;
 			int restFromDivision = keyMidiNumber % 12;
 			switch (restFromDivision) {
@@ -676,4 +697,212 @@ int GUIManual::getDispImageNum() {
 
 void GUIManual::setDispImageNum(int nbr) {
 	m_dispImageNum = nbr;
+	updateKeyInfo();
+}
+
+void GUIManual::updateKeyInfo() {
+	int keyXpos = 0;
+	m_keys.resize(m_displayKeys);
+	for (int i = 0; i < (int) m_keys.size(); i++) {
+		// at first we set builtin default key values
+		int key_nb = getDisplayKeyAt(i)->second;
+		m_keys[i].DisplayAsMidiNote = key_nb;
+		m_keys[i].IsSharp = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? false : true;
+		m_keys[i].Xpos = keyXpos;
+		m_keys[i].Ypos = 0;
+
+		int width = 0;
+		if (m_displayedAsPedal) {
+			width = 7;
+		} else {
+			if (!m_keys[i].IsSharp) {
+				width = 12;
+			} else {
+				width = 6;
+			}
+		}
+
+		if (m_displayedAsPedal) {
+			// this is for a pedal keyboard
+			if (m_dispKeyColourInverted) {
+				// keyboard is inverted
+				if (m_dispKeyColourWooden) {
+					if (m_dispImageNum == 2)
+						m_keys[i].KeyImage = ::wxGetApp().m_invertedPedalKeysBmps02[key_nb % 12];
+					else
+						m_keys[i].KeyImage = ::wxGetApp().m_invertedPedalKeysBmps01[key_nb % 12];
+				} else {
+					if (m_dispImageNum == 2)
+						m_keys[i].KeyImage = ::wxGetApp().m_invertedPedalKeysBmps02[key_nb % 12];
+					else
+						m_keys[i].KeyImage = ::wxGetApp().m_invertedPedalKeysBmps01[key_nb % 12];
+				}
+			} else {
+				// this is a normal keyboard
+				if (m_dispKeyColourWooden) {
+					if (m_dispImageNum == 2)
+						m_keys[i].KeyImage = ::wxGetApp().m_pedalKeysBmps02[key_nb % 12];
+					else
+						m_keys[i].KeyImage = ::wxGetApp().m_pedalKeysBmps01[key_nb % 12];
+				} else {
+					if (m_dispImageNum == 2)
+						m_keys[i].KeyImage = ::wxGetApp().m_pedalKeysBmps02[key_nb % 12];
+					else
+						m_keys[i].KeyImage = ::wxGetApp().m_pedalKeysBmps01[key_nb % 12];
+				}
+			}
+		} else {
+			// this is for a manual keyboard
+			if (m_dispKeyColourInverted) {
+				// keyboard is inverted
+				if (m_dispKeyColourWooden) {
+					if (i + 1 < m_displayKeys) {
+						if (m_dispImageNum == 2)
+							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[key_nb % 12];
+						else
+							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[key_nb % 12];
+					} else {
+						if (key_nb % 12 == 0 || key_nb % 12 == 5) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[12];
+						}else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[4];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[4];
+						}
+					}
+				} else {
+					if (i + 1 < m_displayKeys) {
+						if (m_dispImageNum == 2)
+							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[key_nb % 12];
+						else
+							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[key_nb % 12];
+					} else {
+						if (key_nb % 12 == 0 || key_nb % 12 == 5) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[12];
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[4];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[4];
+						}
+					}
+				}
+			} else {
+				// this is a normal keyboard
+				if (m_dispKeyColourWooden) {
+					if (i + 1 < m_displayKeys) {
+						if (m_dispImageNum == 2)
+							m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[key_nb % 12];
+						else
+							m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[key_nb % 12];
+					} else {
+						if (key_nb % 12 == 0 || key_nb % 12 == 5) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[12];
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[4];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[4];
+						}
+					}
+				} else {
+					if (i + 1 < m_displayKeys) {
+						if (m_dispImageNum == 2)
+							m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[key_nb % 12];
+						else
+							m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[key_nb % 12];
+					} else {
+						if (key_nb % 12 == 0 || key_nb % 12 == 5) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[12];
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[4];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[4];
+						}
+					}
+				}
+			}
+		}
+
+		int overridingXOffset = 0;
+		int overridingYOffset = 0;
+		// default values can be overridden by general key types
+		wxString typeName = m_availableKeytypes[key_nb % 12];
+		if (i == 0)
+			typeName = wxT("First") + typeName;
+		else if (i + 1 == m_displayKeys)
+			typeName = wxT("Last") + typeName;
+
+		for (KEYTYPE& key : m_keytypes) {
+			if (key.KeytypeIdentifier.IsSameAs(typeName)) {
+				// a base type match is found!
+				width = key.Width;
+				overridingXOffset = key.Offset;
+				overridingYOffset = key.YOffset;
+				if (key.ImageOff.getImage() != wxEmptyString) {
+					m_keys[i].KeyImage = key.ImageOff.getBitmap();
+				}
+
+				break;
+			}
+		}
+
+		// and possibly finally by a specific matching Key999 entry
+		wxString keyId = wxT("Key") + GOODF_functions::number_format(i + 1);
+		for (KEYTYPE& key : m_keytypes) {
+			if (key.KeytypeIdentifier.IsSameAs(keyId)) {
+				// Key999 overrides any base type
+				width = key.Width;
+				overridingXOffset = key.Offset;
+				overridingYOffset = key.YOffset;
+				if (key.ImageOff.getImage() != wxEmptyString) {
+					m_keys[i].KeyImage = key.ImageOff.getBitmap();
+				}
+
+				break;
+			}
+		}
+		m_keys[i].Xpos += overridingXOffset;
+		m_keys[i].Ypos += overridingYOffset;
+		if (!m_displayedAsPedal) {
+			if (m_keys[i].IsSharp && overridingXOffset == 0)
+				m_keys[i].Xpos -= (width / 2);
+		}
+
+		if (m_displayedAsPedal) {
+			// a pedal key of "e" or "b" should add another key width for the next key
+			if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
+				width *= 2;
+		}
+
+		if (!m_keys[i].IsSharp || m_displayedAsPedal)
+			keyXpos += width;
+	}
+}
+
+KEY_INFO* GUIManual::getKeyInfoAt(unsigned index) {
+	return &(m_keys[index]);
+}
+
+void GUIManual::setDisplayAsPedal(bool isPedal) {
+	m_displayedAsPedal = isPedal;
+	updateKeyInfo();
+}
+
+bool GUIManual::isDisplayedAsPedal() {
+	return m_displayedAsPedal;
 }

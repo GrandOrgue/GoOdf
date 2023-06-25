@@ -27,6 +27,7 @@
 #include "GUIElements.h"
 #include "Manual.h"
 #include <list>
+#include <vector>
 #include "GoImage.h"
 
 struct KEYTYPE {
@@ -53,6 +54,14 @@ struct MANUAL_RENDER_INFO {
 	int x;
 	int keys_y;
 	int piston_y;
+};
+
+struct KEY_INFO {
+	unsigned DisplayAsMidiNote;
+	bool IsSharp;
+	int Xpos;
+	int Ypos;
+	wxBitmap KeyImage;
 };
 
 class GUIManual : public GUIElement {
@@ -89,11 +98,17 @@ public:
 
 	MANUAL_RENDER_INFO m_renderInfo;
 
+	void updateKeyInfo();
+	KEY_INFO* getKeyInfoAt(unsigned index);
+	void setDisplayAsPedal(bool isPedal);
+	bool isDisplayedAsPedal();
+
 private:
 	Manual *m_manual;
 	std::list<KEYTYPE> m_keytypes;
 	wxArrayString m_availableKeytypes;
 	wxArrayString m_availableKeynumbers;
+	std::vector<KEY_INFO> m_keys;
 
 	bool m_dispKeyColourInverted; // (boolean, default: false)
 	bool m_dispKeyColourWooden; // (boolean, default: false)
@@ -107,6 +122,7 @@ private:
 		second = DisplayKey999Note (integer 0 - 127, default: FirstAccessibleKeyMIDINoteNumber + 999)
 	*/
 	int m_dispImageNum;
+	bool m_displayedAsPedal;
 
 	void validateKeyTypes();
 	void populateKeyTypes();

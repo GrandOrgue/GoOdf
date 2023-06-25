@@ -56,8 +56,10 @@ void GUIPanelRepresentation::OnPaintEvent(wxPaintEvent& WXUNUSED(event)) {
 }
 
 void GUIPanelRepresentation::DoPaintNow() {
-	wxClientDC dc(this);
-	RenderPanel(dc);
+	if (this->IsShown()) {
+		wxClientDC dc(this);
+		RenderPanel(dc);
+	}
 }
 
 void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
@@ -100,6 +102,19 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 		TileBitmap(rect, dc, keyHoriz, 0, 0);
 	}
 
+	// Manual backgrounds
+	for (unsigned i = 0; i < m_currentPanel->getNumberOfManuals(); i++) {
+		GUIManual *currentMan = m_currentPanel->getGuiManualAt(i);
+		// wxRect boundingRect = wxRect(currentMan->m_renderInfo.x, currentMan->m_renderInfo.y, currentMan->m_renderInfo.width, currentMan->m_renderInfo.height);
+		wxRect vRect = wxRect(GetCenterX(), currentMan->m_renderInfo.y, GetCenterWidth(), currentMan->m_renderInfo.height);
+		wxBitmap keyVert = m_currentPanel->getDisplayMetrics()->getKeyVertBg();
+		TileBitmap(vRect, dc, keyVert, 0, 0);
+
+		wxRect hRect = wxRect(GetCenterX(), currentMan->m_renderInfo.piston_y, GetCenterWidth(), (!i && m_currentPanel->getDisplayMetrics()->m_dispExtraPedalButtonRow) ? 2 * m_currentPanel->getDisplayMetrics()->m_dispPistonHeight : m_currentPanel->getDisplayMetrics()->m_dispPistonHeight);
+		wxBitmap keyHoriz = m_currentPanel->getDisplayMetrics()->getKeyHorizBg();
+		TileBitmap(hRect, dc, keyHoriz, 0, 0);
+	}
+
 	if (m_currentPanel->getNumberOfImages() > 0) {
 		for (unsigned i = 0; i < m_currentPanel->getNumberOfImages(); i++) {
 			if (m_currentPanel->getImageAt(i)->getWidth() > m_currentPanel->getImageAt(i)->getOriginalWidth() || m_currentPanel->getImageAt(i)->getHeight() > m_currentPanel->getImageAt(i)->getOriginalHeight()) {
@@ -114,6 +129,22 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			} else {
 				dc.DrawBitmap(m_currentPanel->getImageAt(i)->getBitmap(), m_currentPanel->getImageAt(i)->getPositionX(), m_currentPanel->getImageAt(i)->getPositionY(), true);
 			}
+		}
+	}
+
+	// Manual keys drawn after images!
+	for (unsigned i = 0; i < m_currentPanel->getNumberOfManuals(); i++) {
+		GUIManual *currentMan = m_currentPanel->getGuiManualAt(i);
+		int manXpos = currentMan->m_renderInfo.x;
+		int manYpos = currentMan->m_renderInfo.y;
+		if (currentMan->getPosX() >= 0)
+			manXpos = currentMan->getPosX();
+		if (currentMan->getPosY() >= 0)
+			manYpos = currentMan->getPosY();
+		for (int j = 0; j < currentMan->getNumberOfDisplayKeys(); j++) {
+			KEY_INFO *currentKey = currentMan->getKeyInfoAt(j);
+			wxBitmap theKey = currentKey->KeyImage;
+			dc.DrawBitmap(theKey, manXpos + currentKey->Xpos, manYpos + currentKey->Ypos, true);
 		}
 	}
 
@@ -498,6 +529,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 	for (unsigned i = 0; i < nbrManuals; i++) {
 		GUIManual *theManual = m_currentPanel->getGuiManualAt(i);
 		if (!i && theManual && m_currentPanel->getHasPedals()) {
+			// this is the first manual on the panel and it should be displayed as a pedal
 			theManual->m_renderInfo.height = m_currentPanel->getDisplayMetrics()->m_dispPedalHeight;
 			theManual->m_renderInfo.keys_y = theManual->m_renderInfo.y = m_CenterY;
 			m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispPedalHeight;
@@ -511,6 +543,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 			m_CenterY -= 12;
 		}
 		if (!i && !theManual &&	m_currentPanel->getNumberOfEnclosures()) {
+			// this is if there's no manuals on the panel but there's enclosures
 			m_CenterY -= 12;
 			m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispEnclosureHeight;
 			m_EnclosureY = m_CenterY;
@@ -520,7 +553,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 		if (!theManual)
 			continue;
 
-		if (i) {
+		if (i || !m_currentPanel->getHasPedals()) {
 			if (!m_currentPanel->getDisplayMetrics()->m_dispButtonsAboveManuals) {
 				m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispPistonHeight;
 				theManual->m_renderInfo.piston_y = m_CenterY;
@@ -542,8 +575,8 @@ void GUIPanelRepresentation::UpdateLayout() {
 			}
 			theManual->m_renderInfo.y = m_CenterY;
 		}
-		theManual->m_renderInfo.width = 1;
-		if (i) {
+		theManual->m_renderInfo.width = 0;
+		if (i || !m_currentPanel->getHasPedals()) {
 			// this calculates the total width of a manual keyboard by adding the natural widths
 			int startingMidiNbr = theManual->getDisplayFirstNote();
 			for (int j = 0; j < theManual->getNumberOfDisplayKeys(); j++) {
@@ -563,7 +596,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 			}
 		}
 		theManual->m_renderInfo.x = (m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - theManual->m_renderInfo.width) >> 1;
-		theManual->m_renderInfo.width += 16;
+		//theManual->m_renderInfo.width += 16;
 		if ((int)theManual->m_renderInfo.width > m_CenterWidth)
 			m_CenterWidth = theManual->m_renderInfo.width;
 	}

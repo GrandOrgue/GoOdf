@@ -705,6 +705,7 @@ void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
 		m_manual->setDispKeyColourInverted(false);
 	}
 	SetupImageNbrBoxContent();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnKeyColorWoodRadio(wxCommandEvent& event) {
@@ -714,6 +715,7 @@ void GUIManualPanel::OnKeyColorWoodRadio(wxCommandEvent& event) {
 		m_manual->setDispKeyColurWooden(false);
 	}
 	SetupImageNbrBoxContent();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
@@ -731,14 +733,17 @@ void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
 
 void GUIManualPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_manual->setDispImageNum(m_dispImageNbrBox->GetSelection() + 1);
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnPositionXSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setPosX(m_elementPosXSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnPositionYSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setPosY(m_elementPosYSpin->GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnAvailableKeyTypesChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -793,6 +798,7 @@ void GUIManualPanel::OnAddKeyBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIMANUALPANEL_ADDED_KEYS_BOX);
 		wxPostEvent(this, evt);
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnRemoveKeyBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -818,6 +824,7 @@ void GUIManualPanel::OnRemoveKeyBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_removeKey->Disable();
 		UpdateExistingSelectedKeyData();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnCopyKeyBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -842,7 +849,9 @@ void GUIManualPanel::OnCopyKeyBtn(wxCommandEvent& WXUNUSED(event)) {
 				targetKey->YOffset = sourceKey->YOffset;
 			}
 		}
+		m_manual->updateKeyInfo();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnAddedKeysChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -910,7 +919,9 @@ void GUIManualPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
 			KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 			if (key->BitmapWidth == width && key->BitmapHeight == height) {
 				key->ImageOff.setImage(path);
+				m_manual->updateKeyInfo();
 				UpdateExistingSelectedKeyData();
+				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			}
 		}
 	} else {
@@ -925,6 +936,7 @@ void GUIManualPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
 					key->ImageOff.setMask(wxEmptyString);
 
 				UpdateExistingSelectedKeyData();
+				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			}
 		}
 	}
@@ -987,16 +999,22 @@ void GUIManualPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
 void GUIManualPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->Width = m_widthSpin->GetValue();
+	m_manual->updateKeyInfo();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnOffsetSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->Offset = m_offsetSpin->GetValue();
+	m_manual->updateKeyInfo();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->YOffset = m_offsetYSpin->GetValue();
+	m_manual->updateKeyInfo();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1025,6 +1043,7 @@ void GUIManualPanel::OnDisplayKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 	SetupKeyChoiceAndMapping();
 	UpdateAddedKeyTypes();
 	UpdateExistingSelectedKeyData();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnFirstNoteSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1033,6 +1052,7 @@ void GUIManualPanel::OnFirstNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	SetupKeyChoiceAndMapping();
 	UpdateAddedKeyTypes();
 	UpdateExistingSelectedKeyData();
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnDisplayKeyChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -1055,7 +1075,9 @@ void GUIManualPanel::OnFrontendMIDIkeySpin(wxSpinEvent& WXUNUSED(event)) {
 	int selectedIndex = m_displayKeyChoice->GetSelection();
 	if (selectedIndex != wxNOT_FOUND) {
 		m_manual->getDisplayKeyAt(selectedIndex)->second = m_frontendMIDIkey->GetValue();
+		m_manual->updateKeyInfo();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GUIManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1069,6 +1091,7 @@ void GUIManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 wxString GUIManualPanel::GetPathForImageFile() {
