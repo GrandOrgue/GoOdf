@@ -48,7 +48,9 @@ void GUIPanelRepresentation::SetCurrentPanel(GoPanel *thePanel) {
 	m_currentPanel = thePanel;
 	m_windowPanel->SetSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	SetTitle(m_currentPanel->getName());
 	UpdateLayout();
+	DoPaintNow();
 }
 
 void GUIPanelRepresentation::OnPaintEvent(wxPaintEvent& WXUNUSED(event)) {
