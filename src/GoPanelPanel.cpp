@@ -645,5 +645,6 @@ void GoPanelPanel::ShouldCombinationControlsBeEnabled() {
 }
 
 void GoPanelPanel::updateRepresentationLayout() {
-	m_guiRepresentation->DoUpdateLayout();
+	if (m_guiRepresentation->IsShown())
+		m_guiRepresentation->DoUpdateLayout();
 }

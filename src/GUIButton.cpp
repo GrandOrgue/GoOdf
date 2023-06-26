@@ -216,7 +216,7 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 			setBitmapHeight(height);
 		}
 	} else {
-		if (isPiston) {
+		if (m_displayAsPiston) {
 			setBitmapWidth(32);
 			setBitmapHeight(32);
 		} else {
