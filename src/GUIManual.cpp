@@ -722,6 +722,12 @@ void GUIManual::updateKeyInfo() {
 		}
 
 		if (m_displayedAsPedal) {
+			// a pedal key of "e" or "b" should add another key width for the next key
+			if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
+				width *= 2;
+		}
+
+		if (m_displayedAsPedal) {
 			// this is for a pedal keyboard
 			if (m_dispKeyColourInverted) {
 				// keyboard is inverted
@@ -855,7 +861,11 @@ void GUIManual::updateKeyInfo() {
 				if (key.ImageOff.getImage() != wxEmptyString) {
 					m_keys[i].KeyImage = key.ImageOff.getBitmap();
 				}
-
+				if (m_displayedAsPedal && !key.ForceWritingWidth && width == key.BitmapWidth) {
+					// a pedal key of "e" or "b" should by default add another key width for the next key
+					if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
+						width *= 2;
+				}
 				break;
 			}
 		}
@@ -871,7 +881,11 @@ void GUIManual::updateKeyInfo() {
 				if (key.ImageOff.getImage() != wxEmptyString) {
 					m_keys[i].KeyImage = key.ImageOff.getBitmap();
 				}
-
+				if (m_displayedAsPedal && !key.ForceWritingWidth && width == key.BitmapWidth) {
+					// a pedal key of "e" or "b" should by default add another key width for the next key
+					if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
+						width *= 2;
+				}
 				break;
 			}
 		}
@@ -880,12 +894,6 @@ void GUIManual::updateKeyInfo() {
 		if (!m_displayedAsPedal) {
 			if (m_keys[i].IsSharp && overridingXOffset == 0)
 				m_keys[i].Xpos -= (width / 2);
-		}
-
-		if (m_displayedAsPedal) {
-			// a pedal key of "e" or "b" should add another key width for the next key
-			if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
-				width *= 2;
 		}
 
 		if (!m_keys[i].IsSharp || m_displayedAsPedal)

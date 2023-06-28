@@ -685,6 +685,8 @@ void GoPanel::updateGuiManuals() {
 				if (isFirst) {
 					if (m_hasPedals) {
 						man->setDisplayAsPedal(true);
+					} else {
+						man->setDisplayAsPedal(false);
 					}
 					isFirst = false;
 				}

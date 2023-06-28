@@ -286,6 +286,7 @@ void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 		UpdateControlValues();
 		wxString updatedLabel = m_image->getImageNameOnly();
 		::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
+		::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 	}
 }
 
@@ -323,26 +324,32 @@ void GoImagePanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void GoImagePanel::OnPosXSpin(wxSpinEvent& event) {
 	m_image->setPositionX(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnPosYSpin(wxSpinEvent& event) {
 	m_image->setPositionY(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnWidthSpin(wxSpinEvent& event) {
 	m_image->setWidth(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnHeightSpin(wxSpinEvent& event) {
 	m_image->setHeight(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnTileOffsetXSpin(wxSpinEvent& event) {
 	m_image->setTileOffsetX(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnTileOffsetYSpin(wxSpinEvent& event) {
 	m_image->setTileOffsetY(event.GetValue());
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::OnRemoveImageBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -356,6 +363,7 @@ void GoImagePanel::OnRemoveImageBtn(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
 void GoImagePanel::UpdateControlValues() {

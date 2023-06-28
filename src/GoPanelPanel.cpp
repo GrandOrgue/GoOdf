@@ -333,6 +333,7 @@ void GoPanelPanel::OnHasPedalRadio(wxCommandEvent& event) {
 		m_hasPedalNo->SetValue(true);
 		m_panel->setHasPedals(false);
 	}
+	updateRepresentationLayout();
 }
 
 void GoPanelPanel::OnNewImageBtn(wxCommandEvent& WXUNUSED(event)) {
