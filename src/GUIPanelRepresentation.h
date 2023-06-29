@@ -36,7 +36,6 @@ public:
 private:
 	DECLARE_EVENT_TABLE()
 
-	wxPanel *m_windowPanel;
 	GoPanel *m_currentPanel;
 
 	int m_HackY;

@@ -28,16 +28,11 @@ BEGIN_EVENT_TABLE(GUIPanelRepresentation, wxDialog)
 END_EVENT_TABLE()
 
 GUIPanelRepresentation::GUIPanelRepresentation(wxWindow *parent, const wxString& title) : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX) {
-	m_windowPanel = new wxPanel(this, wxID_ANY);
 	m_currentPanel = NULL;
 	m_HackY = 0;
 	m_EnclosureY = 0;
 	m_CenterY = 0;
 	m_CenterWidth = 0;
-	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-	// m_windowPanel->SetClientSize(800, 500);
-	// topSizer->Add(m_windowPanel, 1, wxGROW);
-	 m_windowPanel->SetSizer(topSizer);
 }
 
 GUIPanelRepresentation::~GUIPanelRepresentation() {
@@ -46,7 +41,6 @@ GUIPanelRepresentation::~GUIPanelRepresentation() {
 
 void GUIPanelRepresentation::SetCurrentPanel(GoPanel *thePanel) {
 	m_currentPanel = thePanel;
-	m_windowPanel->SetSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	SetTitle(m_currentPanel->getName());
 	UpdateLayout();
@@ -725,7 +719,6 @@ wxString GUIPanelRepresentation::BreakTextLine(wxString text, int textBreakWidth
 }
 
 void GUIPanelRepresentation::DoUpdateLayout() {
-	m_windowPanel->SetSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	UpdateLayout();
 	DoPaintNow();
