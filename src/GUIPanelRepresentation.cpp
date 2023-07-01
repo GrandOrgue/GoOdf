@@ -153,12 +153,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			if (btnElement) {
 				if (btnElement->getPosX() != -1) {
 					// the "button" uses absolute pixel positioning
-					if (btnElement->getWidth() > btnElement->getBitmapWidth() || btnElement->getHeight() > btnElement->getBitmapHeight()) {
-						wxRect imgRect(btnElement->getPosX(), btnElement->getPosY(), btnElement->getWidth(), btnElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
-					} else {
-						dc.DrawBitmap(theBmp, btnElement->getPosX(), btnElement->getPosY(), true);
-					}
+
+					wxRect imgRect(btnElement->getPosX(), btnElement->getPosY(), btnElement->getWidth(), btnElement->getHeight());
+					TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+
 					if (btnElement->getTextBreakWidth()) {
 						dc.SetFont(btnElement->getDispLabelFont());
 						dc.SetBackgroundMode(wxTRANSPARENT);
@@ -193,12 +191,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 				} else {
 					if (btnElement->isDisplayAsPiston()) {
 						wxPoint thePos = GetPushbuttonPosition(btnElement->getDispButtonRow(), btnElement->getDispButtonCol());
-						if (btnElement->getWidth() > btnElement->getBitmapWidth() || btnElement->getHeight() > btnElement->getBitmapHeight()) {
-							wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
-							TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
-						} else {
-							dc.DrawBitmap(theBmp, thePos.x, thePos.y, true);
-						}
+
+						wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
+						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+
 						if (btnElement->getTextBreakWidth()) {
 							dc.SetFont(btnElement->getDispLabelFont());
 							dc.SetBackgroundMode(wxTRANSPARENT);
@@ -232,12 +228,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 						}
 					} else {
 						wxPoint thePos = GetDrawstopPosition(btnElement->getDispDrawstopRow(), btnElement->getDispDrawstopCol());
-						if (btnElement->getWidth() > btnElement->getBitmapWidth() || btnElement->getHeight() > btnElement->getBitmapHeight()) {
-							wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
-							TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
-						} else {
-							dc.DrawBitmap(theBmp, thePos.x, thePos.y, true);
-						}
+
+						wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
+						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+
 						if (btnElement->getTextBreakWidth()) {
 							dc.SetFont(btnElement->getDispLabelFont());
 							dc.SetBackgroundMode(wxTRANSPARENT);
@@ -277,12 +271,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			if (encElement) {
 				if (encElement->getPosX() != -1) {
 					// the enclosure uses absolute pixel positioning
-					if (encElement->getWidth() > encElement->getBitmapWidth() || encElement->getHeight() > encElement->getBitmapHeight()) {
-						wxRect imgRect(encElement->getPosX(), encElement->getPosY(), encElement->getWidth(), encElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
-					} else {
-						dc.DrawBitmap(theBmp, encElement->getPosX(), encElement->getPosY(), true);
-					}
+
+					wxRect imgRect(encElement->getPosX(), encElement->getPosY(), encElement->getWidth(), encElement->getHeight());
+					TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
+
 					if (encElement->getTextBreakWidth()) {
 						dc.SetFont(encElement->getDispLabelFont());
 						dc.SetBackgroundMode(wxTRANSPARENT);
@@ -306,12 +298,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 					}
 					if (enclosureNumberOnPanel != -1) {
 						enclosureNumberOnPanel += 1;
-						if (encElement->getWidth() > encElement->getBitmapWidth() || encElement->getHeight() > encElement->getBitmapHeight()) {
-							wxRect imgRect(GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), encElement->getWidth(), encElement->getHeight());
-							TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
-						} else {
-							dc.DrawBitmap(theBmp, GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), true);
-						}
+
+						wxRect imgRect(GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), encElement->getWidth(), encElement->getHeight());
+						TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
+
 						if (encElement->getTextBreakWidth()) {
 							dc.SetFont(encElement->getDispLabelFont());
 							dc.SetBackgroundMode(wxTRANSPARENT);
@@ -375,12 +365,8 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 				}
 
 				if (theBmp.IsOk()) { // @suppress("Method cannot be resolved")
-					if (labelElement->getWidth() > labelElement->getBitmapWidth() || labelElement->getHeight() > labelElement->getBitmapHeight()) {
-						wxRect imgRect(xPosToUse, yPosToUse, labelElement->getWidth(), labelElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, labelElement->getTileOffsetX(), labelElement->getTileOffsetY());
-					} else {
-						dc.DrawBitmap(theBmp, xPosToUse, yPosToUse, true);
-					}
+					wxRect imgRect(xPosToUse, yPosToUse, labelElement->getWidth(), labelElement->getHeight());
+					TileBitmap(imgRect, dc, theBmp, labelElement->getTileOffsetX(), labelElement->getTileOffsetY());
 				}
 
 				if (labelElement->getTextBreakWidth() && labelElement->getName() != wxEmptyString) {
