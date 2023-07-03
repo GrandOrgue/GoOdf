@@ -33,6 +33,8 @@ GUIPanelRepresentation::GUIPanelRepresentation(wxWindow *parent, const wxString&
 	m_EnclosureY = 0;
 	m_CenterY = 0;
 	m_CenterWidth = 0;
+	m_FontScale = 1.0;
+	InitFont();
 }
 
 GUIPanelRepresentation::~GUIPanelRepresentation() {
@@ -158,7 +160,11 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 					TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
 
 					if (btnElement->getTextBreakWidth()) {
-						dc.SetFont(btnElement->getDispLabelFont());
+						wxFont theFont = btnElement->getDispLabelFont();
+						int pointSize = theFont.GetPointSize();
+						pointSize *= m_FontScale;
+						theFont.SetPointSize(pointSize);
+						dc.SetFont(theFont);
 						dc.SetBackgroundMode(wxTRANSPARENT);
 						dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
 						wxRect textRect(
@@ -233,7 +239,11 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
 
 						if (btnElement->getTextBreakWidth()) {
-							dc.SetFont(btnElement->getDispLabelFont());
+							wxFont theFont = btnElement->getDispLabelFont();
+							int pointSize = theFont.GetPointSize();
+							pointSize *= m_FontScale;
+							theFont.SetPointSize(pointSize);
+							dc.SetFont(theFont);
 							dc.SetBackgroundMode(wxTRANSPARENT);
 							dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
 							wxRect textRect(
@@ -303,7 +313,11 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 						TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
 
 						if (encElement->getTextBreakWidth()) {
-							dc.SetFont(encElement->getDispLabelFont());
+							wxFont theFont = encElement->getDispLabelFont();
+							int pointSize = theFont.GetPointSize();
+							pointSize *= m_FontScale;
+							theFont.SetPointSize(pointSize);
+							dc.SetFont(theFont);
 							dc.SetBackgroundMode(wxTRANSPARENT);
 							dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
 							wxRect textRect(
@@ -370,7 +384,11 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 				}
 
 				if (labelElement->getTextBreakWidth() && labelElement->getName() != wxEmptyString) {
-					dc.SetFont(labelElement->getDispLabelFont());
+					wxFont theFont = labelElement->getDispLabelFont();
+					int pointSize = theFont.GetPointSize();
+					pointSize *= m_FontScale;
+					theFont.SetPointSize(pointSize);
+					dc.SetFont(theFont);
 					dc.SetBackgroundMode(wxTRANSPARENT);
 					dc.SetTextForeground(labelElement->getDispLabelColour()->getColor());
 					wxRect textRect(
@@ -708,4 +726,14 @@ void GUIPanelRepresentation::DoUpdateLayout() {
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	UpdateLayout();
 	DoPaintNow();
+}
+
+void GUIPanelRepresentation::InitFont() {
+  wxMemoryDC dc;
+  wxFont font = *wxNORMAL_FONT;
+  wxCoord cx, cy;
+  font.SetPointSize(39);
+  dc.SetFont(font);
+  dc.GetTextExtent(wxT("M"), &cx, &cy);
+  m_FontScale = 62.0 / cy;
 }

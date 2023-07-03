@@ -42,6 +42,7 @@ private:
 	int m_EnclosureY;
 	int m_CenterY;
 	int m_CenterWidth;
+	double m_FontScale;
 
 	wxPoint GetDrawstopPosition(int row, int col);
 	wxPoint GetPushbuttonPosition(int row, int col);
@@ -73,6 +74,7 @@ private:
 	void RenderPanel(wxDC& dc);
 	void TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap, int tileOffsetX, int tileOffsetY);
 	wxString BreakTextLine(wxString text, int textBreakWidth, wxDC& dc);
+	void InitFont();
 
 };
 
