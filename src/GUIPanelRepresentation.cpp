@@ -153,127 +153,52 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			// Test if it's a button type
 			GUIButton *btnElement = dynamic_cast<GUIButton*>(guiElement);
 			if (btnElement) {
-				if (btnElement->getPosX() != -1) {
-					// the "button" uses absolute pixel positioning
-
-					wxRect imgRect(btnElement->getPosX(), btnElement->getPosY(), btnElement->getWidth(), btnElement->getHeight());
-					TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
-
-					if (btnElement->getTextBreakWidth()) {
-						wxFont theFont = btnElement->getDispLabelFont();
-						int pointSize = theFont.GetPointSize();
-						pointSize *= m_FontScale;
-						theFont.SetPointSize(pointSize);
-						dc.SetFont(theFont);
-						dc.SetBackgroundMode(wxTRANSPARENT);
-						dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
-						wxRect textRect(
-							btnElement->getPosX() + btnElement->getTextRectLeft(),
-							btnElement->getPosY() + btnElement->getTextRectTop(),
-							btnElement->getTextRectWidth(),
-							btnElement->getTextRectHeight()
-						);
-						wxString textToDisplay;
-						if (btnElement->getDispLabelText() != wxEmptyString)
-							textToDisplay = btnElement->getDispLabelText();
-						else
-							textToDisplay = btnElement->getDisplayName();
-						if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
-							wxString combinationNbr = textToDisplay.Mid(19);
-							long theNbr;
-							if (combinationNbr.ToLong(&theNbr)) {
-								theNbr += 1;
-								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-							}
-						} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
-							wxString combinationNbr = textToDisplay.Mid(7);
-							long theNbr;
-							if (combinationNbr.ToLong(&theNbr)) {
-								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-							}
-						}
-						dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
-					}
+				wxPoint thePos;
+				if (btnElement->isDisplayAsPiston()) {
+					thePos = GetPushbuttonPosition(btnElement->getDispButtonRow(), btnElement->getDispButtonCol());
 				} else {
-					if (btnElement->isDisplayAsPiston()) {
-						wxPoint thePos = GetPushbuttonPosition(btnElement->getDispButtonRow(), btnElement->getDispButtonCol());
+					thePos = GetDrawstopPosition(btnElement->getDispDrawstopRow(), btnElement->getDispDrawstopCol());
+				}
+				if (btnElement->getPosX() != -1) {
+					thePos.x = btnElement->getPosX();
+				}
+				if (btnElement->getPosY() != -1) {
+					thePos.y = btnElement->getPosY();
+				}
 
-						wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+				wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
+				TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
 
-						if (btnElement->getTextBreakWidth()) {
-							dc.SetFont(btnElement->getDispLabelFont());
-							dc.SetBackgroundMode(wxTRANSPARENT);
-							dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
-							wxRect textRect(
-								thePos.x + btnElement->getTextRectLeft(),
-								thePos.y + btnElement->getTextRectTop(),
-								btnElement->getTextRectWidth(),
-								btnElement->getTextRectHeight()
-							);
-							wxString textToDisplay;
-							if (btnElement->getDispLabelText() != wxEmptyString)
-								textToDisplay = btnElement->getDispLabelText();
-							else
-								textToDisplay = btnElement->getDisplayName();
-							if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
-								wxString combinationNbr = textToDisplay.Mid(19);
-								long theNbr;
-								if (combinationNbr.ToLong(&theNbr)) {
-									theNbr += 1;
-									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-								}
-							} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
-								wxString combinationNbr = textToDisplay.Mid(7);
-								long theNbr;
-								if (combinationNbr.ToLong(&theNbr)) {
-									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-								}
-							}
-							dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+				if (btnElement->getTextBreakWidth()) {
+					dc.SetFont(btnElement->getDispLabelFont());
+					dc.SetBackgroundMode(wxTRANSPARENT);
+					dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
+					wxRect textRect(
+						thePos.x + btnElement->getTextRectLeft(),
+						thePos.y + btnElement->getTextRectTop(),
+						btnElement->getTextRectWidth(),
+						btnElement->getTextRectHeight()
+					);
+					wxString textToDisplay;
+					if (btnElement->getDispLabelText() != wxEmptyString)
+						textToDisplay = btnElement->getDispLabelText();
+					else
+						textToDisplay = btnElement->getDisplayName();
+					if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
+						wxString combinationNbr = textToDisplay.Mid(19);
+						long theNbr;
+						if (combinationNbr.ToLong(&theNbr)) {
+							theNbr += 1;
+							textToDisplay = wxString::Format(wxT("%ld"), theNbr);
 						}
-					} else {
-						wxPoint thePos = GetDrawstopPosition(btnElement->getDispDrawstopRow(), btnElement->getDispDrawstopCol());
-
-						wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
-
-						if (btnElement->getTextBreakWidth()) {
-							wxFont theFont = btnElement->getDispLabelFont();
-							int pointSize = theFont.GetPointSize();
-							pointSize *= m_FontScale;
-							theFont.SetPointSize(pointSize);
-							dc.SetFont(theFont);
-							dc.SetBackgroundMode(wxTRANSPARENT);
-							dc.SetTextForeground(btnElement->getDispLabelColour()->getColor());
-							wxRect textRect(
-								thePos.x + btnElement->getTextRectLeft(),
-								thePos.y + btnElement->getTextRectTop(),
-								btnElement->getTextRectWidth(),
-								btnElement->getTextRectHeight()
-							);
-							wxString textToDisplay;
-							if (btnElement->getDispLabelText() != wxEmptyString)
-								textToDisplay = btnElement->getDispLabelText();
-							else
-								textToDisplay = btnElement->getDisplayName();
-							if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
-								wxString combinationNbr = textToDisplay.Mid(19);
-								long theNbr;
-								if (combinationNbr.ToLong(&theNbr)) {
-									theNbr += 1;
-									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-								}
-							} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
-								wxString combinationNbr = textToDisplay.Mid(7);
-								long theNbr;
-								if (combinationNbr.ToLong(&theNbr)) {
-									textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-								}
-							}
-							dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
+					} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
+						wxString combinationNbr = textToDisplay.Mid(7);
+						long theNbr;
+						if (combinationNbr.ToLong(&theNbr)) {
+							textToDisplay = wxString::Format(wxT("%ld"), theNbr);
 						}
 					}
+					dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 				}
 				continue;
 			}
