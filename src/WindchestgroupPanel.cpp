@@ -268,18 +268,7 @@ void WindchestgroupPanel::OnRemoveWindchestBtn(wxCommandEvent& WXUNUSED(event)) 
 }
 
 void WindchestgroupPanel::DoRemoveWindchest() {
-	// first remove all possible references to this windchest from ranks
-	unsigned numberOfRanks = ::wxGetApp().m_frame->m_organ->getNumberOfRanks();
-	for (unsigned i = 0; i < numberOfRanks; i++) {
-		if (::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->getWindchest() == m_windchest) {
-			::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->setWindchest(NULL);
-		}
-		// also remove any possible reference in any pipe of this rank
-		for (Pipe p : ::wxGetApp().m_frame->m_organ->getOrganRankAt(i)->m_pipes) {
-			if (p.windchest == m_windchest)
-				p.windchest = NULL;
-		}
-	}
+	// possible references to this windchest from all stops/ranks/pipes will be removed in the Organ
 	::wxGetApp().m_frame->RemoveCurrentItemFromOrgan();
 }
 
