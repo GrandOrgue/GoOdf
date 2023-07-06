@@ -166,8 +166,10 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 					thePos.y = btnElement->getPosY();
 				}
 
-				wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
-				TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+				if (theBmp.IsOk()) {
+					wxRect imgRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
+					TileBitmap(imgRect, dc, theBmp, btnElement->getTileOffsetX(), btnElement->getTileOffsetY());
+				}
 
 				if (btnElement->getTextBreakWidth()) {
 					dc.SetFont(btnElement->getDispLabelFont());
@@ -340,6 +342,9 @@ void GUIPanelRepresentation::TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap,
 			wholeImg.Paste(bmp, i, j);
 		}
 	}
+	if (!wholeImg.IsOk())
+		return;
+
 	wxBitmap fullBmp = wxBitmap(wholeImg);
 
 	dc.DrawBitmap(fullBmp, rect.x, rect.y, true);
