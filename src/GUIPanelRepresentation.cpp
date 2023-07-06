@@ -206,59 +206,48 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			}
 			GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(guiElement);
 			if (encElement) {
-				if (encElement->getPosX() != -1) {
-					// the enclosure uses absolute pixel positioning
+				wxPoint thePos(0, 0);
 
-					wxRect imgRect(encElement->getPosX(), encElement->getPosY(), encElement->getWidth(), encElement->getHeight());
-					TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
-
-					if (encElement->getTextBreakWidth()) {
-						dc.SetFont(encElement->getDispLabelFont());
-						dc.SetBackgroundMode(wxTRANSPARENT);
-						dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
-						wxRect textRect(
-							encElement->getPosX() + encElement->getTextRectLeft(),
-							encElement->getPosY() + encElement->getTextRectTop(),
-							encElement->getTextRectWidth(),
-							encElement->getTextRectHeight()
-						);
-						dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
-					}
-				} else {
-					// the enclosure uses the default layout model
-					int enclosureNumberOnPanel = -1;
-					for (unsigned j = 0; j < m_currentPanel->getNumberOfEnclosures(); j++) {
-						if (encElement == m_currentPanel->getGuiEnclosureAt(j)) {
-							enclosureNumberOnPanel = j;
-							break;
-						}
-					}
-					if (enclosureNumberOnPanel != -1) {
-						enclosureNumberOnPanel += 1;
-
-						wxRect imgRect(GetEnclosureX(enclosureNumberOnPanel), GetEnclosureY(), encElement->getWidth(), encElement->getHeight());
-						TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
-
-						if (encElement->getTextBreakWidth()) {
-							wxFont theFont = encElement->getDispLabelFont();
-							int pointSize = theFont.GetPointSize();
-							pointSize *= m_FontScale;
-							theFont.SetPointSize(pointSize);
-							dc.SetFont(theFont);
-							dc.SetBackgroundMode(wxTRANSPARENT);
-							dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
-							wxRect textRect(
-								GetEnclosureX(enclosureNumberOnPanel) + encElement->getTextRectLeft(),
-								GetEnclosureY() + encElement->getTextRectTop(),
-								encElement->getTextRectWidth(),
-								encElement->getTextRectHeight()
-							);
-							dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
-						}
-					} else {
-						continue;
+				int enclosureNumberOnPanel = -1;
+				for (unsigned j = 0; j < m_currentPanel->getNumberOfEnclosures(); j++) {
+					if (encElement == m_currentPanel->getGuiEnclosureAt(j)) {
+						enclosureNumberOnPanel = j;
+						break;
 					}
 				}
+				if (enclosureNumberOnPanel != -1) {
+					enclosureNumberOnPanel += 1;
+					thePos.x = GetEnclosureX(enclosureNumberOnPanel);
+				}
+				thePos.y = GetEnclosureY();
+
+				if (encElement->getPosX() != -1) {
+					thePos.x = encElement->getPosX();
+				}
+				if (encElement->getPosY() != -1) {
+					thePos.y = encElement->getPosY();
+				}
+
+				wxRect imgRect(thePos.x, thePos.y, encElement->getWidth(), encElement->getHeight());
+				TileBitmap(imgRect, dc, theBmp, encElement->getTileOffsetX(), encElement->getTileOffsetY());
+
+				if (encElement->getTextBreakWidth()) {
+					wxFont theFont = encElement->getDispLabelFont();
+					int pointSize = theFont.GetPointSize();
+					pointSize *= m_FontScale;
+					theFont.SetPointSize(pointSize);
+					dc.SetFont(theFont);
+					dc.SetBackgroundMode(wxTRANSPARENT);
+					dc.SetTextForeground(encElement->getDispLabelColour()->getColor());
+					wxRect textRect(
+						thePos.x + encElement->getTextRectLeft(),
+						thePos.y + encElement->getTextRectTop(),
+						encElement->getTextRectWidth(),
+						encElement->getTextRectHeight()
+					);
+					dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
+				}
+
 				continue;
 			}
 			GUILabel *labelElement = dynamic_cast<GUILabel*>(guiElement);
