@@ -76,7 +76,7 @@ public:
 	void updateDisplayName();
 
 	Manual* getManual();
-	void addKeytype(wxString identifier);
+	void addKeytype(wxString identifier, bool isReading = false);
 	unsigned getNumberOfKeytypes();
 	KEYTYPE* getKeytypeAt(unsigned index);
 	void removeKeytypeAt(unsigned index);

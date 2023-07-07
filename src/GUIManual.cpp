@@ -175,7 +175,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 				noteName = wxT("B");
 
 			wxString keyType = typePrefix + noteName;
-			addKeytype(keyType);
+			addKeytype(keyType, true);
 			KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
 			bool keepKeyType = false;
 			wxString keyImageOn = wxT("ImageOn_") + keyType;
@@ -260,7 +260,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 	for (int i = 0; i < m_displayKeys; i++) {
 		wxString keyStr = wxT("Key") + GOODF_functions::number_format(i + 1);
 		wxString keyImgOn = cfg->Read(keyStr + wxT("ImageOn"), wxEmptyString);
-		addKeytype(keyStr);
+		addKeytype(keyStr, true);
 		KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
 		bool keepKeyType = false;
 		if (keyImgOn != wxEmptyString) {
@@ -381,7 +381,7 @@ Manual* GUIManual::getManual() {
 	return m_manual;
 }
 
-void GUIManual::addKeytype(wxString identifier) {
+void GUIManual::addKeytype(wxString identifier, bool isReading) {
 	KEYTYPE type;
 	type.KeytypeIdentifier = identifier;
 	type.ImageOn = GoImage();
@@ -448,7 +448,8 @@ void GUIManual::addKeytype(wxString identifier) {
 	type.ForceWritingWidth = false;
 	m_keytypes.push_back(type);
 
-	updateKeyInfo();
+	if (!isReading)
+		updateKeyInfo();
 }
 
 unsigned GUIManual::getNumberOfKeytypes() {
