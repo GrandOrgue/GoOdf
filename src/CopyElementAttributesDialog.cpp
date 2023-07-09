@@ -71,7 +71,6 @@ bool CopyElementAttributesDialog::Create(
 
 	CreateControls();
 
-	// m_panelChoice->SetSelection(::wxGetApp().m_frame->m_organ->getIndexOfOrganPanel(m_sourcePanel));
 	m_panelChoice->Select(m_panelList.Index(m_sourcePanel->getName()));
 	updateAvailableGuiElements();
 
@@ -200,16 +199,24 @@ void CopyElementAttributesDialog::updateAvailableGuiElements() {
 	}
 
 	GoPanel *currentTargetPanel = GetSelectedTargetPanel();
+	GUIElement *sourceElement = m_sourcePanel->getGuiElementAt(m_sourceElementIndex);
+
 	int nbrGuiElements = currentTargetPanel->getNumberOfGuiElements();
 	for (int i = 0; i < nbrGuiElements; i++) {
 		if (currentTargetPanel == m_sourcePanel && i == m_sourceElementIndex)
 			continue;
-		wxString sourceType = m_sourcePanel->getGuiElementAt(m_sourceElementIndex)->getType();
-		wxString targetType = currentTargetPanel->getGuiElementAt(i)->getType();
-		if (targetType == sourceType || targetType.StartsWith(sourceType.Mid(0, 5))) {
+
+		GUIElement *candidateElement = currentTargetPanel->getGuiElementAt(i);
+
+		if ((dynamic_cast<GUIButton*>(sourceElement) != nullptr && dynamic_cast<GUIButton*>(candidateElement) != nullptr) ||
+			(dynamic_cast<GUIEnclosure*>(sourceElement) != nullptr && dynamic_cast<GUIEnclosure*>(candidateElement) != nullptr) ||
+			(dynamic_cast<GUILabel*>(sourceElement) != nullptr && dynamic_cast<GUILabel*>(candidateElement) != nullptr) ||
+			(dynamic_cast<GUIManual*>(sourceElement) != nullptr && dynamic_cast<GUIManual*>(candidateElement) != nullptr)
+		) {
 			m_matchingElementsList.Add(currentTargetPanel->getGuiElementAt(i)->getDisplayName());
 			m_referenceElementIdx.push_back(i);
 		}
+
 	}
 
 	if (!m_matchingElementsList.IsEmpty()) {
