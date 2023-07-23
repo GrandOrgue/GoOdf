@@ -868,7 +868,7 @@ void GeneralPanel::OnReferencedCouplerSelection(wxCommandEvent& WXUNUSED(event))
 void GeneralPanel::OnCouplerOnOffRadioBtns(wxCommandEvent& event) {
 	if (m_referencedCouplers->GetSelection() != wxNOT_FOUND) {
 		bool onOffValue = false;
-		if (event.GetId() == ID_DIVISIONAL_COUPLER_ON_RADIO)
+		if (event.GetId() == ID_GENERAL_COUPLER_ON_RADIO)
 			onOffValue = true;
 
 		unsigned selected = (unsigned) m_referencedCouplers->GetSelection();
