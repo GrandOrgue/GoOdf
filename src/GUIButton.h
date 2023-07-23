@@ -101,6 +101,7 @@ public:
 	void setBitmapHeight(int height);
 	int getBitmapHeight();
 	void setDefaultFont(wxFont &theFont);
+	void updateBuiltinBitmapValues();
 
 protected:
 	bool m_displayAsPiston;

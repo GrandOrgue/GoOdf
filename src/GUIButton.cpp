@@ -39,22 +39,13 @@ GUIButton::GUIButton() : GUIElement() {
 	m_imageOff = wxEmptyString; // (string, default: use internal bitmap according to DispImageNum)
 	m_maskOn = wxEmptyString; // (string, default: empty)
 	m_maskOff = wxEmptyString; // (string, default: value of MaskOn)
-	m_width = 0; // (integer 0 - panel width, default: bitmap width)
-	m_height = 0; // (integer 0 - panel height, default: bitmap height)
 	m_tileOffsetX = 0; // (integer 0 - bitmap width, default: 0)
 	m_tileOffsetY = 0; // (integer 0 - bitmap width, default: 0)
 	m_mouseRectLeft = 0; // (integer 0 - Width, default: 0)
 	m_mouseRectTop = 0; // (integer 0 - Height, default: 0)
-	m_mouseRectWidth = 0; // (integer 0 - Width, default: Width)
-	m_mouseRectHeight = 0; // (integer 0 - Height, default: Height)
-	m_mouseRadius = 0; // (integer 0 - max(MouseRectHeight, MouseRectWidth), default: min(MouseRectHeight, MouseRectWidth) / 2)
 	m_textRectLeft = 1; // (integer 0 - Width, default: 1)
 	m_textRectTop = 1; // (integer 0 - Height, default: 1)
-	m_textRectWidth = 0; // (integer 0 - Width, default: Width)
-	m_textRectHeight = 0; // (integer 0 - Height, default: Height)
-	m_textBreakWidth = 0; // (integer 0 - text rectangle width, default: slightly smaller than Width)
-	m_bitmapWidth = 0;
-	m_bitmapHeight = 0;
+	updateBuiltinBitmapValues();
 }
 
 GUIButton::~GUIButton() {
@@ -586,4 +577,25 @@ int GUIButton::getBitmapHeight() {
 void GUIButton::setDefaultFont(wxFont &theFont) {
 	m_dispLabelFont = theFont;
 	m_dispLabelFontSize.setSizeValue(theFont.GetPointSize());
+}
+
+void GUIButton::updateBuiltinBitmapValues() {
+	int width, height;
+	if (isDisplayAsPiston()) {
+		width = 32;
+		height = 32;
+	} else {
+		width = 65;
+		height = 65;
+	}
+	m_bitmapWidth = width;
+	m_bitmapHeight = height;
+	m_width = width;
+	m_height = height;
+	m_mouseRectWidth = width - m_mouseRectLeft;
+	m_mouseRectHeight = height - m_mouseRectTop;
+	m_mouseRadius = width / 2;
+	m_textRectWidth = width - m_textRectLeft;
+	m_textRectHeight = height - m_textRectTop;
+	m_textBreakWidth = m_textRectWidth - (m_textRectWidth < 50 ? 4 : 14);
 }

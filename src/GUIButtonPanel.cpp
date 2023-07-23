@@ -763,7 +763,6 @@ void GUIButtonPanel::setButton(GUIButton *button) {
 		m_addImageOffBtn->Disable();
 		m_addMaskOnBtn->Disable();
 		m_addMaskOffBtn->Disable();
-		UpdateBuiltinBitmapValues();
 	}
 	if (m_button->getImageOff() != wxEmptyString) {
 		wxString relativeImageOff = GOODF_functions::removeBaseOdfPath(m_button->getImageOff());
@@ -864,7 +863,7 @@ void GUIButtonPanel::OnDisplayAsPistonRadio(wxCommandEvent& event) {
 	SetupImageNbrBoxContent();
 	m_dispImageNbrBox->SetSelection(m_button->getDispImageNum() - 1);
 	if (m_button->getImageOn() == wxEmptyString) {
-		UpdateBuiltinBitmapValues();
+		m_button->updateBuiltinBitmapValues();
 		UpdateSpinRanges();
 		UpdateDefaultSpinValues();
 	}
@@ -946,7 +945,7 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (msg.ShowModal() == wxID_YES) {
 				// then we empty the value in button and panel
 				m_button->setImageOn(wxEmptyString);
-				UpdateBuiltinBitmapValues();
+				m_button->updateBuiltinBitmapValues();
 				UpdateSpinRanges();
 				UpdateDefaultSpinValues();
 				m_imageOnPathField->SetValue(wxEmptyString);
@@ -1318,25 +1317,4 @@ wxString GUIButtonPanel::GetPathForImageFile() {
 	wxFileName selectedFile = wxFileName(imageFilePath);
 	m_lastUsedImagePath = selectedFile.GetPath();
 	return imageFilePath;
-}
-
-void GUIButtonPanel::UpdateBuiltinBitmapValues() {
-	int width, height;
-	if (m_button->isDisplayAsPiston()) {
-		width = 32;
-		height = 32;
-	} else {
-		width = 65;
-		height = 65;
-	}
-	m_button->setBitmapWidth(width);
-	m_button->setBitmapHeight(height);
-	m_button->setWidth(width);
-	m_button->setHeight(height);
-	m_button->setMouseRectWidth(width - m_button->getMouseRectLeft());
-	m_button->setMouseRectHeight(height - m_button->getMouseRectTop());
-	m_button->setMouseRadius(width / 2);
-	m_button->setTextRectWidth(width - m_button->getTextRectLeft());
-	m_button->setTextRectHeight(height - m_button->getTextRectTop());
-	m_button->setTextBreakWidth(m_button->getTextRectWidth() - (m_button->getTextRectWidth() < 50 ? 4 : 14));
 }
