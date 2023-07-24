@@ -412,6 +412,8 @@ bool GUIButton::isDisplayAsPiston() const {
 
 void GUIButton::setDisplayAsPiston(bool displayAsPiston) {
 	m_displayAsPiston = displayAsPiston;
+	if (m_imageOn == wxEmptyString)
+		updateBuiltinBitmapValues();
 }
 
 int GUIButton::getHeight() const {

@@ -24,7 +24,7 @@
 
 GUIDivisional::GUIDivisional(Divisional *divisional) : GUIButton(), m_divisional(divisional) {
 	m_type = wxT("Divisional");
-	m_displayAsPiston = true;
+	setDisplayAsPiston(true);
 }
 
 GUIDivisional::~GUIDivisional() {

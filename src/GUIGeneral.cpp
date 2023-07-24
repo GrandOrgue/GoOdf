@@ -24,7 +24,7 @@
 
 GUIGeneral::GUIGeneral(General *general) : GUIButton(), m_general(general) {
 	m_type = wxT("General");
-	m_displayAsPiston = true;
+	setDisplayAsPiston(true);
 }
 
 GUIGeneral::~GUIGeneral() {
