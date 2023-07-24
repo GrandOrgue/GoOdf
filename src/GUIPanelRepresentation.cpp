@@ -137,8 +137,11 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 		int manYpos = currentMan->m_renderInfo.y;
 		if (currentMan->getPosX() >= 0)
 			manXpos = currentMan->getPosX();
-		if (currentMan->getPosY() >= 0)
+		if (currentMan->getPosY() >= 0) {
 			manYpos = currentMan->getPosY();
+		} else if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveManuals && i + 1 == m_currentPanel->getNumberOfManuals()) {
+			manYpos += 8;
+		}
 		for (int j = 0; j < currentMan->getNumberOfDisplayKeys(); j++) {
 			KEY_INFO *currentKey = currentMan->getKeyInfoAt(j);
 			wxBitmap theKey = currentKey->KeyImage;
@@ -385,10 +388,14 @@ wxPoint GUIPanelRepresentation::GetPushbuttonPosition(int row, int col) {
 		if (i == 99)
 			i = 0;
 
-		if (i >= (int) m_currentPanel->getNumberOfManuals())
+		if (i > (int) m_currentPanel->getNumberOfManuals())
 			position.y = GetHackY() - (i + 1 - (int) m_currentPanel->getNumberOfManuals()) * (m_currentPanel->getDisplayMetrics()->m_dispManualHeight + m_currentPanel->getDisplayMetrics()->m_dispPistonHeight) + m_currentPanel->getDisplayMetrics()->m_dispManualHeight + 5;
-		else
-			position.y = m_currentPanel->getGuiManualAt(i)->m_renderInfo.piston_y + 5;
+		else {
+			if (!m_currentPanel->getHasPedals() && i > 0)
+				position.y = m_currentPanel->getGuiManualAt(i - 1)->m_renderInfo.piston_y + 5;
+			else
+				position.y = m_currentPanel->getGuiManualAt(i)->m_renderInfo.piston_y + 5;
+		}
 
 		if (m_currentPanel->getDisplayMetrics()->m_dispExtraPedalButtonRow && !row)
 			position.y += m_currentPanel->getDisplayMetrics()->m_dispPistonHeight;
@@ -510,7 +517,7 @@ void GUIPanelRepresentation::UpdateLayout() {
 	for (unsigned i = 0; i < nbrManuals; i++) {
 		GUIManual *theManual = m_currentPanel->getGuiManualAt(i);
 		if (!i && theManual && m_currentPanel->getHasPedals()) {
-			// this is the first manual on the panel and it should be displayed as a pedal
+			// this is the first manual (and a real one) on the panel and it should be a pedal
 			theManual->m_renderInfo.height = m_currentPanel->getDisplayMetrics()->m_dispPedalHeight;
 			theManual->m_renderInfo.keys_y = theManual->m_renderInfo.y = m_CenterY;
 			m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispPedalHeight;
@@ -523,8 +530,8 @@ void GUIPanelRepresentation::UpdateLayout() {
 			m_EnclosureY = m_CenterY;
 			m_CenterY -= 12;
 		}
-		if (!i && !theManual &&	m_currentPanel->getNumberOfEnclosures()) {
-			// this is if there's no manuals on the panel but there's enclosures
+		if (!i && !m_currentPanel->getHasPedals() && m_currentPanel->getNumberOfEnclosures()) {
+			// this is if there's no pedal on the panel but there are enclosures
 			m_CenterY -= 12;
 			m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispEnclosureHeight;
 			m_EnclosureY = m_CenterY;
@@ -534,13 +541,13 @@ void GUIPanelRepresentation::UpdateLayout() {
 		if (!theManual)
 			continue;
 
-		if (i || !m_currentPanel->getHasPedals()) {
+		if (i || (i == 0 && !m_currentPanel->getHasPedals())) {
 			if (!m_currentPanel->getDisplayMetrics()->m_dispButtonsAboveManuals) {
 				m_CenterY -= m_currentPanel->getDisplayMetrics()->m_dispPistonHeight;
 				theManual->m_renderInfo.piston_y = m_CenterY;
 			}
 			theManual->m_renderInfo.height = m_currentPanel->getDisplayMetrics()->m_dispManualHeight;
-			if (m_currentPanel->getDisplayMetrics()->m_dispTrimBelowManuals && i == 1) {
+			if (m_currentPanel->getDisplayMetrics()->m_dispTrimBelowManuals && (i == 1 || (i == 0 && !m_currentPanel->getHasPedals()))) {
 				theManual->m_renderInfo.height += 8;
 				m_CenterY -= 8;
 			}
@@ -556,8 +563,9 @@ void GUIPanelRepresentation::UpdateLayout() {
 			}
 			theManual->m_renderInfo.y = m_CenterY;
 		}
-		theManual->m_renderInfo.width = 0;
-		if (i || !m_currentPanel->getHasPedals()) {
+
+		theManual->m_renderInfo.width = 1;
+		if (i || (i == 0 && !m_currentPanel->getHasPedals())) {
 			// this calculates the total width of a manual keyboard by adding the natural widths
 			int startingMidiNbr = theManual->getDisplayFirstNote();
 			for (int j = 0; j < theManual->getNumberOfDisplayKeys(); j++) {

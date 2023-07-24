@@ -410,8 +410,13 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
-	if (fileDialog.ShowModal() == wxID_CANCEL)
+	if (fileDialog.ShowModal() == wxID_CANCEL) {
+		SetupOrganMainPanel();
+		m_organPanel->setCurrentOrgan(m_organ);
+		m_organPanel->setOdfPath(wxEmptyString);
+		m_organPanel->setOdfName(wxEmptyString);
 		return;
+	}
 
 	organFilePath = fileDialog.GetPath();
 
@@ -1899,11 +1904,13 @@ void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
 		if (i == panelIndex)
 			break;
 	}
-	wxTreeItemId guiElements = m_organTreeCtrl->GetLastChild(panelId);
-	m_organTreeCtrl->DeleteChildren(guiElements);
-	int nbrElements = m_organ->getOrganPanelAt(panelIndex)->getNumberOfGuiElements();
-	for (int i = 0; i < nbrElements; i++) {
-		m_organTreeCtrl->AppendItem(guiElements, m_organ->getOrganPanelAt(panelIndex)->getGuiElementAt(i)->getDisplayName());
+	if (panelId.IsOk()) {
+		wxTreeItemId guiElements = m_organTreeCtrl->GetLastChild(panelId);
+		m_organTreeCtrl->DeleteChildren(guiElements);
+		int nbrElements = m_organ->getOrganPanelAt(panelIndex)->getNumberOfGuiElements();
+		for (int i = 0; i < nbrElements; i++) {
+			m_organTreeCtrl->AppendItem(guiElements, m_organ->getOrganPanelAt(panelIndex)->getGuiElementAt(i)->getDisplayName());
+		}
 	}
 }
 
