@@ -625,6 +625,40 @@ void Organ::removeSwitchAt(unsigned index) {
 	updateOrganElements();
 }
 
+void Organ::moveSwitch(int sourceIndex, int toBeforeIndex) {
+	auto theOneToMove = std::next(m_Switches.begin(), sourceIndex);
+	std::list<GoSwitch>::iterator it = m_Switches.begin();
+
+	if (toBeforeIndex > (int) m_Switches.size() - 1) {
+		it = m_Switches.end();
+	} else {
+		it = std::next(m_Switches.begin(), toBeforeIndex);
+	}
+
+	m_Switches.splice(it, m_Switches, theOneToMove);
+
+	// Now that the move is made we should evaluate and validate all switches for their references
+	unsigned currentIdx = 0;
+	for (GoSwitch& sw : m_Switches) {
+		if (sw.getFunction() != wxT("Input")) {
+			unsigned compIdx = 0;
+			for (GoSwitch& compSw : m_Switches) {
+				if (compIdx == currentIdx) {
+					compIdx++;
+					continue;
+				}
+				if (sw.hasSwitchReference(&compSw) && compIdx > currentIdx) {
+					sw.removeSwitchReference(&compSw);
+				}
+				compIdx++;
+			}
+		}
+		currentIdx++;
+	}
+
+	updateOrganElements();
+}
+
 Rank* Organ::getOrganRankAt(unsigned index) {
 	auto iterator = std::next(m_Ranks.begin(), index);
 	return &(*iterator);

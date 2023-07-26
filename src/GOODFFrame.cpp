@@ -41,6 +41,8 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
+	EVT_TREE_BEGIN_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeLeftDrag)
+	EVT_TREE_END_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeDragCompleted)
 	EVT_BUTTON(ID_ADD_ENCLOSURE_BTN, GOODFFrame::OnAddNewEnclosure)
 	EVT_BUTTON(ID_ADD_TREMULANT_BTN, GOODFFrame::OnAddNewTremulant)
 	EVT_BUTTON(ID_ADD_WINDCHEST_BTN, GOODFFrame::OnAddNewWindchestgroup)
@@ -299,6 +301,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	tree_divisionalCouplers = m_organTreeCtrl->AppendItem(tree_organ, "Divisional Couplers");
 	tree_generals = m_organTreeCtrl->AppendItem(tree_organ, "Generals");
 	tree_panels = m_organTreeCtrl->AppendItem(tree_organ, "Panels");
+	m_draggedItem = (wxTreeItemId) 0l;
 	SetupOrganMainPanel();
 
 	// Expand all the nodes
@@ -1280,6 +1283,73 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 		}
 	} else {
 		event.Skip();
+	}
+}
+
+void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
+	// Only allow dragging if item is a switch
+	wxTreeItemId sourceItem = event.GetItem();
+	if (m_organTreeCtrl->GetItemParent(sourceItem) == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) {
+		m_draggedItem = sourceItem;
+		event.Allow();
+	}
+}
+
+void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
+	wxTreeItemId srcItem = m_draggedItem;
+	wxTreeItemId dstItem = event.GetItem();
+	m_draggedItem = (wxTreeItemId) 0l;
+
+	if (m_organTreeCtrl->GetItemParent(dstItem) == tree_switches) {
+		// we drop it after target item but first check if the move really should happen
+		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+			return;
+		}
+		int targetIndex = 0;
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_switches, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_switches, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_switches, cookie);
+			if (dstItem == currentId) {
+				// this is the target we're looking for
+				targetIndex = i;
+			}
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		if (targetIndex < numChildrens) {
+			targetIndex += 1;
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_switches, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveSwitch(sourceIndex, targetIndex);
+		m_organTreeCtrl->SelectItem(newPos);
+	} else if (dstItem == tree_switches) {
+		// we make it first child
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_switches, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_switches, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_switches, cookie);
+
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_switches, 0, m_organTreeCtrl->GetItemText(srcItem));
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveSwitch(sourceIndex, 0);
+		m_organTreeCtrl->SelectItem(newPos);
 	}
 }
 

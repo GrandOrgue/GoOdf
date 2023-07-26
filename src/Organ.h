@@ -102,6 +102,7 @@ public:
 	unsigned getIndexOfOrganSwitch(GoSwitch *switchToFind);
 	void addSwitch(GoSwitch theSwitch, bool isParsing = false);
 	void removeSwitchAt(unsigned index);
+	void moveSwitch(int sourceIndex, int toBeforeIndex);
 	Rank* getOrganRankAt(unsigned index);
 	unsigned getNumberOfRanks();
 	unsigned getIndexOfOrganRank(Rank *rank);

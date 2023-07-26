@@ -109,6 +109,7 @@ private:
 	wxTreeItemId tree_divisionalCouplers;
 	wxTreeItemId tree_generals;
 	wxTreeItemId tree_panels;
+	wxTreeItemId m_draggedItem;
 
 	OrganPanel *m_organPanel;
 	EnclosurePanel *m_enclosurePanel;
@@ -135,6 +136,8 @@ private:
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
+	void OnOrganTreeLeftDrag(wxTreeEvent& event);
+	void OnOrganTreeDragCompleted(wxTreeEvent& event);
 	void OnAddNewEnclosure(wxCommandEvent& event);
 	void OnAddNewTremulant(wxCommandEvent& event);
 	void OnAddNewWindchestgroup(wxCommandEvent& event);
