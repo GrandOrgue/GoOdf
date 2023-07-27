@@ -25,10 +25,20 @@
 // Event table
 BEGIN_EVENT_TABLE(GUIPanelRepresentation, wxDialog)
 	EVT_PAINT(GUIPanelRepresentation::OnPaintEvent)
+	EVT_LEFT_DOWN(GUIPanelRepresentation::OnLeftClick)
+	EVT_MOTION(GUIPanelRepresentation::OnMouseMotion)
+	EVT_LEFT_UP(GUIPanelRepresentation::OnLeftRelease)
 END_EVENT_TABLE()
 
 GUIPanelRepresentation::GUIPanelRepresentation(wxWindow *parent, const wxString& title) : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX) {
 	m_currentPanel = NULL;
+	m_isFirstRender = true;
+	m_selectedObjectIndex = -1;
+	m_isDraggingObject = false;
+	m_currentDragX = -1;
+	m_currentDragY = -1;
+	m_startDragX = -1;
+	m_startDragY = -1;
 	m_HackY = 0;
 	m_EnclosureY = 0;
 	m_CenterY = 0;
@@ -43,6 +53,10 @@ GUIPanelRepresentation::~GUIPanelRepresentation() {
 
 void GUIPanelRepresentation::SetCurrentPanel(GoPanel *thePanel) {
 	m_currentPanel = thePanel;
+	m_isFirstRender = true;
+	if (!m_guiObjects.empty()) {
+		m_guiObjects.clear();
+	}
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	SetTitle(m_currentPanel->getName());
 	UpdateLayout();
@@ -54,6 +68,92 @@ void GUIPanelRepresentation::OnPaintEvent(wxPaintEvent& WXUNUSED(event)) {
 	RenderPanel(dc);
 }
 
+void GUIPanelRepresentation::OnLeftClick(wxMouseEvent& event) {
+	if (!m_guiObjects.empty()) {
+		wxCoord xPos = event.GetX();
+		wxCoord yPos = event.GetY();
+		m_startDragX = xPos;
+		m_startDragY = yPos;
+		m_selectedObjectIndex = -1;
+		for (int i = (int) m_guiObjects.size() - 1; i >= 0; i--) {
+			if (m_guiObjects[i].boundingRect.Contains(xPos, yPos)) {
+				m_selectedObjectIndex = i;
+				m_guiObjects[i].isSelected = true;
+				for (unsigned j = 0; j < m_guiObjects.size(); j++){
+					if (m_guiObjects[j].isSelected && j != (unsigned) i){
+						m_guiObjects[j].isSelected = false;
+					}
+				}
+				break;
+			}
+		}
+		if (m_selectedObjectIndex < 0) {
+			for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+				m_guiObjects[i].isSelected = false;
+			}
+		}
+		DoPaintNow();
+	} else {
+		event.Skip();
+	}
+}
+
+void GUIPanelRepresentation::OnMouseMotion(wxMouseEvent& event) {
+	if (m_selectedObjectIndex >= 0 && event.Dragging()) {
+		m_isDraggingObject = true;
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+		wxClientDC dc(this);
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
+		int xPos = m_guiObjects[m_selectedObjectIndex].boundingRect.x + m_currentDragX - m_startDragX;
+		int yPos = m_guiObjects[m_selectedObjectIndex].boundingRect.y + m_currentDragY - m_startDragY;
+		wxRect tempOutline(
+			xPos,
+			yPos,
+			m_guiObjects[m_selectedObjectIndex].boundingRect.width,
+			m_guiObjects[m_selectedObjectIndex].boundingRect.height
+		);
+		dc.DrawRectangle(tempOutline);
+		dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+		dc.SetTextForeground(*wxYELLOW);
+		dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
+	}
+}
+
+void GUIPanelRepresentation::OnLeftRelease(wxMouseEvent& event) {
+	if (m_selectedObjectIndex >= 0 && m_isDraggingObject) {
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+		int finalXpos = m_guiObjects[m_selectedObjectIndex].boundingRect.x + m_currentDragX - m_startDragX;
+		int finalYpos = m_guiObjects[m_selectedObjectIndex].boundingRect.y + m_currentDragY - m_startDragY;
+
+		if (m_guiObjects[m_selectedObjectIndex].element) {
+			m_guiObjects[m_selectedObjectIndex].element->setPosX(finalXpos);
+			m_guiObjects[m_selectedObjectIndex].element->setPosY(finalYpos);
+		} else if (m_guiObjects[m_selectedObjectIndex].img) {
+			m_guiObjects[m_selectedObjectIndex].img->setPositionX(finalXpos);
+			m_guiObjects[m_selectedObjectIndex].img->setPositionY(finalYpos);
+		}
+		m_guiObjects[m_selectedObjectIndex].boundingRect.x = finalXpos;
+		m_guiObjects[m_selectedObjectIndex].boundingRect.y = finalYpos;
+		m_guiObjects[m_selectedObjectIndex].isSelected = false;
+
+		m_isDraggingObject = false;
+		m_selectedObjectIndex = -1;
+		// reset all drag coordinates
+		m_currentDragX = -1;
+		m_currentDragY = -1;
+		m_startDragX = -1;
+		m_startDragY = -1;
+
+		UpdateLayout();
+		DoPaintNow();
+	}
+}
+
 void GUIPanelRepresentation::DoPaintNow() {
 	if (this->IsShown()) {
 		wxClientDC dc(this);
@@ -62,6 +162,7 @@ void GUIPanelRepresentation::DoPaintNow() {
 }
 
 void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
+	m_overlay.Reset();
 	// First draw the basic background of left jamb
 	wxRect rect = wxRect(0, 0, GetCenterX(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	wxBitmap stopBg = m_currentPanel->getDisplayMetrics()->getDrawstopBg();
@@ -115,17 +216,29 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 
 	if (m_currentPanel->getNumberOfImages() > 0) {
 		for (unsigned i = 0; i < m_currentPanel->getNumberOfImages(); i++) {
+			int imgX = m_currentPanel->getImageAt(i)->getPositionX();
+			int imgY = m_currentPanel->getImageAt(i)->getPositionY();
+			int imgWidth = m_currentPanel->getImageAt(i)->getWidth();
+			int imgHeight = m_currentPanel->getImageAt(i)->getHeight();
 			if (m_currentPanel->getImageAt(i)->getWidth() > m_currentPanel->getImageAt(i)->getOriginalWidth() || m_currentPanel->getImageAt(i)->getHeight() > m_currentPanel->getImageAt(i)->getOriginalHeight()) {
 				wxRect imgRect(
-					m_currentPanel->getImageAt(i)->getPositionX(),
-					m_currentPanel->getImageAt(i)->getPositionY(),
-					m_currentPanel->getImageAt(i)->getWidth(),
-					m_currentPanel->getImageAt(i)->getHeight()
+					imgX,
+					imgY,
+					imgWidth,
+					imgHeight
 				);
 				wxBitmap theBmp = m_currentPanel->getImageAt(i)->getBitmap();
 				TileBitmap(imgRect, dc, theBmp, m_currentPanel->getImageAt(i)->getTileOffsetX(), m_currentPanel->getImageAt(i)->getTileOffsetY());
 			} else {
-				dc.DrawBitmap(m_currentPanel->getImageAt(i)->getBitmap(), m_currentPanel->getImageAt(i)->getPositionX(), m_currentPanel->getImageAt(i)->getPositionY(), true);
+				dc.DrawBitmap(m_currentPanel->getImageAt(i)->getBitmap(), imgX, imgY, true);
+			}
+			if (m_isFirstRender && imgWidth < m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() / 2 && imgHeight < m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() / 2) {
+				GUI_OBJECT theImage;
+				theImage.element = NULL;
+				theImage.img = m_currentPanel->getImageAt(i);
+				theImage.boundingRect = wxRect(imgX, imgY, imgWidth, imgHeight);
+				theImage.isSelected = false;
+				m_guiObjects.push_back(theImage);
 			}
 		}
 	}
@@ -146,6 +259,14 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 			KEY_INFO *currentKey = currentMan->getKeyInfoAt(j);
 			wxBitmap theKey = currentKey->KeyImage;
 			dc.DrawBitmap(theKey, manXpos + currentKey->Xpos, manYpos + currentKey->Ypos, true);
+		}
+		if (m_isFirstRender) {
+			GUI_OBJECT theManual;
+			theManual.element = currentMan;
+			theManual.img = NULL;
+			theManual.boundingRect = wxRect(manXpos, manYpos, currentMan->m_renderInfo.width, currentMan->m_renderInfo.height);
+			theManual.isSelected = false;
+			m_guiObjects.push_back(theManual);
 		}
 	}
 
@@ -205,6 +326,14 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 					}
 					dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 				}
+				if (m_isFirstRender) {
+					GUI_OBJECT theButton;
+					theButton.element = btnElement;
+					theButton.img = NULL;
+					theButton.boundingRect = wxRect(thePos.x, thePos.y, btnElement->getWidth(), btnElement->getHeight());
+					theButton.isSelected = false;
+					m_guiObjects.push_back(theButton);
+				}
 				continue;
 			}
 			GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(guiElement);
@@ -249,6 +378,14 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 						encElement->getTextRectHeight()
 					);
 					dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
+				}
+				if (m_isFirstRender) {
+					GUI_OBJECT theEnclosure;
+					theEnclosure.element = encElement;
+					theEnclosure.img = NULL;
+					theEnclosure.boundingRect = wxRect(thePos.x, thePos.y, encElement->getWidth(), encElement->getHeight());
+					theEnclosure.isSelected = false;
+					m_guiObjects.push_back(theEnclosure);
 				}
 
 				continue;
@@ -318,9 +455,27 @@ void GUIPanelRepresentation::RenderPanel(wxDC& dc) {
 					);
 					dc.DrawLabel(BreakTextLine(labelElement->getName(), labelElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
 				}
+				if (m_isFirstRender) {
+					GUI_OBJECT theLabel;
+					theLabel.element = labelElement;
+					theLabel.img = NULL;
+					theLabel.boundingRect = wxRect(xPosToUse, yPosToUse, labelElement->getWidth(), labelElement->getHeight());
+					theLabel.isSelected = false;
+					m_guiObjects.push_back(theLabel);
+				}
 			}
 		}
 	}
+
+	// Draw any selection that exist
+	if (m_selectedObjectIndex >= 0) {
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
+		dc.DrawRectangle(m_guiObjects[m_selectedObjectIndex].boundingRect);
+	}
+	m_isFirstRender = false;
 }
 
 void GUIPanelRepresentation::TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap, int tileOffsetX, int tileOffsetY) {
@@ -650,6 +805,11 @@ wxString GUIPanelRepresentation::BreakTextLine(wxString text, int textBreakWidth
 }
 
 void GUIPanelRepresentation::DoUpdateLayout() {
+	m_selectedObjectIndex = -1;
+	m_isFirstRender = true;
+	if (!m_guiObjects.empty()) {
+		m_guiObjects.clear();
+	}
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	UpdateLayout();
 	DoPaintNow();

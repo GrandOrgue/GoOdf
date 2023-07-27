@@ -345,7 +345,6 @@ void GoPanelPanel::OnNewImageBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_panel->addImage(image);
 
 		::wxGetApp().m_frame->AddImageItemToTree();
-
 	} else {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 images!"), wxT("Too many images"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
@@ -603,7 +602,7 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_panel->addGuiElement(label);
 
 		::wxGetApp().m_frame->AddGuiElementToTree(wxT("GUI Label"));
-
+		m_guiRepresentation->DoUpdateLayout();
 	} else {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();

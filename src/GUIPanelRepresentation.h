@@ -24,6 +24,14 @@
 #include <wx/wx.h>
 #include "GoPanel.h"
 #include <vector>
+#include "wx/overlay.h"
+
+struct GUI_OBJECT {
+	GUIElement *element;
+	GoImage *img;
+	wxRect boundingRect;
+	bool isSelected;
+};
 
 class GUIPanelRepresentation : public wxDialog {
 public:
@@ -37,6 +45,15 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	GoPanel *m_currentPanel;
+	std::vector<GUI_OBJECT> m_guiObjects;
+	bool m_isFirstRender;
+	wxOverlay m_overlay;
+	int m_selectedObjectIndex;
+	bool m_isDraggingObject;
+	wxCoord m_startDragX;
+	wxCoord m_startDragY;
+	wxCoord m_currentDragX;
+	wxCoord m_currentDragY;
 
 	int m_HackY;
 	int m_EnclosureY;
@@ -75,6 +92,9 @@ private:
 	void TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap, int tileOffsetX, int tileOffsetY);
 	wxString BreakTextLine(wxString text, int textBreakWidth, wxDC& dc);
 	void InitFont();
+	void OnLeftClick(wxMouseEvent& event);
+	void OnMouseMotion(wxMouseEvent& event);
+	void OnLeftRelease(wxMouseEvent& event);
 
 };
 
