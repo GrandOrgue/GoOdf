@@ -42,6 +42,7 @@ BEGIN_EVENT_TABLE(GUIEnclosurePanel, wxPanel)
 	EVT_BUTTON(ID_GUIENCLOSUREPANEL_IMAGE_PATH_BTN, GUIEnclosurePanel::OnAddImagePathBtn)
 	EVT_BUTTON(ID_GUIENCLOSUREPANEL_MASK_PATH_BTN, GUIEnclosurePanel::OnAddMaskPathBtn)
 	EVT_BUTTON(ID_GUIENCLOSUREPANEL_REMOVE_BITMAP_BTN, GUIEnclosurePanel::OnRemoveBitmapBtn)
+	EVT_BUTTON(ID_GUIENCLOSUREPANEL_ADD_IMAGE_BITMAPS_BTN, GUIEnclosurePanel::OnAddImageBitmapsBtn)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_WIDTH_SPIN, GUIEnclosurePanel::OnWidthSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_HEIGHT_SPIN, GUIEnclosurePanel::OnHeightSpin)
 	EVT_SPINCTRL(ID_GUIENCLOSUREPANEL_TILE_X_SPIN, GUIEnclosurePanel::OnTileOffsetXSpin)
@@ -99,7 +100,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("DispLabelColour: ")
 	);
-	colorRow->Add(labelColourText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	colorRow->Add(labelColourText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 	m_labelColourChoice = new wxChoice(
 		this,
 		ID_GUIENCLOSUREPANEL_COLOR_CHOICE,
@@ -107,12 +108,12 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		m_colors
 	);
-	colorRow->Add(m_labelColourChoice, 1, wxEXPAND, 0);
+	colorRow->Add(m_labelColourChoice, 1, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	m_labelColourPick = new wxColourPickerCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_COLOR_PICKER
 	);
-	colorRow->Add(m_labelColourPick, 1, wxEXPAND, 0);
+	colorRow->Add(m_labelColourPick, 1, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	panelSizer->Add(colorRow, 0, wxGROW);
 
 	wxBoxSizer *positionRow = new wxBoxSizer(wxHORIZONTAL);
@@ -178,13 +179,15 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 	panelSizer->Add(positionRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *thirdFirstVertical = new wxBoxSizer(wxVERTICAL);
 	m_bitmapBox = new wxListBox(
 		this,
 		ID_GUIENCLOSUREPANEL_BITMAP_BOX,
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	thirdRow->Add(m_bitmapBox, 1, wxGROW|wxALL, 5);
+	thirdFirstVertical->Add(m_bitmapBox, 1, wxGROW);
+	thirdRow->Add(thirdFirstVertical, 1, wxGROW|wxALL, 5);
 	wxBoxSizer *thirdVertical = new wxBoxSizer(wxVERTICAL);
 	m_addBitmapBtn = new wxButton(
 		this,
@@ -194,14 +197,14 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		0
 	);
-	thirdVertical->Add(m_addBitmapBtn, 0, wxGROW|wxALL, 5);
+	thirdVertical->Add(m_addBitmapBtn, 0, wxGROW);
 	wxBoxSizer *verticalSecond = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *imagePathText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("Image: ")
 	);
-	verticalSecond->Add(imagePathText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	verticalSecond->Add(imagePathText, 0, wxALIGN_CENTER_VERTICAL);
 	m_imagePathField = new wxTextCtrl(
 		this,
 		wxID_ANY,
@@ -210,7 +213,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		wxTE_READONLY
 	);
-	verticalSecond->Add(m_imagePathField, 1, wxEXPAND|wxALL, 5);
+	verticalSecond->Add(m_imagePathField, 1, wxEXPAND, 0);
 	m_addImagePathBtn = new wxButton(
 		this,
 		ID_GUIENCLOSUREPANEL_IMAGE_PATH_BTN,
@@ -219,15 +222,15 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		0
 	);
-	verticalSecond->Add(m_addImagePathBtn, 0, wxALL, 5);
-	thirdVertical->Add(verticalSecond, 0, wxGROW);
+	verticalSecond->Add(m_addImagePathBtn, 0, wxLEFT, 5);
+	thirdVertical->Add(verticalSecond, 0, wxGROW|wxTOP|wxBOTTOM, 5);
 	wxBoxSizer *verticalThird = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *maskPathText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("Mask: ")
 	);
-	verticalThird->Add(maskPathText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	verticalThird->Add(maskPathText, 0, wxALIGN_CENTER_VERTICAL);
 	m_maskPathField = new wxTextCtrl(
 		this,
 		wxID_ANY,
@@ -236,7 +239,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		wxTE_READONLY
 	);
-	verticalThird->Add(m_maskPathField, 1, wxEXPAND|wxALL, 5);
+	verticalThird->Add(m_maskPathField, 1, wxEXPAND, 0);
 	m_addMaskPathBtn = new wxButton(
 		this,
 		ID_GUIENCLOSUREPANEL_MASK_PATH_BTN,
@@ -245,7 +248,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		0
 	);
-	verticalThird->Add(m_addMaskPathBtn, 0, wxALL, 5);
+	verticalThird->Add(m_addMaskPathBtn, 0, wxLEFT, 5);
 	thirdVertical->Add(verticalThird, 0, wxGROW);
 	m_removeBitmapBtn = new wxButton(
 		this,
@@ -255,8 +258,17 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		0
 	);
-	thirdVertical->Add(m_removeBitmapBtn, 0, wxGROW|wxALL, 5);
-	thirdRow->Add(thirdVertical, 2, wxGROW);
+	thirdVertical->Add(m_removeBitmapBtn, 0, wxGROW|wxTOP|wxBOTTOM, 5);
+	m_addImageBitmapsBtn = new wxButton(
+		this,
+		ID_GUIENCLOSUREPANEL_ADD_IMAGE_BITMAPS_BTN,
+		wxT("Browse for image(s) and add them as new bitmap(s)..."),
+		wxDefaultPosition,
+		wxDefaultSize,
+		0
+	);
+	thirdVertical->Add(m_addImageBitmapsBtn, 0, wxGROW);
+	thirdRow->Add(thirdVertical, 2, wxGROW|wxALL, 5);
 	panelSizer->Add(thirdRow, 1, wxGROW);
 
 	wxBoxSizer *seventhRow  = new wxBoxSizer(wxHORIZONTAL);
@@ -305,7 +317,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("TileOffsetX: ")
 	);
-	eighthRow->Add(tileOffsetXText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	eighthRow->Add(tileOffsetXText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
 	m_tileOffsetXSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_TILE_X_SPIN,
@@ -317,14 +329,14 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	eighthRow->Add(m_tileOffsetXSpin, 0, wxEXPAND|wxALL, 5);
+	eighthRow->Add(m_tileOffsetXSpin, 0, wxEXPAND|wxLEFT, 5);
 	eighthRow->AddStretchSpacer();
 	wxStaticText *tileOffsetYText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("TileOffsetY: ")
 	);
-	eighthRow->Add(tileOffsetYText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	eighthRow->Add(tileOffsetYText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT, 5);
 	m_tileOffsetYSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_TILE_Y_SPIN,
@@ -336,7 +348,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	eighthRow->Add(m_tileOffsetYSpin, 0, wxEXPAND|wxALL, 5);
+	eighthRow->Add(m_tileOffsetYSpin, 0, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	panelSizer->Add(eighthRow, 0, wxEXPAND);
 
 	wxBoxSizer *ninthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -385,7 +397,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("MouseRectWidth: ")
 	);
-	tenthRow->Add(mouseRectWidthText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	tenthRow->Add(mouseRectWidthText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 	m_mouseRectWidthSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_MOUSE_RECT_WIDTH_SPIN,
@@ -397,14 +409,14 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	tenthRow->Add(m_mouseRectWidthSpin, 0, wxEXPAND|wxALL, 5);
+	tenthRow->Add(m_mouseRectWidthSpin, 0, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	tenthRow->AddStretchSpacer();
 	wxStaticText *mouseRectHeightText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("MouseRectHeight: ")
 	);
-	tenthRow->Add(mouseRectHeightText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	tenthRow->Add(mouseRectHeightText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 	m_mouseRectHeightSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_MOUSE_RECT_HEIGHT_SPIN,
@@ -416,7 +428,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	tenthRow->Add(m_mouseRectHeightSpin, 0, wxEXPAND|wxALL, 5);
+	tenthRow->Add(m_mouseRectHeightSpin, 0, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	panelSizer->Add(tenthRow, 0, wxEXPAND);
 
 	wxBoxSizer *eleventh = new wxBoxSizer(wxHORIZONTAL);
@@ -445,7 +457,6 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxT("MouseAxisEnd: ")
 	);
 	eleventh->Add(mouseAxisEndText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-
 	m_mouseAxisEndSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_MOUSE_AXIS_END_SPIN,
@@ -486,7 +497,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("TextRectLeft: ")
 	);
-	twelfthRow->Add(textRectLeftText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	twelfthRow->Add(textRectLeftText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 	m_textRectLeftSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_TEXT_RECT_LEFT_SPIN,
@@ -498,14 +509,14 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	twelfthRow->Add(m_textRectLeftSpin, 0, wxEXPAND|wxALL, 5);
+	twelfthRow->Add(m_textRectLeftSpin, 0, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	twelfthRow->AddStretchSpacer();
 	wxStaticText *textRectTopText = new wxStaticText (
 		this,
 		wxID_STATIC,
 		wxT("TextRectTop: ")
 	);
-	twelfthRow->Add(textRectTopText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	twelfthRow->Add(textRectTopText, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
 	m_textRectTopSpin = new wxSpinCtrl(
 		this,
 		ID_GUIENCLOSUREPANEL_TEXT_RECT_TOP_SPIN,
@@ -517,7 +528,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		1,
 		0
 	);
-	twelfthRow->Add(m_textRectTopSpin, 0, wxEXPAND|wxALL, 5);
+	twelfthRow->Add(m_textRectTopSpin, 0, wxEXPAND|wxLEFT|wxRIGHT, 5);
 	panelSizer->Add(twelfthRow, 0, wxEXPAND);
 
 	wxBoxSizer *thirteenthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -809,6 +820,60 @@ void GUIEnclosurePanel::OnRemoveBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
+void GUIEnclosurePanel::OnAddImageBitmapsBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxArrayString paths;
+	GetPathsForImageBitmaps(paths);
+	if (!paths.IsEmpty()) {
+		unsigned nbrBmpsBefore = m_enclosure->getNumberOfBitmaps();
+		for (unsigned i = 0; i < paths.GetCount(); i++) {
+			wxImage img = wxImage(paths[i]);
+			if (img.IsOk()) {
+				int width = img.GetWidth();
+				int height = img.GetHeight();
+				GoImage bitmap;
+				bitmap.setImage(paths[i]);
+				if (m_enclosure->getNumberOfBitmaps() != 0) {
+					// bitmaps already exist so size of each new must match the first
+					if (width == m_enclosure->getBitmapWidth() && height == m_enclosure->getBitmapHeight()) {
+						m_enclosure->addBitmap(bitmap);
+						unsigned existingBitmaps = m_enclosure->getNumberOfBitmaps();
+						m_bitmapBox->Append(wxT("Bitmap ") + wxString::Format(wxT("%u"), existingBitmaps));
+					} else {
+						wxMessageDialog msg(this, wxT("Current bitmap size doesn't match the first bitmap! Please review/set first bitmap size correctly."), wxT("All bitmaps must be of same size!"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+						msg.ShowModal();
+					}
+				} else {
+					// no bitmaps exist so we can just add this one and set default values from it
+					m_enclosure->addBitmap(bitmap);
+					m_enclosure->setBitmapWidth(width);
+					m_enclosure->setBitmapHeight(height);
+					m_enclosure->setWidth(width);
+					m_enclosure->setHeight(height);
+					m_enclosure->setMouseRectWidth(width - m_enclosure->getMouseRectLeft());
+					m_enclosure->setMouseRectHeight(height - m_enclosure->getMouseRectTop() - 3);
+					m_enclosure->setMouseAxisStart(m_enclosure->getMouseRectHeight() / 3);
+					m_enclosure->setMouseAxisEnd(m_enclosure->getMouseRectHeight() / 3 * 2);
+					m_enclosure->setTextRectWidth(width - m_enclosure->getTextRectLeft());
+					m_enclosure->setTextRectHeight(height - m_enclosure->getTextRectTop());
+					m_enclosure->setTextBreakWidth(m_enclosure->getTextRectWidth());
+					unsigned existingBitmaps = m_enclosure->getNumberOfBitmaps();
+					m_bitmapBox->Append(wxT("Bitmap ") + wxString::Format(wxT("%u"), existingBitmaps));
+					UpdateSpinRanges();
+					UpdateDefaultSpinValues();
+				}
+			}
+		}
+		if (m_enclosure->getNumberOfBitmaps() > nbrBmpsBefore) {
+			// New bitmaps were added, we select the first new
+			m_bitmapBox->SetSelection(nbrBmpsBefore);
+			// we need to notify the bitmapBox that selection has changed
+			wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIENCLOSUREPANEL_BITMAP_BOX);
+			wxPostEvent(this, evt);
+			::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
+		}
+	}
+}
+
 void GUIEnclosurePanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setWidth(m_widthSpin->GetValue());
 	UpdateSpinRanges();
@@ -995,6 +1060,32 @@ wxString GUIEnclosurePanel::GetPathForImageFile() {
 
 	imageFilePath = fileDialog.GetPath();
 	return imageFilePath;
+}
+
+void GUIEnclosurePanel::GetPathsForImageBitmaps(wxArrayString &paths) {
+	wxString defaultPath = wxEmptyString;
+	if (m_enclosure->getNumberOfBitmaps() > 0 && m_enclosure->getBitmapAtIndex(0)->getImage() != wxEmptyString) {
+		wxFileName filePath = wxFileName(m_enclosure->getBitmapAtIndex(0)->getImage());
+		if (filePath.FileExists())
+			defaultPath = filePath.GetPath();
+	} else {
+		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+	}
+	if (defaultPath == wxEmptyString)
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+
+	wxFileDialog fileDialog(
+		this,
+		wxT("Select image file(s), all pixel sizes for element(s) must match!"),
+		defaultPath,
+		"",
+		"Image files (*.png;*.bmp;*.gif;*.jpg;*.ico)|*.png;*.bmp;*.gif;*.jpg;*.ico;*.PNG;*.BMP;*.GIF;*.JPG;*.ICO;*.Png;*.Bmp;*.Gif;*.Jpg;*.Ico",
+		wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE
+	);
+
+	if (fileDialog.ShowModal() == wxID_OK) {
+		fileDialog.GetPaths(paths);
+	}
 }
 
 void GUIEnclosurePanel::UpdateBuiltinBitmapValues() {

@@ -52,6 +52,7 @@ private:
 	wxTextCtrl *m_maskPathField;
 	wxButton *m_addMaskPathBtn;
 	wxButton *m_removeBitmapBtn;
+	wxButton *m_addImageBitmapsBtn;
 	wxSpinCtrl *m_widthSpin; // 0 - panel width, default bitmap width
 	wxSpinCtrl *m_heightSpin; // 0 - panel height, default bitmap width
 	wxSpinCtrl *m_tileOffsetXSpin; // (integer 0 - bitmap width, default: 0)
@@ -86,6 +87,7 @@ private:
 	void OnAddImagePathBtn(wxCommandEvent& event);
 	void OnAddMaskPathBtn(wxCommandEvent& event);
 	void OnRemoveBitmapBtn(wxCommandEvent& event);
+	void OnAddImageBitmapsBtn(wxCommandEvent& event);
 	void OnWidthSpin(wxSpinEvent& event);
 	void OnHeightSpin(wxSpinEvent& event);
 	void OnTileOffsetXSpin(wxSpinEvent& event);
@@ -106,6 +108,7 @@ private:
 	void UpdateSpinRanges();
 	void UpdateDefaultSpinValues();
 	wxString GetPathForImageFile();
+	void GetPathsForImageBitmaps(wxArrayString &paths);
 	void UpdateBuiltinBitmapValues();
 };
 
