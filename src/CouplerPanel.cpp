@@ -150,7 +150,12 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 	secondRow1stCol->Add(availableReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableSwitches = new wxListBox(
 		this,
-		ID_COUPLER_AVAILABLE_SWITCHES
+		ID_COUPLER_AVAILABLE_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	secondRow1stCol->Add(m_availableSwitches, 1, wxEXPAND|wxALL, 5);
 	secondRow->Add(secondRow1stCol, 1, wxEXPAND);
@@ -179,7 +184,12 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 	secondRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedSwitches = new wxListBox(
 		this,
-		ID_COUPLER_REFERENCED_SWITCHES
+		ID_COUPLER_REFERENCED_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	secondRow3rdCol->Add(m_referencedSwitches, 1, wxEXPAND|wxALL, 5);
 	secondRow->Add(secondRow3rdCol, 1, wxEXPAND);
@@ -821,31 +831,45 @@ void CouplerPanel::OnRemoveCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void CouplerPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableSwitches->GetSelection();
-		if (!m_coupler->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected))) {
-			m_coupler->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected));
-			UpdateReferencedSwitches();
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			if (!m_coupler->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+				m_coupler->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
+			}
 		}
+		UpdateReferencedSwitches();
 	}
 }
 
 void CouplerPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedSwitches->GetSelection();
-		m_coupler->removeSwitchReference(m_coupler->getSwitchAtIndex(selected));
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		std::list<GoSwitch*> switchesToRemove;
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			switchesToRemove.push_back(m_coupler->getSwitchAtIndex(selectedSwitches[i]));
+		}
+		for (GoSwitch *sw : switchesToRemove) {
+			m_coupler->removeSwitchReference(sw);
+		}
 		UpdateReferencedSwitches();
 	}
 }
 
 void CouplerPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_addReferencedSwitch->Enable(true);
 	}
 }
 
 void CouplerPanel::OnReferencedSwitchSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_removeReferencedSwitch->Enable(true);
 	}
 }

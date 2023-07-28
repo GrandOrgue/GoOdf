@@ -137,7 +137,12 @@ TremulantPanel::TremulantPanel(wxWindow *parent) : wxPanel(parent) {
 	thirdRow1stCol->Add(availableReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableSwitches = new wxListBox(
 		this,
-		ID_TREM_AVAILABLE_SWITCHES
+		ID_TREM_AVAILABLE_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow1stCol->Add(m_availableSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow1stCol, 1, wxEXPAND);
@@ -166,7 +171,12 @@ TremulantPanel::TremulantPanel(wxWindow *parent) : wxPanel(parent) {
 	thirdRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedSwitches = new wxListBox(
 		this,
-		ID_TREM_REFERENCED_SWITCHES
+		ID_TREM_REFERENCED_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow3rdCol->Add(m_referencedSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow3rdCol, 1, wxEXPAND);
@@ -611,31 +621,45 @@ void TremulantPanel::DoRemoveTremulant() {
 }
 
 void TremulantPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableSwitches->GetSelection();
-		if (!m_tremulant->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected))) {
-			m_tremulant->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected));
-			UpdateReferencedSwitches();
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			if (!m_tremulant->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+				m_tremulant->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
+			}
 		}
+		UpdateReferencedSwitches();
 	}
 }
 
 void TremulantPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedSwitches->GetSelection();
-		m_tremulant->removeSwitchReference(m_tremulant->getSwitchAtIndex(selected));
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		std::list<GoSwitch*> switchesToRemove;
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			switchesToRemove.push_back(m_tremulant->getSwitchAtIndex(selectedSwitches[i]));
+		}
+		for (GoSwitch *sw : switchesToRemove) {
+			m_tremulant->removeSwitchReference(sw);
+		}
 		UpdateReferencedSwitches();
 	}
 }
 
 void TremulantPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_addReferencedSwitch->Enable(true);
 	}
 }
 
 void TremulantPanel::OnReferencedSwitchSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_removeReferencedSwitch->Enable(true);
 	}
 }

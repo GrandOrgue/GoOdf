@@ -131,7 +131,12 @@ SwitchPanel::SwitchPanel(wxWindow *parent) : wxPanel(parent) {
 	thirdRow1stCol->Add(availableReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableSwitches = new wxListBox(
 		this,
-		ID_SWITCH_AVAILABLE_SWITCHES
+		ID_SWITCH_AVAILABLE_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow1stCol->Add(m_availableSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow1stCol, 1, wxEXPAND);
@@ -160,7 +165,12 @@ SwitchPanel::SwitchPanel(wxWindow *parent) : wxPanel(parent) {
 	thirdRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedSwitches = new wxListBox(
 		this,
-		ID_SWITCH_REFERENCED_SWITCHES
+		ID_SWITCH_REFERENCED_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow3rdCol->Add(m_referencedSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow3rdCol, 1, wxEXPAND);
@@ -453,31 +463,45 @@ void SwitchPanel::UpdateReferencedSwitches() {
 }
 
 void SwitchPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableSwitches->GetSelection();
-		if (!m_switch->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected))) {
-			m_switch->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected));
-			UpdateReferencedSwitches();
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			if (!m_switch->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+				m_switch->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
+			}
 		}
+		UpdateReferencedSwitches();
 	}
 }
 
 void SwitchPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedSwitches->GetSelection();
-		m_switch->removeSwitchReference(m_switch->getSwitchAtIndex(selected));
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		std::list<GoSwitch*> switchesToRemove;
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			switchesToRemove.push_back(m_switch->getSwitchAtIndex(selectedSwitches[i]));
+		}
+		for (GoSwitch *sw : switchesToRemove) {
+			m_switch->removeSwitchReference(sw);
+		}
 		UpdateReferencedSwitches();
 	}
 }
 
 void SwitchPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_addReferencedSwitch->Enable(true);
 	}
 }
 
 void SwitchPanel::OnReferencedSwitchSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_removeReferencedSwitch->Enable(true);
 	}
 }
