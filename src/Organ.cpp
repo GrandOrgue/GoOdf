@@ -346,7 +346,15 @@ bool Organ::doesHavePedals() {
 }
 
 void Organ::setHasPedals(bool hasPedals) {
-	m_hasPedals = hasPedals;
+	if (hasPedals != m_hasPedals) {
+		m_hasPedals = hasPedals;
+
+		// Since the manual numbering now have changed we must possibly change
+		// any references done to already existing pipes
+		if (!m_Stops.empty() || !m_Ranks.empty()) {
+			updatePipeReferencesFromPedalChoice();
+		}
+	}
 }
 
 wxString Organ::getInfoFilename() {
@@ -802,6 +810,114 @@ void Organ::removeReferenceToRankInStops(Rank *rank) {
 	}
 }
 
+void Organ::updateManualPipeReferences(int sourceIdx, int newIdx) {
+	int oldManIdx = sourceIdx;
+	if (!m_hasPedals) {
+		oldManIdx += 1;
+	}
+	wxString searchFor = wxT("REF:") + GOODF_functions::number_format(oldManIdx);
+	wxString replaceWith = wxT("REF:") + GOODF_functions::number_format(newIdx);
+
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			for (Pipe& p : s.getInternalRank()->m_pipes) {
+				if (p.m_attacks.front().fileName.StartsWith(searchFor)) {
+					p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+					p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+				}
+			}
+		}
+	}
+
+	for (Rank& r : m_Ranks) {
+		for (Pipe& p : r.m_pipes) {
+			if (p.m_attacks.front().fileName.StartsWith(searchFor)) {
+				p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+				p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+			}
+		}
+	}
+}
+
+void Organ::updatePipeReferencesFromPedalChoice() {
+	// This function is called whenever the has pedal choice is changed and
+	// there could possibly be pipes that have references to other pipes
+
+	if (m_hasPedals) {
+		// choice has changed from not having pedals to having, which means
+		// that any reference should be for one manual number less than before
+		for (Stop& s : m_Stops) {
+			if (s.isUsingInternalRank()) {
+				for (Pipe& p : s.getInternalRank()->m_pipes) {
+					if (p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+						wxString manStr = p.m_attacks.front().fileName.Mid(4, 3);
+						long manIdxValue;
+						if (manStr.ToLong(&manIdxValue)) {
+							manIdxValue -= 1;
+							wxString searchFor = wxT("REF:") + manStr;
+							wxString replaceWith = wxT("REF:") + GOODF_functions::number_format(manIdxValue);
+							p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+							p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+						}
+					}
+				}
+			}
+		}
+
+		for (Rank& r : m_Ranks) {
+			for (Pipe& p : r.m_pipes) {
+				if (p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+					wxString manStr = p.m_attacks.front().fileName.Mid(4, 3);
+					long manIdxValue;
+					if (manStr.ToLong(&manIdxValue)) {
+						manIdxValue -= 1;
+						wxString searchFor = wxT("REF:") + manStr;
+						wxString replaceWith = wxT("REF:") + GOODF_functions::number_format(manIdxValue);
+						p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+						p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+					}
+				}
+			}
+		}
+	} else {
+		// now we're not having a pedal anymore so references should be for one
+		// number higher than before
+		for (Stop& s : m_Stops) {
+			if (s.isUsingInternalRank()) {
+				for (Pipe& p : s.getInternalRank()->m_pipes) {
+					if (p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+						wxString manStr = p.m_attacks.front().fileName.Mid(4, 3);
+						long manIdxValue;
+						if (manStr.ToLong(&manIdxValue)) {
+							manIdxValue += 1;
+							wxString searchFor = wxT("REF:") + manStr;
+							wxString replaceWith = wxT("REF:") + GOODF_functions::number_format(manIdxValue);
+							p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+							p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+						}
+					}
+				}
+			}
+		}
+
+		for (Rank& r : m_Ranks) {
+			for (Pipe& p : r.m_pipes) {
+				if (p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+					wxString manStr = p.m_attacks.front().fileName.Mid(4, 3);
+					long manIdxValue;
+					if (manStr.ToLong(&manIdxValue)) {
+						manIdxValue += 1;
+						wxString searchFor = wxT("REF:") + manStr;
+						wxString replaceWith = wxT("REF:") + GOODF_functions::number_format(manIdxValue);
+						p.m_attacks.front().fileName.Replace(searchFor, replaceWith, false);
+						p.m_attacks.front().fullPath.Replace(searchFor, replaceWith, false);
+					}
+				}
+			}
+		}
+	}
+}
+
 Manual* Organ::getOrganManualAt(unsigned index) {
 	auto iterator = std::next(m_Manuals.begin(), index);
 	return &(*iterator);
@@ -846,6 +962,38 @@ void Organ::removeManualAt(unsigned index) {
 		}
 	}
 	m_Manuals.erase(it);
+	updateOrganElements();
+}
+
+void Organ::moveManual(int sourceIndex, int toBeforeIndex) {
+	Manual *theManual = getOrganManualAt(sourceIndex);
+	auto theOneToMove = std::next(m_Manuals.begin(), sourceIndex);
+	std::list<Manual>::iterator it = m_Manuals.begin();
+
+	if (toBeforeIndex > (int) m_Manuals.size() - 1) {
+		it = m_Manuals.end();
+	} else {
+		it = std::next(m_Manuals.begin(), toBeforeIndex);
+	}
+
+	m_Manuals.splice(it, m_Manuals, theOneToMove);
+
+	// Now that the move is made we should check if the pedal choice must be
+	// changed as only the first manual may be assigned to be the pedal
+	if (m_hasPedals && (toBeforeIndex == 0 || sourceIndex == 0)) {
+		for (Manual& man : m_Manuals) {
+			if (man.isThePedal()) {
+				man.setIsPedal(false);
+			}
+		}
+	}
+
+	// If any pipe would reference another pipe from a stop on this manual it's
+	// paths would be wrong now. So they must be corrected both for internal
+	// ranks in stops and for separate ranks
+	int newManIndex = (int) getIndexOfOrganManual(theManual);
+	updateManualPipeReferences(sourceIndex, newManIndex);
+
 	updateOrganElements();
 }
 

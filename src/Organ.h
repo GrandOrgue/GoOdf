@@ -117,11 +117,14 @@ public:
 	wxString getOdfRoot();
 	void setOdfRoot(wxString root);
 	void removeReferenceToRankInStops(Rank *rank);
+	void updateManualPipeReferences(int sourceIdx, int newIdx);
+	void updatePipeReferencesFromPedalChoice();
 	Manual* getOrganManualAt(unsigned index);
 	unsigned getNumberOfManuals();
 	unsigned getIndexOfOrganManual(Manual *manual);
 	void addManual(Manual manual, bool isParsing = false);
 	void removeManualAt(unsigned index);
+	void moveManual(int sourceIndex, int toBeforeIndex);
 	Coupler* getOrganCouplerAt(unsigned index);
 	unsigned getNumberOfCouplers();
 	unsigned getIndexOfOrganCoupler(Coupler *coupler);

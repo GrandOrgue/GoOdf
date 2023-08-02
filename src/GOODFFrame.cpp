@@ -1287,9 +1287,11 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 }
 
 void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
-	// Only allow dragging if item is a switch
+	// Only allow dragging if item is a switch, manual
 	wxTreeItemId sourceItem = event.GetItem();
-	if (m_organTreeCtrl->GetItemParent(sourceItem) == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) {
+	if ((m_organTreeCtrl->GetItemParent(sourceItem) == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
+		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1)
+	) {
 		m_draggedItem = sourceItem;
 		event.Allow();
 	}
@@ -1300,8 +1302,8 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 	wxTreeItemId dstItem = event.GetItem();
 	m_draggedItem = (wxTreeItemId) 0l;
 
-	if (m_organTreeCtrl->GetItemParent(dstItem) == tree_switches) {
-		// we drop it after target item but first check if the move really should happen
+	if (m_organTreeCtrl->GetItemParent(dstItem) == tree_switches && m_organTreeCtrl->GetItemParent(srcItem) == tree_switches) {
+		// we drop it after target switch but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
 			return;
 		}
@@ -1330,7 +1332,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (dstItem == tree_switches) {
+	} else if (dstItem == tree_switches && m_organTreeCtrl->GetItemParent(srcItem) == tree_switches) {
 		// we make it first child
 		int sourceIndex = 0;
 		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_switches, false);
@@ -1349,6 +1351,142 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_switches, 0, m_organTreeCtrl->GetItemText(srcItem));
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, 0);
+		m_organTreeCtrl->SelectItem(newPos);
+	} else if (m_organTreeCtrl->GetItemParent(dstItem) == tree_manuals  && m_organTreeCtrl->GetItemParent(srcItem) == tree_manuals) {
+		// we drop it after target manual but first check if the move really should happen
+		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+			return;
+		}
+		int targetIndex = 0;
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_manuals, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_manuals, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_manuals, cookie);
+			if (dstItem == currentId) {
+				// this is the target we're looking for
+				targetIndex = i;
+			}
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		if (targetIndex < numChildrens) {
+			targetIndex += 1;
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_manuals, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+		// create the subitems for Stops, Couplers and Divisionals
+		wxTreeItemId newStops = m_organTreeCtrl->AppendItem(newPos, wxT("Stops"));
+		wxTreeItemId newCouplers = m_organTreeCtrl->AppendItem(newPos, wxT("Couplers"));
+		wxTreeItemId newDivisionals = m_organTreeCtrl->AppendItem(newPos, wxT("Divisionals"));
+		// copy items from source to new pos
+		wxTreeItemId srcDivisionals = m_organTreeCtrl->GetLastChild(srcItem);
+		wxTreeItemId srcCouplers = m_organTreeCtrl->GetPrevSibling(srcDivisionals);
+		wxTreeItemId srcStops = m_organTreeCtrl->GetPrevSibling(srcCouplers);
+		int numDivisionals = m_organTreeCtrl->GetChildrenCount(srcDivisionals, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numDivisionals; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcDivisionals, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcDivisionals, cookie);
+
+			m_organTreeCtrl->AppendItem(newDivisionals, m_organTreeCtrl->GetItemText(currentId));
+		}
+		int numCouplers = m_organTreeCtrl->GetChildrenCount(srcCouplers, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numCouplers; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcCouplers, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcCouplers, cookie);
+
+			m_organTreeCtrl->AppendItem(newCouplers, m_organTreeCtrl->GetItemText(currentId));
+		}
+
+		int numStops = m_organTreeCtrl->GetChildrenCount(srcStops, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numStops; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcStops, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcStops, cookie);
+
+			m_organTreeCtrl->AppendItem(newStops, m_organTreeCtrl->GetItemText(currentId));
+		}
+		m_organTreeCtrl->DeleteChildren(srcItem);
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveManual(sourceIndex, targetIndex);
+		m_organTreeCtrl->SelectItem(newPos);
+	} else if (dstItem == tree_manuals && m_organTreeCtrl->GetItemParent(srcItem) == tree_manuals) {
+		// we make it first child
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_manuals, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_manuals, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_manuals, cookie);
+
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_manuals, 0, m_organTreeCtrl->GetItemText(srcItem));
+		// create the subitems for Stops, Couplers and Divisionals
+		wxTreeItemId newStops = m_organTreeCtrl->AppendItem(newPos, wxT("Stops"));
+		wxTreeItemId newCouplers = m_organTreeCtrl->AppendItem(newPos, wxT("Couplers"));
+		wxTreeItemId newDivisionals = m_organTreeCtrl->AppendItem(newPos, wxT("Divisionals"));
+		// copy items from source to new pos
+		wxTreeItemId srcDivisionals = m_organTreeCtrl->GetLastChild(srcItem);
+		wxTreeItemId srcCouplers = m_organTreeCtrl->GetPrevSibling(srcDivisionals);
+		wxTreeItemId srcStops = m_organTreeCtrl->GetPrevSibling(srcCouplers);
+		int numDivisionals = m_organTreeCtrl->GetChildrenCount(srcDivisionals, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numDivisionals; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcDivisionals, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcDivisionals, cookie);
+
+			m_organTreeCtrl->AppendItem(newDivisionals, m_organTreeCtrl->GetItemText(currentId));
+		}
+		int numCouplers = m_organTreeCtrl->GetChildrenCount(srcCouplers, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numCouplers; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcCouplers, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcCouplers, cookie);
+
+			m_organTreeCtrl->AppendItem(newCouplers, m_organTreeCtrl->GetItemText(currentId));
+		}
+
+		int numStops = m_organTreeCtrl->GetChildrenCount(srcStops, false);
+		// wxTreeItemIdValue cookie;
+		for (int i = 0; i < numStops; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcStops, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcStops, cookie);
+
+			m_organTreeCtrl->AppendItem(newStops, m_organTreeCtrl->GetItemText(currentId));
+		}
+		m_organTreeCtrl->DeleteChildren(srcItem);
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveManual(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
 	}
 }

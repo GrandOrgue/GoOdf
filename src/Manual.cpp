@@ -322,10 +322,18 @@ bool Manual::isThePedal() {
 }
 
 void Manual::setIsPedal(bool isPedal) {
-	m_thePedal = isPedal;
-	if (m_thePedal)
-		::wxGetApp().m_frame->m_organ->setHasPedals(true);
-	// TODO: maybe need to adjust organ value of has pedals if the manual is deleted?
+	if (isPedal) {
+		if (!::wxGetApp().m_frame->m_organ->doesHavePedals()) {
+			m_thePedal = isPedal;
+			::wxGetApp().m_frame->m_organ->setHasPedals(true);
+		} else {
+			// Pedals already exist so this should be impossible!
+		}
+	} else {
+		m_thePedal = isPedal;
+		::wxGetApp().m_frame->m_organ->setHasPedals(false);
+	}
+
 }
 
 bool Manual::isDisplayed() {
