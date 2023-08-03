@@ -97,6 +97,7 @@ public:
 	unsigned getIndexOfOrganWindchest(Windchestgroup *windchest);
 	void addWindchestgroup(Windchestgroup windchest);
 	void removeWindchestgroupAt(unsigned index);
+	void moveWindchestgroup(int sourceIndex, int toBeforeIndex);
 	GoSwitch* getOrganSwitchAt(unsigned index);
 	unsigned getNumberOfSwitches();
 	unsigned getIndexOfOrganSwitch(GoSwitch *switchToFind);

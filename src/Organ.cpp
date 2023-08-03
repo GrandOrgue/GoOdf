@@ -560,6 +560,20 @@ void Organ::removeWindchestgroupAt(unsigned index) {
 	m_Windchestgroups.erase(it);
 }
 
+void Organ::moveWindchestgroup(int sourceIndex, int toBeforeIndex) {
+	Windchestgroup *theWindchest = getOrganWindchestgroupAt(sourceIndex);
+	auto theOneToMove = std::next(m_Windchestgroups.begin(), sourceIndex);
+	std::list<Windchestgroup>::iterator it = m_Windchestgroups.begin();
+
+	if (toBeforeIndex > (int) m_Windchestgroups.size() - 1) {
+		it = m_Windchestgroups.end();
+	} else {
+		it = std::next(m_Windchestgroups.begin(), toBeforeIndex);
+	}
+
+	m_Windchestgroups.splice(it, m_Windchestgroups, theOneToMove);
+}
+
 GoSwitch* Organ::getOrganSwitchAt(unsigned index) {
 	auto iterator = std::next(m_Switches.begin(), index);
 	return &(*iterator);
