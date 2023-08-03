@@ -23,15 +23,7 @@
 
 #include <wx/wx.h>
 #include "GoPanel.h"
-#include <vector>
-#include "wx/overlay.h"
-
-struct GUI_OBJECT {
-	GUIElement *element;
-	GoImage *img;
-	wxRect boundingRect;
-	bool isSelected;
-};
+#include "GUIRepresentationDrawingPanel.h"
 
 class GUIPanelRepresentation : public wxDialog {
 public:
@@ -42,59 +34,7 @@ public:
 	void DoUpdateLayout();
 
 private:
-	DECLARE_EVENT_TABLE()
-
-	GoPanel *m_currentPanel;
-	std::vector<GUI_OBJECT> m_guiObjects;
-	bool m_isFirstRender;
-	wxOverlay m_overlay;
-	int m_selectedObjectIndex;
-	bool m_isDraggingObject;
-	wxCoord m_startDragX;
-	wxCoord m_startDragY;
-	wxCoord m_currentDragX;
-	wxCoord m_currentDragY;
-
-	int m_HackY;
-	int m_EnclosureY;
-	int m_CenterY;
-	int m_CenterWidth;
-	double m_FontScale;
-
-	wxPoint GetDrawstopPosition(int row, int col);
-	wxPoint GetPushbuttonPosition(int row, int col);
-	unsigned GetEnclosuresWidth();
-	int GetEnclosureY();
-	int GetEnclosureX(int enclosureNbr);
-	int GetJambLeftRightWidth();
-	unsigned GetJambLeftRightHeight();
-	int GetJambLeftRightY();
-	int GetJambLeftX();
-	int GetJambRightX();
-	int GetJambTopDrawstop();
-	int GetJambTopPiston();
-	unsigned GetJambTopHeight();
-	unsigned GetJambTopWidth();
-	int GetJambTopX();
-	int GetJambTopY();
-	unsigned GetPistonTopHeight();
-	unsigned GetPistonWidth();
-	int GetPistonX();
-	int GetCenterWidth();
-	int GetCenterY();
-	int GetCenterX();
-	int GetHackY();
-	void UpdateLayout();
-
-	void OnPaintEvent(wxPaintEvent& event);
-	void DoPaintNow();
-	void RenderPanel(wxDC& dc);
-	void TileBitmap(wxRect rect, wxDC& dc, wxBitmap& bitmap, int tileOffsetX, int tileOffsetY);
-	wxString BreakTextLine(wxString text, int textBreakWidth, wxDC& dc);
-	void InitFont();
-	void OnLeftClick(wxMouseEvent& event);
-	void OnMouseMotion(wxMouseEvent& event);
-	void OnLeftRelease(wxMouseEvent& event);
+	GUIRepresentationDrawingPanel *m_drawingPanel;
 
 };
 
