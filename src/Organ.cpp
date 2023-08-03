@@ -561,7 +561,6 @@ void Organ::removeWindchestgroupAt(unsigned index) {
 }
 
 void Organ::moveWindchestgroup(int sourceIndex, int toBeforeIndex) {
-	Windchestgroup *theWindchest = getOrganWindchestgroupAt(sourceIndex);
 	auto theOneToMove = std::next(m_Windchestgroups.begin(), sourceIndex);
 	std::list<Windchestgroup>::iterator it = m_Windchestgroups.begin();
 
@@ -714,6 +713,19 @@ void Organ::removeRankAt(unsigned index) {
 	std::list<Rank>::iterator it = m_Ranks.begin();
 	std::advance(it, index);
 	m_Ranks.erase(it);
+}
+
+void Organ::moveRank(int sourceIndex, int toBeforeIndex) {
+	auto theOneToMove = std::next(m_Ranks.begin(), sourceIndex);
+	std::list<Rank>::iterator it = m_Ranks.begin();
+
+	if (toBeforeIndex > (int) m_Ranks.size() - 1) {
+		it = m_Ranks.end();
+	} else {
+		it = std::next(m_Ranks.begin(), toBeforeIndex);
+	}
+
+	m_Ranks.splice(it, m_Ranks, theOneToMove);
 }
 
 Stop* Organ::getOrganStopAt(unsigned index) {

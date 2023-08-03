@@ -109,6 +109,7 @@ public:
 	unsigned getIndexOfOrganRank(Rank *rank);
 	void addRank(Rank rank);
 	void removeRankAt(unsigned index);
+	void moveRank(int sourceIndex, int toBeforeIndex);
 	Stop* getOrganStopAt(unsigned index);
 	unsigned getNumberOfStops();
 	unsigned getIndexOfOrganStop(Stop *stop);

@@ -1287,11 +1287,12 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 }
 
 void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
-	// Only allow dragging if item is a switch, manual, windchestgroup
+	// Only allow dragging if item is a switch, manual, windchestgroup, rank
 	wxTreeItemId sourceItem = event.GetItem();
 	if ((m_organTreeCtrl->GetItemParent(sourceItem) == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
 		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1) ||
-		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1)
+		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1) ||
+		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_ranks && m_organTreeCtrl->GetChildrenCount(tree_ranks, false) > 1)
 	) {
 		m_draggedItem = sourceItem;
 		event.Allow();
@@ -1540,7 +1541,59 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveWindchestgroup(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+	} else if (m_organTreeCtrl->GetItemParent(dstItem) == tree_ranks && m_organTreeCtrl->GetItemParent(srcItem) == tree_ranks) {
+		// we drop it after target rank but first check if the move really should happen
+		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+			return;
+		}
+		int targetIndex = 0;
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_ranks, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_ranks, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_ranks, cookie);
+			if (dstItem == currentId) {
+				// this is the target we're looking for
+				targetIndex = i;
+			}
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		if (targetIndex < numChildrens) {
+			targetIndex += 1;
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_ranks, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveRank(sourceIndex, targetIndex);
+		m_organTreeCtrl->SelectItem(newPos);
+	} else if (dstItem == tree_ranks && m_organTreeCtrl->GetItemParent(srcItem) == tree_ranks) {
+		// we make it first child
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_ranks, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_ranks, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_ranks, cookie);
+
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_ranks, 0, m_organTreeCtrl->GetItemText(srcItem));
+
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->moveRank(sourceIndex, 0);
+		m_organTreeCtrl->SelectItem(newPos);
 	}
+
 }
 
 void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
