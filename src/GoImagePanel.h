@@ -32,6 +32,7 @@ public:
 
 	void setImage(GoImage *image);
 	void setIsFirstRemoval(bool value);
+	void updatePositionValues();
 
 private:
 	DECLARE_EVENT_TABLE()

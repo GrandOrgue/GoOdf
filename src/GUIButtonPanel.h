@@ -34,6 +34,7 @@ public:
 	~GUIButtonPanel();
 
 	void setButton(GUIButton *button);
+	void updatePositionValues();
 
 private:
 	DECLARE_EVENT_TABLE()

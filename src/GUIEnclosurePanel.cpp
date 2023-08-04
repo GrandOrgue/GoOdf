@@ -640,6 +640,13 @@ void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure)
 	UpdateDefaultSpinValues();
 }
 
+void GUIEnclosurePanel::updatePositionValues() {
+	if (m_enclosure) {
+		m_elementPosXSpin->SetValue(m_enclosure->getPosX());
+		m_elementPosYSpin->SetValue(m_enclosure->getPosY());
+	}
+}
+
 void GUIEnclosurePanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);

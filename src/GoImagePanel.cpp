@@ -254,6 +254,13 @@ void GoImagePanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void GoImagePanel::updatePositionValues() {
+	if (m_image) {
+		m_posXSpin->SetValue(m_image->getPositionX());
+		m_posYSpin->SetValue(m_image->getPositionY());
+	}
+}
+
 void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString imageFilePath;
 	wxString defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();

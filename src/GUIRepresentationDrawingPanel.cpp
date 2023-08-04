@@ -21,6 +21,7 @@
 #include "GUIRepresentationDrawingPanel.h"
 #include "GUIButton.h"
 #include "GUILabel.h"
+#include "GOODF.h"
 
 // Event table
 BEGIN_EVENT_TABLE(GUIRepresentationDrawingPanel, wxPanel)
@@ -145,16 +146,15 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 		}
 		m_guiObjects[m_selectedObjectIndex].boundingRect.x = finalXpos;
 		m_guiObjects[m_selectedObjectIndex].boundingRect.y = finalYpos;
-		m_guiObjects[m_selectedObjectIndex].isSelected = false;
 
 		m_isDraggingObject = false;
-		// m_selectedObjectIndex = -1;
 		// reset all drag coordinates
 		m_currentDragX = -1;
 		m_currentDragY = -1;
 		m_startDragX = -1;
 		m_startDragY = -1;
 
+		::wxGetApp().m_frame->GUIElementPositionIsChanged();
 		UpdateLayout();
 		DoPaintNow();
 	}
@@ -193,6 +193,7 @@ void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 			}
 			m_guiObjects[m_selectedObjectIndex].boundingRect.x = xPos;
 			m_guiObjects[m_selectedObjectIndex].boundingRect.y = yPos;
+			::wxGetApp().m_frame->GUIElementPositionIsChanged();
 			UpdateLayout();
 			DoPaintNow();
 

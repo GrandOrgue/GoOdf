@@ -2231,6 +2231,14 @@ void GOODFFrame::PanelGUIPropertyIsChanged() {
 	m_panelPanel->updateRepresentationLayout();
 }
 
+void GOODFFrame::GUIElementPositionIsChanged() {
+	m_imagePanel->updatePositionValues();
+	m_guiButtonPanel->updatePositionValues();
+	m_guiEnclosurePanel->updatePositionValues();
+	m_guiLabelPanel->updatePositionValues();
+	m_guiManualPanel->updatePositionValues();
+}
+
 void GOODFFrame::removeAllItemsFromTree() {
 	m_organTreeCtrl->DeleteChildren(tree_manuals);
 	m_organTreeCtrl->DeleteChildren(tree_windchestgrps);

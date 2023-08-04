@@ -698,6 +698,13 @@ void GUIManualPanel::setManual(GUIManual *manual) {
 	SetupImageNbrBoxContent();
 }
 
+void GUIManualPanel::updatePositionValues() {
+	if (m_manual) {
+		m_elementPosXSpin->SetValue(m_manual->getPosX());
+		m_elementPosYSpin->SetValue(m_manual->getPosY());
+	}
+}
+
 void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
 	if (event.GetId() == ID_GUIMANUALPANEL_COLOR_INVERTED_YES) {
 		m_manual->setDispKeyColourInverted(true);

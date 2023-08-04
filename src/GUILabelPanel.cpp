@@ -682,6 +682,13 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 	UpdateDefaultSpinValues();
 }
 
+void GUILabelPanel::updatePositionValues() {
+	if (m_label) {
+		m_elementPosXSpin->SetValue(m_label->getPosX());
+		m_elementPosYSpin->SetValue(m_label->getPosY());
+	}
+}
+
 void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);

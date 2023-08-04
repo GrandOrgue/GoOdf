@@ -34,6 +34,7 @@ public:
 	~GUIEnclosurePanel();
 
 	void setEnclosure(GUIEnclosure *enclosure);
+	void updatePositionValues();
 
 private:
 	DECLARE_EVENT_TABLE()

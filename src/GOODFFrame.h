@@ -69,6 +69,7 @@ public:
 	void AddGuiElementToTree(wxString title);
 	void RebuildPanelGuiElementsInTree(int panelIndex);
 	void PanelGUIPropertyIsChanged();
+	void GUIElementPositionIsChanged();
 
 	Organ *m_organ;
 

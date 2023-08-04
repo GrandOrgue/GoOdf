@@ -34,6 +34,7 @@ public:
 	~GUILabelPanel();
 
 	void setLabel(GUILabel *label);
+	void updatePositionValues();
 
 private:
 	DECLARE_EVENT_TABLE()

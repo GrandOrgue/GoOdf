@@ -33,6 +33,7 @@ public:
 	~GUIManualPanel();
 
 	void setManual(GUIManual *manual);
+	void updatePositionValues();
 
 private:
 	DECLARE_EVENT_TABLE()
