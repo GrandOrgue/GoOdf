@@ -612,6 +612,7 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 void GoPanelPanel::OnShowPanelBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_guiRepresentation->SetTitle(m_panel->getName());
 	m_guiRepresentation->Show();
+	m_guiRepresentation->DoUpdateLayout();
 }
 
 void GoPanelPanel::ShouldCombinationControlsBeEnabled() {

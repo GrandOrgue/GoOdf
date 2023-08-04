@@ -65,8 +65,6 @@ void GUIRepresentationDrawingPanel::SetCurrentPanel(GoPanel *thePanel) {
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 
 	UpdateLayout();
-	DoPaintNow();
-
 	PostSizeEvent();
 }
 
@@ -864,6 +862,7 @@ void GUIRepresentationDrawingPanel::DoUpdateLayout() {
 	SetClientSize(m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue(), m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	UpdateLayout();
 	DoPaintNow();
+	PostSizeEvent();
 }
 
 void GUIRepresentationDrawingPanel::InitFont() {
