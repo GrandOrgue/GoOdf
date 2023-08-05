@@ -30,10 +30,11 @@ BEGIN_EVENT_TABLE(GUIRepresentationDrawingPanel, wxPanel)
 	EVT_MOTION(GUIRepresentationDrawingPanel::OnMouseMotion)
 	EVT_LEFT_UP(GUIRepresentationDrawingPanel::OnLeftRelease)
 	EVT_KEY_DOWN(GUIRepresentationDrawingPanel::OnKeyboardInput)
+	EVT_CHAR(GUIRepresentationDrawingPanel::OnKeyboardInput)
 	EVT_SIZE(GUIRepresentationDrawingPanel::OnPanelSize)
 END_EVENT_TABLE()
 
-GUIRepresentationDrawingPanel::GUIRepresentationDrawingPanel(wxWindow *parent) : wxPanel(parent) {
+GUIRepresentationDrawingPanel::GUIRepresentationDrawingPanel(wxWindow *parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS) {
 	m_currentPanel = NULL;
 	m_isFirstRender = true;
 	m_selectedObjectIndex = -1;
