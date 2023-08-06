@@ -757,19 +757,15 @@ void GUIButtonPanel::setButton(GUIButton *button) {
 	if (m_button->getImageOn() != wxEmptyString) {
 		wxString relativeImageOn = GOODF_functions::removeBaseOdfPath(m_button->getImageOn());
 		m_imageOnPathField->SetValue(relativeImageOn);
-		m_addImageOffBtn->Enable();
 	} else {
 		m_imageOnPathField->SetValue(wxEmptyString);
-		m_addImageOffBtn->Disable();
 		m_addMaskOnBtn->Disable();
-		m_addMaskOffBtn->Disable();
 	}
 	if (m_button->getImageOff() != wxEmptyString) {
 		wxString relativeImageOff = GOODF_functions::removeBaseOdfPath(m_button->getImageOff());
 		m_imageOffPathField->SetValue(relativeImageOff);
 	} else {
 		m_imageOffPathField->SetValue(wxEmptyString);
-		m_addMaskOnBtn->Disable();
 		m_addMaskOffBtn->Disable();
 	}
 	if (m_button->getMaskOn() != wxEmptyString) {
@@ -777,7 +773,6 @@ void GUIButtonPanel::setButton(GUIButton *button) {
 		m_maskOnPathField->SetValue(relativeMaskOn);
 	} else {
 		m_maskOnPathField->SetValue(wxEmptyString);
-		m_addMaskOffBtn->Disable();
 	}
 	if (m_button->getMaskOff() != wxEmptyString) {
 		wxString relativeMaskOff = GOODF_functions::removeBaseOdfPath(m_button->getMaskOff());
@@ -926,44 +921,56 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 	if (path != wxEmptyString) {
 		wxImage img = wxImage(path);
 		if (img.IsOk()) {
-			m_button->setImageOn(path);
 			int width = img.GetWidth();
 			int height = img.GetHeight();
-			m_button->setBitmapWidth(width);
-			m_button->setBitmapHeight(height);
-			m_button->setWidth(width);
-			m_button->setHeight(height);
-			m_button->setMouseRectWidth(width - m_button->getMouseRectLeft());
-			m_button->setMouseRectHeight(height - m_button->getMouseRectTop());
-			m_button->setMouseRadius(std::min(width, height) / 2);
-			m_button->setTextRectWidth(width - m_button->getTextRectLeft());
-			m_button->setTextRectHeight(height - m_button->getTextRectTop());
-			m_button->setTextBreakWidth(m_button->getTextRectWidth() - (m_button->getTextRectWidth() < 50 ? 4 : 14));
-			UpdateSpinRanges();
-			UpdateDefaultSpinValues();
-			wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOn());
-			m_imageOnPathField->SetValue(relativePath);
-			m_addImageOffBtn->Enable();
+			if (m_button->getImageOff() == wxEmptyString || (width == m_button->getBitmapWidth() && height == m_button->getBitmapHeight())) {
+				m_button->setImageOn(path);
+				m_button->setBitmapWidth(width);
+				m_button->setBitmapHeight(height);
+				m_button->setWidth(width);
+				m_button->setHeight(height);
+				m_button->setMouseRectWidth(width - m_button->getMouseRectLeft());
+				m_button->setMouseRectHeight(height - m_button->getMouseRectTop());
+				m_button->setMouseRadius(std::min(width, height) / 2);
+				m_button->setTextRectWidth(width - m_button->getTextRectLeft());
+				m_button->setTextRectHeight(height - m_button->getTextRectTop());
+				m_button->setTextBreakWidth(m_button->getTextRectWidth() - (m_button->getTextRectWidth() < 50 ? 4 : 14));
+				UpdateSpinRanges();
+				UpdateDefaultSpinValues();
+				wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOn());
+				m_imageOnPathField->SetValue(relativePath);
+				m_addMaskOnBtn->Enable();
+			} else {
+				wxMessageDialog msg(this, wxT("Image on bitmap size doesn't match existing bitmap!"), wxT("Wrong bitmap size"), wxOK|wxCENTRE|wxICON_ERROR);
+				msg.ShowModal();
+			}
 		}
 	} else {
 		// the user has clicked cancel which returns an empty string
 		if (m_button->getImageOn() != wxEmptyString) {
-			wxMessageDialog msg(this, wxT("Image on value is not empty! Do you want to empty it?"), wxT("Empty image on value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			wxMessageDialog msg(this, wxT("Image on value is not empty! Do you want to empty it? (Also removes mask on if set, may remove image/mask off if set and they won't match default values)"), wxT("Empty image on value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 			if (msg.ShowModal() == wxID_YES) {
 				// then we empty the value in button and panel
 				m_button->setImageOn(wxEmptyString);
+				m_button->setMaskOn(wxEmptyString);
 				m_button->updateBuiltinBitmapValues();
 				UpdateSpinRanges();
 				UpdateDefaultSpinValues();
 				m_imageOnPathField->SetValue(wxEmptyString);
-				m_addImageOffBtn->Disable();
+				m_maskOnPathField->SetValue(wxEmptyString);
 				m_addMaskOnBtn->Disable();
-				m_addMaskOffBtn->Disable();
+				if (m_button->getImageOff() != wxEmptyString) {
+					// the off bitmap must be evaluated to whether it may stay or not
+					wxImage offImg = wxImage(m_button->getImageOff());
+					if (!offImg.IsOk() || offImg.GetWidth() != m_button->getBitmapWidth() || offImg.GetHeight() != m_button->getBitmapHeight()) {
+						m_button->setImageOff(wxEmptyString);
+						m_button->setMaskOff(wxEmptyString);
+						m_imageOffPathField->SetValue(wxEmptyString);
+						m_maskOffPathField->SetValue(wxEmptyString);
+						m_addMaskOffBtn->Disable();
+					}
+				}
 			}
-		} else {
-			m_addImageOffBtn->Disable();
-			m_addMaskOnBtn->Disable();
-			m_addMaskOffBtn->Disable();
 		}
 	}
 }
@@ -979,25 +986,26 @@ void GUIButtonPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
 				m_button->setImageOff(path);
 				wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getImageOff());
 				m_imageOffPathField->SetValue(relativePath);
-				m_addMaskOnBtn->Enable();
+				m_addMaskOffBtn->Enable();
 				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
+			} else {
+				wxMessageDialog msg(this, wxT("Image off bitmap size must match on bitmap!"), wxT("Wrong bitmap size"), wxOK|wxCENTRE|wxICON_ERROR);
+				msg.ShowModal();
 			}
 		}
 	} else {
 		// the user has clicked cancel which returns an empty string
 		if (m_button->getImageOff() != wxEmptyString) {
-			wxMessageDialog msg(this, wxT("Image off value is not empty! Do you want to empty it?"), wxT("Empty image off value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			wxMessageDialog msg(this, wxT("Image off value is not empty! Do you want to empty it? (Also removes mask off if set)"), wxT("Empty image off value?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 			if (msg.ShowModal() == wxID_YES) {
 				// then we empty the value in button and panel
 				m_button->setImageOff(wxEmptyString);
+				m_button->setMaskOff(wxEmptyString);
 				m_imageOffPathField->SetValue(wxEmptyString);
-				m_addMaskOnBtn->Disable();
+				m_maskOffPathField->SetValue(wxEmptyString);
 				m_addMaskOffBtn->Disable();
 				::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 			}
-		} else {
-			m_addMaskOnBtn->Disable();
-			m_addMaskOffBtn->Disable();
 		}
 	}
 }
@@ -1013,7 +1021,6 @@ void GUIButtonPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
 				m_button->setMaskOn(path);
 				wxString relativePath = GOODF_functions::removeBaseOdfPath(m_button->getMaskOn());
 				m_maskOnPathField->SetValue(relativePath);
-				m_addMaskOffBtn->Enable();
 			}
 		}
 	} else {
@@ -1024,10 +1031,7 @@ void GUIButtonPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
 				// then we empty the value in button and panel
 				m_button->setMaskOn(wxEmptyString);
 				m_maskOnPathField->SetValue(wxEmptyString);
-				m_addMaskOffBtn->Disable();
 			}
-		} else {
-			m_addMaskOffBtn->Disable();
 		}
 	}
 }
