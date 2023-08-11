@@ -20,6 +20,7 @@
 
 #include "Organ.h"
 #include "GOODFFunctions.h"
+#include <algorithm>
 
 Organ::Organ() {
 	// Initialize a new blank organ
@@ -819,6 +820,138 @@ void Organ::removeStop(Stop *stop) {
 		index++;
 	}
 	updateOrganElements();
+}
+
+bool Organ::moveStop(int srcManualIdx, int srcStopIdxOnManual, int dstManualIdx, int dstStopIdxOnManual) {
+	if (srcManualIdx < 0 || srcStopIdxOnManual < 0 || dstManualIdx < 0 || dstStopIdxOnManual < 0) {
+		return false;
+	}
+	Manual *srcMan = getOrganManualAt(srcManualIdx);
+	Manual *dstMan = getOrganManualAt(dstManualIdx);
+
+	wxString movedStopOriginalRef;
+	wxString movedStopNewRef;
+	wxArrayString referencesToAdjust;
+	wxArrayString newReferenceStrings;
+
+	if (srcMan == dstMan) {
+		// The move is within the same manual
+		srcMan->moveStop(srcStopIdxOnManual, dstStopIdxOnManual);
+
+		// references to stops on the moved stops' manual that must change because of the moved stop
+		if (dstStopIdxOnManual < srcStopIdxOnManual) {
+			movedStopOriginalRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(srcStopIdxOnManual + 1);
+			movedStopNewRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(dstStopIdxOnManual + 1);
+			int nbrAffectedStops = srcStopIdxOnManual - dstStopIdxOnManual;
+			for (int i = 0; i < nbrAffectedStops; i++) {
+				wxString affectedString = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(dstStopIdxOnManual + 1 + i);
+				referencesToAdjust.Add(affectedString);
+				wxString newStringRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(dstStopIdxOnManual + 2 + i);
+				newReferenceStrings.Add(newStringRef);
+			}
+		} else {
+			movedStopOriginalRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(srcStopIdxOnManual + 1);
+			movedStopNewRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(dstStopIdxOnManual);
+			int nbrAffectedStops = dstStopIdxOnManual - 1 - srcStopIdxOnManual;
+			for (int i = 0; i < nbrAffectedStops; i++) {
+				wxString affectedString = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(srcStopIdxOnManual + 2 + i);
+				referencesToAdjust.Add(affectedString);
+				wxString newStringRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(srcStopIdxOnManual + 1 + i);
+				newReferenceStrings.Add(newStringRef);
+			}
+		}
+
+	} else {
+		movedStopOriginalRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(srcStopIdxOnManual + 1);
+		movedStopNewRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(dstStopIdxOnManual + 1);
+		// All references to stops after the moved stop on the source manual should decrease by one stop number
+		for (unsigned i = (unsigned) srcStopIdxOnManual + 1; i < srcMan->getNumberOfStops(); i++) {
+			wxString affectedString = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(i + 1);
+			referencesToAdjust.Add(affectedString);
+			wxString newStringRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(srcMan)) + wxT(":") + GOODF_functions::number_format(i);
+			newReferenceStrings.Add(newStringRef);
+		}
+		// All references to stops on target manual at inserted position and after need to increase my one stop number
+		for (unsigned i = (unsigned) dstStopIdxOnManual; i < dstMan->getNumberOfStops(); i++) {
+			wxString affectedString = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(i + 1);
+			referencesToAdjust.Add(affectedString);
+			wxString newStringRef = wxT("REF:") + GOODF_functions::number_format(getIndexOfOrganManual(dstMan)) + wxT(":") + GOODF_functions::number_format(i + 2);
+			newReferenceStrings.Add(newStringRef);
+		}
+
+		Stop *srcStop = srcMan->getStopAt((unsigned) srcStopIdxOnManual);
+		srcStop->setOwningManual(dstMan);
+		dstMan->addStop(srcStop);
+		srcMan->removeStop(srcStop);
+		if (dstStopIdxOnManual < (int) dstMan->getNumberOfStops()) {
+			dstMan->moveStop((int) (dstMan->getNumberOfStops() - 1), dstStopIdxOnManual);
+		}
+	}
+
+	// If any pipe would reference a pipe in the source stop or a stop that had
+	// it's order on the manual changed the ref paths would be wrong now.
+	// So they must be corrected both for internal ranks in stops and for separate ranks
+	// In a first pass we fix the references to the moved stop and store all adjusted pipes
+	std::list<Pipe*> adjustedPipes;
+
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			for (Pipe& p : s.getInternalRank()->m_pipes) {
+				if (p.m_attacks.front().fileName.StartsWith(movedStopOriginalRef)) {
+					p.m_attacks.front().fileName.Replace(movedStopOriginalRef, movedStopNewRef, false);
+					p.m_attacks.front().fullPath.Replace(movedStopOriginalRef, movedStopNewRef, false);
+					adjustedPipes.push_back(&p);
+				}
+			}
+		}
+	}
+
+	for (Rank& r : m_Ranks) {
+		for (Pipe& p : r.m_pipes) {
+			if (p.m_attacks.front().fileName.StartsWith(movedStopOriginalRef)) {
+				p.m_attacks.front().fileName.Replace(movedStopOriginalRef, movedStopNewRef, false);
+				p.m_attacks.front().fullPath.Replace(movedStopOriginalRef, movedStopNewRef, false);
+				adjustedPipes.push_back(&p);
+			}
+		}
+	}
+
+	// In the second pass we correct all other references but avoid changing the already corrected ones
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			for (Pipe& p : s.getInternalRank()->m_pipes) {
+				bool adjusted = std::find(std::begin(adjustedPipes), std::end(adjustedPipes), &p) != std::end(adjustedPipes);
+				if (adjusted) {
+					continue;
+				}
+				for (unsigned i = 0; i < referencesToAdjust.size(); i++) {
+					if (p.m_attacks.front().fileName.StartsWith(referencesToAdjust[i])) {
+						p.m_attacks.front().fileName.Replace(referencesToAdjust[i], newReferenceStrings[i], false);
+						p.m_attacks.front().fullPath.Replace(referencesToAdjust[i], newReferenceStrings[i], false);
+					}
+				}
+			}
+		}
+	}
+
+	for (Rank& r : m_Ranks) {
+		for (Pipe& p : r.m_pipes) {
+			bool adjusted = std::find(std::begin(adjustedPipes), std::end(adjustedPipes), &p) != std::end(adjustedPipes);
+			if (adjusted) {
+				continue;
+			}
+			for (unsigned i = 0; i < referencesToAdjust.size(); i++) {
+				if (p.m_attacks.front().fileName.StartsWith(referencesToAdjust[i])) {
+					p.m_attacks.front().fileName.Replace(referencesToAdjust[i], newReferenceStrings[i], false);
+					p.m_attacks.front().fullPath.Replace(referencesToAdjust[i], newReferenceStrings[i], false);
+				}
+			}
+		}
+	}
+
+	updateOrganElements();
+
+	return true;
 }
 
 wxString Organ::getOdfRoot() {

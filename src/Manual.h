@@ -65,6 +65,7 @@ public:
 	void removeStopAt(unsigned index);
 	bool hasStopReference(Stop *stop);
 	int getIndexOfStop(Stop *stop);
+	void moveStop(int idxToMove, int destinationIdx);
 	unsigned getNumberOfCouplers();
 	Coupler* getCouplerAt(unsigned index);
 	void addCoupler(Coupler *coupler);

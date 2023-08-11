@@ -30,6 +30,8 @@
 #include "Windchestgroup.h"
 #include "OrganFileParser.h"
 #include "CopyElementAttributesDialog.h"
+#include <vector>
+#include <algorithm>
 
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
@@ -1287,12 +1289,14 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 }
 
 void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
-	// Only allow dragging if item is a switch, manual, windchestgroup, rank
+	// Only allow dragging if item is a switch, manual, windchestgroup, rank, stop
 	wxTreeItemId sourceItem = event.GetItem();
-	if ((m_organTreeCtrl->GetItemParent(sourceItem) == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
-		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1) ||
-		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1) ||
-		(m_organTreeCtrl->GetItemParent(sourceItem) == tree_ranks && m_organTreeCtrl->GetChildrenCount(tree_ranks, false) > 1)
+	wxTreeItemId sourceParent = m_organTreeCtrl->GetItemParent(sourceItem);
+	if ((sourceParent == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
+		(sourceParent == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1) ||
+		(sourceParent == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1) ||
+		(sourceParent == tree_ranks && m_organTreeCtrl->GetChildrenCount(tree_ranks, false) > 1) ||
+		(m_organTreeCtrl->GetItemText(sourceParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(sourceParent)) == wxT("Couplers"))
 	) {
 		m_draggedItem = sourceItem;
 		event.Allow();
@@ -1302,9 +1306,13 @@ void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
 void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 	wxTreeItemId srcItem = m_draggedItem;
 	wxTreeItemId dstItem = event.GetItem();
+	wxTreeItemId srcParent = m_organTreeCtrl->GetItemParent(srcItem);
+	wxTreeItemId dstParent = m_organTreeCtrl->GetItemParent(dstItem);
+	wxTreeItemId srcGrandParent = m_organTreeCtrl->GetItemParent(srcParent);
+	wxTreeItemId dstGrandParent = m_organTreeCtrl->GetItemParent(dstParent);
 	m_draggedItem = (wxTreeItemId) 0l;
 
-	if (m_organTreeCtrl->GetItemParent(dstItem) == tree_switches && m_organTreeCtrl->GetItemParent(srcItem) == tree_switches) {
+	if (dstParent == tree_switches && srcParent == tree_switches) {
 		// we drop it after target switch but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
 			return;
@@ -1334,7 +1342,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (dstItem == tree_switches && m_organTreeCtrl->GetItemParent(srcItem) == tree_switches) {
+	} else if (dstItem == tree_switches && srcParent == tree_switches) {
 		// we make it first child
 		int sourceIndex = 0;
 		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_switches, false);
@@ -1354,7 +1362,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (m_organTreeCtrl->GetItemParent(dstItem) == tree_manuals && m_organTreeCtrl->GetItemParent(srcItem) == tree_manuals) {
+	} else if (dstParent == tree_manuals && srcParent == tree_manuals) {
 		// we drop it after target manual but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
 			return;
@@ -1427,7 +1435,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveManual(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (dstItem == tree_manuals && m_organTreeCtrl->GetItemParent(srcItem) == tree_manuals) {
+	} else if (dstItem == tree_manuals && srcParent == tree_manuals) {
 		// we make it first child
 		int sourceIndex = 0;
 		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_manuals, false);
@@ -1490,7 +1498,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveManual(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (m_organTreeCtrl->GetItemParent(dstItem) == tree_windchestgrps && m_organTreeCtrl->GetItemParent(srcItem) == tree_windchestgrps) {
+	} else if (dstParent == tree_windchestgrps && srcParent == tree_windchestgrps) {
 		// we drop it after target windchestgroup but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
 			return;
@@ -1520,7 +1528,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveWindchestgroup(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (dstItem == tree_windchestgrps && m_organTreeCtrl->GetItemParent(srcItem) == tree_windchestgrps) {
+	} else if (dstItem == tree_windchestgrps && srcParent == tree_windchestgrps) {
 		// we make it first child
 		int sourceIndex = 0;
 		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false);
@@ -1541,7 +1549,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveWindchestgroup(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (m_organTreeCtrl->GetItemParent(dstItem) == tree_ranks && m_organTreeCtrl->GetItemParent(srcItem) == tree_ranks) {
+	} else if (dstParent == tree_ranks && srcParent == tree_ranks) {
 		// we drop it after target rank but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
 			return;
@@ -1571,7 +1579,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveRank(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
-	} else if (dstItem == tree_ranks && m_organTreeCtrl->GetItemParent(srcItem) == tree_ranks) {
+	} else if (dstItem == tree_ranks && srcParent == tree_ranks) {
 		// we make it first child
 		int sourceIndex = 0;
 		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_ranks, false);
@@ -1592,6 +1600,119 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveRank(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(srcParent)) == wxT("Couplers")) {
+		// The source item is certainly a stop, allowed drop destinations are another stop, the stop main category and a manual
+		std::vector<wxTreeItemId> manualsInTree;
+		int nbrManuals = m_organTreeCtrl->GetChildrenCount(tree_manuals, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < nbrManuals; i++) {
+			wxTreeItemId currentMan;
+			if (i == 0)
+				currentMan = m_organTreeCtrl->GetFirstChild(tree_manuals, cookie);
+			else
+				currentMan = m_organTreeCtrl->GetNextChild(tree_manuals, cookie);
+
+			manualsInTree.push_back(currentMan);
+		}
+
+		// Get what index the source stop had to begin with
+		int srcStopIdx = -1;
+		int nbrSrcStops = m_organTreeCtrl->GetChildrenCount(srcParent, false);
+		wxTreeItemIdValue srcCookie;
+		for (int i = 0; i < nbrSrcStops; i++) {
+			wxTreeItemId currentStop;
+			if (i == 0)
+				currentStop = m_organTreeCtrl->GetFirstChild(srcParent, srcCookie);
+			else
+				currentStop = m_organTreeCtrl->GetNextChild(srcParent, srcCookie);
+
+			if (currentStop == srcItem) {
+				srcStopIdx = i;
+				break;
+			}
+		}
+
+		if (m_organTreeCtrl->GetItemText(dstParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(dstParent)) == wxT("Couplers")) {
+			// The destination item is another stop, should the move proceed?
+			if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+				return;
+			}
+
+			// Get what manual each of the stops belongs to
+			int srcManualIdx = -1;
+			int dstManualIdx = -1;
+			for (unsigned i = 0; i < manualsInTree.size(); i++) {
+				if (m_organTreeCtrl->GetItemText(manualsInTree[i]) == m_organTreeCtrl->GetItemText(srcGrandParent))
+					srcManualIdx = i;
+				if (m_organTreeCtrl->GetItemText(manualsInTree[i]) == m_organTreeCtrl->GetItemText(dstGrandParent))
+					dstManualIdx = i;
+			}
+
+			// Get what index the destination stop has
+			int dstStopIdx = -1;
+			int nbrDstStops = m_organTreeCtrl->GetChildrenCount(dstParent, false);
+			wxTreeItemIdValue dstCookie;
+			for (int i = 0; i < nbrDstStops; i++) {
+				wxTreeItemId currentStop;
+				if (i == 0)
+					currentStop = m_organTreeCtrl->GetFirstChild(dstParent, dstCookie);
+				else
+					currentStop = m_organTreeCtrl->GetNextChild(dstParent, dstCookie);
+
+				if (currentStop == dstItem) {
+					dstStopIdx = i;
+					break;
+				}
+			}
+			if (dstStopIdx < nbrDstStops) {
+				dstStopIdx += 1;
+			}
+
+			// Now we should know the source and destination index of respective manual and stop
+			if (m_organ->moveStop(srcManualIdx, srcStopIdx, dstManualIdx, dstStopIdx)) {
+				// The move succeeded in the organ so now it's just to take care of it in tree
+				wxTreeItemId newPos = m_organTreeCtrl->InsertItem(dstParent, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+				m_organTreeCtrl->Delete(srcItem);
+				m_organTreeCtrl->SelectItem(newPos);
+			}
+		} else if ((std::find(manualsInTree.begin(), manualsInTree.end(), dstItem) != manualsInTree.end() && dstParent == tree_manuals) ||
+			(std::find(manualsInTree.begin(), manualsInTree.end(), dstParent) != manualsInTree.end() && m_organTreeCtrl->GetItemText(dstItem) == wxT("Stops"))
+		) {
+			// The destination is a manual or a stops category, should the move proceed?
+			if (srcGrandParent == dstItem && m_organTreeCtrl->GetChildrenCount(srcParent, false) < 2) {
+				return;
+			} else if (srcParent == dstItem && m_organTreeCtrl->GetChildrenCount(srcParent, false) < 2) {
+				return;
+			}
+			// Get what manual the source stop belongs to and what manual is the destination
+			int srcManualIdx = -1;
+			int dstManualIdx = -1;
+			for (unsigned i = 0; i < manualsInTree.size(); i++) {
+				if (m_organTreeCtrl->GetItemText(manualsInTree[i]) == m_organTreeCtrl->GetItemText(srcGrandParent))
+					srcManualIdx = i;
+				if ((m_organTreeCtrl->GetItemText(manualsInTree[i]) == m_organTreeCtrl->GetItemText(dstItem)) ||
+					(m_organTreeCtrl->GetItemText(manualsInTree[i]) == m_organTreeCtrl->GetItemText(dstParent))
+				)
+					dstManualIdx = i;
+			}
+
+			// Target we will be the first (0th) element
+			int dstStopIdx = 0;
+			// Now we should know the source and destination index of respective manual and stop
+			if (m_organ->moveStop(srcManualIdx, srcStopIdx, dstManualIdx, dstStopIdx)) {
+				// The move succeeded in the organ so now it's just to take care of it in tree
+				wxTreeItemId newPos;
+				if (m_organTreeCtrl->GetItemText(dstItem) == wxT("Stops")) {
+					newPos = m_organTreeCtrl->InsertItem(dstItem, 0, m_organTreeCtrl->GetItemText(srcItem));
+				} else {
+					wxTreeItemIdValue stopsCookie;
+					wxTreeItemId stopCategory = m_organTreeCtrl->GetFirstChild(dstItem, stopsCookie);
+					newPos = m_organTreeCtrl->InsertItem(stopCategory, 0, m_organTreeCtrl->GetItemText(srcItem));
+				}
+				m_organTreeCtrl->Delete(srcItem);
+				m_organTreeCtrl->SelectItem(newPos);
+			}
+		}
 	}
 
 }

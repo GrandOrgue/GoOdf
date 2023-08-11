@@ -116,6 +116,7 @@ public:
 	void addStop(Stop stop, bool isParsing = false);
 	void removeStopAt(unsigned index);
 	void removeStop(Stop *stop);
+	bool moveStop(int srcManualIdx, int srcStopIdxOnManual, int dstManualIdx, int dstStopIdxOnManual);
 	wxString getOdfRoot();
 	void setOdfRoot(wxString root);
 	void removeReferenceToRankInStops(Rank *rank);

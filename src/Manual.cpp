@@ -379,6 +379,19 @@ int Manual::getIndexOfStop(Stop *stop) {
 	return -1;
 }
 
+void Manual::moveStop(int idxToMove, int destinationIdx) {
+	auto theOneToMove = std::next(m_stops.begin(), idxToMove);
+	std::list<Stop*>::iterator it = m_stops.begin();
+
+	if (destinationIdx > (int) m_stops.size() - 1) {
+		it = m_stops.end();
+	} else {
+		it = std::next(m_stops.begin(), destinationIdx);
+	}
+
+	m_stops.splice(it, m_stops, theOneToMove);
+}
+
 unsigned Manual::getNumberOfCouplers() {
 	return m_couplers.size();
 }
