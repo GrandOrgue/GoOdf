@@ -1289,14 +1289,16 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 }
 
 void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
-	// Only allow dragging if item is a switch, manual, windchestgroup, rank, stop
+	// Only allow dragging if item is a switch, manual, windchestgroup, rank, stop, gui element
 	wxTreeItemId sourceItem = event.GetItem();
 	wxTreeItemId sourceParent = m_organTreeCtrl->GetItemParent(sourceItem);
+	wxTreeItemId sourceGrandParent = m_organTreeCtrl->GetItemParent(sourceParent);
 	if ((sourceParent == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
 		(sourceParent == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1) ||
 		(sourceParent == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1) ||
 		(sourceParent == tree_ranks && m_organTreeCtrl->GetChildrenCount(tree_ranks, false) > 1) ||
-		(m_organTreeCtrl->GetItemText(sourceParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(sourceParent)) == wxT("Couplers"))
+		(m_organTreeCtrl->GetItemText(sourceParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(sourceParent)) == wxT("Couplers")) ||
+		(m_organTreeCtrl->GetItemParent(sourceGrandParent) == tree_panels && m_organTreeCtrl->GetItemText(sourceParent) == wxT("GUI Elements") && m_organTreeCtrl->GetChildrenCount(sourceParent, false) > 1)
 	) {
 		m_draggedItem = sourceItem;
 		event.Allow();
@@ -1713,6 +1715,93 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 				m_organTreeCtrl->SelectItem(newPos);
 			}
 		}
+	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("GUI Elements") && m_organTreeCtrl->GetItemParent(srcGrandParent) == tree_panels && m_organTreeCtrl->GetItemText(dstParent) == wxT("GUI Elements") && dstGrandParent == srcGrandParent) {
+		// the target is another gui element in the same panel so just test if the move really should happen
+		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+			return;
+		}
+
+		int targetIndex = 0;
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(srcParent, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcParent, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcParent, cookie);
+			if (dstItem == currentId) {
+				// this is the target we're looking for
+				targetIndex = i;
+			}
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		if (targetIndex < numChildrens) {
+			targetIndex += 1;
+		}
+
+		// Okay, so now we need to get what panel we're actually dealing with
+		int panelIndex = -1;
+		int numPanels = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+		wxTreeItemIdValue panelCookie;
+		for (int i = 0; i < numPanels; i++) {
+			wxTreeItemId currentPanel;
+			if (i == 0)
+				currentPanel = m_organTreeCtrl->GetFirstChild(tree_panels, panelCookie);
+			else
+				currentPanel = m_organTreeCtrl->GetNextChild(tree_panels, panelCookie);
+
+			if (currentPanel == srcGrandParent) {
+				panelIndex = i;
+				break;
+			}
+		}
+
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(srcParent, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->getOrganPanelAt(panelIndex)->moveGuiElement(sourceIndex, targetIndex);
+		m_organTreeCtrl->SelectItem(newPos);
+	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("GUI Elements") && m_organTreeCtrl->GetItemParent(srcGrandParent) == tree_panels && dstItem == srcParent) {
+		// We should make it the first child of the panel in question, first get what child it is
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(srcParent, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(srcParent, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(srcParent, cookie);
+
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+
+		// Okay, so now we need to get what panel we're actually dealing with
+		int panelIndex = -1;
+		int numPanels = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+		wxTreeItemIdValue panelCookie;
+		for (int i = 0; i < numPanels; i++) {
+			wxTreeItemId currentPanel;
+			if (i == 0)
+				currentPanel = m_organTreeCtrl->GetFirstChild(tree_panels, panelCookie);
+			else
+				currentPanel = m_organTreeCtrl->GetNextChild(tree_panels, panelCookie);
+
+			if (currentPanel == srcGrandParent) {
+				panelIndex = i;
+				break;
+			}
+		}
+
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(srcParent, 0, m_organTreeCtrl->GetItemText(srcItem));
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->getOrganPanelAt(panelIndex)->moveGuiElement(sourceIndex, 0);
+		m_organTreeCtrl->SelectItem(newPos);
 	}
 
 }

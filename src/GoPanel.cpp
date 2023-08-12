@@ -585,6 +585,19 @@ void GoPanel::updateGuiElementsDisplayNames() {
 	}
 }
 
+void GoPanel::moveGuiElement(int sourceIndex, int toBeforeIndex) {
+	auto theOneToMove = std::next(m_guiElements.begin(), sourceIndex);
+	std::list<GUIElement*>::iterator it = m_guiElements.begin();
+
+	if (toBeforeIndex > (int) m_guiElements.size() - 1) {
+		it = m_guiElements.end();
+	} else {
+		it = std::next(m_guiElements.begin(), toBeforeIndex);
+	}
+
+	m_guiElements.splice(it, m_guiElements, theOneToMove);
+}
+
 void GoPanel::updateButtonRowsAndCols() {
 	for (GUIElement* e : m_guiElements) {
 		GUIButton *btnElement = dynamic_cast<GUIButton*>(e);

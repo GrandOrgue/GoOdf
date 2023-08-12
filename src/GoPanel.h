@@ -81,6 +81,7 @@ public:
 	bool hasItemAsGuiElement(General *general);
 	void removeItemFromPanel(General *general);
 	void updateGuiElementsDisplayNames();
+	void moveGuiElement(int sourceIndex, int toBeforeIndex);
 	void updateButtonRowsAndCols();
 	void applyButtonFontName();
 	void applyButtonFontSize();
