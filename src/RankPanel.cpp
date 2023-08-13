@@ -202,6 +202,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0,
 		0.000001
 	);
+	m_pitchTuningSpin->SetDigits(6);
+	m_pitchTuningSpin->SetIncrement(1.0f);
 	pitchRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
 	pitchRow->AddStretchSpacer();
 	wxStaticText *pitchCorrectionText = new wxStaticText (
@@ -222,6 +224,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0,
 		0.000001
 	);
+	m_pitchCorrectionSpin->SetDigits(6);
+	m_pitchCorrectionSpin->SetIncrement(1.0f);
 	pitchRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(pitchRow, 0, wxGROW);
 
@@ -244,6 +248,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		100,
 		0.000001
 	);
+	m_amplitudeLevelSpin->SetDigits(6);
+	m_amplitudeLevelSpin->SetIncrement(1.0f);
 	fourthRow->Add(m_amplitudeLevelSpin, 0, wxEXPAND|wxALL, 5);
 	fourthRow->AddStretchSpacer();
 	wxStaticText *gainText = new wxStaticText (
@@ -264,6 +270,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		0,
 		0.000001
 	);
+	m_gainSpin->SetDigits(6);
+	m_gainSpin->SetIncrement(1.0f);
 	fourthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(fourthRow, 0, wxGROW);
 
@@ -286,6 +294,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		100,
 		0.000001
 	);
+	m_minVelocityVolumeSpin->SetDigits(6);
+	m_minVelocityVolumeSpin->SetIncrement(1.0f);
 	fifthRow->Add(m_minVelocityVolumeSpin, 0, wxEXPAND|wxALL, 5);
 	fifthRow->AddStretchSpacer();
 	wxStaticText *maxVelocityVolText = new wxStaticText (
@@ -306,6 +316,8 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		100,
 		0.000001
 	);
+	m_maxVelocityVolumeSpin->SetDigits(6);
+	m_maxVelocityVolumeSpin->SetIncrement(1.0f);
 	fifthRow->Add(m_maxVelocityVolumeSpin, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(fifthRow, 0, wxGROW);
 

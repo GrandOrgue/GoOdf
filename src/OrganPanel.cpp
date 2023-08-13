@@ -405,6 +405,8 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		100,
 		0.000001
 	);
+	m_amplitudeLevelSpin->SetDigits(6);
+	m_amplitudeLevelSpin->SetIncrement(1.0f);
 	fifteenthRow->Add(m_amplitudeLevelSpin, 0, wxEXPAND|wxALL, 5);
 	wxStaticText *gainText = new wxStaticText (
 		organProperties->GetStaticBox(),
@@ -424,6 +426,8 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		0,
 		0.000001
 	);
+	m_gainSpin->SetDigits(6);
+	m_gainSpin->SetIncrement(1.0f);
 	fifteenthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
 	fifteenthRow->AddStretchSpacer();
 	wxStaticText *pitchText = new wxStaticText (
@@ -444,6 +448,8 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		0,
 		0.000001
 	);
+	m_pitchTuningSpin->SetDigits(6);
+	m_pitchTuningSpin->SetIncrement(1.0f);
 	fifteenthRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
 	organProperties->Add(fifteenthRow, 0, wxGROW);
 
@@ -485,6 +491,8 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		0,
 		0.000001
 	);
+	m_pitchCorrectionSpin->SetDigits(6);
+	m_pitchCorrectionSpin->SetIncrement(1.0f);
 	sixteenthRow->Add(m_pitchCorrectionSpin, 0, wxGROW|wxALL, 5);
 	organProperties->Add(sixteenthRow, 0, wxGROW);
 
