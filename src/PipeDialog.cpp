@@ -443,7 +443,7 @@ void PipeDialog::CreateControls() {
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		0,
-		120,
+		3000,
 		0
 	);
 	eighthRow->Add(m_loopCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
@@ -464,7 +464,7 @@ void PipeDialog::CreateControls() {
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		0,
-		200,
+		3000,
 		0
 	);
 	ninthRow->Add(m_releaseCrossfadeSpin, 0, wxEXPAND|wxALL, 5);

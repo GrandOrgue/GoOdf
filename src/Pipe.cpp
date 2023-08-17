@@ -187,11 +187,11 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	wxString retuningStr = cfg->Read(pipeNr + wxT("AcceptsRetuning"), wxEmptyString);
 	acceptsRetuning = GOODF_functions::parseBoolean(retuningStr, parent->doesAcceptsRetuning());
 	int loopXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("LoopCrossfadeLength"), 0));
-	if (loopXfade > 0 && loopXfade < 121) {
+	if (loopXfade > 0 && loopXfade < 3001) {
 		loopCrossfadeLength = loopXfade;
 	}
 	int relXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCrossfadeLength"), 0));
-	if (relXfade > 0 && relXfade < 201) {
+	if (relXfade > 0 && relXfade < 3001) {
 		releaseCrossfadeLength = relXfade;
 	}
 
