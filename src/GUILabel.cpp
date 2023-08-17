@@ -169,12 +169,12 @@ void GUILabel::read(wxFileConfig *cfg) {
 		}
 	}
 	wxString fontStr = cfg->Read("DispLabelFontName", wxEmptyString);
-	wxFont labelFont = wxFont(fontStr);
+	wxFont labelFont(fontStr);
 	if (fontStr != wxEmptyString && labelFont.IsOk()) {
 		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
 	} else {
-		labelFont = getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont;
+		labelFont = getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont;
 		labelFont.SetPointSize(m_dispLabelFontSize.getSizeValue());
 		setDispLabelFont(labelFont);
 	}

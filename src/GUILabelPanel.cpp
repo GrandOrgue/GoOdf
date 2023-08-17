@@ -27,11 +27,13 @@
 #include <algorithm>
 #include <wx/msgdlg.h>
 #include <wx/filename.h>
+#include <wx/fontdlg.h>
+#include <wx/fontdata.h>
 
 // Event table
 BEGIN_EVENT_TABLE(GUILabelPanel, wxPanel)
 	EVT_TEXT(ID_GUILABELPANEL_LABEL_TEXT, GUILabelPanel::OnLabelTextChange)
-	EVT_FONTPICKER_CHANGED(ID_GUILABELPANEL_FONT_PICKER, GUILabelPanel::OnLabelFontChange)
+	EVT_BUTTON(ID_GUILABELPANEL_FONT_PICKER, GUILabelPanel::OnLabelFontChange)
 	EVT_CHOICE(ID_GUILABELPANEL_COLOR_CHOICE, GUILabelPanel::OnLabelColourChoice)
 	EVT_COLOURPICKER_CHANGED(ID_GUILABELPANEL_COLOR_PICKER, GUILabelPanel::OnLabelColourPick)
 	EVT_RADIOBUTTON(ID_GUILABELPANEL_FREE_X_POS_YES, GUILabelPanel::OnFreeXposRadio)
@@ -89,7 +91,7 @@ GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 		wxT("Label font: ")
 	);
 	firstRow->Add(labelFontText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_labelFont = new wxFontPickerCtrl(
+	m_labelFont = new wxButton(
 		this,
 		ID_GUILABELPANEL_FONT_PICKER
 	);
@@ -604,7 +606,8 @@ void GUILabelPanel::setLabel(GUILabel *label) {
 		m_labelTextField->Enable();
 	else
 		m_labelTextField->Disable();
-	m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
+	m_labelFont->SetFont(m_label->getDispLabelFont());
+	m_labelFont->SetLabel(m_label->getDispLabelFont().GetFaceName() + wxString::Format(wxT(" %i"), m_label->getDispLabelFontSize()->getSizeValue()));
 	if (m_label->getDispLabelColour()->getSelectedColorIndex() == 0) {
 		// it's a custom color
 		m_labelColourChoice->SetSelection(0);
@@ -696,27 +699,39 @@ void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
-void GUILabelPanel::OnLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
-	if (m_labelFont->GetSelectedFont().GetFaceName() != m_label->getDispLabelFont().GetFaceName()) {
-		m_label->setDispLabelFont(m_labelFont->GetSelectedFont());
-	} else if (m_label->getDispLabelFont().GetFaceName() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetFaceName()) {
-		wxMessageDialog fontNameMsg(this, wxT("Do you want to revert to display metrics default?"), wxT("Revert to default font name?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-		if (fontNameMsg.ShowModal() == wxID_YES) {
-			wxFont dispFont = m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont;
-			dispFont.SetPointSize(m_label->getDispLabelFontSize()->getSizeValue());
-			m_label->setDispLabelFont(dispFont);
-			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
+void GUILabelPanel::OnLabelFontChange(wxCommandEvent& WXUNUSED(event)) {
+	wxFontData fontData;
+	fontData.SetInitialFont(m_label->getDispLabelFont());
+	wxFontDialog fontDlg(this, fontData);
+
+	if (fontDlg.ShowModal() == wxID_OK) {
+		wxFontData selectedFontData = fontDlg.GetFontData();
+		wxFont selectedFont = selectedFontData.GetChosenFont();
+		m_labelFont->SetFont(selectedFont);
+		m_labelFont->SetLabel(selectedFont.GetFaceName() + wxString::Format(wxT(" %i"), selectedFont.GetPointSize()));
+		m_label->setDispLabelFont(selectedFont);
+		m_label->setDispLabelFontSize(selectedFont.GetPointSize());
+	} else {
+		if (m_label->getDispLabelFont().GetFaceName() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetFaceName()) {
+			wxMessageDialog fontNameMsg(this, wxT("Do you want to revert to display metrics default?"), wxT("Revert to default font name?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontNameMsg.ShowModal() == wxID_YES) {
+				wxFont dispFont = m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont;
+				dispFont.SetPointSize(m_label->getDispLabelFontSize()->getSizeValue());
+				m_label->setDispLabelFont(dispFont);
+				m_labelFont->SetFont(dispFont);
+				m_labelFont->SetLabel(dispFont.GetFaceName() + wxString::Format(wxT(" %i"), dispFont.GetPointSize()));
+			}
+		}
+		if (m_label->getDispLabelFontSize()->getSizeValue() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetPointSize()) {
+			wxMessageDialog fontSizeMsg(this, wxT("Do you want to revert to current display metrics size value?"), wxT("Revert to current default size?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (fontSizeMsg.ShowModal() == wxID_YES) {
+				m_label->setDispLabelFontSize(m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetPointSize());
+				m_labelFont->SetFont(m_label->getDispLabelFont());
+				m_labelFont->SetLabel(m_label->getDispLabelFont().GetFaceName() + wxString::Format(wxT(" %i"), m_label->getOwningPanel()->getDisplayMetrics()->m_dispGroupLabelFont.GetPointSize()));
+			}
 		}
 	}
-	if (m_labelFont->GetSelectedFont().GetPointSize() != m_label->getDispLabelFontSize()->getSizeValue()) {
-		m_label->setDispLabelFontSize(m_labelFont->GetSelectedFont().GetPointSize());
-	} else if (m_label->getDispLabelFontSize()->getSizeValue() != m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetPointSize()) {
-		wxMessageDialog fontSizeMsg(this, wxT("Do you want to revert to current display metrics size value?"), wxT("Revert to current default size?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-		if (fontSizeMsg.ShowModal() == wxID_YES) {
-			m_label->setDispLabelFontSize(m_label->getOwningPanel()->getDisplayMetrics()->m_dispControlLabelFont.GetPointSize());
-			m_labelFont->SetSelectedFont(m_label->getDispLabelFont());
-		}
-	}
+
 	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 
