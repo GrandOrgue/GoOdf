@@ -44,6 +44,7 @@ struct KEYTYPE {
 	int BitmapWidth;
 	int BitmapHeight;
 	bool ForceWritingWidth;
+	bool ForceWritingOffset;
 	bool IsSharp;
 };
 

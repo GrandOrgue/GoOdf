@@ -62,7 +62,7 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(key.KeytypeIdentifier + wxT("MaskOff=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
 				if (key.Width != key.BitmapWidth || keyNbrOverrideBaseKeyWidth(&key) || key.ForceWritingWidth)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Width=") + wxString::Format(wxT("%i"), key.Width));
-				if (key.Offset != 0)
+				if (key.Offset != 0 || key.ForceWritingOffset)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("Offset=") + wxString::Format(wxT("%i"), key.Offset));
 				if (key.YOffset != 0)
 					outFile->AddLine(key.KeytypeIdentifier + wxT("YOffset=") + wxString::Format(wxT("%i"), key.YOffset));
@@ -85,7 +85,7 @@ void GUIManual::write(wxTextFile *outFile) {
 					outFile->AddLine(wxT("MaskOff_") + key.KeytypeIdentifier + wxT("=") + GOODF_functions::fixSeparator(key.ImageOff.getRelativeMaskPath()));
 				if (key.Width != key.BitmapWidth || key.ForceWritingWidth)
 					outFile->AddLine(wxT("Width_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.Width));
-				if (key.Offset != 0)
+				if (key.Offset != 0 || key.ForceWritingOffset)
 					outFile->AddLine(wxT("Offset_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.Offset));
 				if (key.YOffset != 0)
 					outFile->AddLine(wxT("YOffset_") + key.KeytypeIdentifier + wxT("=") + wxString::Format(wxT("%i"), key.YOffset));
@@ -236,6 +236,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 			if (cfgOffset > -501 && cfgOffset < 501) {
 				keepKeyType = true;
 				type->Offset = cfgOffset;
+				type->ForceWritingOffset = true;
 			}
 			wxString keyYoffset = wxT("YOffset_") + keyType;
 			int cfgYoffset = static_cast<int>(cfg->ReadLong(keyYoffset, -1000));
@@ -322,6 +323,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 		if (keyOffset > -501 && keyOffset < 501) {
 			type->Offset = keyOffset;
 			keepKeyType = true;
+			type->ForceWritingOffset = true;
 		}
 		int keyYoffset = static_cast<int>(cfg->ReadLong(keyStr + wxT("YOffset"), -1000));
 		if (keyYoffset > -501 && keyYoffset < 501) {
@@ -446,6 +448,7 @@ void GUIManual::addKeytype(wxString identifier, bool isReading) {
 	type.BitmapWidth = typeWidth;
 	type.BitmapHeight = typeHeight;
 	type.ForceWritingWidth = false;
+	type.ForceWritingOffset = false;
 	m_keytypes.push_back(type);
 
 	if (!isReading)
