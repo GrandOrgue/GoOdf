@@ -262,7 +262,18 @@ wxString GoImage::getMaskNameOnly() {
 wxBitmap GoImage::getBitmap() {
 	wxImage img(m_imagePath);
 	if (img.IsOk()) {
-		wxBitmap bmp(m_imagePath, img.GetType());
+		wxBitmap bmp;
+		if (m_maskPath == wxEmptyString) {
+			bmp = wxBitmap(m_imagePath, img.GetType());
+		} else {
+			wxImage maskImg(m_maskPath);
+			if (maskImg.IsOk()) {
+				img.SetMaskFromImage(maskImg, 0xFF, 0xFF, 0xFF);
+				bmp = wxBitmap(img);
+			} else {
+				bmp = wxBitmap(m_imagePath, img.GetType());
+			}
+		}
 		return bmp;
 	} else {
 		return wxNullBitmap;

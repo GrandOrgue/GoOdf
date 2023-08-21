@@ -849,6 +849,8 @@ void GUIManual::updateKeyInfo() {
 
 		int overridingXOffset = 0;
 		int overridingYOffset = 0;
+		bool forceOffset = false;
+		bool forceWidth = false;
 		// default values can be overridden by general key types
 		wxString typeName = m_availableKeytypes[key_nb % 12];
 		if (i == 0)
@@ -870,6 +872,11 @@ void GUIManual::updateKeyInfo() {
 					if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
 						width *= 2;
 				}
+				/*
+				if (key.ForceWritingOffset) {
+					forceOffset = true;
+				}
+				*/
 				break;
 			}
 		}
@@ -890,17 +897,23 @@ void GUIManual::updateKeyInfo() {
 					if ((key_nb % 12) == 4 || (key_nb % 12) == 11)
 						width *= 2;
 				}
+				if (key.ForceWritingOffset) {
+					forceOffset = true;
+				}
+				if (key.ForceWritingWidth) {
+					forceWidth = true;
+				}
 				break;
 			}
 		}
 		m_keys[i].Xpos += overridingXOffset;
 		m_keys[i].Ypos += overridingYOffset;
 		if (!m_displayedAsPedal) {
-			if (m_keys[i].IsSharp && overridingXOffset == 0)
+			if (m_keys[i].IsSharp && overridingXOffset == 0 && !forceOffset)
 				m_keys[i].Xpos -= (width / 2);
 		}
 
-		if (!m_keys[i].IsSharp || m_displayedAsPedal)
+		if (!m_keys[i].IsSharp || m_displayedAsPedal || forceWidth)
 			keyXpos += width;
 	}
 }
