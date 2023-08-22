@@ -171,7 +171,7 @@ void OrganFileParser::parseOrganSection() {
 		m_organ->setTrackerDelay(static_cast<unsigned>(trackerDelay));
 	}
 	cfgBoolValue = m_organFile->Read("HasPedals", wxEmptyString);
-	m_organ->setHasPedals(GOODF_functions::parseBoolean(cfgBoolValue, false));
+	m_organ->setHasPedals(GOODF_functions::parseBoolean(cfgBoolValue, false), true);
 
 	if (m_isUsingOldPanelFormat) {
 		// the display metrics must be read from the organ section into Panel000
@@ -339,7 +339,7 @@ void OrganFileParser::parseOrganSection() {
 				m_organFile->SetPath(wxT("/") + manGroupName);
 				Manual m;
 				if (manIdxNbr == 0)
-					m.setIsPedal(true);
+					m.setIsPedal(true, true);
 				m_organ->addManual(m, true);
 				Manual *man = m_organ->getOrganManualAt(m_organ->getNumberOfManuals() - 1);
 				man->read(m_organFile, m_isUsingOldPanelFormat, manGroupName);

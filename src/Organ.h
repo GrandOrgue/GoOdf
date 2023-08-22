@@ -64,7 +64,7 @@ public:
 	bool doesGeneralsStoreDivisionalCouplers();
 	void setGeneralsStoreDivisionalCouplers(bool generalsStoreDivisionalCouplers);
 	bool doesHavePedals();
-	void setHasPedals(bool hasPedals);
+	void setHasPedals(bool hasPedals, bool isParsing = false);
 	wxString getInfoFilename();
 	void setInfoFilename(wxString infoFilename);
 	wxString getOrganBuildDate();

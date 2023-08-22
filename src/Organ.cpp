@@ -346,10 +346,10 @@ bool Organ::doesHavePedals() {
 	return m_hasPedals;
 }
 
-void Organ::setHasPedals(bool hasPedals) {
-	if (hasPedals != m_hasPedals) {
-		m_hasPedals = hasPedals;
+void Organ::setHasPedals(bool hasPedals, bool isParsing) {
+	m_hasPedals = hasPedals;
 
+	if (!isParsing) {
 		// Since the manual numbering now have changed we must possibly change
 		// any references done to already existing pipes
 		if (!m_Stops.empty() || !m_Ranks.empty()) {

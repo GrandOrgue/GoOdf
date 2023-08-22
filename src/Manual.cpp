@@ -321,19 +321,9 @@ bool Manual::isThePedal() {
 	return m_thePedal;
 }
 
-void Manual::setIsPedal(bool isPedal) {
-	if (isPedal) {
-		if (!::wxGetApp().m_frame->m_organ->doesHavePedals()) {
-			m_thePedal = isPedal;
-			::wxGetApp().m_frame->m_organ->setHasPedals(true);
-		} else {
-			// Pedals already exist so this should be impossible!
-		}
-	} else {
-		m_thePedal = isPedal;
-		::wxGetApp().m_frame->m_organ->setHasPedals(false);
-	}
-
+void Manual::setIsPedal(bool isPedal, bool isParsing) {
+	m_thePedal = isPedal;
+	::wxGetApp().m_frame->m_organ->setHasPedals(isPedal, isParsing);
 }
 
 bool Manual::isDisplayed() {

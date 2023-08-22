@@ -56,7 +56,7 @@ public:
 	int getMidiInputNumber();
 	void setMidiInputNumber(int midiInputNbr);
 	bool isThePedal();
-	void setIsPedal(bool isPedal);
+	void setIsPedal(bool isPedal, bool isParsing = false);
 	bool isDisplayed();
 	unsigned getNumberOfStops();
 	Stop* getStopAt(unsigned index);
