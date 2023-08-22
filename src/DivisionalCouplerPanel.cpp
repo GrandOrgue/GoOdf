@@ -417,6 +417,7 @@ void DivisionalCouplerPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_divCplr->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
@@ -433,6 +434,7 @@ void DivisionalCouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
@@ -443,11 +445,13 @@ void DivisionalCouplerPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
 		m_defaultToEngagedNo->SetValue(true);
 		m_divCplr->setDefaultToEngaged(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnGcStateChange(wxCommandEvent& WXUNUSED(event)) {
 	int gcValue = (int) m_gcStateChoice->GetSelection() - 1;
 	m_divCplr->setGcState(gcValue);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
@@ -458,6 +462,7 @@ void DivisionalCouplerPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 		m_storeInGeneralNo->SetValue(true);
 		m_divCplr->setStoreInGeneral(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnBidirectionalChange(wxCommandEvent& event) {
@@ -468,6 +473,7 @@ void DivisionalCouplerPanel::OnBidirectionalChange(wxCommandEvent& event) {
 		m_isBiDirectionalNo->SetValue(true);
 		m_divCplr->setBiDirectionalCoupling(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnAddReferencedManual(wxCommandEvent& WXUNUSED(event)) {
@@ -478,6 +484,7 @@ void DivisionalCouplerPanel::OnAddReferencedManual(wxCommandEvent& WXUNUSED(even
 			UpdateReferencedManuals();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnRemoveReferencedManual(wxCommandEvent& WXUNUSED(event)) {
@@ -486,6 +493,7 @@ void DivisionalCouplerPanel::OnRemoveReferencedManual(wxCommandEvent& WXUNUSED(e
 		m_divCplr->removeManualAt(selected);
 		UpdateReferencedManuals();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnRemoveDivisionalCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -537,6 +545,7 @@ void DivisionalCouplerPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(ev
 			UpdateReferencedSwitches();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -545,6 +554,7 @@ void DivisionalCouplerPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED
 		m_divCplr->removeSwitchReference(m_divCplr->getSwitchAtIndex(selected));
 		UpdateReferencedSwitches();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {

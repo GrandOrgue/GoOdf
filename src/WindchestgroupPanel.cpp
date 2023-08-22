@@ -217,6 +217,7 @@ void WindchestgroupPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	m_windchest->setName(m_nameField->GetValue());
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void WindchestgroupPanel::OnAddReferencedEnclosure(wxCommandEvent& WXUNUSED(event)) {
@@ -225,6 +226,7 @@ void WindchestgroupPanel::OnAddReferencedEnclosure(wxCommandEvent& WXUNUSED(even
 		if (!m_windchest->hasEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selected))) {
 			m_windchest->addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selected));
 			UpdateReferencedEnclosures();
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
 }
@@ -234,6 +236,7 @@ void WindchestgroupPanel::OnRemoveReferencedEnclosure(wxCommandEvent& WXUNUSED(e
 		unsigned selected = (unsigned) m_referencedEnclosures->GetSelection();
 		m_windchest->removeEnclosureReference(m_windchest->getEnclosureAt(selected));
 		UpdateReferencedEnclosures();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -243,6 +246,7 @@ void WindchestgroupPanel::OnAddReferencedTremulant(wxCommandEvent& WXUNUSED(even
 		if (!m_windchest->hasTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected))) {
 			m_windchest->addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected));
 			UpdateReferencedTremulants();
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
 }
@@ -252,6 +256,7 @@ void WindchestgroupPanel::OnRemoveReferencedTremulant(wxCommandEvent& WXUNUSED(e
 		unsigned selected = (unsigned) m_referencedTremulants->GetSelection();
 		m_windchest->removeTremulantReference(m_windchest->getTremulantAt(selected));
 		UpdateReferencedTremulants();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

@@ -646,6 +646,7 @@ void StopPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_stop->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
@@ -662,6 +663,7 @@ void StopPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
@@ -672,11 +674,13 @@ void StopPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
 		m_defaultToEngagedNo->SetValue(true);
 		m_stop->setDefaultToEngaged(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnGcStateChange(wxCommandEvent& WXUNUSED(event)) {
 	int gcValue = (int) m_gcStateChoice->GetSelection() - 1;
 	m_stop->setGcState(gcValue);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
@@ -687,6 +691,7 @@ void StopPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
 		m_storeInDivisionalNo->SetValue(true);
 		m_stop->setStoreInDivisional(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
@@ -697,18 +702,22 @@ void StopPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 		m_storeInGeneralNo->SetValue(true);
 		m_stop->setStoreInGeneral(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnFirstAccPipeLogKeyNbrChange(wxSpinEvent& WXUNUSED(event)) {
 	m_stop->setFirstPipeLogicalKeyNbr(m_firstAccessiblePipeLogicalKeyNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnNbrOfAccPipesChange(wxSpinEvent& WXUNUSED(event)) {
 	m_stop->setNumberOfAccessiblePipes(m_numberOfAccessiblePipesSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnFirstAccPipeLogPipeNbrChange(wxSpinEvent& WXUNUSED(event)) {
 	m_stop->setFirstPipeLogicalPipeNbr(m_firstAccessiblePipeLogicalPipeNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnUseInternalRankSelection(wxCommandEvent& event) {
@@ -717,6 +726,7 @@ void StopPanel::OnUseInternalRankSelection(wxCommandEvent& event) {
 	} else {
 		m_stop->setUsingInternalRank(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void StopPanel::OnRemoveStopBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -743,6 +753,7 @@ void StopPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -758,6 +769,7 @@ void StopPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_stop->removeSwitchReference(sw);
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -836,6 +848,7 @@ void StopPanel::OnAddRankReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_referencedRanks->SetSelection(m_stop->getNumberOfRanks() - 1);
 			wxCommandEvent evt(wxEVT_LISTBOX, ID_STOP_REFERENCED_RANKS);
 			wxPostEvent(this, evt);
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
 }
@@ -853,6 +866,7 @@ void StopPanel::OnRemoveRankReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_firstPipeNumberSpin->Disable();
 		m_pipeCountSpin->Disable();
 		m_firstAccessibleKeyNumberSpin->Disable();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -887,6 +901,7 @@ void StopPanel::OnRankFirstPipeNumberSpin(wxSpinEvent& WXUNUSED(event)) {
 			m_stop->getRankReferenceAt(selected)->m_pipeCount = maxPipes;
 		m_pipeCountSpin->SetRange(0, maxPipes);
 		m_pipeCountSpin->SetValue(m_stop->getRankReferenceAt(selected)->m_pipeCount);
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -894,6 +909,7 @@ void StopPanel::OnRankPipeCountSpin(wxSpinEvent& WXUNUSED(event)) {
 	if (m_referencedRanks->GetSelection() != wxNOT_FOUND) {
 		unsigned selected = (unsigned) m_referencedRanks->GetSelection();
 		m_stop->getRankReferenceAt(selected)->m_pipeCount = m_pipeCountSpin->GetValue();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -901,6 +917,7 @@ void StopPanel::OnRankFirstKeyNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	if (m_referencedRanks->GetSelection() != wxNOT_FOUND) {
 		unsigned selected = (unsigned) m_referencedRanks->GetSelection();
 		m_stop->getRankReferenceAt(selected)->m_firstAccessibleKeyNumber = m_firstAccessibleKeyNumberSpin->GetValue();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

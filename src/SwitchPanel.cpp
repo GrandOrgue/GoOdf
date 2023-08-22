@@ -371,6 +371,7 @@ void SwitchPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_switch->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
@@ -387,6 +388,7 @@ void SwitchPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_addReferencedSwitch->Enable(true);
 		m_removeReferencedSwitch->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
@@ -397,11 +399,13 @@ void SwitchPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
 		m_defaultToEngagedNo->SetValue(true);
 		m_switch->setDefaultToEngaged(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnGcStateChange(wxCommandEvent& WXUNUSED(event)) {
 	int gcValue = (int) m_gcStateChoice->GetSelection() - 1;
 	m_switch->setGcState(gcValue);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
@@ -412,6 +416,7 @@ void SwitchPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
 		m_storeInDivisionalNo->SetValue(true);
 		m_switch->setStoreInDivisional(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
@@ -422,6 +427,7 @@ void SwitchPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 		m_storeInGeneralNo->SetValue(true);
 		m_switch->setStoreInGeneral(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void SwitchPanel::OnRemoveSwitchBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -472,6 +478,7 @@ void SwitchPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -487,6 +494,7 @@ void SwitchPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_switch->removeSwitchReference(sw);
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

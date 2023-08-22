@@ -608,6 +608,7 @@ void DivisionalPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_divisional->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnProtectedSelection(wxCommandEvent& event) {
@@ -618,6 +619,7 @@ void DivisionalPanel::OnProtectedSelection(wxCommandEvent& event) {
 		m_isProtectedNo->SetValue(true);
 		m_divisional->setProtected(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnAddStopReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -628,6 +630,7 @@ void DivisionalPanel::OnAddStopReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			UpdateReferencedStops();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnAddAllAvailableStopsBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -640,6 +643,7 @@ void DivisionalPanel::OnAddAllAvailableStopsBtn(wxCommandEvent& WXUNUSED(event))
 		}
 		UpdateReferencedStops();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnRemoveStopReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -648,6 +652,7 @@ void DivisionalPanel::OnRemoveStopReferenceBtn(wxCommandEvent& WXUNUSED(event)) 
 		m_divisional->removeStopAt(selected);
 		UpdateReferencedStops();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnStopListboxSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -680,6 +685,7 @@ void DivisionalPanel::OnStopOnOffRadioBtns(wxCommandEvent& event) {
 		unsigned selected = (unsigned) m_referencedStops->GetSelection();
 		m_divisional->getStopPairAt(selected)->second = onOffValue;
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::UpdateReferencedStops() {
@@ -709,6 +715,7 @@ void DivisionalPanel::OnAddCouplerReferenceBtn(wxCommandEvent& WXUNUSED(event)) 
 			UpdateReferencedCouplers();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnAddAllAvailableCouplersBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -721,6 +728,7 @@ void DivisionalPanel::OnAddAllAvailableCouplersBtn(wxCommandEvent& WXUNUSED(even
 		}
 		UpdateReferencedCouplers();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnRemoveCouplerReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -729,6 +737,7 @@ void DivisionalPanel::OnRemoveCouplerReferenceBtn(wxCommandEvent& WXUNUSED(event
 		m_divisional->removeCouplerAt(selected);
 		UpdateReferencedCouplers();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnCouplerListboxSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -761,6 +770,7 @@ void DivisionalPanel::OnCouplerOnOffRadioBtns(wxCommandEvent& event) {
 		unsigned selected = (unsigned) m_referencedCouplers->GetSelection();
 		m_divisional->getCouplerPairAt(selected)->second = onOffValue;
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::UpdateReferencedCouplers() {
@@ -790,6 +800,7 @@ void DivisionalPanel::OnAddTremulantReferenceBtn(wxCommandEvent& WXUNUSED(event)
 			UpdateReferencedTremulants();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnAddAllAvailableTremulantsBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -802,6 +813,7 @@ void DivisionalPanel::OnAddAllAvailableTremulantsBtn(wxCommandEvent& WXUNUSED(ev
 		}
 		UpdateReferencedTremulants();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnRemoveTremulantReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -810,6 +822,7 @@ void DivisionalPanel::OnRemoveTremulantReferenceBtn(wxCommandEvent& WXUNUSED(eve
 		m_divisional->removeTremulantAt(selected);
 		UpdateReferencedTremulants();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnTremulantListboxSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -842,6 +855,7 @@ void DivisionalPanel::OnTremOnOffRadioBtns(wxCommandEvent& event) {
 		unsigned selected = (unsigned) m_referencedTremulants->GetSelection();
 		m_divisional->getTremulantPairAt(selected)->second = onOffValue;
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::UpdateReferencedTremulants() {
@@ -871,6 +885,7 @@ void DivisionalPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			UpdateReferencedSwitches();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnAddAllAvailableSwitchesBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -883,6 +898,7 @@ void DivisionalPanel::OnAddAllAvailableSwitchesBtn(wxCommandEvent& WXUNUSED(even
 		}
 		UpdateReferencedSwitches();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -891,6 +907,7 @@ void DivisionalPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)
 		m_divisional->removeSwitchAt(selected);
 		UpdateReferencedSwitches();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -923,6 +940,7 @@ void DivisionalPanel::OnSwitchOnOffRadioBtns(wxCommandEvent& event) {
 		unsigned selected = (unsigned) m_referencedSwitches->GetSelection();
 		m_divisional->getSwitchPairAt(selected)->second = onOffValue;
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalPanel::UpdateReferencedSwitches() {

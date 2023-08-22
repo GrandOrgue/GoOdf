@@ -120,6 +120,7 @@ void EnclosurePanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 
 void EnclosurePanel::OnAmpMinLvlChange(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setAmpMinimumLevel(m_ampMinLvlSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void EnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {

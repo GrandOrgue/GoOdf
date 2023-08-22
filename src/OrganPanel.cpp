@@ -539,17 +539,17 @@ void OrganPanel::setOdfPath(wxString path) {
 
 void OrganPanel::setOdfName(wxString name) {
 	m_odfName = name;
-	m_organNameField->SetValue(m_odfName);
+	m_organNameField->ChangeValue(m_odfName);
 }
 
 void OrganPanel::getDataFromOrgan() {
-	m_churchNameField->SetValue(m_currentOrgan->getChurchName());
-	m_churchAddressField->SetValue(m_currentOrgan->getChurchAddress());
-	m_organBuilderField->SetValue(m_currentOrgan->getOrganBuilder());
-	m_organBuildDateField->SetValue(m_currentOrgan->getOrganBuildDate());
-	m_organCommentsField->SetValue(m_currentOrgan->getOrganComments());
-	m_recordingDetailsField->SetValue(m_currentOrgan->getRecordingDetails());
-	m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
+	m_churchNameField->ChangeValue(m_currentOrgan->getChurchName());
+	m_churchAddressField->ChangeValue(m_currentOrgan->getChurchAddress());
+	m_organBuilderField->ChangeValue(m_currentOrgan->getOrganBuilder());
+	m_organBuildDateField->ChangeValue(m_currentOrgan->getOrganBuildDate());
+	m_organCommentsField->ChangeValue(m_currentOrgan->getOrganComments());
+	m_recordingDetailsField->ChangeValue(m_currentOrgan->getRecordingDetails());
+	m_infoPathField->ChangeValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
 	if (m_currentOrgan->doesDivisionalsStoreIntermanualCouplers())
 		m_interManualYes->SetValue(true);
 	else
@@ -584,6 +584,7 @@ void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
 	if (!m_infoPathField->IsEmpty()) {
 		m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 wxString OrganPanel::GetDirectoryPath() {
@@ -615,42 +616,49 @@ void OrganPanel::OnOrganFileNameChange(wxCommandEvent& WXUNUSED(event)) {
 		m_odfName.Replace(wxT(" "), wxT(""));
 		m_organNameField->SetValue(m_odfName);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnChurchNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_churchNameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_churchNameField);
 	m_currentOrgan->setChurchName(m_churchNameField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnChurchAddressChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_churchAddressField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_churchAddressField);
 	m_currentOrgan->setChurchAddress(m_churchAddressField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnOrganBuilderChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_organBuilderField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_organBuilderField);
 	m_currentOrgan->setOrganBuilder(m_organBuilderField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnOrganBuildDateChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_organBuildDateField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_organBuildDateField);
 	m_currentOrgan->setOrganBuildDate(m_organBuildDateField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnOrganCommentsChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_organCommentsField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_organCommentsField);
 	m_currentOrgan->setOrganComments(m_organCommentsField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnRecordingDetailsChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_recordingDetailsField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_recordingDetailsField);
 	m_currentOrgan->setRecordingDetails(m_recordingDetailsField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnBrowseForInfoPath(wxCommandEvent& WXUNUSED(event)) {
@@ -684,6 +692,7 @@ void OrganPanel::OnBrowseForInfoPath(wxCommandEvent& WXUNUSED(event)) {
 	infoFilePath = fileDialog.GetPath();
 	m_currentOrgan->setInfoFilename(infoFilePath);
 	m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(infoFilePath));
+	::wxGetApp().m_frame->m_organ->setModified(true);
 
 }
 
@@ -695,6 +704,7 @@ void OrganPanel::OnInterManualRBChange(wxCommandEvent& event) {
 		m_interManualNo->SetValue(true);
 		m_currentOrgan->setDivisionalsStoreIntermanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnIntraManualRBChange(wxCommandEvent& event) {
@@ -705,6 +715,7 @@ void OrganPanel::OnIntraManualRBChange(wxCommandEvent& event) {
 		m_intraManualNo->SetValue(true);
 		m_currentOrgan->setDivisionalsStoreIntramanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnStoreTremulantsChange(wxCommandEvent& event) {
@@ -715,6 +726,7 @@ void OrganPanel::OnStoreTremulantsChange(wxCommandEvent& event) {
 		m_storeTremulantsNo->SetValue(true);
 		m_currentOrgan->setDivisionalsStoreTremulants(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnStoreDivCouplersRBChange(wxCommandEvent& event) {
@@ -725,6 +737,7 @@ void OrganPanel::OnStoreDivCouplersRBChange(wxCommandEvent& event) {
 		m_storeDivCouplersNo->SetValue(true);
 		m_currentOrgan->setGeneralsStoreDivisionalCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnStoreNonDispRBChange(wxCommandEvent& event) {
@@ -735,6 +748,7 @@ void OrganPanel::OnStoreNonDispRBChange(wxCommandEvent& event) {
 		m_storeNonDisplayedNo->SetValue(true);
 		m_currentOrgan->setCombinationsStoreNonDisplayedDrawstops(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnNewOrganBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -744,20 +758,25 @@ void OrganPanel::OnNewOrganBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void OrganPanel::OnAmplitudeLevelSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setAmplitudeLevel(m_amplitudeLevelSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setGain(m_gainSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setPitchTuning(m_pitchTuningSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentOrgan->setTrackerDelay(m_trackerDelaySpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setPitchCorrection(m_pitchCorrectionSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }

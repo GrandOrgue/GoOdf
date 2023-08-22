@@ -295,16 +295,19 @@ void ReleaseDialog::OnTremulantChoice(wxCommandEvent& WXUNUSED(event)) {
 void ReleaseDialog::OnMaxKeyPressTimeSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentRelease->maxKeyPressTime = m_maxKeyPressTime->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ReleaseDialog::OnCuePointSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentRelease->cuePoint = m_cuePointSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ReleaseDialog::OnReleaseEndSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentRelease->releaseEnd = m_releaseEndSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 Release* ReleaseDialog::GetReleasePointer(unsigned index) {

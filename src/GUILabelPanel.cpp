@@ -869,6 +869,7 @@ void GUILabelPanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUILabelPanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {

@@ -327,6 +327,7 @@ void GoImagePanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 		}
 		UpdateControlValues();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GoImagePanel::OnPosXSpin(wxSpinEvent& event) {

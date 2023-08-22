@@ -547,23 +547,22 @@ void PipeDialog::OnNextPipeBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void PipeDialog::OnPercussiveSelection(wxCommandEvent& event) {
 	if (event.GetId() == ID_PIPE_DIALOG_PERCUSSIVE_YES) {
-
 		m_currentPipe->isPercussive = true;
-
 	} else {
-
 		m_currentPipe->isPercussive = false;
-
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnHarmonicNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->harmonicNumber = m_harmonicNbrSpin->GetValue();
 	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_currentPipe->harmonicNumber));
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->midiKeyNumber = m_midiKeyNbrSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnMidiPitchFractionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
@@ -575,45 +574,49 @@ void PipeDialog::OnMidiPitchFractionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	}
 	m_midiPitchFractionSpin->SetValue(value);
 	m_currentPipe->midiPitchFraction = value;
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->pitchCorrection = m_pitchCorrectionSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnAcceptsRetuningSelection(wxCommandEvent& event) {
 	if (event.GetId() == ID_PIPE_DIALOG_ACCEPTS_RETUNING_YES) {
-
 		m_currentPipe->acceptsRetuning = true;
-
 	} else {
-
 		m_currentPipe->acceptsRetuning = false;
-
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnWindchestChoice(wxCommandEvent& WXUNUSED(event)) {
 	if (m_windchestChoice->GetSelection() != wxNOT_FOUND) {
 		unsigned selectedIndex = m_windchestChoice->GetSelection();
 		m_currentPipe->windchest = ::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(selectedIndex);
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void PipeDialog::OnMinVelocitySpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->minVelocityVolume = m_minVelocitySpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnMaxVelocitySpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->maxVelocityVolume = m_maxVelocitySpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnLoopCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->loopCrossfadeLength = m_loopCrossfadeSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnReleaseCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->releaseCrossfadeLength = m_releaseCrossfadeSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 Pipe* PipeDialog::GetPipePointer(unsigned index) {
@@ -717,6 +720,7 @@ void PipeDialog::OnCopyPropertiesBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_copyToNbrPipesSpin->SetValue(0);
 	m_copyPropertiesBtn->Disable();
 	m_copyAtkRelBtn->Disable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnCopyAtkRelBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -734,6 +738,7 @@ void PipeDialog::OnCopyAtkRelBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_copyToNbrPipesSpin->SetValue(0);
 	m_copyPropertiesBtn->Disable();
 	m_copyAtkRelBtn->Disable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::SetCopyState() {
@@ -746,16 +751,20 @@ void PipeDialog::SetCopyState() {
 
 void PipeDialog::OnAmplitudeLevelSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->amplitudeLevel = m_amplitudeLevelSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->gain = m_gainSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentPipe->pitchTuning = m_pitchTuningSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void PipeDialog::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentPipe->trackerDelay = m_trackerDelaySpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }

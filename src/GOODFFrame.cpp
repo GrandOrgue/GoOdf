@@ -387,6 +387,7 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	odfFile->Close();
 	delete odfFile;
 	m_organHasBeenSaved = true;
+	m_organ->setModified(false);
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
@@ -396,13 +397,6 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 			return;
 		}
 	}
-	if (m_organ) {
-		delete m_organ;
-		m_organ = NULL;
-	}
-	m_organ = new Organ();
-	removeAllItemsFromTree();
-	m_organHasBeenSaved = false;
 
 	wxString organFilePath;
 
@@ -415,11 +409,15 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
-	if (fileDialog.ShowModal() == wxID_CANCEL) {
-		SetupOrganMainPanel();
-		m_organPanel->setCurrentOrgan(m_organ);
-		m_organPanel->setOdfPath(wxEmptyString);
-		m_organPanel->setOdfName(wxEmptyString);
+	if (fileDialog.ShowModal() == wxID_OK) {
+		if (m_organ) {
+			delete m_organ;
+			m_organ = NULL;
+		}
+		m_organ = new Organ();
+		removeAllItemsFromTree();
+		m_organHasBeenSaved = false;
+	} else {
 		return;
 	}
 
@@ -500,7 +498,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		m_organPanel->setOdfPath(wxEmptyString);
 		m_organPanel->setOdfName(wxEmptyString);
 	}
-	m_organ->organElementHasChanged();
+	m_organ->organElementHasChanged(true);
 	m_organTreeCtrl->SelectItem(tree_organ);
 }
 
@@ -1344,6 +1342,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstItem == tree_switches && srcParent == tree_switches) {
 		// we make it first child
 		int sourceIndex = 0;
@@ -1364,6 +1363,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveSwitch(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstParent == tree_manuals && srcParent == tree_manuals) {
 		// we drop it after target manual but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
@@ -1500,6 +1500,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveManual(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstParent == tree_windchestgrps && srcParent == tree_windchestgrps) {
 		// we drop it after target windchestgroup but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
@@ -1530,6 +1531,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveWindchestgroup(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstItem == tree_windchestgrps && srcParent == tree_windchestgrps) {
 		// we make it first child
 		int sourceIndex = 0;
@@ -1551,6 +1553,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveWindchestgroup(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstParent == tree_ranks && srcParent == tree_ranks) {
 		// we drop it after target rank but first check if the move really should happen
 		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
@@ -1581,6 +1584,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveRank(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (dstItem == tree_ranks && srcParent == tree_ranks) {
 		// we make it first child
 		int sourceIndex = 0;
@@ -1602,6 +1606,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->moveRank(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(srcParent)) == wxT("Couplers")) {
 		// The source item is certainly a stop, allowed drop destinations are another stop, the stop main category and a manual
 		std::vector<wxTreeItemId> manualsInTree;
@@ -1676,6 +1681,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 				wxTreeItemId newPos = m_organTreeCtrl->InsertItem(dstParent, dstItem, m_organTreeCtrl->GetItemText(srcItem));
 				m_organTreeCtrl->Delete(srcItem);
 				m_organTreeCtrl->SelectItem(newPos);
+				m_organ->setModified(true);
 			}
 		} else if ((std::find(manualsInTree.begin(), manualsInTree.end(), dstItem) != manualsInTree.end() && dstParent == tree_manuals) ||
 			(std::find(manualsInTree.begin(), manualsInTree.end(), dstParent) != manualsInTree.end() && m_organTreeCtrl->GetItemText(dstItem) == wxT("Stops"))
@@ -1713,6 +1719,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 				}
 				m_organTreeCtrl->Delete(srcItem);
 				m_organTreeCtrl->SelectItem(newPos);
+				m_organ->setModified(true);
 			}
 		}
 	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("GUI Elements") && m_organTreeCtrl->GetItemParent(srcGrandParent) == tree_panels && m_organTreeCtrl->GetItemText(dstParent) == wxT("GUI Elements") && dstGrandParent == srcGrandParent) {
@@ -1764,6 +1771,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->getOrganPanelAt(panelIndex)->moveGuiElement(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	} else if (m_organTreeCtrl->GetItemText(srcParent) == wxT("GUI Elements") && m_organTreeCtrl->GetItemParent(srcGrandParent) == tree_panels && dstItem == srcParent) {
 		// We should make it the first child of the panel in question, first get what child it is
 		int sourceIndex = 0;
@@ -1802,6 +1810,7 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->getOrganPanelAt(panelIndex)->moveGuiElement(sourceIndex, 0);
 		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
 	}
 
 }
@@ -1818,6 +1827,7 @@ void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
 			else
 				m_organTreeCtrl->AppendItem(tree_enclosures, newEnclosure.getName());
 		}
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 enclosures!"), wxT("Too many enclosures"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -1829,6 +1839,7 @@ void GOODFFrame::OnAddNewTremulant(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfTremulants() < 10) {
 		Tremulant newTremulant;
 		m_organ->addTremulant(newTremulant);
+		m_organ->setModified(true);
 
 		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_tremulants, newTremulant.getName()));
 	} else {
@@ -2181,6 +2192,7 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			m_organTreeCtrl->Delete(selected);
 			m_organTreeCtrl->SelectItem(nextToSelect);
 		}
+		m_organ->setModified(true);
 	}
 }
 
@@ -2191,6 +2203,7 @@ void GOODFFrame::AddStopItemToTree() {
 	wxTreeItemId couplerChild = m_organTreeCtrl->GetPrevSibling(divisionalChild);
 	wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
 	m_organTreeCtrl->AppendItem(stopChild, wxT("New Stop"));
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::SelectStopItemInTree(int nbrAdded) {
@@ -2221,6 +2234,7 @@ void GOODFFrame::AddCouplerItemToTree() {
 	wxTreeItemId newCoupler = m_organTreeCtrl->AppendItem(couplerChild, wxT("New Coupler"));
 	m_organTreeCtrl->ExpandAllChildren(selectedManual);
 	m_organTreeCtrl->SelectItem(newCoupler);
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::AddDivisionalItemToTree() {
@@ -2230,6 +2244,7 @@ void GOODFFrame::AddDivisionalItemToTree() {
 	wxTreeItemId newDivisional = m_organTreeCtrl->AppendItem(divisionalChild, wxT("New Divisional"));
 	m_organTreeCtrl->ExpandAllChildren(selectedManual);
 	m_organTreeCtrl->SelectItem(newDivisional);
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
@@ -2244,6 +2259,7 @@ void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
 			else
 				m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName());
 		}
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 windchests!"), wxT("Too many windchests"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2263,6 +2279,7 @@ void GOODFFrame::OnAddNewSwitch(wxCommandEvent& WXUNUSED(event)) {
 			else
 				m_organTreeCtrl->AppendItem(tree_switches, newSwitch.getName());
 		}
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 switches!"), wxT("Too many switches"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2282,6 +2299,7 @@ void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
 			else
 				m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName());
 		}
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 ranks!"), wxT("Too many ranks"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2290,8 +2308,25 @@ void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageDialog dlg(this, wxT("Are you really sure you want to create a completely new organ?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-	if (dlg.ShowModal() == wxID_YES) {
+	if (m_organ->isModified()) {
+		wxMessageDialog dlg(this, wxT("Are you really sure you want to create a completely new organ?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (dlg.ShowModal() == wxID_YES) {
+			if (m_organ) {
+				delete m_organ;
+				m_organ = NULL;
+			}
+			m_organ = new Organ();
+			m_organHasBeenSaved = false;
+
+			removeAllItemsFromTree();
+			SetupOrganMainPanel();
+			m_organTreeCtrl->SelectItem(tree_organ);
+
+			m_organPanel->setCurrentOrgan(m_organ);
+			m_organPanel->setOdfPath(wxEmptyString);
+			m_organPanel->setOdfName(wxEmptyString);
+		}
+	} else {
 		if (m_organ) {
 			delete m_organ;
 			m_organ = NULL;
@@ -2320,6 +2355,7 @@ void GOODFFrame::OnAddNewManual(wxCommandEvent& WXUNUSED(event)) {
 		m_organTreeCtrl->AppendItem(thisManual, wxT("Couplers"));
 		m_organTreeCtrl->AppendItem(thisManual, wxT("Divisionals"));
 
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(thisManual);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 16 manuals!"), wxT("Too many manuals"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2333,6 +2369,7 @@ void GOODFFrame::OnAddNewDivisionalCoupler(wxCommandEvent& WXUNUSED(event)) {
 		m_organ->addDivisionalCoupler(divCplr);
 		wxTreeItemId thisDivCplr = m_organTreeCtrl->AppendItem(tree_divisionalCouplers, wxT("New Divisional Coupler"));
 
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(thisDivCplr);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 8 divisional couplers!"), wxT("Too many divisional couplers"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2346,6 +2383,7 @@ void GOODFFrame::OnAddNewGeneral(wxCommandEvent& WXUNUSED(event)) {
 		m_organ->addGeneral(gen);
 		wxTreeItemId thisGeneral = m_organTreeCtrl->AppendItem(tree_generals, wxT("New General"));
 
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(thisGeneral);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 99 generals!"), wxT("Too many generals"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2359,6 +2397,7 @@ void GOODFFrame::OnAddNewReversiblePiston(wxCommandEvent& WXUNUSED(event)) {
 		m_organ->addReversiblePiston(p);
 		wxTreeItemId thisPiston = m_organTreeCtrl->AppendItem(tree_reversiblePistons, wxT("New Reversible Piston"));
 
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(thisPiston);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 32 reversible pistons!"), wxT("Too many reversible pistons"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2377,6 +2416,7 @@ void GOODFFrame::OnAddNewPanel(wxCommandEvent& WXUNUSED(event)) {
 		m_organTreeCtrl->AppendItem(thisPanel, wxT("Images"));
 		m_organTreeCtrl->AppendItem(thisPanel, wxT("GUI Elements"));
 
+		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(thisPanel);
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 1000 panels!"), wxT("Too many panels"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
@@ -2402,6 +2442,7 @@ void GOODFFrame::AddImageItemToTree() {
 	wxTreeItemId newImage = m_organTreeCtrl->AppendItem(imageChild, wxT("New Image"));
 	m_organTreeCtrl->ExpandAllChildren(selectedPanel);
 	m_organTreeCtrl->SelectItem(newImage);
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::AddGuiElementToTree(wxString title) {
@@ -2412,6 +2453,7 @@ void GOODFFrame::AddGuiElementToTree(wxString title) {
 	m_organTreeCtrl->ExpandAllChildren(selectedPanel);
 	m_organTreeCtrl->SelectItem(newGuiElement);
 	m_organTreeCtrl->SelectItem(selectedPanel);
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
@@ -2439,6 +2481,7 @@ void GOODFFrame::RebuildPanelGuiElementsInTree(int panelIndex) {
 
 void GOODFFrame::PanelGUIPropertyIsChanged() {
 	m_panelPanel->updateRepresentationLayout();
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::GUIElementPositionIsChanged() {
@@ -2447,6 +2490,7 @@ void GOODFFrame::GUIElementPositionIsChanged() {
 	m_guiEnclosurePanel->updatePositionValues();
 	m_guiLabelPanel->updatePositionValues();
 	m_guiManualPanel->updatePositionValues();
+	m_organ->setModified(true);
 }
 
 void GOODFFrame::removeAllItemsFromTree() {

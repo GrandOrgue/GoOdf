@@ -609,12 +609,14 @@ void RankPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	m_rank->setName(m_nameField->GetValue());
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnWindchestChoice(wxCommandEvent& WXUNUSED(event)) {
 	if (m_windchestChoice->GetSelection() != wxNOT_FOUND) {
 		unsigned selectedIndex = m_windchestChoice->GetSelection();
 		m_rank->setWindchest(::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(selectedIndex));
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -654,6 +656,7 @@ void RankPanel::OnMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 			UpdatePipeTree();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnLogicalPipeSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -691,16 +694,19 @@ void RankPanel::OnLogicalPipeSpin(wxSpinEvent& WXUNUSED(event)) {
 	if (theParent) {
 		theParent->internalRankLogicalPipesChanged(m_rank->getNumberOfLogicalPipes());
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnHarmonicNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	int harmonicNbr = m_harmonicNumberSpin->GetValue();
 	m_rank->setHarmonicNumber(harmonicNbr);
 	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(harmonicNbr));
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setPitchCorrection((float) m_pitchCorrectionSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnPercussiveSelection(wxCommandEvent& event) {
@@ -715,14 +721,17 @@ void RankPanel::OnPercussiveSelection(wxCommandEvent& event) {
 	}
 	RebuildPipeTree();
 	UpdatePipeTree();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnMinVelocitySpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setMinVelocityVolume((float) m_minVelocityVolumeSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnMaxVelocitySpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setMaxVelocityVolume((float) m_maxVelocityVolumeSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnRetuningSelection(wxCommandEvent& event) {
@@ -733,6 +742,7 @@ void RankPanel::OnRetuningSelection(wxCommandEvent& event) {
 		m_acceptsRetuningNo->SetValue(true);
 		m_rank->setAcceptsRetuning(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -770,6 +780,7 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 		RebuildPipeTree();
 		UpdatePipeTree();
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnRemoveRankBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -802,6 +813,7 @@ void RankPanel::OnClearPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_rank->createDummyPipes();
 		RebuildPipeTree();
 		UpdatePipeTree();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1024,6 +1036,7 @@ void RankPanel::OnAddNewAttack() {
 	}
 
 	m_rank->setPipesRootPath(fileDialog.GetDirectory());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnAddNewRelease() {
@@ -1065,6 +1078,7 @@ void RankPanel::OnAddNewRelease() {
 	}
 
 	m_rank->setPipesRootPath(fileDialog.GetDirectory());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnClearPipe() {
@@ -1082,6 +1096,7 @@ void RankPanel::OnClearPipe() {
 		m_pipeTreeCtrl->SelectItem(toSelect);
 		m_pipeTreeCtrl->ExpandAllChildren(toSelect);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnEditPipe() {
@@ -1133,6 +1148,7 @@ void RankPanel::OnCreateReference() {
 
 			RebuildPipeTree();
 			UpdatePipeTree();
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
 }
@@ -1162,6 +1178,7 @@ void RankPanel::OnEditAttack() {
 				}
 			}
 		}
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1186,7 +1203,7 @@ void RankPanel::OnEditRelease() {
 				}
 			}
 		}
-
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1212,6 +1229,7 @@ void RankPanel::OnRemoveSelectedAttack() {
 				m_pipeTreeCtrl->SelectItem(toSelect);
 				m_pipeTreeCtrl->ExpandAllChildren(toSelect);
 			}
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
 }
@@ -1234,6 +1252,7 @@ void RankPanel::OnRemoveSelectedRelease() {
 		m_pipeTreeCtrl->SelectItem(toSelect);
 		m_pipeTreeCtrl->ExpandAllChildren(toSelect);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 wxTreeItemId RankPanel::GetPipeTreeItemAt(int index) {
@@ -1271,18 +1290,22 @@ wxTreeItemId RankPanel::GetPipeOfSelection() {
 
 void RankPanel::OnAmplitudeLevelSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setAmplitudeLevel(m_amplitudeLevelSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setGain(m_gainSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_rank->setPitchTuning(m_pitchTuningSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_rank->setTrackerDelay(m_trackerDelaySpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1319,6 +1342,7 @@ void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 		RebuildPipeTree();
 		UpdatePipeTree();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1354,6 +1378,7 @@ void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 		RebuildPipeTree();
 		UpdatePipeTree();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1382,6 +1407,7 @@ void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 		RebuildPipeTree();
 		UpdatePipeTree();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

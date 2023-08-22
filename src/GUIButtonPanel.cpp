@@ -988,6 +988,7 @@ void GUIButtonPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1049,6 +1050,7 @@ void GUIButtonPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnAddMaskOffBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1075,6 +1077,7 @@ void GUIButtonPanel::OnAddMaskOffBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1105,24 +1108,29 @@ void GUIButtonPanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectLeft(m_mouseRectLeftSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnMouseRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectTop(m_mouseRectTopSpin->GetValue());
 	UpdateSpinRanges();
 	UpdateDefaultSpinValues();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnMouseRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectWidth(m_mouseRectWidthSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnMouseRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRectHeight(m_mouseRectHeightSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnMouseRadiusSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_button->setMouseRadius(m_mouseRadiusSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIButtonPanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {

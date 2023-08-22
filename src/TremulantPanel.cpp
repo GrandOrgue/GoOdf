@@ -490,6 +490,7 @@ void TremulantPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_tremulant->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
@@ -506,6 +507,7 @@ void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
@@ -516,11 +518,13 @@ void TremulantPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
 		m_defaultToEngagedNo->SetValue(true);
 		m_tremulant->setDefaultToEngaged(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnGcStateChange(wxCommandEvent& WXUNUSED(event)) {
 	int gcValue = (int) m_gcStateChoice->GetSelection() - 1;
 	m_tremulant->setGcState(gcValue);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
@@ -531,6 +535,7 @@ void TremulantPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
 		m_storeInDivisionalNo->SetValue(true);
 		m_tremulant->setStoreInDivisional(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
@@ -541,6 +546,7 @@ void TremulantPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 		m_storeInGeneralNo->SetValue(true);
 		m_tremulant->setStoreInGeneral(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnTremTypeChange(wxCommandEvent& WXUNUSED(event)) {
@@ -557,22 +563,27 @@ void TremulantPanel::OnTremTypeChange(wxCommandEvent& WXUNUSED(event)) {
 		m_stopRateSpin->Enable(true);
 		m_ampModDepthSpin->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnPeriodChange(wxSpinEvent& WXUNUSED(event)) {
 	m_tremulant->setPeriod(m_periodSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnStartRateChange(wxSpinEvent& WXUNUSED(event)) {
 	m_tremulant->setStartRate(m_startRateSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnStopRateChange(wxSpinEvent& WXUNUSED(event)) {
 	m_tremulant->setStopRate(m_stopRateSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnAmpModDepthChange(wxSpinEvent& WXUNUSED(event)) {
 	m_tremulant->setAmpModDepth(m_ampModDepthSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void TremulantPanel::OnRemoveTremulantBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -630,6 +641,7 @@ void TremulantPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -645,6 +657,7 @@ void TremulantPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event))
 			m_tremulant->removeSwitchReference(sw);
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

@@ -253,8 +253,8 @@ void GoPanelPanel::setPanel(GoPanel *panel) {
 	m_guiRepresentation->SetCurrentPanel(m_panel);
 	// if this is the main panel certain things cannot be done/changed
 	if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(0) == m_panel) {
-		m_nameField->SetValue(m_panel->getName());
-		m_groupField->SetValue(m_panel->getGroup());
+		m_nameField->ChangeValue(m_panel->getName());
+		m_groupField->ChangeValue(m_panel->getGroup());
 		m_nameField->Disable();
 		m_groupField->Disable();
 		m_removePanelBtn->Disable();
@@ -262,8 +262,8 @@ void GoPanelPanel::setPanel(GoPanel *panel) {
 		m_nameField->Enable();
 		m_groupField->Enable();
 		m_removePanelBtn->Enable();
-		m_nameField->SetValue(m_panel->getName());
-		m_groupField->SetValue(m_panel->getGroup());
+		m_nameField->ChangeValue(m_panel->getName());
+		m_groupField->ChangeValue(m_panel->getGroup());
 	}
 	if (m_panel->getHasPedals()) {
 		m_hasPedalYes->SetValue(true);
@@ -317,12 +317,14 @@ void GoPanelPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	m_panel->setName(m_nameField->GetValue());
 	wxString updatedLabel = m_nameField->GetValue();
 	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(updatedLabel);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GoPanelPanel::OnGroupChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_groupField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_groupField);
 	m_panel->setGroup(m_groupField->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GoPanelPanel::OnHasPedalRadio(wxCommandEvent& event) {
@@ -334,6 +336,7 @@ void GoPanelPanel::OnHasPedalRadio(wxCommandEvent& event) {
 		m_panel->setHasPedals(false);
 	}
 	updateRepresentationLayout();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GoPanelPanel::OnNewImageBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -586,6 +589,7 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 			wxCommandEvent evt(wxEVT_LISTBOX, ID_PANEL_SETTER_ELEMENTS_CHOICE);
 			wxPostEvent(this, evt);
 		}
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	} else {
 		wxMessageDialog msg(this, wxT("Panel cannot have more than 999 gui elements!"), wxT("Too many gui elements"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();

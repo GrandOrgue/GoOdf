@@ -25,6 +25,7 @@
 Organ::Organ() {
 	// Initialize a new blank organ
 	m_odfRoot = wxEmptyString;
+	m_isModified = false;
 	m_churchName = wxEmptyString;
 	m_churchAddress = wxEmptyString;
 	m_organBuilder = wxEmptyString;
@@ -1793,8 +1794,11 @@ const wxArrayString& Organ::getOrganElements() const {
 	return m_organElements;
 }
 
-void Organ::organElementHasChanged() {
+void Organ::organElementHasChanged(bool isParsing) {
 	updateOrganElements();
+	if (!isParsing) {
+		setModified(true);
+	}
 }
 
 void Organ::updateRelativePipePaths() {
@@ -1807,70 +1811,9 @@ void Organ::updateRelativePipePaths() {
 }
 
 bool Organ::isModified() {
-	if (m_odfRoot != wxEmptyString)
-		return true;
-	if (m_churchName != wxEmptyString)
-		return true;
-	if (m_churchAddress != wxEmptyString)
-			return true;
-	if (m_organBuilder != wxEmptyString)
-		return true;
-	if (m_organBuildDate != wxEmptyString)
-		return true;
-	if (m_organComments != wxEmptyString)
-		return true;
-	if (m_recordingDetails != wxEmptyString)
-		return true;
-	if (m_infoFilename != wxEmptyString)
-		return true;
-	if (!m_divisionalsStoreIntermanualCouplers)
-		return true;
-	if (!m_divisionalsStoreIntramanualCouplers)
-		return true;
-	if (!m_divisionalsStoreTremulants)
-		return true;
-	if (!m_generalsStoreDivisionalCouplers)
-		return true;
-	if (!m_combinationsStoreNonDisplayedDrawstops)
-		return true;
-	if (m_hasPedals)
-		return true;
-	if (m_amplitudeLevel != 100.0f)
-		return true;
-	if (m_gain != 0.0f)
-		return true;
-	if (m_pitchTuning != 0.0f)
-		return true;
-	if (m_pitchCorrection != 0.0f)
-		return true;
-	if (m_trackerDelay != 0)
-		return true;
-	if (!m_Enclosures.empty())
-		return true;
-	if (!m_Tremulants.empty())
-		return true;
-	if (!m_Windchestgroups.empty())
-		return true;
-	if (!m_Switches.empty())
-		return true;
-	if (!m_Ranks.empty())
-		return true;
-	if (!m_Stops.empty())
-		return true;
-	if (!m_Manuals.empty())
-		return true;
-	if (!m_Couplers.empty())
-		return true;
-	if (!m_Divisionals.empty())
-		return true;
-	if (!m_DivisionalCouplers.empty())
-		return true;
-	if (!m_Generals.empty())
-		return true;
-	if (!m_ReversiblePistons.empty())
-		return true;
-	if (m_Panels.size() > 1)
-		return true;
+	return m_isModified;
+}
 
-	return false;
+void Organ::setModified(bool modified) {
+	m_isModified = modified;
 }

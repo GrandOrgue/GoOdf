@@ -1103,10 +1103,12 @@ void DisplayMetricsPanel::OnControlLabelFontChange(wxFontPickerEvent& WXUNUSED(e
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DisplayMetricsPanel::OnShortcutKeyLabelFontChange(wxFontPickerEvent& WXUNUSED(event)) {
 	m_displayMetrics->m_dispShortcutKeyLabelFont = m_shortcutKeyLabelFont->GetSelectedFont();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DisplayMetricsPanel::OnShortcutKeyLabelColourChoice(wxCommandEvent& event) {
@@ -1119,11 +1121,13 @@ void DisplayMetricsPanel::OnShortcutKeyLabelColourChoice(wxCommandEvent& event) 
 			m_shortcutKeyColourPick->Disable();
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DisplayMetricsPanel::OnShortcutKeyLabelColourPick(wxColourPickerEvent& event) {
 	if (event.GetId() == ID_SHORTCUT_COLOUR_PICKER) {
 		m_displayMetrics->m_dispShortcutKeyLabelColour.setColorValue(m_shortcutKeyColourPick->GetColour());
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -1142,6 +1146,7 @@ void DisplayMetricsPanel::OnGroupLabelFontChange(wxFontPickerEvent& WXUNUSED(eve
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DisplayMetricsPanel::OnDrawstopColSpin(wxSpinEvent& WXUNUSED(event)) {

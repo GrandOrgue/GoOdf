@@ -315,6 +315,7 @@ void ReversiblePistonPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_piston->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ReversiblePistonPanel::OnStopListboxSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -373,6 +374,7 @@ void ReversiblePistonPanel::OnUseSelectedBtn(wxCommandEvent& WXUNUSED(event)) {
 	}
 	UpdateInfoFields();
 	useSelectedBtn->Disable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ReversiblePistonPanel::OnRemovePistonBtn(wxCommandEvent& WXUNUSED(event)) {

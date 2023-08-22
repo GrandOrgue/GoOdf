@@ -725,6 +725,7 @@ void GUIEnclosurePanel::OnAddBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 	// we need to notify the bitmapBox that selection has changed
 	wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIENCLOSUREPANEL_BITMAP_BOX);
 	wxPostEvent(this, evt);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnAddImagePathBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -782,6 +783,7 @@ void GUIEnclosurePanel::OnAddMaskPathBtn(wxCommandEvent& WXUNUSED(event)) {
 			if (width == m_enclosure->getBitmapWidth() && height == m_enclosure->getBitmapHeight()) {
 				m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->setMask(path);
 				m_maskPathField->SetValue(m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->getMaskNameOnly());
+				::wxGetApp().m_frame->m_organ->setModified(true);
 			}
 		}
 	} else {
@@ -792,6 +794,7 @@ void GUIEnclosurePanel::OnAddMaskPathBtn(wxCommandEvent& WXUNUSED(event)) {
 				// then we empty the value in button and panel
 				m_enclosure->getBitmapAtIndex(m_bitmapBox->GetSelection())->setMask(wxEmptyString);
 				m_maskPathField->SetValue(wxEmptyString);
+				::wxGetApp().m_frame->m_organ->setModified(true);
 			}
 		}
 	}
@@ -815,6 +818,7 @@ void GUIEnclosurePanel::OnRemoveBitmapBtn(wxCommandEvent& WXUNUSED(event)) {
 			// then we notify the box that selection has changed
 			wxCommandEvent evt(wxEVT_LISTBOX, ID_GUIENCLOSUREPANEL_BITMAP_BOX);
 			wxPostEvent(this, evt);
+			::wxGetApp().m_frame->m_organ->setModified(true);
 		} else {
 			m_removeBitmapBtn->Disable();
 			m_addImagePathBtn->Disable();
@@ -884,72 +888,87 @@ void GUIEnclosurePanel::OnAddImageBitmapsBtn(wxCommandEvent& WXUNUSED(event)) {
 void GUIEnclosurePanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setWidth(m_widthSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setHeight(m_heightSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTileOffsetXSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTileOffsetX(m_tileOffsetXSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTileOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTileOffsetY(m_tileOffsetYSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectLeft(m_mouseRectLeftSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectTop(m_mouseRectTopSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectWidth(m_mouseRectWidthSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseRectHeight(m_mouseRectHeightSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseAxisStartSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseAxisStart(m_mouseAxisStartSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnMouseAxisEndSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setMouseAxisEnd(m_mouseAxisEndSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTextRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectLeft(m_textRectLeftSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTextRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectTop(m_textRectTopSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTextRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectWidth(m_textRectWidthSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTextRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextRectHeight(m_textRectHeightSpin->GetValue());
 	UpdateSpinRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnTextBreakWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_enclosure->setTextBreakWidth(m_textBreakWidthSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIEnclosurePanel::OnRemoveEnclosureBtn(wxCommandEvent& WXUNUSED(event)) {

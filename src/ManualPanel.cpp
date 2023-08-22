@@ -477,6 +477,7 @@ void ManualPanel::OnPedalCheckbox(wxCommandEvent& WXUNUSED(event)) {
 		m_manual->setIsPedal(true);
 	else
 		m_manual->setIsPedal(false);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnLogicalKeysSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -494,22 +495,27 @@ void ManualPanel::OnLogicalKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 		if (m_manual->getNumberOfAccessibleKeys() > m_manual->getNumberOfLogicalKeys())
 			m_manual->setNumberOfAccessibleKeys(m_manual->getNumberOfLogicalKeys());
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnFirstLogicalKeySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setFirstAccessibleKeyLogicalKeyNumber(m_firstAccessibleKeyLogicalKeyNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnFirstMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setFirstAccessibleKeyMIDINoteNumber(m_firstAccessibleKeyMIDINoteNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnAccessibleKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setNumberOfAccessibleKeys(m_numberOfAccessibleKeysSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnMidiInputNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setMidiInputNumber(m_midiInputNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void ManualPanel::OnNewStopBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -584,6 +590,7 @@ void ManualPanel::OnAddReferencedTremBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_manual->addTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected));
 			UpdateReferencedTremulants();
 		}
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -592,6 +599,7 @@ void ManualPanel::OnRemoveReferencedTremBtn(wxCommandEvent& WXUNUSED(event)) {
 		unsigned selected = (unsigned) m_referencedTremulants->GetSelection();
 		m_manual->removeTremulant(m_manual->getTremulantAt(selected));
 		UpdateReferencedTremulants();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -619,6 +627,7 @@ void ManualPanel::OnAddReferencedSwitchBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -634,6 +643,7 @@ void ManualPanel::OnRemoveReferencedSwitchBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_manual->removeGoSwitch(sw);
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -643,8 +653,10 @@ void ManualPanel::OnMidiKeyMapKeyChoice(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ManualPanel::OnMidiKeyMapValueSpin(wxSpinEvent& WXUNUSED(event)) {
-	if (m_midiKeyMapKeys->GetCurrentSelection() != wxNOT_FOUND)
+	if (m_midiKeyMapKeys->GetCurrentSelection() != wxNOT_FOUND) {
 		m_manual->setMidiKeyMapValue(m_midiKeyMapKeys->GetString(m_midiKeyMapKeys->GetCurrentSelection()), m_midiKeyMapValue->GetValue());
+		::wxGetApp().m_frame->m_organ->setModified(true);
+	}
 }
 
 void ManualPanel::OnRemoveManualBtn(wxCommandEvent& WXUNUSED(event)) {

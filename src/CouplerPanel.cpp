@@ -683,6 +683,7 @@ void CouplerPanel::OnDisplayInvertedRadio(wxCommandEvent& event) {
 		m_displayInvertedNo->SetValue(true);
 		m_coupler->setDisplayInverted(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
@@ -699,6 +700,7 @@ void CouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
@@ -709,11 +711,13 @@ void CouplerPanel::OnDefaultToEngagedChange(wxCommandEvent& event) {
 		m_defaultToEngagedNo->SetValue(true);
 		m_coupler->setDefaultToEngaged(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnGcStateChange(wxCommandEvent& WXUNUSED(event)) {
 	int gcValue = (int) m_gcStateChoice->GetSelection() - 1;
 	m_coupler->setGcState(gcValue);
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
@@ -724,6 +728,7 @@ void CouplerPanel::OnStoreInDivisionalChange(wxCommandEvent& event) {
 		m_storeInDivisionalNo->SetValue(true);
 		m_coupler->setStoreInDivisional(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
@@ -734,6 +739,7 @@ void CouplerPanel::OnStoreInGeneralChange(wxCommandEvent& event) {
 		m_storeInGeneralNo->SetValue(true);
 		m_coupler->setStoreInGeneral(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnUnisonOffRadio(wxCommandEvent& event) {
@@ -744,18 +750,22 @@ void CouplerPanel::OnUnisonOffRadio(wxCommandEvent& event) {
 		m_unisonOffNo->SetValue(true);
 		m_coupler->setUnisonOff(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnDestinationManualChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_coupler->setDestinationManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(m_destinationManualChoice->GetCurrentSelection()));
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnDestinationKeyShiftSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_coupler->setDestinationKeyshift(m_destinationKeyShiftSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCouplerTypeChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_coupler->setCouplerType(m_couplerTypeChoice->GetString(m_couplerTypeChoice->GetSelection()));
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCoupleToSubsequentUnisonIntermanualCouplers(wxCommandEvent& event) {
@@ -766,6 +776,7 @@ void CouplerPanel::OnCoupleToSubsequentUnisonIntermanualCouplers(wxCommandEvent&
 		m_coupleToSubsequentUnisonIntermanualCouplersNo->SetValue(true);
 		m_coupler->setCoupleToSubsequentUnisonIntermanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCoupleToSubsequentUpwardIntermanualCouplers(wxCommandEvent& event) {
@@ -776,6 +787,7 @@ void CouplerPanel::OnCoupleToSubsequentUpwardIntermanualCouplers(wxCommandEvent&
 		m_coupleToSubsequentUpwardIntermanualCouplersNo->SetValue(true);
 		m_coupler->setCoupleToSubsequentUpwardIntermanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCoupleToSubsequentDownwardIntermanualCouplers(wxCommandEvent& event) {
@@ -786,6 +798,7 @@ void CouplerPanel::OnCoupleToSubsequentDownwardIntermanualCouplers(wxCommandEven
 		m_coupleToSubsequentDownwardIntermanualCouplersNo->SetValue(true);
 		m_coupler->setCoupleToSubsequentDownwardIntermanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCoupleToSubsequentUpwardIntramanualCouplers(wxCommandEvent& event) {
@@ -796,6 +809,7 @@ void CouplerPanel::OnCoupleToSubsequentUpwardIntramanualCouplers(wxCommandEvent&
 		m_coupleToSubsequentUpwardIntramanualCouplersNo->SetValue(true);
 		m_coupler->setCoupleToSubsequentUpwardIntramanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnCoupleToSubsequentDownwardIntramanualCouplers(wxCommandEvent& event) {
@@ -806,14 +820,17 @@ void CouplerPanel::OnCoupleToSubsequentDownwardIntramanualCouplers(wxCommandEven
 		m_coupleToSubsequentDownwardIntramanualCouplersNo->SetValue(true);
 		m_coupler->setCoupleToSubsequentDownwardIntramanualCouplers(false);
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnFirstMidiNoteNumberSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_coupler->setFirstMidiNoteNumber(m_firstMIDINoteNumberSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnNumberOfKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_coupler->setNumberOfKeys(m_numberOfKeysSpin->GetValue());
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void CouplerPanel::OnRemoveCouplerBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -840,6 +857,7 @@ void CouplerPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
@@ -855,6 +873,7 @@ void CouplerPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_coupler->removeSwitchReference(sw);
 		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

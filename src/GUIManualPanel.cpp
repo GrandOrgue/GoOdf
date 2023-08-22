@@ -736,6 +736,7 @@ void GUIManualPanel::OnForceWriteWidthRadio(wxCommandEvent& event) {
 			currentKey->ForceWritingWidth = false;
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnImageNumberChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -914,6 +915,7 @@ void GUIManualPanel::OnAddImageOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnAddImageOffBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -974,6 +976,7 @@ void GUIManualPanel::OnAddMaskOffBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1001,6 +1004,7 @@ void GUIManualPanel::OnAddMaskOnBtn(wxCommandEvent& WXUNUSED(event)) {
 			}
 		}
 	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnWidthSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1027,21 +1031,25 @@ void GUIManualPanel::OnOffsetYSpin(wxSpinEvent& WXUNUSED(event)) {
 void GUIManualPanel::OnMouseRectLeftSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->MouseRectLeft = m_mouseRectLeftSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnMouseRectTopSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->MouseRectTop = m_mouseRectTopSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnMouseRectWidthSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->MouseRectWidth = m_mouseRectWidthSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnMouseRectHeightSpin(wxSpinEvent& WXUNUSED(event)) {
 	KEYTYPE *key = m_manual->getKeytypeAt(m_addedKeyTypes->GetSelection());
 	key->MouseRectHeight = m_mouseRectHeightSpin->GetValue();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void GUIManualPanel::OnDisplayKeysSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -1075,6 +1083,7 @@ void GUIManualPanel::OnBackendMIDIkeySpin(wxSpinEvent& WXUNUSED(event)) {
 	int selectedIndex = m_displayKeyChoice->GetSelection();
 	if (selectedIndex != wxNOT_FOUND) {
 		m_manual->getDisplayKeyAt(selectedIndex)->first = m_backendMIDIkey->GetValue();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 

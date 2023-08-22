@@ -174,12 +174,14 @@ public:
 	const wxArrayString& getSetterElements() const;
 	const wxArrayString& getOrganElements() const;
 	std::pair<wxString, int> getTypeAndIndexOfElement(int index);
-	void organElementHasChanged();
+	void organElementHasChanged(bool isParsing = false);
 	void updateRelativePipePaths();
 	bool isModified();
+	void setModified(bool modified);
 
 private:
 	wxString m_odfRoot;
+	bool m_isModified;
 	// Organ properties
 	wxString m_churchName;
 	wxString m_churchAddress;
