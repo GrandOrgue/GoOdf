@@ -31,6 +31,7 @@ BEGIN_EVENT_TABLE(GUIRepresentationDrawingPanel, wxPanel)
 	EVT_LEFT_UP(GUIRepresentationDrawingPanel::OnLeftRelease)
 	EVT_KEY_DOWN(GUIRepresentationDrawingPanel::OnKeyboardInput)
 	EVT_CHAR(GUIRepresentationDrawingPanel::OnKeyboardInput)
+	EVT_KEY_UP(GUIRepresentationDrawingPanel::OnKeyRelease)
 	EVT_SIZE(GUIRepresentationDrawingPanel::OnPanelSize)
 END_EVENT_TABLE()
 
@@ -193,8 +194,35 @@ void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 			m_guiObjects[m_selectedObjectIndex].boundingRect.y = yPos;
 			::wxGetApp().m_frame->GUIElementPositionIsChanged();
 
-			DoPaintNow();
+			wxClientDC dc(this);
+			wxDCOverlay overlaydc(m_overlay, &dc);
+			overlaydc.Clear();
+			dc.SetBrush(*wxTRANSPARENT_BRUSH);
+			dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
+			wxRect tempOutline(
+				xPos,
+				yPos,
+				m_guiObjects[m_selectedObjectIndex].boundingRect.width,
+				m_guiObjects[m_selectedObjectIndex].boundingRect.height
+			);
+			dc.DrawRectangle(tempOutline);
+			dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+			dc.SetTextForeground(*wxYELLOW);
+			dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
 
+			return;
+		} else {
+			event.Skip();
+		}
+	}
+	event.Skip();
+}
+
+void GUIRepresentationDrawingPanel::OnKeyRelease(wxKeyEvent& event) {
+	if (m_selectedObjectIndex > -1) {
+		if (event.IsKeyInCategory(WXK_CATEGORY_NAVIGATION)) {
+			// When key is released a full re-paint is made
+			DoPaintNow();
 			return;
 		} else {
 			event.Skip();

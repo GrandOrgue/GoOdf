@@ -96,6 +96,7 @@ private:
 	void OnMouseMotion(wxMouseEvent& event);
 	void OnLeftRelease(wxMouseEvent& event);
 	void OnKeyboardInput(wxKeyEvent& event);
+	void OnKeyRelease(wxKeyEvent& event);
 	void OnPanelSize(wxSizeEvent& event);
 
 };
