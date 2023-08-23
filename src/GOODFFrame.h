@@ -53,6 +53,7 @@ public:
 	~GOODFFrame();
 
 	void OnQuit(wxCommandEvent& event);
+	void OnClose(wxCloseEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnHelp(wxCommandEvent& event);
 	void OnWriteODF(wxCommandEvent& event);

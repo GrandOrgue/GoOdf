@@ -55,6 +55,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_BUTTON(ID_ADD_GENERAL_BTN, GOODFFrame::OnAddNewGeneral)
 	EVT_BUTTON(ID_ADD_REVERSIBLE_PISTON_BTN, GOODFFrame::OnAddNewReversiblePiston)
 	EVT_BUTTON(ID_ADD_PANEL_BTN, GOODFFrame::OnAddNewPanel)
+	EVT_CLOSE(GOODFFrame::OnClose)
 END_EVENT_TABLE()
 
 GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
@@ -353,13 +354,54 @@ void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
+	/*
+	if (m_organ->isModified()) {
+		// Ask if user wants to save/write the organ file
+		wxMessageDialog dlg(this, wxT("ODF file is modified. Do you want to save/write it?"), wxT("ODF file is modified"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (dlg.ShowModal() == wxID_YES) {
+			// Try triggering save/write by posting an event
+			wxCommandEvent evt(wxEVT_MENU, ID_WRITE_ODF);
+			wxPostEvent(this, evt);
+
+			if (m_organ->isModified()) {
+				// This means that the save failed, ask if the user wants to abort the quitting to fix the issue
+				wxMessageDialog confirmDlg(this, wxT("ODF file couldn't be saved/written! Do you want to return to fix it before quitting?"), wxT("ODF file couldn't be saved"), wxYES_NO|wxCENTRE|wxICON_ERROR);
+				if (confirmDlg.ShowModal() == wxID_YES) {
+					return;
+				}
+			}
+		}
+	} */
 	// Destroy the frame
 	Close();
 }
 
+void GOODFFrame::OnClose(wxCloseEvent& event) {
+	if (event.CanVeto() && m_organ->isModified()) {
+		// Ask if user wants to save/write the organ file
+		wxMessageDialog dlg(this, wxT("ODF file is modified. Do you want to save/write it?"), wxT("ODF file is modified"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (dlg.ShowModal() == wxID_YES) {
+			// Try triggering save/write by posting an event
+			wxCommandEvent evt(wxEVT_MENU, ID_WRITE_ODF);
+			wxPostEvent(this, evt);
+
+			if (m_organ->isModified()) {
+				// This means that the save failed, ask if the user wants to abort the quitting to fix the issue
+				wxMessageDialog confirmDlg(this, wxT("ODF file couldn't be saved/written! Do you want to return to fix it before quitting?"), wxT("ODF file couldn't be saved"), wxYES_NO|wxCENTRE|wxICON_ERROR);
+				if (confirmDlg.ShowModal() == wxID_YES) {
+					event.Veto();
+					return;
+				}
+			}
+		}
+	}
+	// Destroy the frame
+	Destroy();
+}
+
 void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organPanel->getOdfPath().IsEmpty() || m_organPanel->getOdfName().IsEmpty()) {
-		wxMessageDialog incomplete(this, wxT("Path and name for ODF must be set!"), wxT("Cannot write ODF"), wxOK|wxCENTRE);
+		wxMessageDialog incomplete(this, wxT("Both path (location) and name for ODF must be set!"), wxT("Cannot write ODF"), wxOK|wxCENTRE);
 		incomplete.ShowModal();
 		return;
 	}
