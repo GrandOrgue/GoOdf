@@ -154,7 +154,6 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 		m_startDragY = -1;
 
 		::wxGetApp().m_frame->GUIElementPositionIsChanged();
-		UpdateLayout();
 		DoPaintNow();
 	}
 	event.Skip();
@@ -193,7 +192,7 @@ void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 			m_guiObjects[m_selectedObjectIndex].boundingRect.x = xPos;
 			m_guiObjects[m_selectedObjectIndex].boundingRect.y = yPos;
 			::wxGetApp().m_frame->GUIElementPositionIsChanged();
-			UpdateLayout();
+
 			DoPaintNow();
 
 			return;
@@ -876,6 +875,7 @@ void GUIRepresentationDrawingPanel::InitFont() {
 	m_FontScale = 62.0 / cy;
 }
 
-void  GUIRepresentationDrawingPanel::OnPanelSize(wxSizeEvent& WXUNUSED(event)) {
+void GUIRepresentationDrawingPanel::OnPanelSize(wxSizeEvent& WXUNUSED(event)) {
 	GetParent()->SetClientSize(GetClientSize());
+	GetParent()->SetMaxClientSize(GetClientSize());
 }

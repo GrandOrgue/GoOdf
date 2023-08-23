@@ -245,12 +245,16 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 }
 
 GoPanelPanel::~GoPanelPanel() {
-
+	if (m_guiRepresentation)
+		m_guiRepresentation->Destroy();
 }
 
 void GoPanelPanel::setPanel(GoPanel *panel) {
 	m_panel = panel;
 	m_guiRepresentation->SetCurrentPanel(m_panel);
+	if (m_guiRepresentation->IsShown()) {
+		m_guiRepresentation->DoUpdateLayout();
+	}
 	// if this is the main panel certain things cannot be done/changed
 	if (::wxGetApp().m_frame->m_organ->getOrganPanelAt(0) == m_panel) {
 		m_nameField->ChangeValue(m_panel->getName());
@@ -614,9 +618,13 @@ void GoPanelPanel::OnLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GoPanelPanel::OnShowPanelBtn(wxCommandEvent& WXUNUSED(event)) {
-	m_guiRepresentation->SetTitle(m_panel->getName());
-	m_guiRepresentation->Show();
-	m_guiRepresentation->DoUpdateLayout();
+	if (!m_guiRepresentation->IsShown()) {
+		m_guiRepresentation->Destroy();
+		m_guiRepresentation = new GUIPanelRepresentation(this, wxT("Panel"));
+		m_guiRepresentation->SetCurrentPanel(m_panel);
+		m_guiRepresentation->Show();
+		m_guiRepresentation->DoUpdateLayout();
+	}
 }
 
 void GoPanelPanel::ShouldCombinationControlsBeEnabled() {

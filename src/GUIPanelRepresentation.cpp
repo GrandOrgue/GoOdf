@@ -21,7 +21,10 @@
 #include "GUIPanelRepresentation.h"
 
 GUIPanelRepresentation::GUIPanelRepresentation(wxWindow *parent, const wxString& title) : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX) {
+	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
 	m_drawingPanel = new GUIRepresentationDrawingPanel(this);
+	topSizer->Add(m_drawingPanel, 1, wxEXPAND);
+	SetSizerAndFit(topSizer);
 }
 
 GUIPanelRepresentation::~GUIPanelRepresentation() {
