@@ -19,6 +19,7 @@
  */
 
 #include "Organ.h"
+#include "GOODF.h"
 #include "GOODFFunctions.h"
 #include <algorithm>
 
@@ -1816,4 +1817,5 @@ bool Organ::isModified() {
 
 void Organ::setModified(bool modified) {
 	m_isModified = modified;
+	::wxGetApp().m_frame->UpdateFrameTitle();
 }

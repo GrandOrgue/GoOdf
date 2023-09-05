@@ -578,7 +578,7 @@ GeneralPanel::~GeneralPanel() {
 
 void GeneralPanel::setGeneral(General *general) {
 	m_general = general;
-	m_nameField->SetValue(m_general->getName());
+	m_nameField->ChangeValue(m_general->getName());
 	if (m_general->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

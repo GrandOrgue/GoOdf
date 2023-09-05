@@ -593,7 +593,7 @@ GUIEnclosurePanel::~GUIEnclosurePanel() {
 
 void GUIEnclosurePanel::GUIEnclosurePanel::setEnclosure(GUIEnclosure *enclosure) {
 	m_enclosure = enclosure;
-	m_labelTextField->SetValue(m_enclosure->getDispLabelText());
+	m_labelTextField->ChangeValue(m_enclosure->getDispLabelText());
 	m_labelFont->SetSelectedFont(m_enclosure->getDispLabelFont());
 	if (m_enclosure->getDispLabelColour()->getSelectedColorIndex() == 0) {
 		// it's a custom color

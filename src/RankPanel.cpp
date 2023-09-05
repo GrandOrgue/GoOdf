@@ -556,7 +556,7 @@ void RankPanel::setRank(Rank *rank) {
 		m_windchestChoice->Insert(availableWindchests, 0);
 	}
 
-	m_nameField->SetValue(m_rank->getName());
+	m_nameField->ChangeValue(m_rank->getName());
 	if (m_rank->getWindchest() != NULL)
 		m_windchestChoice->SetSelection((int) (::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(m_rank->getWindchest()) - 1));
 	m_firstMidiNoteNumberSpin->SetValue(m_rank->getFirstMidiNoteNumber());
@@ -592,7 +592,7 @@ void RankPanel::setRank(Rank *rank) {
 }
 
 void RankPanel::setNameFieldValue(wxString name) {
-	m_nameField->SetValue(name);
+	m_nameField->ChangeValue(name);
 }
 
 void RankPanel::disableNameFieldInput() {

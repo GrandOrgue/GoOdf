@@ -213,7 +213,7 @@ ReversiblePistonPanel::~ReversiblePistonPanel() {
 
 void ReversiblePistonPanel::setReversiblePiston(ReversiblePiston *piston) {
 	m_piston = piston;
-	m_nameField->SetValue(m_piston->getName());
+	m_nameField->ChangeValue(m_piston->getName());
 	if (m_piston->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

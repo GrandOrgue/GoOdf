@@ -170,7 +170,7 @@ WindchestgroupPanel::~WindchestgroupPanel() {
 
 void WindchestgroupPanel::setWindchest(Windchestgroup *windchest) {
 	m_windchest = windchest;
-	m_nameField->SetValue(m_windchest->getName());
+	m_nameField->ChangeValue(m_windchest->getName());
 
 	// Update/populate available enclosures
 	wxArrayString organEnclosures;

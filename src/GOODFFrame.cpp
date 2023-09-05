@@ -354,24 +354,6 @@ void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
-	/*
-	if (m_organ->isModified()) {
-		// Ask if user wants to save/write the organ file
-		wxMessageDialog dlg(this, wxT("ODF file is modified. Do you want to save/write it?"), wxT("ODF file is modified"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
-		if (dlg.ShowModal() == wxID_YES) {
-			// Try triggering save/write by posting an event
-			wxCommandEvent evt(wxEVT_MENU, ID_WRITE_ODF);
-			wxPostEvent(this, evt);
-
-			if (m_organ->isModified()) {
-				// This means that the save failed, ask if the user wants to abort the quitting to fix the issue
-				wxMessageDialog confirmDlg(this, wxT("ODF file couldn't be saved/written! Do you want to return to fix it before quitting?"), wxT("ODF file couldn't be saved"), wxYES_NO|wxCENTRE|wxICON_ERROR);
-				if (confirmDlg.ShowModal() == wxID_YES) {
-					return;
-				}
-			}
-		}
-	} */
 	// Destroy the frame
 	Close();
 }
@@ -430,6 +412,7 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	delete odfFile;
 	m_organHasBeenSaved = true;
 	m_organ->setModified(false);
+	UpdateFrameTitle();
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
@@ -527,6 +510,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 			}
 			RebuildPanelGuiElementsInTree(i);
 		}
+		UpdateFrameTitle();
 	} else {
 		if (m_organ) {
 			delete m_organ;
@@ -539,6 +523,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		m_organPanel->setCurrentOrgan(m_organ);
 		m_organPanel->setOdfPath(wxEmptyString);
 		m_organPanel->setOdfName(wxEmptyString);
+		SetTitle(::wxGetApp().m_fullAppName);
 	}
 	m_organ->organElementHasChanged(true);
 	m_organTreeCtrl->SelectItem(tree_organ);
@@ -2367,6 +2352,7 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 			m_organPanel->setCurrentOrgan(m_organ);
 			m_organPanel->setOdfPath(wxEmptyString);
 			m_organPanel->setOdfName(wxEmptyString);
+			SetTitle(::wxGetApp().m_fullAppName);
 		}
 	} else {
 		if (m_organ) {
@@ -2533,6 +2519,14 @@ void GOODFFrame::GUIElementPositionIsChanged() {
 	m_guiLabelPanel->updatePositionValues();
 	m_guiManualPanel->updatePositionValues();
 	m_organ->setModified(true);
+}
+
+void GOODFFrame::UpdateFrameTitle() {
+	if (m_organ->isModified()) {
+		SetTitle(::wxGetApp().m_fullAppName + wxT(" - ") + m_organPanel->getOdfName() + wxT(" (modified)"));
+	} else {
+		SetTitle(::wxGetApp().m_fullAppName + wxT(" - ") + m_organPanel->getOdfName());
+	}
 }
 
 void GOODFFrame::removeAllItemsFromTree() {

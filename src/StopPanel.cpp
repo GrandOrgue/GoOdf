@@ -537,7 +537,7 @@ void StopPanel::setStop(Stop *stop) {
 	m_internalRankPanel->setRank(m_stop->getInternalRank());
 	m_internalRankPanel->setNameFieldValue(m_stop->getName());
 	m_internalRankPanel->disableNameFieldInput();
-	m_nameField->SetValue(m_stop->getName());
+	m_nameField->ChangeValue(m_stop->getName());
 	if (m_stop->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

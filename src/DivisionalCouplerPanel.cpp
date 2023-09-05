@@ -336,7 +336,7 @@ DivisionalCouplerPanel::~DivisionalCouplerPanel() {
 
 void DivisionalCouplerPanel::setDivisionalCoupler(DivisionalCoupler *divCplr) {
 	m_divCplr = divCplr;
-	m_nameField->SetValue(m_divCplr->getName());
+	m_nameField->ChangeValue(m_divCplr->getName());
 	if (m_divCplr->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

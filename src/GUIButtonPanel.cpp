@@ -715,7 +715,7 @@ GUIButtonPanel::~GUIButtonPanel() {
 
 void GUIButtonPanel::setButton(GUIButton *button) {
 	m_button = button;
-	m_labelTextField->SetValue(m_button->getDispLabelText());
+	m_labelTextField->ChangeValue(m_button->getDispLabelText());
 	m_labelFont->SetFont(m_button->getDispLabelFont());
 	m_labelFont->SetLabel(m_button->getDispLabelFont().GetFaceName() + wxString::Format(wxT(" %i"), m_button->getDispLabelFontSize()->getSizeValue()));
 	if (m_button->getDispLabelColour()->getSelectedColorIndex() == 0) {

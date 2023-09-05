@@ -31,11 +31,11 @@ IMPLEMENT_APP(GOODF)
 
 bool GOODF::OnInit() {
 	// Create fullAppName with version from cmake
-	wxString fullAppName = wxT("GOODF ");
-	fullAppName.Append(wxT(GOODF_VERSION));
+	m_fullAppName = wxT("GOODF ");
+	m_fullAppName.Append(wxT(GOODF_VERSION));
 
 	// Create the frame window
-	m_frame = new GOODFFrame(fullAppName);
+	m_frame = new GOODFFrame(m_fullAppName);
 
 	// Fix paths/locations
 	wxFileName fn(wxStandardPaths::Get().GetExecutablePath());

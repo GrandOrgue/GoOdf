@@ -405,7 +405,7 @@ TremulantPanel::~TremulantPanel() {
 
 void TremulantPanel::setTremulant(Tremulant *tremulant) {
 	m_tremulant = tremulant;
-	m_nameField->SetValue(m_tremulant->getName());
+	m_nameField->ChangeValue(m_tremulant->getName());
 	if (m_tremulant->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

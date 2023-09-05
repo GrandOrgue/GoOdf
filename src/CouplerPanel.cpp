@@ -563,7 +563,7 @@ CouplerPanel::~CouplerPanel() {
 
 void CouplerPanel::setCoupler(Coupler *coupler) {
 	m_coupler = coupler;
-	m_nameField->SetValue(m_coupler->getName());
+	m_nameField->ChangeValue(m_coupler->getName());
 	if (m_coupler->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

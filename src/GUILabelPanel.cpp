@@ -601,7 +601,7 @@ GUILabelPanel::~GUILabelPanel() {
 
 void GUILabelPanel::setLabel(GUILabel *label) {
 	m_label = label;
-	m_labelTextField->SetValue(m_label->getName());
+	m_labelTextField->ChangeValue(m_label->getName());
 	if (m_label->getType().IsSameAs(wxT("Label")))
 		m_labelTextField->Enable();
 	else

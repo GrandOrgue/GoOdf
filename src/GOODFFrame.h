@@ -71,6 +71,7 @@ public:
 	void RebuildPanelGuiElementsInTree(int panelIndex);
 	void PanelGUIPropertyIsChanged();
 	void GUIElementPositionIsChanged();
+	void UpdateFrameTitle();
 
 	Organ *m_organ;
 

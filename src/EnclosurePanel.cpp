@@ -101,7 +101,7 @@ EnclosurePanel::~EnclosurePanel() {
 
 void EnclosurePanel::setEnclosure(Enclosure *enclosure) {
 	m_enclosure = enclosure;
-	m_nameField->SetValue(m_enclosure->getName());
+	m_nameField->ChangeValue(m_enclosure->getName());
 	m_ampMinLvlSpin->SetValue(m_enclosure->getAmpMinimumLevel());
 }
 

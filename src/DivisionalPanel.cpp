@@ -487,7 +487,7 @@ DivisionalPanel::~DivisionalPanel() {
 
 void DivisionalPanel::setDivisional(Divisional *divisional) {
 	m_divisional = divisional;
-	m_nameField->SetValue(m_divisional->getName());
+	m_nameField->ChangeValue(m_divisional->getName());
 	if (m_divisional->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

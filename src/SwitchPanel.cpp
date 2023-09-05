@@ -298,7 +298,7 @@ SwitchPanel::~SwitchPanel() {
 
 void SwitchPanel::setSwitch(GoSwitch *sw) {
 	m_switch = sw;
-	m_nameField->SetValue(m_switch->getName());
+	m_nameField->ChangeValue(m_switch->getName());
 	if (m_switch->isDisplayedInverted())
 		m_displayInvertedYes->SetValue(true);
 	else

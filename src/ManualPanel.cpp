@@ -383,7 +383,7 @@ ManualPanel::~ManualPanel() {
 
 void ManualPanel::setManual(Manual *manual) {
 	m_manual = manual;
-	m_nameField->SetValue(m_manual->getName());
+	m_nameField->ChangeValue(m_manual->getName());
 	if (m_manual == ::wxGetApp().m_frame->m_organ->getOrganManualAt(0))
 		m_thisIsThePedalCheckbox->Enable(true);
 	else

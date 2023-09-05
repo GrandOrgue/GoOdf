@@ -63,6 +63,7 @@ public:
 	std::vector<wxBitmap> m_woodBitmaps;
 	std::vector<wxBitmap> m_scaledWoodBitmaps;
 	wxHtmlHelpController *m_helpController;
+	wxString m_fullAppName;
 };
 
 DECLARE_APP(GOODF)
