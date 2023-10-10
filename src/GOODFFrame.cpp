@@ -1316,14 +1316,31 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 void GOODFFrame::OnOrganTreeLeftDrag(wxTreeEvent& event) {
 	// Only allow dragging if item is a switch, manual, windchestgroup, rank, stop, gui element
 	wxTreeItemId sourceItem = event.GetItem();
+	if (sourceItem == tree_organ ||
+		sourceItem == tree_manuals ||
+		sourceItem == tree_windchestgrps ||
+		sourceItem == tree_enclosures ||
+		sourceItem == tree_tremulants ||
+		sourceItem == tree_ranks ||
+		sourceItem == tree_switches ||
+		sourceItem == tree_reversiblePistons ||
+		sourceItem == tree_divisionalCouplers ||
+		sourceItem == tree_generals ||
+		sourceItem == tree_panels
+	) {
+		return;
+	}
 	wxTreeItemId sourceParent = m_organTreeCtrl->GetItemParent(sourceItem);
 	wxTreeItemId sourceGrandParent = m_organTreeCtrl->GetItemParent(sourceParent);
+	wxTreeItemIdValue cookie;
+	wxTreeItemId mainPanel = m_organTreeCtrl->GetFirstChild(tree_panels, cookie);
 	if ((sourceParent == tree_switches && m_organTreeCtrl->GetChildrenCount(tree_switches, false) > 1) ||
 		(sourceParent == tree_manuals && m_organTreeCtrl->GetChildrenCount(tree_manuals, false) > 1) ||
 		(sourceParent == tree_windchestgrps && m_organTreeCtrl->GetChildrenCount(tree_windchestgrps, false) > 1) ||
 		(sourceParent == tree_ranks && m_organTreeCtrl->GetChildrenCount(tree_ranks, false) > 1) ||
 		(m_organTreeCtrl->GetItemText(sourceParent) == wxT("Stops") && m_organTreeCtrl->GetItemText(m_organTreeCtrl->GetNextSibling(sourceParent)) == wxT("Couplers")) ||
-		(m_organTreeCtrl->GetItemParent(sourceGrandParent) == tree_panels && m_organTreeCtrl->GetItemText(sourceParent) == wxT("GUI Elements") && m_organTreeCtrl->GetChildrenCount(sourceParent, false) > 1)
+		(m_organTreeCtrl->GetItemParent(sourceGrandParent) == tree_panels && m_organTreeCtrl->GetItemText(sourceParent) == wxT("GUI Elements") && m_organTreeCtrl->GetChildrenCount(sourceParent, false) > 1) ||
+		(sourceParent == tree_panels && sourceItem != mainPanel)
 	) {
 		m_draggedItem = sourceItem;
 		event.Allow();
@@ -1836,6 +1853,49 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(srcParent, 0, m_organTreeCtrl->GetItemText(srcItem));
 		m_organTreeCtrl->Delete(srcItem);
 		m_organ->getOrganPanelAt(panelIndex)->moveGuiElement(sourceIndex, 0);
+		m_organTreeCtrl->SelectItem(newPos);
+		m_organ->setModified(true);
+	} else if (dstParent == tree_panels && srcParent == tree_panels) {
+		// Check if the move is invalid and if so just return
+		if (m_organTreeCtrl->GetNextSibling(dstItem) == srcItem) {
+			return;
+		}
+		// Otherwise drop the panel after the destination panel as main panel must always be first
+		int targetIndex = 0;
+		int sourceIndex = 0;
+		int numChildrens = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+		wxTreeItemIdValue cookie;
+		for (int i = 0; i < numChildrens; i++) {
+			wxTreeItemId currentId;
+			if (i == 0)
+				currentId = m_organTreeCtrl->GetFirstChild(tree_panels, cookie);
+			else
+				currentId = m_organTreeCtrl->GetNextChild(tree_panels, cookie);
+			if (dstItem == currentId) {
+				// this is the target we're looking for
+				targetIndex = i;
+			}
+			if (srcItem == currentId) {
+				sourceIndex = i;
+			}
+		}
+		if (targetIndex < numChildrens) {
+			targetIndex += 1;
+		}
+		GoPanel *thePanel = m_organ->getOrganPanelAt(sourceIndex);
+		wxTreeItemId newPos = m_organTreeCtrl->InsertItem(tree_panels, dstItem, m_organTreeCtrl->GetItemText(srcItem));
+		// create the subitems for Display metrics, Images and GUI Elements
+		m_organTreeCtrl->AppendItem(newPos, wxT("Displaymetrics"));
+		wxTreeItemId newImages = m_organTreeCtrl->AppendItem(newPos, wxT("Images"));
+		for (unsigned j = 0; j < thePanel->getNumberOfImages(); j++) {
+			m_organTreeCtrl->AppendItem(newImages, thePanel->getImageAt(j)->getImageNameOnly());
+		}
+		wxTreeItemId newGuiElements = m_organTreeCtrl->AppendItem(newPos, wxT("GUI Elements"));
+		for (unsigned j = 0; j < (unsigned) thePanel->getNumberOfGuiElements(); j++) {
+			m_organTreeCtrl->AppendItem(newGuiElements, thePanel->getGuiElementAt(j)->getDisplayName());
+		}
+		m_organTreeCtrl->Delete(srcItem);
+		m_organ->movePanel(sourceIndex, targetIndex);
 		m_organTreeCtrl->SelectItem(newPos);
 		m_organ->setModified(true);
 	}

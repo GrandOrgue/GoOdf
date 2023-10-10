@@ -164,6 +164,7 @@ public:
 	void addPanel(GoPanel panel);
 	void removePanelAt(unsigned index);
 	void removePanel(GoPanel *panel);
+	void movePanel(int sourceIndex, int toBeforeIndex);
 	void panelDisplayMetricsUpdate(DisplayMetrics *metrics);
 	void panelApplyButtonFontName(DisplayMetrics *metrics);
 	void panelApplyButtonFontSize(DisplayMetrics *metrics);

@@ -1530,6 +1530,19 @@ void Organ::removePanel(GoPanel *panel) {
 	}
 }
 
+void Organ::movePanel(int sourceIndex, int toBeforeIndex) {
+	auto theOneToMove = std::next(m_Panels.begin(), sourceIndex);
+	std::list<GoPanel>::iterator it = m_Panels.begin();
+
+	if (toBeforeIndex > (int) m_Panels.size() - 1) {
+		it = m_Panels.end();
+	} else {
+		it = std::next(m_Panels.begin(), toBeforeIndex);
+	}
+
+	m_Panels.splice(it, m_Panels, theOneToMove);
+}
+
 void Organ::panelDisplayMetricsUpdate(DisplayMetrics *metrics) {
 	for (GoPanel &p : m_Panels) {
 		if (p.getDisplayMetrics() == metrics) {
