@@ -31,6 +31,7 @@
 #include "AttackDialog.h"
 #include "StopPanel.h"
 #include "PipeBorrowingDialog.h"
+#include "PipeCopyOffsetDialog.h"
 #include <algorithm>
 
 // Event table
@@ -828,8 +829,9 @@ void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 		mnu.Append(ID_PIPE_MENU_ADD_ATTACK, "Add new attack from...\tCtrl+A");
 		mnu.Append(ID_PIPE_MENU_ADD_RELEASE, "Add new release from...\tCtrl+R");
 		mnu.Append(ID_PIPE_MENU_CREATE_REFERENCE, "Borrow pipe...\tCtrl+B");
-		mnu.Append(ID_PIPE_MENU_CLEAR_PIPE, "Reset this pipe\tDel");
+		mnu.Append(ID_PIPE_MENU_COPY_PIPE_OFFSET, "Copy this pipe offset to...\tCtrl+C");
 		mnu.Append(ID_PIPE_MENU_EDIT_PIPE, "Edit pipe properties\tCtrl+E");
+		mnu.Append(ID_PIPE_MENU_CLEAR_PIPE, "Reset this pipe\tDel");
 		showMenu = true;
 	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Attack(s)") ||
 		(m_pipeTreeCtrl->GetItemParent(m_pipeTreeCtrl->GetItemParent(selectedItem)) == m_tree_rank_root &&
@@ -882,6 +884,9 @@ void RankPanel::OnPopupMenuClick(wxCommandEvent &evt) {
 			break;
 		case ID_PIPE_MENU_REMOVE_SELECTED_RELEASE:
 			OnRemoveSelectedRelease();
+			break;
+		case ID_PIPE_MENU_COPY_PIPE_OFFSET:
+			OnCopyPipeOffset();
 			break;
 	}
 }
@@ -1083,7 +1088,7 @@ void RankPanel::OnAddNewRelease() {
 
 void RankPanel::OnClearPipe() {
 	int pipeIndex = GetSelectedItemIndexRelativeParent();
-	if  (pipeIndex < 0)
+	if (pipeIndex < 0)
 		return;
 
 	m_rank->clearPipeAt((unsigned) pipeIndex);
@@ -1253,6 +1258,67 @@ void RankPanel::OnRemoveSelectedRelease() {
 		m_pipeTreeCtrl->ExpandAllChildren(toSelect);
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+void RankPanel::OnCopyPipeOffset() {
+	int selectedPipeIndex = GetSelectedItemIndexRelativeParent();
+	if (selectedPipeIndex < 0)
+		return;
+
+	PipeCopyOffsetDialog copyDlg(m_pipeTreeCtrl->GetChildrenCount(m_tree_rank_root, false), selectedPipeIndex, this);
+	if (copyDlg.ShowModal() == wxID_OK) {
+		wxArrayInt targetPipes;
+		if (copyDlg.GetSelectedIndices(targetPipes)) {
+			Pipe *source = m_rank->getPipeAt(selectedPipeIndex);
+			// there are valid target pipes to copy to with offset
+			for (unsigned i = 0; i < targetPipes.size(); i++) {
+				int targetIdx = targetPipes[i];
+				int offset = targetIdx - selectedPipeIndex;
+				Pipe *target = m_rank->getPipeAt(targetIdx);
+
+				target->isPercussive = source->isPercussive;
+				target->amplitudeLevel = source->amplitudeLevel;
+				target->gain = source->gain;
+				float newPitchTuning = source->pitchTuning + (offset * 100);
+				if (newPitchTuning < -1800)
+					newPitchTuning = -1800;
+				if (newPitchTuning > 1800)
+					newPitchTuning = 1800;
+				target->pitchTuning = newPitchTuning;
+				target->trackerDelay = source->trackerDelay;
+				target->harmonicNumber = source->harmonicNumber;
+				target->midiKeyNumber = source->midiKeyNumber;
+				target->midiPitchFraction = source->midiPitchFraction;
+				target->pitchCorrection = source->pitchCorrection;
+				target->acceptsRetuning = source->acceptsRetuning;
+				target->windchest = source->windchest;
+				target->minVelocityVolume = source->minVelocityVolume;
+				target->maxVelocityVolume = source->maxVelocityVolume;
+				target->loopCrossfadeLength = source->loopCrossfadeLength;
+				target->releaseCrossfadeLength = source->releaseCrossfadeLength;
+
+				target->m_attacks.clear();
+				for (Attack atk : source->m_attacks) {
+					target->m_attacks.push_back(atk);
+				}
+
+				target->m_releases.clear();
+				for (Release rel : source->m_releases) {
+					target->m_releases.push_back(rel);
+				}
+			}
+
+			RebuildPipeTree();
+			UpdatePipeTree();
+
+			wxTreeItemId toSelect = GetPipeTreeItemAt(selectedPipeIndex);
+			if (toSelect.IsOk()) {
+				m_pipeTreeCtrl->SelectItem(toSelect);
+				m_pipeTreeCtrl->ExpandAllChildren(toSelect);
+			}
+			::wxGetApp().m_frame->m_organ->setModified(true);
+		}
+	}
 }
 
 wxTreeItemId RankPanel::GetPipeTreeItemAt(int index) {
@@ -1440,6 +1506,12 @@ void RankPanel::OnTreeKeyboardInput(wxTreeEvent& event) {
 			case 'E':
 				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
 					OnEditPipe();
+				else
+					event.Skip();
+				break;
+			case 'C':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnCopyPipeOffset();
 				else
 					event.Skip();
 				break;

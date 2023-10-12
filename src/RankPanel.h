@@ -121,6 +121,7 @@ private:
 	void OnEditRelease();
 	void OnRemoveSelectedAttack();
 	void OnRemoveSelectedRelease();
+	void OnCopyPipeOffset();
 	wxTreeItemId GetPipeTreeItemAt(int index);
 	wxTreeItemId GetPipeOfSelection();
 

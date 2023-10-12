@@ -119,6 +119,7 @@ set(APP_SRC
   src/ReleaseDialog.cpp
   src/AttackDialog.cpp
   src/PipeBorrowingDialog.cpp
+  src/PipeCopyOffsetDialog.cpp
   src/RankPanel.cpp
   src/RankReference.cpp
   src/Stop.cpp
