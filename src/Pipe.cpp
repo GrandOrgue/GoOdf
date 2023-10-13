@@ -240,6 +240,11 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 		a.fileName = wxT("DUMMY");
 		a.fullPath = wxT("DUMMY");
 		m_attacks.push_back(a);
+	} else {
+		// update the pipes root path of parent rank from the main attack
+		wxFileName fileName = m_attacks.front().fullPath;
+		wxString pipePath = fileName.GetPath();
+		parent->setPipesRootPath(pipePath);
 	}
 }
 
