@@ -1263,6 +1263,11 @@ void Rank::createNewAttackInPipe(unsigned index, wxString filePath, bool loadRel
 	else
 		relativeFileName = filePath;
 
+	// if the pipe has a DUMMY pipe we'll replace it
+	if (iterator->m_attacks.front().fullPath.IsSameAs(wxT("DUMMY"), true)) {
+		iterator->m_attacks.pop_front();
+	}
+
 	// create and add the attack to the pipe
 	Attack a;
 	a.fileName = relativeFileName;
