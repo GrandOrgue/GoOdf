@@ -1105,6 +1105,11 @@ void RankPanel::OnClearPipe() {
 }
 
 void RankPanel::OnEditPipe() {
+	wxTreeItemId firstSelected = GetPipeTreeItemAt(GetSelectedItemIndexRelativeParent());
+	bool isItemExpanded = false;
+	if (firstSelected.IsOk() && m_pipeTreeCtrl->IsExpanded(firstSelected))
+		isItemExpanded = true;
+
 	PipeDialog dlg(m_rank->m_pipes, (unsigned) GetSelectedItemIndexRelativeParent(), this);
 	dlg.ShowModal();
 
@@ -1114,7 +1119,21 @@ void RankPanel::OnEditPipe() {
 	wxTreeItemId toSelect = GetPipeTreeItemAt(dlg.GetSelectedPipeIndex());
 	if (toSelect.IsOk()) {
 		m_pipeTreeCtrl->SelectItem(toSelect);
-		// m_pipeTreeCtrl->ExpandAllChildren(toSelect);
+		if (isItemExpanded)
+			m_pipeTreeCtrl->ExpandAllChildren(toSelect);
+
+		if (m_pipeTreeCtrl->GetChildrenCount(toSelect) > 0) {
+			wxTreeItemId lastChild = m_pipeTreeCtrl->GetLastChild(toSelect);
+			if (lastChild.IsOk()) {
+				if (m_pipeTreeCtrl->GetChildrenCount(lastChild) > 0) {
+					wxTreeItemId veryLastChild = m_pipeTreeCtrl->GetLastChild(lastChild);
+					if (veryLastChild.IsOk())
+						m_pipeTreeCtrl->EnsureVisible(veryLastChild);
+				} else {
+					m_pipeTreeCtrl->EnsureVisible(lastChild);
+				}
+			}
+		}
 	}
 }
 
