@@ -337,7 +337,10 @@ void Rank::readPipes(
 	bool loadRelease,
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime,
-	wxString tremulantFolderPrefix
+	wxString tremulantFolderPrefix,
+	int startPipeIdx,
+	int firstMatchingNumber,
+	int totalNbrOfPipes
 ) {
 	bool organRootPathIsSet = false;
 
@@ -349,11 +352,13 @@ void Rank::readPipes(
 	if (!pipeRoot.IsOpened())
 		return;
 
-	clearAllPipes();
+	//clearAllPipes();
 
-	for (int i = 0; i < numberOfLogicalPipes; i++) {
-		Pipe p;
-		setupPipeProperties(p);
+	int count = 0;
+	for (int i = startPipeIdx; i < startPipeIdx + totalNbrOfPipes; i++) {
+		emptyPipeAt(i);
+		Pipe *p = getPipeAt(i);
+		setupPipeProperties(*p);
 
 		wxArrayString pipeAttacks;
 		wxArrayString pipeAttacksToAdd;
@@ -390,7 +395,7 @@ void Rank::readPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 			wxDIR_FILES
 		);
 
@@ -399,7 +404,7 @@ void Rank::readPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -410,7 +415,7 @@ void Rank::readPipes(
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
 		// make sure to exactly match the MIDI number
-		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+		exactlyMatchMidiNumber(pipeAttacksToAdd, count + firstMatchingNumber);
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
@@ -429,7 +434,7 @@ void Rank::readPipes(
 				if (hasTremulantFolders)
 					a.isTremulant = 0;
 
-				p.m_attacks.push_back(a);
+				p->m_attacks.push_back(a);
 
 				if (loadOnlyOneAttack)
 					break;
@@ -448,7 +453,7 @@ void Rank::readPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 					wxDIR_FILES
 				);
 
@@ -458,7 +463,7 @@ void Rank::readPipes(
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 				// make sure to exactly match the MIDI number
-				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+				exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -502,7 +507,7 @@ void Rank::readPipes(
 							}
 						}
 
-						p.m_releases.push_back(rel);
+						p->m_releases.push_back(rel);
 
 					}
 				}
@@ -519,13 +524,14 @@ void Rank::readPipes(
 					pipeRoot,
 					m_latestPipesRootPath + wxFILE_SEP_PATH + tremulantFolders.Item(j),
 					pipeAttacks,
-					i
+					count,
+					firstMatchingNumber
 				);
 
 				onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
 				// make sure to exactly match the MIDI number
-				exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+				exactlyMatchMidiNumber(pipeAttacksToAdd, count + firstMatchingNumber);
 
 				// if there are any matching attacks we add them
 				if (!pipeAttacksToAdd.IsEmpty()) {
@@ -543,7 +549,7 @@ void Rank::readPipes(
 						a.loadRelease = loadRelease;
 						a.isTremulant = 1;
 
-						p.m_attacks.push_back(a);
+						p->m_attacks.push_back(a);
 
 					}
 				}
@@ -577,7 +583,8 @@ void Rank::readPipes(
 								tremRoot,
 								currentTremRootPath + wxFILE_SEP_PATH + tremReleaseFolders.Item(k),
 								pipeReleases,
-								i
+								count,
+								firstMatchingNumber
 							);
 						}
 					}
@@ -586,7 +593,7 @@ void Rank::readPipes(
 					onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 					// make sure to exactly match the MIDI number
-					exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+					exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 					// if there are any matching releases we add them
 					if (!pipeReleasesToAdd.IsEmpty()) {
@@ -626,7 +633,7 @@ void Rank::readPipes(
 								}
 							}
 
-							p.m_releases.push_back(rel);
+							p->m_releases.push_back(rel);
 						}
 					}
 
@@ -634,13 +641,14 @@ void Rank::readPipes(
 			}
 		}
 
-		if (p.m_attacks.empty()) {
+		if (p->m_attacks.empty()) {
 			// if we don't have any other attacks for this pipe, just add a single dummy attack
 			Attack a;
-			p.m_attacks.push_back(a);
+			p->m_attacks.push_back(a);
 		}
 
-		m_pipes.push_back(p);
+		//m_pipes.push_back(p);
+		count++;
 	}
 }
 
@@ -650,7 +658,10 @@ void Rank::addToPipes(
 	bool loadRelease,
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime,
-	wxString tremulantFolderPrefix
+	wxString tremulantFolderPrefix,
+	int startPipeIdx,
+	int firstMatchingNumber,
+	int totalNbrOfPipes
 ) {
 	bool organRootPathIsSet = false;
 
@@ -662,7 +673,8 @@ void Rank::addToPipes(
 	if (!pipeRoot.IsOpened())
 		return;
 
-	for (int i = 0; i < numberOfLogicalPipes; i++) {
+	int count = 0;
+	for (int i = startPipeIdx; i < startPipeIdx + totalNbrOfPipes; i++) {
 		Pipe *p = getPipeAt(i);
 
 		wxArrayString pipeAttacks;
@@ -700,7 +712,7 @@ void Rank::addToPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 			wxDIR_FILES
 		);
 
@@ -709,7 +721,7 @@ void Rank::addToPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -720,7 +732,7 @@ void Rank::addToPipes(
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
 		// make sure to exactly match the MIDI number
-		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+		exactlyMatchMidiNumber(pipeAttacksToAdd, count + firstMatchingNumber);
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
@@ -758,7 +770,7 @@ void Rank::addToPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 					wxDIR_FILES
 				);
 
@@ -768,7 +780,7 @@ void Rank::addToPipes(
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 				// make sure to exactly match the MIDI number
-				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+				exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -829,13 +841,14 @@ void Rank::addToPipes(
 					pipeRoot,
 					m_latestPipesRootPath + wxFILE_SEP_PATH + tremulantFolders.Item(j),
 					pipeAttacks,
-					i
+					count,
+					firstMatchingNumber
 				);
 
 				onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
 				// make sure to exactly match the MIDI number
-				exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+				exactlyMatchMidiNumber(pipeAttacksToAdd, count + firstMatchingNumber);
 
 				// if there are any matching attacks we add them
 				if (!pipeAttacksToAdd.IsEmpty()) {
@@ -887,7 +900,8 @@ void Rank::addToPipes(
 								tremRoot,
 								currentTremRootPath + wxFILE_SEP_PATH + tremReleaseFolders.Item(k),
 								pipeReleases,
-								i
+								count,
+								firstMatchingNumber
 							);
 						}
 					}
@@ -896,7 +910,7 @@ void Rank::addToPipes(
 					onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 					// make sure to exactly match the MIDI number
-					exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+					exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 					// if there are any matching releases we add them
 					if (!pipeReleasesToAdd.IsEmpty()) {
@@ -943,6 +957,7 @@ void Rank::addToPipes(
 				}
 			}
 		}
+		count++;
 	}
 }
 
@@ -951,7 +966,10 @@ void Rank::addTremulantToPipes(
 	bool loadOnlyOneAttack,
 	bool loadRelease,
 	wxString releaseFolderPrefix,
-	bool extractKeyPressTime
+	bool extractKeyPressTime,
+	int startPipeIdx,
+	int firstMatchingNumber,
+	int totalNbrOfPipes
 ) {
 	// This method is for adding additional attacks/releases as (wave) tremulants only
 	bool organRootPathIsSet = false;
@@ -964,7 +982,8 @@ void Rank::addTremulantToPipes(
 	if (!pipeRoot.IsOpened())
 		return;
 
-	for (int i = 0; i < numberOfLogicalPipes; i++) {
+	int count = 0;
+	for (int i = startPipeIdx; i < startPipeIdx + totalNbrOfPipes; i++) {
 		Pipe *p = getPipeAt(i);
 
 		wxArrayString pipeAttacks;
@@ -996,7 +1015,7 @@ void Rank::addTremulantToPipes(
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeAttacks,
-			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 			wxDIR_FILES
 		);
 
@@ -1005,7 +1024,7 @@ void Rank::addTremulantToPipes(
 			pipeRoot.GetAllFiles(
 				m_latestPipesRootPath + wxFILE_SEP_PATH + extraAttackFolder,
 				&pipeAttacks,
-				wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+				wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 				wxDIR_FILES
 			);
 		}
@@ -1016,7 +1035,7 @@ void Rank::addTremulantToPipes(
 		onlyAddWaveFiles(pipeAttacks, pipeAttacksToAdd);
 
 		// make sure to exactly match the MIDI number
-		exactlyMatchMidiNumber(pipeAttacksToAdd, i + firstMidiNoteNumber);
+		exactlyMatchMidiNumber(pipeAttacksToAdd, count + firstMatchingNumber);
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
@@ -1053,7 +1072,7 @@ void Rank::addTremulantToPipes(
 				pipeRoot.GetAllFiles(
 					m_latestPipesRootPath + wxFILE_SEP_PATH + releaseFolders.Item(j),
 					&pipeReleases,
-					wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+					wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 					wxDIR_FILES
 				);
 
@@ -1063,7 +1082,7 @@ void Rank::addTremulantToPipes(
 				onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 				// make sure to exactly match the MIDI number
-				exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+				exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
@@ -1115,10 +1134,15 @@ void Rank::addTremulantToPipes(
 				pipeReleasesToAdd.Empty();
 			}
 		}
+		count++;
 	}
 }
 
-void Rank::addReleasesToPipes() {
+void Rank::addReleasesToPipes(
+	int startPipeIdx,
+	int firstMatchingNumber,
+	int totalNbrOfPipes
+) {
 	// This method is for adding releases only from a single folder
 	bool organRootPathIsSet = false;
 
@@ -1130,7 +1154,8 @@ void Rank::addReleasesToPipes() {
 	if (!pipeRoot.IsOpened())
 		return;
 
-	for (int i = 0; i < numberOfLogicalPipes; i++) {
+	int count = 0;
+	for (int i = startPipeIdx; i < startPipeIdx + totalNbrOfPipes; i++) {
 		Pipe *p = getPipeAt(i);
 
 		wxArrayString pipeReleases;
@@ -1140,7 +1165,7 @@ void Rank::addReleasesToPipes() {
 		pipeRoot.GetAllFiles(
 			m_latestPipesRootPath,
 			&pipeReleases,
-			wxString::Format(wxT("*%i*.*"), (i + firstMidiNoteNumber)),
+			wxString::Format(wxT("*%i*.*"), (count + firstMatchingNumber)),
 			wxDIR_FILES
 		);
 
@@ -1150,7 +1175,7 @@ void Rank::addReleasesToPipes() {
 		onlyAddWaveFiles(pipeReleases, pipeReleasesToAdd);
 
 		// make sure to exactly match the MIDI number
-		exactlyMatchMidiNumber(pipeReleasesToAdd, i + firstMidiNoteNumber);
+		exactlyMatchMidiNumber(pipeReleasesToAdd, count + firstMatchingNumber);
 
 		// if there are any matching attacks we add them
 		if (!pipeReleasesToAdd.IsEmpty()) {
@@ -1173,7 +1198,7 @@ void Rank::addReleasesToPipes() {
 
 		pipeReleases.Empty();
 		pipeReleasesToAdd.Empty();
-
+		count++;
 	}
 }
 
@@ -1247,6 +1272,12 @@ void Rank::clearPipeAt(unsigned index) {
 	setupPipeProperties(*iterator);
 	Attack a;
 	(*iterator).m_attacks.push_back(a);
+}
+
+void Rank::emptyPipeAt(unsigned index) {
+	auto iterator = std::next(m_pipes.begin(), index);
+	(*iterator).m_attacks.clear();
+	(*iterator).m_releases.clear();
 }
 
 void Rank::createNewAttackInPipe(unsigned index, wxString filePath, bool loadRelease) {
@@ -1348,11 +1379,11 @@ Pipe* Rank::getPipeAt(unsigned index) {
 	return &(*iterator);
 }
 
-void Rank::fillArrayStringWithFiles(wxDir &root, wxString path, wxArrayString &list, int pipeIndex) {
+void Rank::fillArrayStringWithFiles(wxDir &root, wxString path, wxArrayString &list, int theCount, int firstMatchingNbr) {
 	root.GetAllFiles(
 		path,
 		&list,
-		wxString::Format(wxT("*%i*.*"), (pipeIndex + firstMidiNoteNumber)),
+		wxString::Format(wxT("*%i*.*"), (theCount + firstMatchingNbr)),
 		wxDIR_FILES
 	);
 }

@@ -32,6 +32,7 @@
 #include "StopPanel.h"
 #include "PipeBorrowingDialog.h"
 #include "PipeCopyOffsetDialog.h"
+#include "PipeLoadingDialog.h"
 #include <algorithm>
 
 // Event table
@@ -61,6 +62,7 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_BUTTON(ID_RANK_EXPAND_TREE_BTN, RankPanel::OnExpandTreeBtn)
 	EVT_BUTTON(ID_RANK_ADD_RELEASES_BTN, RankPanel::OnAddReleaseSamplesBtn)
 	EVT_TREE_KEY_DOWN(ID_RANK_PIPE_TREE, RankPanel::OnTreeKeyboardInput)
+	EVT_BUTTON(ID_RANK_FLEXIBLE_PIPE_LOADING_BTN, RankPanel::OnFlexiblePipeLoadingBtn)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -495,25 +497,27 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_RANK_ADD_PIPES_BTN,
 		wxT("Add more samples from...")
 	);
-	optionsRow5->Add(m_addPipesFromFolderBtn, 0, wxALL, 2);
-	optionsRow5->AddStretchSpacer();
+	optionsRow5->Add(m_addPipesFromFolderBtn, 1, wxALL, 2);
 	m_addTremulantPipesBtn = new wxButton(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ADD_TREMULANT_PIPES_BTN,
 		wxT("Add tremulant samples from...")
 	);
-	optionsRow5->Add(m_addTremulantPipesBtn, 0, wxALL, 2);
-	optionsRow5->AddStretchSpacer();
+	optionsRow5->Add(m_addTremulantPipesBtn, 1, wxALL, 2);
 	readingOptions->Add(optionsRow5, 0, wxGROW);
 	wxBoxSizer *optionsRow6 = new wxBoxSizer(wxHORIZONTAL);
-	optionsRow6->AddStretchSpacer();
 	m_addReleaseSamplesBtn = new wxButton(
 		readingOptions->GetStaticBox(),
 		ID_RANK_ADD_RELEASES_BTN,
 		wxT("Add (only) releases from...")
 	);
-	optionsRow6->Add(m_addReleaseSamplesBtn, 0, wxALL, 2);
-	optionsRow6->AddStretchSpacer();
+	optionsRow6->Add(m_addReleaseSamplesBtn, 1, wxALL, 2);
+	m_flexiblePipeLoadingBtn = new wxButton(
+		readingOptions->GetStaticBox(),
+		ID_RANK_FLEXIBLE_PIPE_LOADING_BTN,
+		wxT("Flexible pipe loading...")
+	);
+	optionsRow6->Add(m_flexiblePipeLoadingBtn, 1, wxALL, 2);
 	readingOptions->Add(optionsRow6, 0, wxGROW);
 	pipeReadingOptions->Add(readingOptions, 1, wxEXPAND);
 	seventhRow->Add(pipeReadingOptions, 1, wxEXPAND);
@@ -775,7 +779,10 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			loadRelease,
 			releaseFolderPrefix,
 			extractKeyPressTime,
-			tremulantFolderPrefix
+			tremulantFolderPrefix,
+			0,
+			m_rank->getFirstMidiNoteNumber(),
+			m_rank->getNumberOfLogicalPipes()
 		);
 
 		RebuildPipeTree();
@@ -810,7 +817,7 @@ void RankPanel::OnClearPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 	wxMessageDialog msg(this, wxT("Are you really sure you want to clear all pipes?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		m_rank->clearAllPipes();
+		// m_rank->clearAllPipes();
 		m_rank->createDummyPipes();
 		RebuildPipeTree();
 		UpdatePipeTree();
@@ -1360,7 +1367,7 @@ wxTreeItemId RankPanel::GetPipeTreeItemAt(int index) {
 wxTreeItemId RankPanel::GetPipeOfSelection() {
 	wxTreeItemId item = m_pipeTreeCtrl->GetSelection();
 	wxTreeItemId parent;
-	bool cont = true;
+	bool cont = item.IsOk() && item != m_tree_rank_root;
 	while (cont) {
 		parent = m_pipeTreeCtrl->GetItemParent(item);
 
@@ -1422,7 +1429,10 @@ void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			loadRelease,
 			releaseFolderPrefix,
 			extractKeyPressTime,
-			tremulantFolderPrefix
+			tremulantFolderPrefix,
+			0,
+			m_rank->getFirstMidiNoteNumber(),
+			m_rank->getNumberOfLogicalPipes()
 		);
 
 		RebuildPipeTree();
@@ -1458,7 +1468,10 @@ void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			loadOnlyOneAttack,
 			loadRelease,
 			releaseFolderPrefix,
-			extractKeyPressTime
+			extractKeyPressTime,
+			0,
+			m_rank->getFirstMidiNoteNumber(),
+			m_rank->getNumberOfLogicalPipes()
 		);
 
 		RebuildPipeTree();
@@ -1469,6 +1482,9 @@ void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void RankPanel::OnExpandTreeBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_pipeTreeCtrl->ExpandAll();
+	if (m_pipeTreeCtrl->GetSelection().IsOk()) {
+		m_pipeTreeCtrl->EnsureVisible(m_pipeTreeCtrl->GetSelection());
+	}
 }
 
 void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -1488,10 +1504,107 @@ void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
 	if (rankPipesPathDialog.ShowModal() == wxID_OK) {
 		m_rank->setPipesRootPath(rankPipesPathDialog.GetPath());
 
-		m_rank->addReleasesToPipes();
+		m_rank->addReleasesToPipes(
+			0,
+			m_rank->getFirstMidiNoteNumber(),
+			m_rank->getNumberOfLogicalPipes()
+		);
 
 		RebuildPipeTree();
 		UpdatePipeTree();
+		::wxGetApp().m_frame->m_organ->setModified(true);
+	}
+}
+
+void RankPanel::OnFlexiblePipeLoadingBtn(wxCommandEvent& WXUNUSED(event)) {
+	int selectedPipeIdx = GetItemIndexRelativeParent(GetPipeOfSelection());
+	bool pipeWasSelected = true;
+	if (selectedPipeIdx < 0) {
+		selectedPipeIdx = 0;
+		pipeWasSelected = false;
+	}
+	PipeLoadingDialog loadingDialog(
+		this,
+		m_rank->getNumberOfLogicalPipes(),
+		selectedPipeIdx + 1,
+		m_rank->getFirstMidiNoteNumber() + selectedPipeIdx,
+		m_rank->getPipesRootPath(),
+		m_optionsAttackField->GetValue(),
+		m_optionsOnlyOneAttack->IsChecked(),
+		m_optionsLoadReleaseInAttack->IsChecked(),
+		m_optionsReleaseField->GetValue(),
+		m_optionsKeyPressTime->IsChecked(),
+		m_optionsTremulantField->GetValue()
+	);
+
+	if (loadingDialog.ShowModal() == wxID_OK) {
+		m_rank->setPipesRootPath(loadingDialog.GetBaseDirectory());
+		switch (loadingDialog.GetSelectedStrategy()) {
+			case 0:
+				// Create new pipe(s) by number matching
+				m_rank->readPipes(
+					loadingDialog.GetSubDirectory(),
+					loadingDialog.GetLoadOnlyOneAttack(),
+					loadingDialog.GetLoadReleaseInAttack(),
+					loadingDialog.GetReleaseFolderPrefix(),
+					loadingDialog.GetExtractKeyPressTime(),
+					loadingDialog.GetTremFolderPrefix(),
+					loadingDialog.GetStartingPipeNumber() - 1,
+					loadingDialog.GetFirstMidiMatchingNbr(),
+					loadingDialog.GetNbrPipesToLoad()
+				);
+				break;
+			case 1:
+				// Add more samples to pipe(s)
+				m_rank->addToPipes(
+					loadingDialog.GetSubDirectory(),
+					loadingDialog.GetLoadOnlyOneAttack(),
+					loadingDialog.GetLoadReleaseInAttack(),
+					loadingDialog.GetReleaseFolderPrefix(),
+					loadingDialog.GetExtractKeyPressTime(),
+					loadingDialog.GetTremFolderPrefix(),
+					loadingDialog.GetStartingPipeNumber() - 1,
+					loadingDialog.GetFirstMidiMatchingNbr(),
+					loadingDialog.GetNbrPipesToLoad()
+				);
+				break;
+			case 2:
+				// Add tremulant samples to pipe(s)
+				m_rank->addTremulantToPipes(
+					loadingDialog.GetSubDirectory(),
+					loadingDialog.GetLoadOnlyOneAttack(),
+					loadingDialog.GetLoadReleaseInAttack(),
+					loadingDialog.GetReleaseFolderPrefix(),
+					loadingDialog.GetExtractKeyPressTime(),
+					loadingDialog.GetStartingPipeNumber() - 1,
+					loadingDialog.GetFirstMidiMatchingNbr(),
+					loadingDialog.GetNbrPipesToLoad()
+				);
+				break;
+			case 3:
+				// Add release samples to pipe(s)
+				m_rank->addReleasesToPipes(
+					loadingDialog.GetStartingPipeNumber() - 1,
+					loadingDialog.GetFirstMidiMatchingNbr(),
+					loadingDialog.GetNbrPipesToLoad()
+				);
+				break;
+			default:
+				break;
+		}
+
+		RebuildPipeTree();
+		UpdatePipeTree();
+
+		if (pipeWasSelected) {
+			wxTreeItemId toSelect = GetPipeTreeItemAt(selectedPipeIdx);
+			if (toSelect.IsOk()) {
+				m_pipeTreeCtrl->SelectItem(toSelect);
+				m_pipeTreeCtrl->ExpandAllChildren(toSelect);
+				m_pipeTreeCtrl->EnsureVisible(toSelect);
+			}
+		}
+
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }

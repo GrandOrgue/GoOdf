@@ -838,9 +838,10 @@ void StopPanel::OnAddRankReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 			// set pipe count from the rank logical pipes
 			unsigned rankRefIdx = m_stop->getIndexOfRankReference(::wxGetApp().m_frame->m_organ->getOrganRankAt(selected));
 			m_stop->getRankReferenceAt(rankRefIdx)->m_pipeCount = ::wxGetApp().m_frame->m_organ->getOrganRankAt(selected)->getNumberOfLogicalPipes();
-			// also update accessible pipes if it's the first rank added
-			if (m_stop->getNumberOfRanks() == 1) {
+			// also update accessible pipes if it's greater than before
+			if (m_stop->getRankReferenceAt(rankRefIdx)->m_pipeCount > m_stop->getNumberOfAccessiblePipes()) {
 				m_stop->setNumberOfAccessiblePipes(m_stop->getRankReferenceAt(rankRefIdx)->m_pipeCount);
+				m_firstAccessibleKeyNumberSpin->SetRange(1, m_stop->getNumberOfAccessiblePipes());
 				m_numberOfAccessiblePipesSpin->SetValue(m_stop->getNumberOfAccessiblePipes());
 			}
 
@@ -878,7 +879,7 @@ void StopPanel::OnReferencedRanksSelection(wxCommandEvent& WXUNUSED(event)) {
 		// first update range of spin controls
 		m_firstPipeNumberSpin->SetRange(1, m_stop->getRankAt(selected)->getNumberOfLogicalPipes());
 		m_pipeCountSpin->SetRange(0, m_stop->getRankAt(selected)->getNumberOfLogicalPipes() - (m_stop->getRankReferenceAt(selected)->m_firstPipeNumber - 1));
-		m_firstAccessibleKeyNumberSpin->SetRange(1, m_stop->getRankAt(selected)->getNumberOfLogicalPipes());
+		m_firstAccessibleKeyNumberSpin->SetRange(1, m_stop->getNumberOfAccessiblePipes());
 
 		// then set values and enable the spins
 		m_firstPipeNumberSpin->SetValue(m_stop->getRankReferenceAt(selected)->m_firstPipeNumber);

@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name and info
 project(
   GOODF
-  VERSION 0.7.3
+  VERSION 0.8.0
   DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
@@ -120,6 +120,7 @@ set(APP_SRC
   src/AttackDialog.cpp
   src/PipeBorrowingDialog.cpp
   src/PipeCopyOffsetDialog.cpp
+  src/PipeLoadingDialog.cpp
   src/RankPanel.cpp
   src/RankReference.cpp
   src/Stop.cpp

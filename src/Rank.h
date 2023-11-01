@@ -74,7 +74,10 @@ public:
 		bool loadRelease,
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime,
-		wxString tremulantFolderPrefix
+		wxString tremulantFolderPrefix,
+		int startPipeIdx,
+		int firstMatchingNumber,
+		int totalNbrOfPipes
 	);
 	void addToPipes(
 		wxString extraAttackFolder,
@@ -82,16 +85,26 @@ public:
 		bool loadRelease,
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime,
-		wxString tremulantFolderPrefix
+		wxString tremulantFolderPrefix,
+		int startPipeIdx,
+		int firstMatchingNumber,
+		int totalNbrOfPipes
 	);
 	void addTremulantToPipes(
 		wxString extraAttackFolder,
 		bool loadOnlyOneAttack,
 		bool loadRelease,
 		wxString releaseFolderPrefix,
-		bool extractKeyPressTime
+		bool extractKeyPressTime,
+		int startPipeIdx,
+		int firstMatchingNumber,
+		int totalNbrOfPipes
 	);
-	void addReleasesToPipes();
+	void addReleasesToPipes(
+		int startPipeIdx,
+		int firstMatchingNumber,
+		int totalNbrOfPipes
+	);
 	void clearAllPipes();
 	void createDummyPipes();
 	void addDummyPipeFront();
@@ -100,6 +113,7 @@ public:
 	void removePipeFront();
 	void removePipeBack();
 	void clearPipeAt(unsigned index);
+	void emptyPipeAt(unsigned index);
 	void createNewAttackInPipe(unsigned index, wxString filePath, bool loadRelease);
 	void createNewReleaseInPipe(unsigned index, wxString filePath, bool extractKeyPressTime);
 	bool deleteAttackInPipe(unsigned pipeIndex, unsigned attackIndex);
@@ -126,7 +140,7 @@ protected:
 	bool acceptsRetuning;
 	wxString m_latestPipesRootPath;
 
-	void fillArrayStringWithFiles(wxDir &root, wxString path, wxArrayString &list, int pipeIndex);
+	void fillArrayStringWithFiles(wxDir &root, wxString path, wxArrayString &list, int theCount, int firstMatchingNbr);
 	void onlyAddWaveFiles(wxArrayString &source, wxArrayString &selection);
 	wxString getOnlyFileName(wxString path);
 	void setupPipeProperties(Pipe &pipe);

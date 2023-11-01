@@ -43,7 +43,6 @@ private:
 	wxTextCtrl *m_nameField;
 	wxSpinCtrl *m_firstMidiNoteNumberSpin; // 0 - 256
 	wxSpinCtrl *m_numberOfLogicalPipesSpin; // 1 - 192
-	// wxSpinCtrl *m_trackerDelaySpin;
 	wxSpinCtrl *m_harmonicNumberSpin; // 1 - 1024, default 8, calculates 64 / rank_size
 	wxStaticText *m_calculatedLength;
 	wxSpinCtrlDouble *m_pitchCorrectionSpin; // -1800 - 1800
@@ -71,6 +70,7 @@ private:
 	wxButton *m_addTremulantPipesBtn;
 	wxButton *m_expandTreeBtn;
 	wxButton *m_addReleaseSamplesBtn;
+	wxButton *m_flexiblePipeLoadingBtn;
 
 	wxButton *removeRankBtn;
 
@@ -105,6 +105,7 @@ private:
 	void OnAddTremulantPipesBtn(wxCommandEvent& event);
 	void OnExpandTreeBtn(wxCommandEvent& event);
 	void OnAddReleaseSamplesBtn(wxCommandEvent& event);
+	void OnFlexiblePipeLoadingBtn(wxCommandEvent& event);
 	void OnTreeKeyboardInput(wxTreeEvent& event);
 
 	void UpdatePipeTree();
