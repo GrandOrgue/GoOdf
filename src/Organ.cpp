@@ -608,43 +608,73 @@ unsigned Organ::getIndexOfOrganSwitch(GoSwitch *switchToFind) {
 }
 
 void Organ::removeSwitchAt(unsigned index) {
-	std::list<GoSwitch>::iterator it = m_Switches.begin();
-	std::advance(it, index);
-	// now that we are at the switch to remove we should make sure to remove it from any manual that have it
-	// also remove from any gui element on any panel and any general that reference it
+	if (index >= m_Switches.size())
+		return;
+
+	GoSwitch *switchToRemove = getOrganSwitchAt(index);
+	// now that we have the switch reference we should make sure to remove it from any manual that have it
 	for (unsigned i = 0; i < m_Manuals.size(); i++) {
-		if (getOrganManualAt(i)->hasGoSwitchReference(&(*it)))
-			getOrganManualAt(i)->removeGoSwitch(&(*it));
+		if (getOrganManualAt(i)->hasGoSwitchReference(switchToRemove)) {
+			// the manual will also remove the switch reference from any divisional, coupler or stop
+			getOrganManualAt(i)->removeGoSwitch(switchToRemove);
+		} else {
+			// even if the switch is not referenced in the manual itself,
+			// it's still possible that a divisional, coupler or stop might reference it
+			// so we manually check the divisionals in the manual
+			for (unsigned j = 0; j < getOrganManualAt(i)->getNumberOfDivisionals(); j++) {
+				if (getOrganManualAt(i)->getDivisionalAt(j)->hasSwitch(switchToRemove))
+					getOrganManualAt(i)->getDivisionalAt(j)->removeSwitch(switchToRemove);
+			}
+			// and the couplers
+			for (unsigned j = 0; j < getOrganManualAt(i)->getNumberOfCouplers(); j++) {
+				if (getOrganManualAt(i)->getCouplerAt(j)->hasSwitchReference(switchToRemove)) {
+					getOrganManualAt(i)->getCouplerAt(j)->removeSwitchReference(switchToRemove);
+				}
+			}
+			// as well as any stop for references to the switch
+			for (unsigned j = 0; j < getOrganManualAt(i)->getNumberOfStops(); j++) {
+				if (getOrganManualAt(i)->getStopAt(j)->hasSwitchReference(switchToRemove)) {
+					getOrganManualAt(i)->getStopAt(j)->removeSwitchReference(switchToRemove);
+				}
+			}
+		}
 	}
+
+	// also remove from any gui element on any panel
 	for (unsigned i = 0; i < m_Panels.size(); i++) {
-		if (getOrganPanelAt(i)->hasItemAsGuiElement(&(*it))) {
-			getOrganPanelAt(i)->removeItemFromPanel(&(*it));
+		if (getOrganPanelAt(i)->hasItemAsGuiElement(switchToRemove)) {
+			getOrganPanelAt(i)->removeItemFromPanel(switchToRemove);
 			::wxGetApp().m_frame->RebuildPanelGuiElementsInTree(i);
 		}
 	}
+
+	// and any general that reference it
 	for (General& g : m_Generals) {
-		if (g.hasSwitch(&(*it))) {
-			g.removeSwitch(&(*it));
+		if (g.hasSwitch(switchToRemove)) {
+			g.removeSwitch(switchToRemove);
 		}
 	}
+
 	// the switch can be referenced in a reversible piston so we just reset it
 	for (ReversiblePiston& rp : m_ReversiblePistons) {
-		if (rp.getSwitch() == &(*it)) {
+		if (rp.getSwitch() == switchToRemove) {
 			rp.setSwitch(NULL);
 			rp.setName(wxT("Empty reversible piston"));
 		}
 	}
 	// a switch can be referenced in any drawstop related item, including other switches, so they must be removed from them too
 	for (GoSwitch& sw : m_Switches) {
-		if (sw.hasSwitchReference(&(*it))) {
-			sw.removeSwitchReference(&(*it));
+		if (sw.hasSwitchReference(switchToRemove)) {
+			sw.removeSwitchReference(switchToRemove);
 		}
 	}
 	for (DivisionalCoupler& cplr : m_DivisionalCouplers) {
-		if (cplr.hasSwitchReference(&(*it))) {
-			cplr.removeSwitchReference(&(*it));
+		if (cplr.hasSwitchReference(switchToRemove)) {
+			cplr.removeSwitchReference(switchToRemove);
 		}
 	}
+	std::list<GoSwitch>::iterator it = m_Switches.begin();
+	std::advance(it, index);
 	m_Switches.erase(it);
 	updateOrganElements();
 }

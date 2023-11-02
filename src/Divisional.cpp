@@ -290,13 +290,13 @@ void Divisional::removeSwitchAt(unsigned index) {
 }
 
 void Divisional::removeSwitch(GoSwitch *sw) {
-	auto it = m_switches.begin();
-	while (it != m_switches.end()){
-	    if((*it).first == sw){
-	        it = m_switches.erase(it);// erase and go to next
-	    } else{
-	        ++it;  // go to next
-	    }
+	unsigned idx = 0;
+	for (auto &s : m_switches) {
+		if (s.first == sw) {
+			removeSwitchAt(idx);
+			break;
+		}
+		idx++;
 	}
 }
 
