@@ -77,6 +77,7 @@ private:
 	RankPanel *m_internalRankPanel;
 	wxPanel *m_referencedRanksPanel;
 	bool m_isFirstRemoval;
+	size_t m_lastUsedPage;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnDisplayInvertedRadio(wxCommandEvent& event);

@@ -62,6 +62,7 @@ END_EVENT_TABLE()
 StopPanel::StopPanel(wxWindow *parent) : wxPanel(parent) {
 	m_stop = NULL;
 	m_isFirstRemoval = true;
+	m_lastUsedPage = 0;
 	functionChoices.Add(wxT("Input"));
 	functionChoices.Add(wxT("And"));
 	functionChoices.Add(wxT("Nand"));
@@ -615,7 +616,12 @@ void StopPanel::setStop(Stop *stop) {
 	m_pipeCountSpin->Disable();
 	m_firstAccessibleKeyNumberSpin->Disable();
 
-	m_notebook->SetSelection(0);
+	if ((m_stop->isUsingInternalRank() && m_lastUsedPage == 1) || (!m_stop->isUsingInternalRank() && m_lastUsedPage == 2)) {
+		m_notebook->SetSelection(m_lastUsedPage);
+	} else {
+		m_notebook->SetSelection(0);
+		m_lastUsedPage = m_notebook->GetSelection();
+	}
 }
 
 void StopPanel::internalRankLogicalPipesChanged(int value) {
@@ -808,6 +814,8 @@ void StopPanel::OnNotebookPageChanged(wxBookCtrlEvent& event) {
 	if ((m_useInternalRankYes->GetValue() && event.GetSelection() == 2) ||
 		(m_useInternalRankNo->GetValue() && event.GetSelection() == 1)) {
 		m_notebook->SetSelection(event.GetOldSelection());
+	} else {
+		m_lastUsedPage = m_notebook->GetSelection();
 	}
 	// Update stop FirstAccessiblePipeLogicalKeyNumber if necessary
 	if (m_useInternalRankYes->GetValue() && m_stop) {
