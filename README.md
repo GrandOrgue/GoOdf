@@ -16,7 +16,11 @@ Note that the way to "save" the work done on an organ is by writing out the ODF 
 Rendering of the GUI panels is now possible, but it likely needs more work before it's fully reliable. Possibility to adjust positioning of smaller images and GUI elements directly on the graphical rendering is implemented since 0.7 either with mouse or with arrow keys. Changing order of switches is implemented with drag and drop in the tree, note that in GrandOrgue it's only possible for a switch to reference another switch with a lower number than itself. If you drag switches to other positions references can be invalidated and removed (only the reference is removed, not any switch). Re-ordering of many other elements in the [Organ] tree with drag and drop can also be done.
 
 ## Future plans
-Testing the ability to both write and read .organ files will need to continue so that they both works really well without any bugs. The graphical rendering of panels most likely still needs more work so that it should display the panels exactly like GrandOrgue will. Improving/implementing new ways to assign properties/references to multiple elements instead of doing it one at a time is on the wish list, this includes more flexible auto loading of pipes and copying options.
+- Testing the ability to both write and read .organ files will need to continue so that they both works really well without any bugs.
+- The graphical rendering of panels most likely still needs more work so that it should display the panels exactly like GrandOrgue will when scaled at 100%.
+- Implementing a possibility to select multiple GUI elements on the rendered panel and move them in unison.
+- An option to import voicing information from an exported .cmb file that reasonably well matches the .organ file is planned.
+- Storing user settings in a configuration file to make some choices persistent is another desired improvement needing implementation.
 
 ## Building from sources
 Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.
