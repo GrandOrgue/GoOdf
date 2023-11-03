@@ -52,33 +52,35 @@ void Coupler::write(wxTextFile *outFile) {
 		wxString manId = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_destinationManual));
 		outFile->AddLine(wxT("DestinationManual=") + manId);
 		outFile->AddLine(wxT("DestinationKeyshift=") + wxString::Format(wxT("%i"), m_destinationKeyshift));
-		if (m_coupleToSubsequentUnisonIntermanualCouplers)
-			outFile->AddLine(wxT("CoupleToSubsequentUnisonIntermanualCouplers=Y"));
-		else
-			outFile->AddLine(wxT("CoupleToSubsequentUnisonIntermanualCouplers=N"));
-		if (m_coupleToSubsequentUpwardIntermanualCouplers)
-			outFile->AddLine(wxT("CoupleToSubsequentUpwardIntermanualCouplers=Y"));
-		else
-			outFile->AddLine(wxT("CoupleToSubsequentUpwardIntermanualCouplers=N"));
-		if (m_coupleToSubsequentDownwardIntermanualCouplers)
-			outFile->AddLine(wxT("CoupleToSubsequentDownwardIntermanualCouplers=Y"));
-		else
-			outFile->AddLine(wxT("CoupleToSubsequentDownwardIntermanualCouplers=N"));
-		if (m_coupleToSubsequentUpwardIntramanualCouplers)
-			outFile->AddLine(wxT("CoupleToSubsequentUpwardIntramanualCouplers=Y"));
-		else
-			outFile->AddLine(wxT("CoupleToSubsequentUpwardIntramanualCouplers=N"));
-		if (m_coupleToSubsequentDownwardIntramanualCouplers)
-			outFile->AddLine(wxT("CoupleToSubsequentDownwardIntramanualCouplers=Y"));
-		else
-			outFile->AddLine(wxT("CoupleToSubsequentDownwardIntramanualCouplers=N"));
+		if (m_couplerType.IsSameAs(wxT("Normal"))) {
+			if (m_coupleToSubsequentUnisonIntermanualCouplers)
+				outFile->AddLine(wxT("CoupleToSubsequentUnisonIntermanualCouplers=Y"));
+			else
+				outFile->AddLine(wxT("CoupleToSubsequentUnisonIntermanualCouplers=N"));
+			if (m_coupleToSubsequentUpwardIntermanualCouplers)
+				outFile->AddLine(wxT("CoupleToSubsequentUpwardIntermanualCouplers=Y"));
+			else
+				outFile->AddLine(wxT("CoupleToSubsequentUpwardIntermanualCouplers=N"));
+			if (m_coupleToSubsequentDownwardIntermanualCouplers)
+				outFile->AddLine(wxT("CoupleToSubsequentDownwardIntermanualCouplers=Y"));
+			else
+				outFile->AddLine(wxT("CoupleToSubsequentDownwardIntermanualCouplers=N"));
+			if (m_coupleToSubsequentUpwardIntramanualCouplers)
+				outFile->AddLine(wxT("CoupleToSubsequentUpwardIntramanualCouplers=Y"));
+			else
+				outFile->AddLine(wxT("CoupleToSubsequentUpwardIntramanualCouplers=N"));
+			if (m_coupleToSubsequentDownwardIntramanualCouplers)
+				outFile->AddLine(wxT("CoupleToSubsequentDownwardIntramanualCouplers=Y"));
+			else
+				outFile->AddLine(wxT("CoupleToSubsequentDownwardIntramanualCouplers=N"));
+		}
 		if (!m_couplerType.IsSameAs(wxT("Normal")))
 			outFile->AddLine(wxT("CouplerType=") + m_couplerType);
-		if (m_firstMIDINoteNumber != 0)
-			outFile->AddLine(wxT("FirstMIDINoteNumber=") + wxString::Format(wxT("%i"), m_firstMIDINoteNumber));
-		if (m_numberOfKeys != 127)
-			outFile->AddLine(wxT("NumberOfKeys=") + wxString::Format(wxT("%i"), m_numberOfKeys));
 	}
+	if (m_firstMIDINoteNumber != 0)
+		outFile->AddLine(wxT("FirstMIDINoteNumber=") + wxString::Format(wxT("%i"), m_firstMIDINoteNumber));
+	if (m_numberOfKeys != 127)
+		outFile->AddLine(wxT("NumberOfKeys=") + wxString::Format(wxT("%i"), m_numberOfKeys));
 }
 
 void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual) {
