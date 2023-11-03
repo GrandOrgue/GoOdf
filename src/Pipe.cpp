@@ -104,7 +104,7 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 			break;
 		}
 
-		if (harmonicNumber != 8 && harmonicNumber != parent->getHarmonicNumber())
+		if ((harmonicNumber != 8 && harmonicNumber != parent->getHarmonicNumber()) || (harmonicNumber == 8 && harmonicNumber != parent->getHarmonicNumber()))
 			outFile->AddLine(pipeNr + wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 		if (midiKeyNumber > -1)
 			outFile->AddLine(pipeNr + wxT("MIDIKeyNumber=") + wxString::Format(wxT("%i"), midiKeyNumber));
