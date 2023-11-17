@@ -266,9 +266,9 @@ void PipeDialog::CreateControls() {
 		-1,
 		100,
 		-1,
-		0.000001
+		0.1
 	);
-	m_midiPitchFractionSpin->SetDigits(6);
+	m_midiPitchFractionSpin->SetDigits(1);
 	m_midiPitchFractionSpin->SetIncrement(1.0f);
 	fourthRow->Add(m_midiPitchFractionSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(fourthRow, 0, wxGROW);
@@ -290,9 +290,9 @@ void PipeDialog::CreateControls() {
 		0,
 		1000,
 		100,
-		0.000001
+		0.1
 	);
-	m_amplitudeLevelSpin->SetDigits(6);
+	m_amplitudeLevelSpin->SetDigits(1);
 	m_amplitudeLevelSpin->SetIncrement(1.0f);
 	fifthRow->Add(m_amplitudeLevelSpin, 0, wxEXPAND|wxALL, 5);
 	wxStaticText *gainText = new wxStaticText (
@@ -311,9 +311,9 @@ void PipeDialog::CreateControls() {
 		-120,
 		40,
 		0,
-		0.000001
+		0.1
 	);
-	m_gainSpin->SetDigits(6);
+	m_gainSpin->SetDigits(1);
 	m_gainSpin->SetIncrement(1.0f);
 	fifthRow->Add(m_gainSpin, 0, wxEXPAND|wxALL, 5);
 	wxStaticText *pitchText = new wxStaticText (
@@ -332,9 +332,9 @@ void PipeDialog::CreateControls() {
 		-1800,
 		1800,
 		0,
-		0.000001
+		0.1
 	);
-	m_pitchTuningSpin->SetDigits(6);
+	m_pitchTuningSpin->SetDigits(1);
 	m_pitchTuningSpin->SetIncrement(1.0f);
 	fifthRow->Add(m_pitchTuningSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(fifthRow, 0, wxGROW);
@@ -375,9 +375,9 @@ void PipeDialog::CreateControls() {
 		-1800,
 		1800,
 		0,
-		0.000001
+		0.1
 	);
-	m_pitchCorrectionSpin->SetDigits(6);
+	m_pitchCorrectionSpin->SetDigits(1);
 	m_pitchCorrectionSpin->SetIncrement(1.0f);
 	sixthRow->Add(m_pitchCorrectionSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(sixthRow, 0, wxGROW);
@@ -399,9 +399,9 @@ void PipeDialog::CreateControls() {
 		0,
 		1000,
 		100,
-		0.000001
+		0.1
 	);
-	m_minVelocitySpin->SetDigits(6);
+	m_minVelocitySpin->SetDigits(1);
 	m_minVelocitySpin->SetIncrement(1.0f);
 	seventhRow->Add(m_minVelocitySpin, 0, wxEXPAND|wxALL, 5);
 	seventhRow->AddStretchSpacer();
@@ -421,9 +421,9 @@ void PipeDialog::CreateControls() {
 		0,
 		1000,
 		100,
-		0.000001
+		0.1
 	);
-	m_maxVelocitySpin->SetDigits(6);
+	m_maxVelocitySpin->SetDigits(1);
 	m_maxVelocitySpin->SetIncrement(1.0f);
 	seventhRow->Add(m_maxVelocitySpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(seventhRow, 0, wxGROW);
