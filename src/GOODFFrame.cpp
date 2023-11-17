@@ -30,6 +30,7 @@
 #include "Windchestgroup.h"
 #include "OrganFileParser.h"
 #include "CopyElementAttributesDialog.h"
+#include "CmbDialog.h"
 #include <vector>
 #include <algorithm>
 
@@ -41,6 +42,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_WRITE_ODF, GOODFFrame::OnWriteODF)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
+	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
 	EVT_TREE_BEGIN_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeLeftDrag)
@@ -72,6 +74,12 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF\tCtrl+S"), wxT("Write/Save the .organ file"));
 	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tCtrl+Q"), wxT("Quit this program"));
 
+	// Create a tools menu
+	m_toolsMenu = new wxMenu();
+
+	// Add tools menu items
+	m_toolsMenu->Append(ID_IMPORT_VOICING_DATA, wxT("Import .cmb\tCtrl+I"), wxT("Import voicing data from a .cmb (settings) file"));
+
 	// Create a help menu
 	m_helpMenu = new wxMenu();
 
@@ -82,6 +90,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	// Create a menu bar and append the menus to it
 	m_menuBar = new wxMenuBar();
 	m_menuBar->Append(m_fileMenu, wxT("&File"));
+	m_menuBar->Append(m_toolsMenu, wxT("&Tools"));
 	m_menuBar->Append(m_helpMenu, wxT("&Help"));
 
 	// Attach menu bar to frame
@@ -2509,6 +2518,214 @@ void GOODFFrame::OnAddNewPanel(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		wxMessageDialog msg(this, wxT("Organ cannot have more than 1000 panels!"), wxT("Too many panels"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
+	}
+}
+
+void GOODFFrame::OnImportCMB(wxCommandEvent& WXUNUSED(event)) {
+	CmbDialog importCmb(this);
+	if (importCmb.ShowModal() == wxID_OK) {
+		CMB_ORGAN *imported = importCmb.GetCmbOrgan();
+
+		if (m_organ->getNumberOfRanks() != imported->cmbRanks.size() || m_organ->getNumberOfStops() != imported->cmbStops.size()) {
+			wxMessageDialog dlg(this, wxT("The number of ranks/stops in the imported cmb doesn't match current organ! Do you want to import selected data to what is possible anyway?"), wxT("Are you really sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (dlg.ShowModal() != wxID_YES) {
+				return;
+			}
+		}
+
+		if (importCmb.GetImportAmplitude())
+			m_organ->setAmplitudeLevel(imported->attributes.amplitude);
+		if (importCmb.GetImportGain())
+			m_organ->setGain(imported->attributes.gain);
+		if (importCmb.GetImportPitchTuning()) {
+			float pitchT = m_organ->getPitchTuning() + imported->attributes.pitchTuning;
+			if (pitchT >= -1800 && pitchT <= 1800) {
+				m_organ->setPitchTuning(pitchT);
+			} else {
+				wxMessageDialog pTerr(this, wxT("The PitchTuning value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+				if (pTerr.ShowModal() == wxID_YES) {
+					if (pitchT > 1800)
+						m_organ->setPitchTuning(1800);
+					else if (pitchT < -1800)
+						m_organ->setPitchTuning(-1800);
+				}
+			}
+		}
+		if (importCmb.GetImportPitchCorrection()) {
+			float pitchC = m_organ->getPitchCorrection() + imported->attributes.pitchCorrection;
+			if (pitchC >= -1800 && pitchC <= 1800) {
+				m_organ->setPitchCorrection(pitchC);
+			} else {
+				wxMessageDialog pCerr(this, wxT("The PitchCorrection value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+				if (pCerr.ShowModal() == wxID_YES) {
+					if (pitchC > 1800)
+						m_organ->setPitchCorrection(1800);
+					else if (pitchC < -1800)
+						m_organ->setPitchCorrection(-1800);
+				}
+			}
+		}
+		if (importCmb.GetImportTrackerDelay()) {
+			m_organ->setTrackerDelay(imported->attributes.trackerDelay);
+		}
+
+		unsigned stopIdx = 0;
+		for (CMB_ELEMENT_WITH_PIPES &s : imported->cmbStops) {
+			if (m_organ->getNumberOfStops() > stopIdx) {
+				Stop *stop = m_organ->getOrganStopAt(stopIdx);
+				if (!stop->isUsingInternalRank())
+					continue;
+
+				if (importCmb.GetImportAmplitude())
+					stop->getInternalRank()->setAmplitudeLevel(s.attributes.amplitude);
+				if (importCmb.GetImportGain())
+					stop->getInternalRank()->setGain(s.attributes.gain);
+				if (importCmb.GetImportPitchTuning()) {
+					float pitchT = stop->getInternalRank()->getPitchTuning() + s.attributes.pitchTuning;
+					if (pitchT >= -1800 && pitchT <= 1800) {
+						stop->getInternalRank()->setPitchTuning(pitchT);
+					} else {
+						wxMessageDialog pTerr(this, wxT("The PitchTuning value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pTerr.ShowModal() == wxID_YES) {
+							if (pitchT > 1800)
+								stop->getInternalRank()->setPitchTuning(1800);
+							else if (pitchT < -1800)
+								stop->getInternalRank()->setPitchTuning(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportPitchCorrection()) {
+					float pitchC = stop->getInternalRank()->getPitchCorrection() + s.attributes.pitchCorrection;
+					if (pitchC >= -1800 && pitchC <= 1800) {
+						stop->getInternalRank()->setPitchCorrection(pitchC);
+					} else {
+						wxMessageDialog pCerr(this, wxT("The PitchCorrection value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pCerr.ShowModal() == wxID_YES) {
+							if (pitchC > 1800)
+								stop->getInternalRank()->setPitchCorrection(1800);
+							else if (pitchC < -1800)
+								stop->getInternalRank()->setPitchCorrection(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportTrackerDelay()) {
+					stop->getInternalRank()->setTrackerDelay(s.attributes.trackerDelay);
+				}
+
+				// next deal with the pipes in the internal rank of the stop
+				for (CMB_PIPE &p : s.pipes) {
+					unsigned pipeIdx = p.pipeNbr - 1;
+					if (pipeIdx < stop->getInternalRank()->m_pipes.size()) {
+						Pipe *pipe = stop->getInternalRank()->getPipeAt(pipeIdx);
+
+						if (importCmb.GetImportAmplitude())
+							pipe->amplitudeLevel = p.attributes.amplitude;
+						if (importCmb.GetImportGain())
+							pipe->gain = p.attributes.gain;
+						if (importCmb.GetImportPitchTuning()) {
+							float pitchT = pipe->pitchTuning + p.attributes.pitchTuning;
+							if (pitchT >= -1800 && pitchT <= 1800) {
+								pipe->pitchTuning = pitchT;
+							}
+						}
+						if (importCmb.GetImportPitchCorrection()) {
+							float pitchC = pipe->pitchCorrection + p.attributes.pitchCorrection;
+							if (pitchC >= -1800 && pitchC <= 1800) {
+								pipe->pitchCorrection = pitchC;
+							}
+						}
+						if (importCmb.GetImportTrackerDelay()) {
+							pipe->trackerDelay = p.attributes.trackerDelay;
+						}
+					}
+				}
+			}
+			stopIdx++;
+		}
+
+		unsigned rankIdx = 0;
+		for (CMB_ELEMENT_WITH_PIPES &r : imported->cmbRanks) {
+			if (m_organ->getNumberOfRanks() > rankIdx) {
+				Rank *rank = m_organ->getOrganRankAt(rankIdx);
+
+				if (importCmb.GetImportAmplitude())
+					rank->setAmplitudeLevel(r.attributes.amplitude);
+				if (importCmb.GetImportGain())
+					rank->setGain(r.attributes.gain);
+				if (importCmb.GetImportPitchTuning()) {
+					float pitchT = rank->getPitchTuning() + r.attributes.pitchTuning;
+					if (pitchT >= -1800 && pitchT <= 1800) {
+						rank->setPitchTuning(pitchT);
+					} else {
+						wxMessageDialog pTerr(this, wxT("The PitchTuning value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pTerr.ShowModal() == wxID_YES) {
+							if (pitchT > 1800)
+								rank->setPitchTuning(1800);
+							else if (pitchT < -1800)
+								rank->setPitchTuning(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportPitchCorrection()) {
+					float pitchC = rank->getPitchCorrection() + r.attributes.pitchCorrection;
+					if (pitchC >= -1800 && pitchC <= 1800) {
+						rank->setPitchCorrection(pitchC);
+					} else {
+						wxMessageDialog pCerr(this, wxT("The PitchCorrection value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pCerr.ShowModal() == wxID_YES) {
+							if (pitchC > 1800)
+								rank->setPitchCorrection(1800);
+							else if (pitchC < -1800)
+								rank->setPitchCorrection(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportTrackerDelay()) {
+					rank->setTrackerDelay(r.attributes.trackerDelay);
+				}
+
+				// next deal with the pipes in the rank
+				for (CMB_PIPE &p : r.pipes) {
+					unsigned pipeIdx = p.pipeNbr - 1;
+					if (pipeIdx < rank->m_pipes.size()) {
+						Pipe *pipe = rank->getPipeAt(pipeIdx);
+
+						if (importCmb.GetImportAmplitude())
+							pipe->amplitudeLevel = p.attributes.amplitude;
+						if (importCmb.GetImportGain())
+							pipe->gain = p.attributes.gain;
+						if (importCmb.GetImportPitchTuning()) {
+							float pitchT = pipe->pitchTuning + p.attributes.pitchTuning;
+							if (pitchT >= -1800 && pitchT <= 1800) {
+								pipe->pitchTuning = pitchT;
+							}
+						}
+						if (importCmb.GetImportPitchCorrection()) {
+							float pitchC = pipe->pitchCorrection + p.attributes.pitchCorrection;
+							if (pitchC >= -1800 && pitchC <= 1800) {
+								pipe->pitchCorrection = pitchC;
+							}
+						}
+						if (importCmb.GetImportTrackerDelay()) {
+							pipe->trackerDelay = p.attributes.trackerDelay;
+						}
+					}
+				}
+			}
+			rankIdx++;
+		}
+
+		// Update display in panels
+		m_organ->setModified(true);
+		m_organPanel->setCurrentOrgan(m_organ);
+		if (m_rankPanel->IsShown()) {
+			Rank *currentRank = m_rankPanel->getCurrentRank();
+			m_rankPanel->setRank(currentRank);
+		}
+		if (m_stopPanel->IsShown()) {
+			Stop *currentStop = m_stopPanel->getCurrentStop();
+			m_stopPanel->setStop(currentStop);
+		}
 	}
 }
 

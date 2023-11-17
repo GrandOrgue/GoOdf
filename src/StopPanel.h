@@ -35,6 +35,7 @@ public:
 	void setStop(Stop *stop);
 	void internalRankLogicalPipesChanged(int value);
 	void setIsFirstRemoval(bool value);
+	Stop* getCurrentStop();
 
 private:
 	DECLARE_EVENT_TABLE()

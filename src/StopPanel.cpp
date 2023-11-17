@@ -624,6 +624,10 @@ void StopPanel::setStop(Stop *stop) {
 	}
 }
 
+Stop* StopPanel::getCurrentStop() {
+	return m_stop;
+}
+
 void StopPanel::internalRankLogicalPipesChanged(int value) {
 	m_numberOfAccessiblePipesSpin->SetValue(value);
 	m_stop->setNumberOfAccessiblePipes(value);

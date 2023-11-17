@@ -79,6 +79,7 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxMenu *m_fileMenu;
+	wxMenu *m_toolsMenu;
 	wxMenu *m_helpMenu;
 	wxMenuBar *m_menuBar;
 	wxSplitterWindow *m_Splitter;
@@ -152,6 +153,7 @@ private:
 	void OnAddNewGeneral(wxCommandEvent& event);
 	void OnAddNewReversiblePiston(wxCommandEvent& event);
 	void OnAddNewPanel(wxCommandEvent& event);
+	void OnImportCMB(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();

@@ -168,6 +168,8 @@ set(APP_SRC
   src/CopyElementAttributesDialog.cpp
   src/GUIRepresentationDrawingPanel.cpp
   src/GUIPanelRepresentation.cpp
+  src/CmbParser.cpp
+  src/CmbDialog.cpp
 )
 
 # add the executable

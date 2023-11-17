@@ -596,6 +596,10 @@ void RankPanel::setRank(Rank *rank) {
 	m_trackerDelaySpin->SetValue(m_rank->getTrackerDelay());
 }
 
+Rank* RankPanel::getCurrentRank() {
+	return m_rank;
+}
+
 void RankPanel::setNameFieldValue(wxString name) {
 	m_nameField->ChangeValue(name);
 }

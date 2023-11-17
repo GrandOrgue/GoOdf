@@ -36,6 +36,7 @@ public:
 	void setNameFieldValue(wxString name);
 	void disableNameFieldInput();
 	void setIsFirstRemoval(bool value);
+	Rank* getCurrentRank();
 
 private:
 	DECLARE_EVENT_TABLE()
