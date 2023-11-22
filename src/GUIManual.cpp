@@ -766,21 +766,31 @@ void GUIManual::updateKeyInfo() {
 				// keyboard is inverted
 				if (m_dispKeyColourWooden) {
 					if (i + 1 < m_displayKeys) {
+						// this is not the last key of the manual
 						if (m_dispImageNum == 2)
 							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[key_nb % 12];
 						else
 							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[key_nb % 12];
 					} else {
+						// this is the last key of the manual
 						if (key_nb % 12 == 0 || key_nb % 12 == 5) {
+							// if it's a C or F as a last key we should use a whole natural key instead
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[12];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[12];
-						}else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+							// if it's any other natural key we use E as the last key
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[4];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[4];
+						} else {
+							// the last key is a sharp!
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[1];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[1];
 						}
 					}
 				} else {
@@ -800,6 +810,12 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[4];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[4];
+						} else {
+							// the last key is a sharp!
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[1];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[1];
 						}
 					}
 				}
@@ -822,6 +838,12 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[4];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[4];
+						} else {
+							// the last key is a sharp!
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[1];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[1];
 						}
 					}
 				} else {
@@ -841,6 +863,12 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[4];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[4];
+						} else {
+							// the last key is a sharp!
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[1];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[1];
 						}
 					}
 				}

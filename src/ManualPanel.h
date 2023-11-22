@@ -89,6 +89,7 @@ private:
 	void DoRemoveManual();
 	void UpdateReferencedTremulants();
 	void UpdateReferencedSwitches();
+	void UpdateAnyGuiVersion();
 
 };
 

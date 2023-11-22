@@ -535,6 +535,9 @@ void ManualPanel::OnLogicalKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 		if (m_manual->getNumberOfAccessibleKeys() > m_manual->getNumberOfLogicalKeys())
 			m_manual->setNumberOfAccessibleKeys(m_manual->getNumberOfLogicalKeys());
 	}
+
+	UpdateAnyGuiVersion();
+
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
@@ -550,6 +553,8 @@ void ManualPanel::OnFirstMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void ManualPanel::OnAccessibleKeysSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setNumberOfAccessibleKeys(m_numberOfAccessibleKeysSpin->GetValue());
+	UpdateAnyGuiVersion();
+
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
@@ -766,4 +771,17 @@ void ManualPanel::UpdateReferencedSwitches() {
 		m_referencedSwitches->Clear();
 		m_removeReferencedSwitch->Disable();
 	}
+}
+
+void ManualPanel::UpdateAnyGuiVersion() {
+	// notify any gui version of the manual that the number of keys might have changed
+	for (unsigned i = 0; i < ::wxGetApp().m_frame->m_organ->getNumberOfPanels(); i++) {
+		for (unsigned j = 0; j < ::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->getNumberOfManuals(); j++) {
+			GUIManual *guiMan = ::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->getGuiManualAt(j);
+			if (guiMan->isReferencing(m_manual)) {
+				guiMan->setNumberOfDisplayKeys(m_manual->getNumberOfAccessibleKeys());
+			}
+		}
+	}
+	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
