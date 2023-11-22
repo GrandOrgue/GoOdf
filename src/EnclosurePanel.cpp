@@ -109,6 +109,14 @@ void EnclosurePanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void EnclosurePanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_ampMinLvlSpin->SetToolTip(wxT("Minimal amplitude when enclosure is fully closed (percentage scaling). NOTE: It's possible to set to 0, but if that level is reached any sound will be totally muted and attacks counted as released!"));
+	} else {
+		m_ampMinLvlSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void EnclosurePanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

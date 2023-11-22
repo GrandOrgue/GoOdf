@@ -33,6 +33,7 @@ public:
 
 	void setManual(Manual *manual);
 	void setIsFirstRemoval(bool value);
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

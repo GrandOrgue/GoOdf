@@ -463,6 +463,46 @@ void ManualPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void ManualPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_thisIsThePedalCheckbox->SetToolTip(wxT("If checked this manual is written as [Manual000] and assumed to be the pedal. Only the very first manual can be set to be the pedal as [Manual000]."));
+		m_numberOfLogicalKeysSpin->SetToolTip(wxT("This is the total number of keys on a manual, including not directly playable ones (for instance not by physical keys - but reachable by octave couplers!). Normally, if you want 61 keys for a manual then the value for this property should also be set to 61."));
+		m_firstAccessibleKeyLogicalKeyNumberSpin->SetToolTip(wxT("The number of the first usable key."));
+		m_firstAccessibleKeyMIDINoteNumberSpin->SetToolTip(wxT("The MIDI number of the first accessible key (by means of MIDI keys). For a normal organ compass this is usually set to 36."));
+		m_numberOfAccessibleKeysSpin->SetToolTip(wxT("Number of MIDI accessible keys."));
+		m_midiInputNumberSpin->SetToolTip(wxT("This number is used while building the initial MIDI configuration. 0 means no association. 1 maps to pedal, 2 to first manual, 3 to second manual etc."));
+		m_addNewDivisional->SetToolTip(wxT("This button adds an old style ODF based divisional that can have a customized content. If there's no special reason to use this feature it's generally better to use the built in setter versions of the divisionals that GrandOrgue provide (this is available on any Panel as SetterXXXDivisionalYYY)."));
+		m_availableTremulants->SetToolTip(wxT("Here all available tremulants of the organ are listed."));
+		m_referencedTremulants->SetToolTip(wxT("This list contain the tremulants that are associated with this manual. NOTE: This association mainly matters for the built in divisionals as it decides what tremulants can be stored in them."));
+		m_addReferencedTremulant->SetToolTip(wxT("Add the selected tremulant as associated with this manual."));
+		m_removeReferencedTremulant->SetToolTip(wxT("Remove the association with the selected tremulant."));
+		m_availableSwitches->SetToolTip(wxT("Here all the available switches of the organ are listed."));
+		m_referencedSwitches->SetToolTip(wxT("This list contain the switches that are associated with this manual. NOTE: This association mainly matters for the built in divisionals as it decides what switches can be stored in them."));
+		m_addReferencedSwitch->SetToolTip(wxT("Add the selected switch(es) as associated with this manual."));
+		m_removeReferencedSwitch->SetToolTip(wxT("Remove the association with the selected switch(es)."));
+		m_midiKeyMapKeys->SetToolTip(wxT("Allows to map the MIDI note in MIDIKey999 to a different number. NOTE: If there's no special reason to change this, the mapping should be left 'as is' by default!"));
+		m_midiKeyMapValue->SetToolTip(wxT("This is the number that the chosen MIDIKey will map to. NOTE: If there's no special reason to change this, the mapping should be left 'as is' by default!"));
+	} else {
+		m_thisIsThePedalCheckbox->SetToolTip(wxEmptyString);
+		m_numberOfLogicalKeysSpin->SetToolTip(wxEmptyString);
+		m_firstAccessibleKeyLogicalKeyNumberSpin->SetToolTip(wxEmptyString);
+		m_firstAccessibleKeyMIDINoteNumberSpin->SetToolTip(wxEmptyString);
+		m_numberOfAccessibleKeysSpin->SetToolTip(wxEmptyString);
+		m_midiInputNumberSpin->SetToolTip(wxEmptyString);
+		m_addNewDivisional->SetToolTip(wxEmptyString);
+		m_availableTremulants->SetToolTip(wxEmptyString);
+		m_referencedTremulants->SetToolTip(wxEmptyString);
+		m_addReferencedTremulant->SetToolTip(wxEmptyString);
+		m_removeReferencedTremulant->SetToolTip(wxEmptyString);
+		m_availableSwitches->SetToolTip(wxEmptyString);
+		m_referencedSwitches->SetToolTip(wxEmptyString);
+		m_addReferencedSwitch->SetToolTip(wxEmptyString);
+		m_removeReferencedSwitch->SetToolTip(wxEmptyString);
+		m_midiKeyMapKeys->SetToolTip(wxEmptyString);
+		m_midiKeyMapValue->SetToolTip(wxEmptyString);
+	}
+}
+
 void ManualPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

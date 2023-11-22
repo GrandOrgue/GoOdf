@@ -37,6 +37,7 @@ public:
 	void disableNameFieldInput();
 	void setIsFirstRemoval(bool value);
 	Rank* getCurrentRank();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

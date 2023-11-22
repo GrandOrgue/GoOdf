@@ -661,3 +661,30 @@ void GoPanelPanel::updateRepresentationLayout() {
 	if (m_guiRepresentation->IsShown())
 		m_guiRepresentation->DoUpdateLayout();
 }
+
+void GoPanelPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_groupField->SetToolTip(wxT("If a group is entered, this panel will be put in a sub menu under that group name in the Panel menu in GrandOrgue. Cannot be set for Main Panel!"));
+		m_hasPedalYes->SetToolTip(wxT("If built-in bitmaps and/or built-in layout of GrandOrgue are used the first added manual will be displayed as a pedal."));
+		m_hasPedalNo->SetToolTip(wxT("All manuals will be displayed as manuals if built-in bitmaps and/or built-in layout of GrandOrgue are used."));
+		m_addImageBtn->SetToolTip(wxT("Custom images can be added to the panel."));
+		m_organElementsChoice->SetToolTip(wxT("Here all the available elements of the organ defined above the Panels in the tree will be shown. One or many can be selected and added to the panel as GUI Elements with the button below."));
+		m_setterElementsChoice->SetToolTip(wxT("The built-in setter elements of GrandOrgue can be selected and added to the panel as GUI Elements with the button below. NOTE: The combination elements need to have some additional information set below to be functioning as intended."));
+		m_labelElementBtn->SetToolTip(wxT("Label elements can be added to the panel as GUI Elements."));
+		m_manualChoice->SetToolTip(wxT("For the setter divisionals the manual they affect is chosen here."));
+		m_combinationNumberSpin->SetToolTip(wxT("For the setter generals and divisionals the combination number should be set here. NOTE: The divisionals are numbered starting with zero indexing, thus divisional 1 is actually entered as 0, divisional 2 is entered as 1 etc."));
+		m_showPanelBtn->SetToolTip(wxT("A graphical rendering of the panel will be shown where adjustments of positioning of elements can be done (which will change the layout method used to absolute positioning for adjusted elements)."));
+	} else {
+		m_groupField->SetToolTip(wxEmptyString);
+		m_hasPedalYes->SetToolTip(wxEmptyString);
+		m_hasPedalNo->SetToolTip(wxEmptyString);
+		m_addImageBtn->SetToolTip(wxEmptyString);
+		m_organElementsChoice->SetToolTip(wxEmptyString);
+		m_setterElementsChoice->SetToolTip(wxEmptyString);
+		m_elementChoiceBtn->SetToolTip(wxEmptyString);
+		m_labelElementBtn->SetToolTip(wxEmptyString);
+		m_manualChoice->SetToolTip(wxEmptyString);
+		m_combinationNumberSpin->SetToolTip(wxEmptyString);
+		m_showPanelBtn->SetToolTip(wxEmptyString);
+	}
+}

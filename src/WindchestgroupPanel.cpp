@@ -211,6 +211,20 @@ void WindchestgroupPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void WindchestgroupPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_availableEnclosures->SetToolTip(wxT("Here all available enclosures of the organ are listed."));
+		m_referencedEnclosures->SetToolTip(wxT("The enclosure(s) listed here will affect this windchestgroup and thus any rank/pipe placed on this windchest. Do note that it's possible that more than one enclosure can affect one winchest, and it's also possible that many windchests are affected by the same enclosure."));
+		m_availableTremulants->SetToolTip(wxT("Here all available tremulants of the organ are listed."));
+		m_referencedTremulants->SetToolTip(wxT("The tremulant(s) listed here can affect any rank/pipe placed on this windchest."));
+	} else {
+		m_availableEnclosures->SetToolTip(wxEmptyString);
+		m_referencedEnclosures->SetToolTip(wxEmptyString);
+		m_availableTremulants->SetToolTip(wxEmptyString);
+		m_referencedTremulants->SetToolTip(wxEmptyString);
+	}
+}
+
 void WindchestgroupPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

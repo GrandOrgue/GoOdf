@@ -704,6 +704,20 @@ void GeneralPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void GeneralPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_isProtectedYes->SetToolTip(wxT("Yes means that the content of the general cannot be modified by the user."));
+		m_isProtectedNo->SetToolTip(wxT("No means that the user can modify the state of added elements."));
+		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
+		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
+	} else {
+		m_isProtectedYes->SetToolTip(wxEmptyString);
+		m_isProtectedNo->SetToolTip(wxEmptyString);
+		m_displayInvertedYes->SetToolTip(wxEmptyString);
+		m_displayInvertedNo->SetToolTip(wxEmptyString);
+	}
+}
+
 void GeneralPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

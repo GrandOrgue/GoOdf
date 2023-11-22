@@ -36,6 +36,7 @@ public:
 	wxString getOdfName();
 	void setOdfPath(wxString path);
 	void setOdfName(wxString name);
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

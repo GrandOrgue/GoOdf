@@ -600,6 +600,66 @@ Rank* RankPanel::getCurrentRank() {
 	return m_rank;
 }
 
+void RankPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_firstMidiNoteNumberSpin->SetToolTip(wxT("The MIDI note number for the first pipe decides the number matching when auto loading pipes with many of the buttons below."));
+		m_numberOfLogicalPipesSpin->SetToolTip(wxT("Set the desired number of pipes for the rank here."));
+		m_harmonicNumberSpin->SetToolTip(wxT("This value together with MIDI note and PitchFraction affects the automatic re-tuning in different temperaments."));
+		m_pitchCorrectionSpin->SetToolTip(wxT("Adjust the tuning in other temperaments than Original with this value."));
+		m_windchestChoice->SetToolTip(wxT("Place the rank on a windchest here."));
+		m_isPercussiveYes->SetToolTip(wxT("A percussive rank has samples that is played once from start to end."));
+		m_isPercussiveNo->SetToolTip(wxT("A non-percussive rank has samples with loops and release(s)."));
+		m_minVelocityVolumeSpin->SetToolTip(wxT("If the rank should be velocity sensitive this value should be something else than 100 and decide the lower range."));
+		m_maxVelocityVolumeSpin->SetToolTip(wxT("If the rank should be velocity sensitive this value should be something else than 100 and decide the upper range."));
+		m_acceptsRetuningYes->SetToolTip(wxT("Enable automatic re-tuning when changing temperaments."));
+		m_acceptsRetuningNo->SetToolTip(wxT("Disable automatic re-tuning. Should only be used for different noise effects."));
+		m_amplitudeLevelSpin->SetToolTip(wxT("Linear volume adjustment for the rank. The value of 100 means that the sample is played 'as is'."));
+		m_gainSpin->SetToolTip(wxT("Logarithmic volume adjustment for the rank. The value of 0 means that the sample is played 'as is'."));
+		m_pitchTuningSpin->SetToolTip(wxT("Adjust the overall tuning of the rank in 'Original temperament'."));
+		m_trackerDelaySpin->SetToolTip(wxT("Introduce latency (delay the attack) in ms. for the whole rank."));
+		readPipesFromFolderBtn->SetToolTip(wxT("Clear and auto load new samples for all the pipes with MIDI number matching and using pipe reading options below."));
+		m_optionsAttackField->SetToolTip(wxT("If attacks are in a sub directory of the main rank it can be specified here."));
+		m_optionsOnlyOneAttack->SetToolTip(wxT("Check this to only load one attack for each pipe even if many are available."));
+		m_optionsLoadReleaseInAttack->SetToolTip(wxT("Un-check to not try adding releases from the attack sample files. For samples coming from SP this should generally be un-checked!"));
+		m_optionsReleaseField->SetToolTip(wxT("Set a string to match release sample folders here."));
+		m_optionsKeyPressTime->SetToolTip(wxT("If checked, try to set MaxKeyPressTime from numerical values in the release folder name."));
+		m_optionsTremulantField->SetToolTip(wxT("Set a string to match tremulant sample folders here."));
+		m_addPipesFromFolderBtn->SetToolTip(wxT("Use this button to add more samples from selected folder to the rank. This operation only adds more samples, it doesn't remove existing samples."));
+		m_addTremulantPipesBtn->SetToolTip(wxT("Use this button to add separate tremulant samples to the rank. Especially useful if the tremulant samples for the rank is not a sub directory to the other samples."));
+		m_addReleaseSamplesBtn->SetToolTip(wxT("Use this button to add separate releases to the rank, it doesn't remove existing samples. This can be useful if the release samples are placed somewhere else than the other samples."));
+		m_flexiblePipeLoadingBtn->SetToolTip(wxT("Use this button to auto load samples for the rank with more fexibility than the other buttons allow."));
+		m_pipeTreeCtrl->SetToolTip(wxT("The pipe tree pipe(s), attacks and releases can be right clicked to bring up a pop-up menu."));
+	} else {
+		m_firstMidiNoteNumberSpin->SetToolTip(wxEmptyString);
+		m_numberOfLogicalPipesSpin->SetToolTip(wxEmptyString);
+		m_harmonicNumberSpin->SetToolTip(wxEmptyString);
+		m_pitchCorrectionSpin->SetToolTip(wxEmptyString);
+		m_windchestChoice->SetToolTip(wxEmptyString);
+		m_isPercussiveYes->SetToolTip(wxEmptyString);
+		m_isPercussiveNo->SetToolTip(wxEmptyString);
+		m_minVelocityVolumeSpin->SetToolTip(wxEmptyString);
+		m_maxVelocityVolumeSpin->SetToolTip(wxEmptyString);
+		m_acceptsRetuningYes->SetToolTip(wxEmptyString);
+		m_acceptsRetuningNo->SetToolTip(wxEmptyString);
+		m_amplitudeLevelSpin->SetToolTip(wxEmptyString);
+		m_gainSpin->SetToolTip(wxEmptyString);
+		m_pitchTuningSpin->SetToolTip(wxEmptyString);
+		m_trackerDelaySpin->SetToolTip(wxEmptyString);
+		readPipesFromFolderBtn->SetToolTip(wxEmptyString);
+		m_optionsAttackField->SetToolTip(wxEmptyString);
+		m_optionsOnlyOneAttack->SetToolTip(wxEmptyString);
+		m_optionsLoadReleaseInAttack->SetToolTip(wxEmptyString);
+		m_optionsReleaseField->SetToolTip(wxEmptyString);
+		m_optionsKeyPressTime->SetToolTip(wxEmptyString);
+		m_optionsTremulantField->SetToolTip(wxEmptyString);
+		m_addPipesFromFolderBtn->SetToolTip(wxEmptyString);
+		m_addTremulantPipesBtn->SetToolTip(wxEmptyString);
+		m_addReleaseSamplesBtn->SetToolTip(wxEmptyString);
+		m_flexiblePipeLoadingBtn->SetToolTip(wxEmptyString);
+		m_pipeTreeCtrl->SetToolTip(wxEmptyString);
+	}
+}
+
 void RankPanel::setNameFieldValue(wxString name) {
 	m_nameField->ChangeValue(name);
 }

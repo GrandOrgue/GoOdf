@@ -36,6 +36,7 @@ public:
 	void internalRankLogicalPipesChanged(int value);
 	void setIsFirstRemoval(bool value);
 	Stop* getCurrentStop();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

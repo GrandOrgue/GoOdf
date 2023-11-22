@@ -542,6 +542,20 @@ void OrganPanel::setOdfName(wxString name) {
 	m_organNameField->ChangeValue(m_odfName);
 }
 
+void OrganPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		wxButton *selectPath = (wxButton*) FindWindow(ID_BROWSE_FOR_ODF_PATH);
+		selectPath->SetToolTip(wxT("Begin with setting the location for the .organ file in the file system here."));
+		wxButton *infoPath = (wxButton*) FindWindow(ID_BROWSE_FOR_INFO_PATH);
+		infoPath->SetToolTip(wxT("An organinfo file can be selected here but it is not necessary and not even supported for organ packages!"));
+	} else {
+		wxButton *selectPath = (wxButton*) FindWindow(ID_BROWSE_FOR_ODF_PATH);
+		selectPath->SetToolTip(wxEmptyString);
+		wxButton *infoPath = (wxButton*) FindWindow(ID_BROWSE_FOR_INFO_PATH);
+		infoPath->SetToolTip(wxEmptyString);
+	}
+}
+
 void OrganPanel::getDataFromOrgan() {
 	m_churchNameField->ChangeValue(m_currentOrgan->getChurchName());
 	m_churchAddressField->ChangeValue(m_currentOrgan->getChurchAddress());

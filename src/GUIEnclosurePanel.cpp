@@ -647,6 +647,72 @@ void GUIEnclosurePanel::updatePositionValues() {
 	}
 }
 
+void GUIEnclosurePanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_labelTextField->SetToolTip(wxT("If another string is desired than the button name (or a shorter one for display reasons) it can be overridden here."));
+		m_labelFont->SetToolTip(wxT("Font face and size can be set here. The default value is derived from the display metrics control label font of the panel."));
+		m_labelColourChoice->SetToolTip(wxT("Colour of the font can be chosen here. If a custom value is chosen the picker will be activated."));
+		m_labelColourPick->SetToolTip(wxT("A custom colour can be picked here."));
+		m_elementPosXSpin->SetToolTip(wxT("Absolute positioning x coordinate value. If set to -1 the built-in layout with rows/columns will be used instead."));
+		m_elementPosYSpin->SetToolTip(wxT("Absolute positioning x coordinate value. If set to -1 the built-in layout with rows/columns will be used instead."));
+		m_enclosureStyleBox->SetToolTip(wxT("Here a built-in enclosure bitmap style that GrandOrgue provides can be chosen."));
+		m_bitmapBox->SetToolTip(wxT("Here the added bitmaps are listed. Select one to display/set/modify its paths."));
+		m_addBitmapBtn->SetToolTip(wxT("Add an empty bitmap for the enclosure."));
+		m_imagePathField->SetToolTip(wxT("Relative path to the image file for selected bitmap is shown here."));
+		m_addImagePathBtn->SetToolTip(wxT("Opens a file dialog where the image file for this bitmap can be selected. NOTE: If this dialog is cancelled the image file for this bitmap can be removed!"));
+		m_maskPathField->SetToolTip(wxT("Relative path to the mask file corresponding to the image file for selected bitmap is shown here."));
+		m_addMaskPathBtn->SetToolTip(wxT("Opens a file dialog where the mask file for this bitmap can be selected. NOTE: If this dialog is cancelled the mask file for this bitmap can be removed!"));
+		m_removeBitmapBtn->SetToolTip(wxT("Removes the bitmap and its associated image and mask."));
+		m_addImageBitmapsBtn->SetToolTip(wxT("This button opens a file dialog where multiple images can be chosen and added as bitmaps for the enclosure. For this to work they have to be in correct sorting order (starting with the closed image and end with the open) and not use or depend on any mask files that exist in the same directory!"));
+		m_widthSpin->SetToolTip(wxT("Width of bitmap to use. NOTE: Changing this value does not scale the image! If set greater than real image width - the shown image in GrandOrgue will be tiled. If set smaller than real image width - the shown image in GrandOrgue will be cropped."));
+		m_heightSpin->SetToolTip(wxT("Height of bitmap to use. NOTE: Changing this value does not scale the image! If set greater than real image height - the shown image in GrandOrgue will be tiled. If set smaller than real image height - the shown image in GrandOrgue will be cropped."));
+		m_tileOffsetXSpin->SetToolTip(wxT("Offset any tiling for the x axis."));
+		m_tileOffsetYSpin->SetToolTip(wxT("Offset any tiling for the y axis."));
+		m_mouseRectLeftSpin->SetToolTip(wxT("Controls the left coordinate for where the area of mouse interaction begin."));
+		m_mouseRectTopSpin->SetToolTip(wxT("Controls the upper coordinate for where the area of mouse interaction begin."));
+		m_mouseRectWidthSpin->SetToolTip(wxT("Set the width of the area of where mouse interaction is possible. NOTE: To get full rectangle area interaction the mouse radius must be set to 0, otherwise the interaction area is limited to a circle created with the mouse radius value."));
+		m_mouseRectHeightSpin->SetToolTip(wxT("Set the height of the area of where mouse interaction is possible. NOTE: To get full rectangle area interaction the mouse radius must be set to 0, otherwise the interaction area is limited to a circle created with the mouse radius value."));
+		m_mouseAxisStartSpin->SetToolTip(wxT("Set the top Y coordinate of the movement axis."));
+		m_mouseAxisEndSpin->SetToolTip(wxT("Set the bottom Y coordinate of the movement axis."));
+		m_textRectLeftSpin->SetToolTip(wxT("Controls to left coordinate for where text can be written on the element."));
+		m_textRectTopSpin->SetToolTip(wxT("Controls to upper coordinate for where text can be written on the element."));
+		m_textRectWidthSpin->SetToolTip(wxT("Set the total width available to write text on the element."));
+		m_textRectHeightSpin->SetToolTip(wxT("Set the total height available to write text on the element."));
+		m_textBreakWidthSpin->SetToolTip(wxT("Control line length of text written on the element. NOTE: Set this value to 0 (zero) to completely remove text and not write anything at all on the bitmap!"));
+	} else {
+		m_labelTextField->SetToolTip(wxEmptyString);
+		m_labelFont->SetToolTip(wxEmptyString);
+		m_labelColourChoice->SetToolTip(wxEmptyString);
+		m_labelColourPick->SetToolTip(wxEmptyString);
+		m_elementPosXSpin->SetToolTip(wxEmptyString);
+		m_elementPosYSpin->SetToolTip(wxEmptyString);
+		m_enclosureStyleBox->SetToolTip(wxEmptyString);
+		m_bitmapBox->SetToolTip(wxEmptyString);
+		m_addBitmapBtn->SetToolTip(wxEmptyString);
+		m_imagePathField->SetToolTip(wxEmptyString);
+		m_addImagePathBtn->SetToolTip(wxEmptyString);
+		m_maskPathField->SetToolTip(wxEmptyString);
+		m_addMaskPathBtn->SetToolTip(wxEmptyString);
+		m_removeBitmapBtn->SetToolTip(wxEmptyString);
+		m_addImageBitmapsBtn->SetToolTip(wxEmptyString);
+		m_widthSpin->SetToolTip(wxEmptyString);
+		m_heightSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetXSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetYSpin->SetToolTip(wxEmptyString);
+		m_mouseRectLeftSpin->SetToolTip(wxEmptyString);
+		m_mouseRectTopSpin->SetToolTip(wxEmptyString);
+		m_mouseRectWidthSpin->SetToolTip(wxEmptyString);
+		m_mouseRectHeightSpin->SetToolTip(wxEmptyString);
+		m_mouseAxisStartSpin->SetToolTip(wxEmptyString);
+		m_mouseAxisEndSpin->SetToolTip(wxEmptyString);
+		m_textRectLeftSpin->SetToolTip(wxEmptyString);
+		m_textRectTopSpin->SetToolTip(wxEmptyString);
+		m_textRectWidthSpin->SetToolTip(wxEmptyString);
+		m_textRectHeightSpin->SetToolTip(wxEmptyString);
+		m_textBreakWidthSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void GUIEnclosurePanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);

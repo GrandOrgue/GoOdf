@@ -628,6 +628,66 @@ Stop* StopPanel::getCurrentStop() {
 	return m_stop;
 }
 
+void StopPanel::setTooltipsEnabled(bool isEnabled) {
+	m_internalRankPanel->setTooltipsEnabled(isEnabled);
+
+	if (isEnabled) {
+		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
+		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
+		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, instead it's controlled indirectly by referenced switch(es)."));
+		m_defaultToEngagedYes->SetToolTip(wxT("The stop will be active by default. Only works if function is 'Input', otherwise the state is decided by switch(es)."));
+		m_defaultToEngagedNo->SetToolTip(wxT("The stop is not active by default."));
+		m_availableSwitches->SetToolTip(wxT("Switches available for referencing are listed here. If function is something else than 'Input' and there are switches available one or many can be selected for referencing."));
+		m_referencedSwitches->SetToolTip(wxT("The switch(es) that should control the state of this stop should be listed here."));
+		m_addReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the left list will be referenced."));
+		m_removeReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the right list will be removed from this stop."));
+		m_gcStateChoice->SetToolTip(wxT("Decides the state of this stop when 'General Cancel' is pushed. Only works for 'Input' function."));
+		m_storeInDivisionalYes->SetToolTip(wxT("This stop is possible to store in divisionals."));
+		m_storeInDivisionalNo->SetToolTip(wxT("This stop will not be stored in divisionals unless 'Full' is used to set it."));
+		m_storeInGeneralYes->SetToolTip(wxT("This stop is possible to store in generals."));
+		m_storeInGeneralNo->SetToolTip(wxT("This stop is not stored in generals unless 'Full' is used to set it."));
+		m_firstAccessiblePipeLogicalKeyNumberSpin->SetToolTip(wxT("The first (directly accessible) pipe is played from this key number on the manual."));
+		m_numberOfAccessiblePipesSpin->SetToolTip(wxT("Number of pipes accessible to play from a manual. Note that this value is calculated from the pipes added and rarely needs to be manually changed except for certain cases!"));
+		m_firstAccessiblePipeLogicalPipeNumberSpin->SetToolTip(wxT("The number of the first pipe accessible from the manual."));
+		m_useInternalRankYes->SetToolTip(wxT("This stop has a rank defined directly in itself."));
+		m_useInternalRankNo->SetToolTip(wxT("This stop references external ranks."));
+		m_availableRanks->SetToolTip(wxT("List of ranks possible to reference."));
+		m_referencedRanks->SetToolTip(wxT("List of the rank(s) this stop actually references."));
+		m_addReferencedRank->SetToolTip(wxT("The selected rank in the left list will be referenced by this stop."));
+		m_removeReferencedRank->SetToolTip(wxT("The selected rank that the stop references will be removed from this stop."));
+		m_firstPipeNumberSpin->SetToolTip(wxT("Number of the first pipe to use from the rank."));
+		m_pipeCountSpin->SetToolTip(wxT("Number of pipes to use from the rank."));
+		m_firstAccessibleKeyNumberSpin->SetToolTip(wxT("Key number offset (from FirstAccessiblePipeLogicalKeyNumber) for the pipe referenced by FirstPipeNumber."));
+	} else {
+		m_displayInvertedYes->SetToolTip(wxEmptyString);
+		m_displayInvertedNo->SetToolTip(wxEmptyString);
+		m_functionChoice->SetToolTip(wxEmptyString);
+		m_defaultToEngagedYes->SetToolTip(wxEmptyString);
+		m_defaultToEngagedNo->SetToolTip(wxEmptyString);
+		m_availableSwitches->SetToolTip(wxEmptyString);
+		m_referencedSwitches->SetToolTip(wxEmptyString);
+		m_addReferencedSwitch->SetToolTip(wxEmptyString);
+		m_removeReferencedSwitch->SetToolTip(wxEmptyString);
+		m_gcStateChoice->SetToolTip(wxEmptyString);
+		m_storeInDivisionalYes->SetToolTip(wxEmptyString);
+		m_storeInDivisionalNo->SetToolTip(wxEmptyString);
+		m_storeInGeneralYes->SetToolTip(wxEmptyString);
+		m_storeInGeneralNo->SetToolTip(wxEmptyString);
+		m_firstAccessiblePipeLogicalKeyNumberSpin->SetToolTip(wxEmptyString);
+		m_numberOfAccessiblePipesSpin->SetToolTip(wxEmptyString);
+		m_firstAccessiblePipeLogicalPipeNumberSpin->SetToolTip(wxEmptyString);
+		m_useInternalRankYes->SetToolTip(wxEmptyString);
+		m_useInternalRankNo->SetToolTip(wxEmptyString);
+		m_availableRanks->SetToolTip(wxEmptyString);
+		m_referencedRanks->SetToolTip(wxEmptyString);
+		m_addReferencedRank->SetToolTip(wxEmptyString);
+		m_removeReferencedRank->SetToolTip(wxEmptyString);
+		m_firstPipeNumberSpin->SetToolTip(wxEmptyString);
+		m_pipeCountSpin->SetToolTip(wxEmptyString);
+		m_firstAccessibleKeyNumberSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void StopPanel::internalRankLogicalPipesChanged(int value) {
 	m_numberOfAccessiblePipesSpin->SetValue(value);
 	m_stop->setNumberOfAccessiblePipes(value);

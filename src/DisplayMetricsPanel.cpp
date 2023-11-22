@@ -1023,6 +1023,116 @@ void DisplayMetricsPanel::setDisplayMetrics(DisplayMetrics *displayMetrics) {
 
 }
 
+void DisplayMetricsPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_screenSizeHorizChoice->SetToolTip(wxT("The panel width size type is chosen here. If custom size is chosen the spin control will be active, otherwise it will just show the actual pixel width of the current choice."));
+		m_screenSizeHorizSpin->SetToolTip(wxT("If custom pixel size is chosen the desired panel width can be set here."));
+		m_screenSizeVertChoice->SetToolTip(wxT("The panel height size type is chosen here. If custom size is chosen the spin control will be active, otherwise it will just show the actual pixel height of the current choice."));
+		m_screenSizeVertSpin->SetToolTip(wxT("If custom pixel size is chosen the desired panel height can be set here."));
+		m_drawstopBackground->SetToolTip(wxT("The built-in drawstop background that GrandOrgue provides can be selected here. (It is the surfaces to the left and right of the middle console.)"));
+		m_consoleBackground->SetToolTip(wxT("The built-in console background that GrandOrgue provides can be selected here. (It is the middle part of the panel where the keyboards normally would be drawn.)"));
+		m_keyHorizBackground->SetToolTip(wxT("The built-in background that GrandOrgue provides below the  manual keyboards and above the pedal keyboard where buttons belonging to that manual normally would be placed. Also used for extra drawstop and button rows above the manuals."));
+		m_keyVertBackground->SetToolTip(wxT("The built-in background that GrandOrgue provides under the keyboards. For manuals it normally appears to be to the left and right of the keyboards. Also used for trim below (lowest) manual and trim above (highest of the) manuals and above the extra drawstop rows (if present)."));
+		m_drawstopInsetBackground->SetToolTip(wxT("The built-in background that GrandOrgue provides as inset background for the drawstop jambs left and right if paired drawstop columns are set (which means that at least 4 drawstop columns must be available)."));
+		m_controlLabelFont->SetToolTip(wxT("Font used by default for buttons (all drawstop types, pistons etc.)"));
+		m_shortcutKeyLabelFont->SetToolTip(wxT("NOTE: This feature is not actually used by GrandOrgue!"));
+		m_shortcutKeyLabelColour->SetToolTip(wxT("NOTE: This feature is not actually used by GrandOrgue!"));
+		m_shortcutKeyColourPick->SetToolTip(wxT("NOTE: This feature is not actually used by GrandOrgue!"));
+		m_groupLabelFont->SetToolTip(wxT("Font used by default for labels."));
+		m_drawstopCols->SetToolTip(wxT("Number of columns used for placing drawstops with the built-in layout system. Must be even."));
+		m_drawstopRows->SetToolTip(wxT("Number of drawstop rows for placing drawstops with the built-in layout system. NOTE: Possibly due to a bug in GrandOrgue exsisting as of november 2023 the drawstop rows are not checked to be out of bounds! However it's still recommended to set this value correctly!"));
+		m_drawstopColsOffsetYes->SetToolTip(wxT("The rows in every other column of drawstops on left/right jamb will be vertically displaced from each other."));
+		m_drawstopColsOffsetNo->SetToolTip(wxT("The rows in all the drawstop columns on the left/right jamb will line up."));
+		m_drawstopOuterColOffsetUpYes->SetToolTip(wxT("The outer columns of the left/right jamb will have its drawstop rows higher up (than the next one)."));
+		m_drawstopOuterColOffsetUpNo->SetToolTip(wxT("The inner columns of the left/right jamb will have its drawstop row higher up (if they are offset)."));
+		m_pairDrawstopColsYes->SetToolTip(wxT("Group drawstop columns together two and two. Number of drawstop columns must be divisible by 4. Will also activate/show the drawstop inset background."));
+		m_pairDrawstopColsNo->SetToolTip(wxT("No grouping of drawstop columns. Inset background for the drawstops will not be visible/shown."));
+		m_extraDrawstopRows->SetToolTip(wxT("Number of drawstop rows in the center block above the manuals. The row numbers start with 100."));
+		m_extraDrawstopCols->SetToolTip(wxT("Number of drawstop columns in the center block above the manuals."));
+		m_buttonCols->SetToolTip(wxT("Number of columns for displaying pistons in the center block. Used for both the rows linked with manuals and for rows above the manuals."));
+		m_extraButtonRows->SetToolTip(wxT("Number of rows for displaying extra pistons in the center block above the manuals. The row numbers start with 100. NOTE: The normal piston rows 0 (pedal) to 8 (if so many manuals) are associated with each manual respecitvely and need not be specified separately."));
+		m_extraPedalButtonRowYes->SetToolTip(wxT("Add an extra piston row with row number 9."));
+		m_extraPedalButtonRowNo->SetToolTip(wxT("No extra piston row for the pedal. Normal row number for the pedal pistons is 0."));
+		m_extraPedalButtonRowOffsetYes->SetToolTip(wxT("Move extra pistons row slightly to the left."));
+		m_extraPedalButtonRowOffsetNo->SetToolTip(wxT("Line up the columns normally."));
+		m_extraPedalButtonRowOffsetRightYes->SetToolTip(wxT("Move extra pistons row slightly to the right."));
+		m_extraPedalButtonRowOffsetRightNo->SetToolTip(wxT("Line up the columns normally."));
+		m_buttonsAboveManualsYes->SetToolTip(wxT("Display the pistons associated with the manual above the manual. (Always done for the pedal)"));
+		m_buttonsAboveManualsNo->SetToolTip(wxT("Display the pistons associated with the manual below the manual. (Cannot be done for the pedal)"));
+		m_trimAboveManualsYes->SetToolTip(wxT("A thin strip of the vertical keyboard background will be shown above highest manual."));
+		m_trimAboveManualsNo->SetToolTip(wxT("No extra vertical background above the highest manual."));
+		m_trimBelowManualsYes->SetToolTip(wxT("A thin strip of the vertical keyboard background will be shown below lowest manual. (not pedal)"));
+		m_trimBelowManualsNo->SetToolTip(wxT("No extra vertical background under lowest manual."));
+		m_trimAboveExtraRowsYes->SetToolTip(wxT("A thin strip of the vertical keyboard background will be shown above highest extra drawstop row."));
+		m_trimAboveExtraRowsNo->SetToolTip(wxT("No extra vertical background above extra drawstop rows."));
+		m_extraDrawstopRowsAboveExtraButtonRowsYes->SetToolTip(wxT("Display any extra drawstop block above any extra piston block."));
+		m_extraDrawstopRowsAboveExtraButtonRowsNo->SetToolTip(wxT("Display any extra drawstop block below any extra piston block."));
+		m_drawstopWidth->SetToolTip(wxT("Drawstop width used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_drawstopHeight->SetToolTip(wxT("Drawstop height used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_pistonWidth->SetToolTip(wxT("Piston width used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_pistonHeight->SetToolTip(wxT("Piston height used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_enclosureWidth->SetToolTip(wxT("Enclosure width used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_enclosureHeight->SetToolTip(wxT("Enclosure height used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_pedalHeight->SetToolTip(wxT("Height of one pedal key used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_pedalKeyWidth->SetToolTip(wxT("Width of one pedal used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_manualHeight->SetToolTip(wxT("Height of one manual key used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+		m_manualKeyWidth->SetToolTip(wxT("Width of one manual key used for built-in layout calculation. NOTE: Does not scale the bitmaps, it only affects the layout distances!"));
+	} else {
+		m_screenSizeHorizChoice->SetToolTip(wxEmptyString);
+		m_screenSizeHorizSpin->SetToolTip(wxEmptyString);
+		m_screenSizeVertChoice->SetToolTip(wxEmptyString);
+		m_screenSizeVertSpin->SetToolTip(wxEmptyString);
+		m_drawstopBackground->SetToolTip(wxEmptyString);
+		m_consoleBackground->SetToolTip(wxEmptyString);
+		m_keyHorizBackground->SetToolTip(wxEmptyString);
+		m_keyVertBackground->SetToolTip(wxEmptyString);
+		m_drawstopInsetBackground->SetToolTip(wxEmptyString);
+		m_controlLabelFont->SetToolTip(wxEmptyString);
+		m_shortcutKeyLabelFont->SetToolTip(wxEmptyString);
+		m_shortcutKeyLabelColour->SetToolTip(wxEmptyString);
+		m_shortcutKeyColourPick->SetToolTip(wxEmptyString);
+		m_groupLabelFont->SetToolTip(wxEmptyString);
+		m_drawstopCols->SetToolTip(wxEmptyString);
+		m_drawstopRows->SetToolTip(wxEmptyString);
+		m_drawstopColsOffsetYes->SetToolTip(wxEmptyString);
+		m_drawstopColsOffsetNo->SetToolTip(wxEmptyString);
+		m_drawstopOuterColOffsetUpYes->SetToolTip(wxEmptyString);
+		m_drawstopOuterColOffsetUpNo->SetToolTip(wxEmptyString);
+		m_pairDrawstopColsYes->SetToolTip(wxEmptyString);
+		m_pairDrawstopColsNo->SetToolTip(wxEmptyString);
+		m_extraDrawstopRows->SetToolTip(wxEmptyString);
+		m_extraDrawstopCols->SetToolTip(wxEmptyString);
+		m_buttonCols->SetToolTip(wxEmptyString);
+		m_extraButtonRows->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowYes->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowNo->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowOffsetYes->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowOffsetNo->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowOffsetRightYes->SetToolTip(wxEmptyString);
+		m_extraPedalButtonRowOffsetRightNo->SetToolTip(wxEmptyString);
+		m_buttonsAboveManualsYes->SetToolTip(wxEmptyString);
+		m_buttonsAboveManualsNo->SetToolTip(wxEmptyString);
+		m_trimAboveManualsYes->SetToolTip(wxEmptyString);
+		m_trimAboveManualsNo->SetToolTip(wxEmptyString);
+		m_trimBelowManualsYes->SetToolTip(wxEmptyString);
+		m_trimBelowManualsNo->SetToolTip(wxEmptyString);
+		m_trimAboveExtraRowsYes->SetToolTip(wxEmptyString);
+		m_trimAboveExtraRowsNo->SetToolTip(wxEmptyString);
+		m_extraDrawstopRowsAboveExtraButtonRowsYes->SetToolTip(wxEmptyString);
+		m_extraDrawstopRowsAboveExtraButtonRowsNo->SetToolTip(wxEmptyString);
+		m_drawstopWidth->SetToolTip(wxEmptyString);
+		m_drawstopHeight->SetToolTip(wxEmptyString);
+		m_pistonWidth->SetToolTip(wxEmptyString);
+		m_pistonHeight->SetToolTip(wxEmptyString);
+		m_enclosureWidth->SetToolTip(wxEmptyString);
+		m_enclosureHeight->SetToolTip(wxEmptyString);
+		m_pedalHeight->SetToolTip(wxEmptyString);
+		m_pedalKeyWidth->SetToolTip(wxEmptyString);
+		m_manualHeight->SetToolTip(wxEmptyString);
+		m_manualKeyWidth->SetToolTip(wxEmptyString);
+	}
+}
+
 void DisplayMetricsPanel::OnHorizontalSizeChoice(wxCommandEvent& event) {
 	if (event.GetId() == ID_HORIZONTAL_SIZE_CHOICE) {
 		m_displayMetrics->m_dispScreenSizeHoriz.setSelectedNameIndex(m_screenSizeHorizChoice->GetSelection(), true);

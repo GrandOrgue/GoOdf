@@ -34,6 +34,7 @@ public:
 	void setPanel(GoPanel *panel);
 	void setIsFirstRemoval(bool value);
 	void updateRepresentationLayout();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

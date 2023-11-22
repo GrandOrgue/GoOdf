@@ -32,6 +32,7 @@ public:
 
 	void setEnclosure(Enclosure *enclosure);
 	void setIsFirstRemoval(bool value);
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

@@ -34,6 +34,7 @@ public:
 
 	void setLabel(GUILabel *label);
 	void updatePositionValues();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

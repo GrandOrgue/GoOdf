@@ -35,6 +35,7 @@ public:
 
 	void setEnclosure(GUIEnclosure *enclosure);
 	void updatePositionValues();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

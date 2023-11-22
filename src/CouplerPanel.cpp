@@ -666,6 +666,74 @@ void CouplerPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void CouplerPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
+		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
+		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, instead it's controlled indirectly by referenced switch(es)."));
+		m_defaultToEngagedYes->SetToolTip(wxT("The stop will be active by default. Only works if function is 'Input', otherwise the state is decided by switch(es)."));
+		m_defaultToEngagedNo->SetToolTip(wxT("The stop is not active by default."));
+		m_availableSwitches->SetToolTip(wxT("Switches available for referencing are listed here. If function is something else than 'Input' and there are switches available one or many can be selected for referencing."));
+		m_referencedSwitches->SetToolTip(wxT("The switch(es) that should control the state of this stop should be listed here."));
+		m_addReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the left list will be referenced."));
+		m_removeReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the right list will be removed from this stop."));
+		m_gcStateChoice->SetToolTip(wxT("Decides the state of this stop when 'General Cancel' is pushed. Only works for 'Input' function."));
+		m_storeInDivisionalYes->SetToolTip(wxT("This stop is possible to store in divisionals."));
+		m_storeInDivisionalNo->SetToolTip(wxT("This stop will not be stored in divisionals unless 'Full' is used to set it."));
+		m_storeInGeneralYes->SetToolTip(wxT("This stop is possible to store in generals."));
+		m_storeInGeneralNo->SetToolTip(wxT("This stop is not stored in generals unless 'Full' is used to set it."));
+		m_unisonOffYes->SetToolTip(wxT("An unison off coupler decouples the manual from the stops (turn it into a floating manual)."));
+		m_unisonOffNo->SetToolTip(wxT("This is the option for any 'normal' coupler."));
+		m_destinationManualChoice->SetToolTip(wxT("Select the manual to couple to."));
+		m_destinationKeyShiftSpin->SetToolTip(wxT("Adjust this value if the key to couple to should not be the same as the source key."));
+		m_couplerTypeChoice->SetToolTip(wxT("Here the type of coupler can be changed."));
+		m_coupleToSubsequentUnisonIntermanualCouplersYes->SetToolTip(wxT("Triggers further inter-manual coupler(s) with a destination key shift of zero."));
+		m_coupleToSubsequentUnisonIntermanualCouplersNo->SetToolTip(wxT("Don't trigger further inter-manual coupler(s)."));
+		m_coupleToSubsequentUpwardIntermanualCouplersYes->SetToolTip(wxT("Triggers further inter-manual coupler(s) with a destination key shift greater than zero."));
+		m_coupleToSubsequentUpwardIntermanualCouplersNo->SetToolTip(wxT("Don't trigger further inter-manual coupler(s) upwards."));
+		m_coupleToSubsequentDownwardIntermanualCouplersYes->SetToolTip(wxT("Triggers further inter-manual coupler(s) with a destination key shift less than zero."));
+		m_coupleToSubsequentDownwardIntermanualCouplersNo->SetToolTip(wxT("Don't trigger further inter-manual coupler(s) downwards."));
+		m_coupleToSubsequentUpwardIntramanualCouplersYes->SetToolTip(wxT("Triggers further intra-manual coupler(s) with a destination key shift greater than zero."));
+		m_coupleToSubsequentUpwardIntramanualCouplersNo->SetToolTip(wxT("Don't trigger further intra-manual coupler(s) upwards."));
+		m_coupleToSubsequentDownwardIntramanualCouplersYes->SetToolTip(wxT("Triggers further intra-manual coupler(s) with a destination key shift less than zero."));
+		m_coupleToSubsequentDownwardIntramanualCouplersNo->SetToolTip(wxT("Don't trigger further intra-manual coupler(s) downwards."));
+		m_firstMIDINoteNumberSpin->SetToolTip(wxT("First MIDI note number to forward."));
+		m_numberOfKeysSpin->SetToolTip(wxT("Number of keys to forward starting with FirstMIDINoteNumber."));
+	} else {
+		m_displayInvertedYes->SetToolTip(wxEmptyString);
+		m_displayInvertedNo->SetToolTip(wxEmptyString);
+		m_functionChoice->SetToolTip(wxEmptyString);
+		m_defaultToEngagedYes->SetToolTip(wxEmptyString);
+		m_defaultToEngagedNo->SetToolTip(wxEmptyString);
+		m_availableSwitches->SetToolTip(wxEmptyString);
+		m_referencedSwitches->SetToolTip(wxEmptyString);
+		m_addReferencedSwitch->SetToolTip(wxEmptyString);
+		m_removeReferencedSwitch->SetToolTip(wxEmptyString);
+		m_gcStateChoice->SetToolTip(wxEmptyString);
+		m_storeInDivisionalYes->SetToolTip(wxEmptyString);
+		m_storeInDivisionalNo->SetToolTip(wxEmptyString);
+		m_storeInGeneralYes->SetToolTip(wxEmptyString);
+		m_storeInGeneralNo->SetToolTip(wxEmptyString);
+		m_unisonOffYes->SetToolTip(wxEmptyString);
+		m_unisonOffNo->SetToolTip(wxEmptyString);
+		m_destinationManualChoice->SetToolTip(wxEmptyString);
+		m_destinationKeyShiftSpin->SetToolTip(wxEmptyString);
+		m_couplerTypeChoice->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUnisonIntermanualCouplersYes->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUnisonIntermanualCouplersNo->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUpwardIntermanualCouplersYes->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUpwardIntermanualCouplersNo->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentDownwardIntermanualCouplersYes->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentDownwardIntermanualCouplersNo->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUpwardIntramanualCouplersYes->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentUpwardIntramanualCouplersNo->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentDownwardIntramanualCouplersYes->SetToolTip(wxEmptyString);
+		m_coupleToSubsequentDownwardIntramanualCouplersNo->SetToolTip(wxEmptyString);
+		m_firstMIDINoteNumberSpin->SetToolTip(wxEmptyString);
+		m_numberOfKeysSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void CouplerPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

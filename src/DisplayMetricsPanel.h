@@ -34,6 +34,7 @@ public:
 	~DisplayMetricsPanel();
 
 	void setDisplayMetrics(DisplayMetrics *displayMetrics);
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

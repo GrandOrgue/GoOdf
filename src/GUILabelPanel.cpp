@@ -692,6 +692,74 @@ void GUILabelPanel::updatePositionValues() {
 	}
 }
 
+void GUILabelPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_labelTextField->SetToolTip(wxT("If another string is desired than the button name (or a shorter one for display reasons) it can be overridden here."));
+		m_labelFont->SetToolTip(wxT("Font face and size can be set here. The default value is derived from the display metrics control label font of the panel."));
+		m_labelColourChoice->SetToolTip(wxT("Colour of the font can be chosen here. If a custom value is chosen the picker will be activated."));
+		m_labelColourPick->SetToolTip(wxT("A custom colour can be picked here."));
+		m_freeXposYes->SetToolTip(wxT("The X position is determined by DispXpos, if not the newer pos X method is used."));
+		m_freeXposNo->SetToolTip(wxT("DispDrawstopCol and DispSpanDrawstopColToRight will determine positioning, if not the newer pos X method is used."));
+		m_freeYposYes->SetToolTip(wxT("The Y position is determined by DispYpos, if not the newer pos Y method is used."));
+		m_freeYposNo->SetToolTip(wxT("The Y position is determined by DispAtTopOfDrawstopCol, if not the newer pos Y method is used."));
+		m_dispXposSpin->SetToolTip(wxT("Set free X position."));
+		m_dispYposSpin->SetToolTip(wxT("Set free Y position."));
+		m_elementPosXSpin->SetToolTip(wxT("Absolute positioning X coordinate value. If set to -1 the built-in layout will be used or the older free X positioning."));
+		m_elementPosYSpin->SetToolTip(wxT("Absolute positioning Y coordinate value. If set to -1 the built-in layout will be used or the older free Y positioning."));
+		m_dispImageNbrBox->SetToolTip(wxT("Choose the built-in bitmap for the element here."));
+		m_atTopOfDrawstopColYes->SetToolTip(wxT("If not free positioning is used the label is displayed above the drawstop column."));
+		m_atTopOfDrawstopColNo->SetToolTip(wxT("If not free positioning is used the label is displayed below the drawstop column."));
+		m_spanDrawstopColToRightYes->SetToolTip(wxT("Move the label half of the drawstop width to the right."));
+		m_spanDrawstopColToRightNo->SetToolTip(wxT("Position label centered above/below drawstop column."));
+		m_drawstopColSpin->SetToolTip(wxT("Position label at the specified drawstop column."));
+		m_imagePathField->SetToolTip(wxT("Relative path to the custom image file for the label is shown here."));
+		m_addImageBtn->SetToolTip(wxT("Opens a file dialog where the image file for this bitmap can be selected. NOTE: If this dialog is cancelled any existing image file can be removed! The preferred image format for GrandOrgue is .png."));
+		m_maskPathField->SetToolTip(wxT("Relative path to the mask file corresponding to the image file is shown here."));
+		m_addMaskBtn->SetToolTip(wxT("Opens a file dialog where the mask file can be selected. NOTE: If this dialog is cancelled the mask file for this bitmap can be removed!"));
+		m_widthSpin->SetToolTip(wxT("Width of bitmap to use. NOTE: Changing this value does not scale the image! If set greater than real image width - the shown image in GrandOrgue will be tiled. If set smaller than real image width - the shown image in GrandOrgue will be cropped."));
+		m_heightSpin->SetToolTip(wxT("Height of bitmap to use. NOTE: Changing this value does not scale the image! If set greater than real image height - the shown image in GrandOrgue will be tiled. If set smaller than real image height - the shown image in GrandOrgue will be cropped."));
+		m_tileOffsetXSpin->SetToolTip(wxT("Offset any tiling for the x axis."));
+		m_tileOffsetYSpin->SetToolTip(wxT("Offset any tiling for the y axis."));
+		m_textRectLeftSpin->SetToolTip(wxT("Controls to left coordinate for where text can be written on the element."));
+		m_textRectTopSpin->SetToolTip(wxT("Controls to upper coordinate for where text can be written on the element."));
+		m_textRectWidthSpin->SetToolTip(wxT("Set the total width available to write text on the element."));
+		m_textRectHeightSpin->SetToolTip(wxT("Set the total height available to write text on the element."));
+		m_textBreakWidthSpin->SetToolTip(wxT("Control line length of text written on the element. NOTE: Set this value to 0 (zero) to completely remove text and not write anything at all on the bitmap!"));
+	} else {
+		m_labelTextField->SetToolTip(wxEmptyString);
+		m_labelFont->SetToolTip(wxEmptyString);
+		m_labelColourChoice->SetToolTip(wxEmptyString);
+		m_labelColourPick->SetToolTip(wxEmptyString);
+		m_freeXposYes->SetToolTip(wxEmptyString);
+		m_freeXposNo->SetToolTip(wxEmptyString);
+		m_freeYposYes->SetToolTip(wxEmptyString);
+		m_freeYposNo->SetToolTip(wxEmptyString);
+		m_dispXposSpin->SetToolTip(wxEmptyString);
+		m_dispYposSpin->SetToolTip(wxEmptyString);
+		m_elementPosXSpin->SetToolTip(wxEmptyString);
+		m_elementPosYSpin->SetToolTip(wxEmptyString);
+		m_dispImageNbrBox->SetToolTip(wxEmptyString);
+		m_atTopOfDrawstopColYes->SetToolTip(wxEmptyString);
+		m_atTopOfDrawstopColNo->SetToolTip(wxEmptyString);
+		m_spanDrawstopColToRightYes->SetToolTip(wxEmptyString);
+		m_spanDrawstopColToRightNo->SetToolTip(wxEmptyString);
+		m_drawstopColSpin->SetToolTip(wxEmptyString);
+		m_imagePathField->SetToolTip(wxEmptyString);
+		m_addImageBtn->SetToolTip(wxEmptyString);
+		m_maskPathField->SetToolTip(wxEmptyString);
+		m_addMaskBtn->SetToolTip(wxEmptyString);
+		m_widthSpin->SetToolTip(wxEmptyString);
+		m_heightSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetXSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetYSpin->SetToolTip(wxEmptyString);
+		m_textRectLeftSpin->SetToolTip(wxEmptyString);
+		m_textRectTopSpin->SetToolTip(wxEmptyString);
+		m_textRectWidthSpin->SetToolTip(wxEmptyString);
+		m_textRectHeightSpin->SetToolTip(wxEmptyString);
+		m_textBreakWidthSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);

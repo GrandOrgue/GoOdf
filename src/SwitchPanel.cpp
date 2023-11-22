@@ -354,6 +354,40 @@ void SwitchPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void SwitchPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
+		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
+		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, instead it's controlled indirectly by referenced switch(es)."));
+		m_defaultToEngagedYes->SetToolTip(wxT("The stop will be active by default. Only works if function is 'Input', otherwise the state is decided by switch(es)."));
+		m_defaultToEngagedNo->SetToolTip(wxT("The stop is not active by default."));
+		m_availableSwitches->SetToolTip(wxT("Switches available for referencing are listed here. If function is something else than 'Input' and there are switches available one or many can be selected for referencing."));
+		m_referencedSwitches->SetToolTip(wxT("The switch(es) that should control the state of this stop should be listed here."));
+		m_addReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the left list will be referenced."));
+		m_removeReferencedSwitch->SetToolTip(wxT("The selected switch(es) from the right list will be removed from this stop."));
+		m_gcStateChoice->SetToolTip(wxT("Decides the state of this stop when 'General Cancel' is pushed. Only works for 'Input' function."));
+		m_storeInDivisionalYes->SetToolTip(wxT("This stop is possible to store in divisionals."));
+		m_storeInDivisionalNo->SetToolTip(wxT("This stop will not be stored in divisionals unless 'Full' is used to set it."));
+		m_storeInGeneralYes->SetToolTip(wxT("This stop is possible to store in generals."));
+		m_storeInGeneralNo->SetToolTip(wxT("This stop is not stored in generals unless 'Full' is used to set it."));
+	} else {
+		m_displayInvertedYes->SetToolTip(wxEmptyString);
+		m_displayInvertedNo->SetToolTip(wxEmptyString);
+		m_functionChoice->SetToolTip(wxEmptyString);
+		m_defaultToEngagedYes->SetToolTip(wxEmptyString);
+		m_defaultToEngagedNo->SetToolTip(wxEmptyString);
+		m_availableSwitches->SetToolTip(wxEmptyString);
+		m_referencedSwitches->SetToolTip(wxEmptyString);
+		m_addReferencedSwitch->SetToolTip(wxEmptyString);
+		m_removeReferencedSwitch->SetToolTip(wxEmptyString);
+		m_gcStateChoice->SetToolTip(wxEmptyString);
+		m_storeInDivisionalYes->SetToolTip(wxEmptyString);
+		m_storeInDivisionalNo->SetToolTip(wxEmptyString);
+		m_storeInGeneralYes->SetToolTip(wxEmptyString);
+		m_storeInGeneralNo->SetToolTip(wxEmptyString);
+	}
+}
+
 void SwitchPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

@@ -261,6 +261,32 @@ void GoImagePanel::updatePositionValues() {
 	}
 }
 
+void GoImagePanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_imagePathField->SetToolTip(wxT("Relative path to the image will be shown here. Not manually editable, use the 'Browse...' button to select the image."));
+		m_addImageBtn->SetToolTip(wxT("This button brings up a file dialog where the image file can be chosen."));
+		m_maskPathField->SetToolTip(wxT("Relative path to the mask will be shown here. Not manually editable, use the 'Browse...' button to select the mask. NOTE: Not needed for .png images that are the preferred image format for GrandOrgue!"));
+		m_addMaskBtn->SetToolTip(wxT("This button brings up a file dialog where the mask file corresponding to the image file can be chosen."));
+		m_posXSpin->SetToolTip(wxT("Position coordinate for the x value."));
+		m_posYSpin->SetToolTip(wxT("Position coordinate for the y value"));
+		m_widthSpin->SetToolTip(wxT("Width of image to use. NOTE: Changing this value does not scale the image! If set greater than real image width - the shown image in GrandOrgue will be tiled. If set smaller than real image width - the shown image in GrandOrgue will be cropped."));
+		m_heightSpin->SetToolTip(wxT("Height of image to use. NOTE: Changing this value does not scale the image! If set greater than real image height - the shown image in GrandOrgue will be tiled. If set smaller than real image height - the shown image in GrandOrgue will be cropped."));
+		m_tileOffsetXSpin->SetToolTip(wxT("Offset any tiling for the x axis."));
+		m_tileOffsetYSpin->SetToolTip(wxT("Offset any tiling for the y axis."));
+	} else {
+		m_imagePathField->SetToolTip(wxEmptyString);
+		m_addImageBtn->SetToolTip(wxEmptyString);
+		m_maskPathField->SetToolTip(wxEmptyString);
+		m_addMaskBtn->SetToolTip(wxEmptyString);
+		m_posXSpin->SetToolTip(wxEmptyString);
+		m_posYSpin->SetToolTip(wxEmptyString);
+		m_widthSpin->SetToolTip(wxEmptyString);
+		m_heightSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetXSpin->SetToolTip(wxEmptyString);
+		m_tileOffsetYSpin->SetToolTip(wxEmptyString);
+	}
+}
+
 void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString imageFilePath;
 	wxString defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();

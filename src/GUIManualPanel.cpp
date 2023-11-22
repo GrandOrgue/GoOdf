@@ -705,6 +705,82 @@ void GUIManualPanel::updatePositionValues() {
 	}
 }
 
+void GUIManualPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_keyColorInvertedYes->SetToolTip(wxT("Use black natural keys for the built-in bitmaps."));
+		m_keyColorInvertedNo->SetToolTip(wxT("Use white natural keys for the built-in bitmaps."));
+		m_keyColorWoodYes->SetToolTip(wxT("Use wooden coloured natural keys for the built-in bitmaps."));
+		m_keyColorWoodNo->SetToolTip(wxT("Use normal white or black natural keys for the built-in bitmaps."));
+		m_forceWriteWidthYes->SetToolTip(wxT("This option is only active if a read odf would require the widths to be written."));
+		m_forceWriteWidthNo->SetToolTip(wxT("Don't force writing widths to odf. Might change the layout of the keys unexpectedly."));
+		m_elementPosXSpin->SetToolTip(wxT("Absolute positioning X coordinate value for the manual. If set to -1 the built-in layout will be used instead."));
+		m_elementPosYSpin->SetToolTip(wxT("Absolute positioning Y coordinate value for the manual. If set to -1 the built-in layout will be used instead."));
+		m_dispImageNbrBox->SetToolTip(wxT("Choose the built-in key bitmap type here."));
+		m_availableKeyTypes->SetToolTip(wxT("The available basic keytypes are listed here."));
+		m_availableKeyNumbers->SetToolTip(wxT("The available individual key numbers are listed here."));
+		m_addKey->SetToolTip(wxT("Add a selected key type or number."));
+		m_removeKey->SetToolTip(wxT("Remove a previously added key type or number."));
+		m_copyKey->SetToolTip(wxT("Bring up a dialog for copying key attributes/bitmaps to selected targets."));
+		m_addedKeyTypes->SetToolTip(wxT("A list of the added key types and/or key numbers."));
+		m_imageOnPathField->SetToolTip(wxT("Relative file path will be displayed here. Use 'Browse...' button to set."));
+		m_addImageOnBtn->SetToolTip(wxT("Opens a file dialog where the image 'On' bitmap can be chosen. The .png format is the preferred format for images in GrandOrgue. NOTE: All added bitmaps for the element must have the same pixel size!"));
+		m_imageOffPathField->SetToolTip(wxT("Relative file path will be displayed here. Use 'Browse...' button to set."));
+		m_addImageOffBtn->SetToolTip(wxT("Opens a file dialog where the image 'Off' bitmap can be chosen. The .png format is the preferred format for images in GrandOrgue. NOTE: All added bitmaps for the element must have the same pixel size!"));
+		m_maskOnPathField->SetToolTip(wxT("Relative file path will be displayed here. Use 'Browse...' button to set."));
+		m_addMaskOnBtn->SetToolTip(wxT("Opens a file dialog where a mask for the image 'On' bitmap can be chosen. NOTE: All added bitmaps for the element must have the same pixel size!"));
+		m_maskOffPathField->SetToolTip(wxT("Relative file path will be displayed here. Use 'Browse...' button to set."));
+		m_addMaskOffBtn->SetToolTip(wxT("Opens a file dialog where a mask for the image 'Off' bitmap can be chosen. NOTE: All added bitmaps for the element must have the same pixel size!"));
+		m_widthSpin->SetToolTip(wxT("Width of bitmap to use for layout calculations. NOTE: Changing this value does not scale or crop the image! It only decides where the next key will be placed (pedal and manual key layout differ slightly)."));
+		m_offsetSpin->SetToolTip(wxT("Offset key on the X-axis from the normal layout."));
+		m_offsetYSpin->SetToolTip(wxT("Offset key on the Y-axis from the normal layout."));
+		m_mouseRectLeftSpin->SetToolTip(wxT("Controls the left coordinate for where the area of mouse interaction begin."));
+		m_mouseRectTopSpin->SetToolTip(wxT("Controls the upper coordinate for where the area of mouse interaction begin."));
+		m_mouseRectWidthSpin->SetToolTip(wxT("Set the width of the area of where mouse interaction is possible."));
+		m_mouseRectHeightSpin->SetToolTip(wxT("Set the height of the area of where mouse interaction is possible."));
+		m_displayKeysSpin->SetToolTip(wxT("Number of keys to display."));
+		m_firstNoteSpin->SetToolTip(wxT("Display first key as the following (MIDI note) type."));
+		m_displayKeyChoice->SetToolTip(wxT("Map the selected key."));
+		m_backendMIDIkey->SetToolTip(wxT("Backend MIDI note key for the manual."));
+		m_frontendMIDIkey->SetToolTip(wxT("Display the key as this MIDI note key."));
+	} else {
+		m_keyColorInvertedYes->SetToolTip(wxEmptyString);
+		m_keyColorInvertedNo->SetToolTip(wxEmptyString);
+		m_keyColorWoodYes->SetToolTip(wxEmptyString);
+		m_keyColorWoodNo->SetToolTip(wxEmptyString);
+		m_forceWriteWidthYes->SetToolTip(wxEmptyString);
+		m_forceWriteWidthNo->SetToolTip(wxEmptyString);
+		m_elementPosXSpin->SetToolTip(wxEmptyString);
+		m_elementPosYSpin->SetToolTip(wxEmptyString);
+		m_dispImageNbrBox->SetToolTip(wxEmptyString);
+		m_availableKeyTypes->SetToolTip(wxEmptyString);
+		m_availableKeyNumbers->SetToolTip(wxEmptyString);
+		m_addKey->SetToolTip(wxEmptyString);
+		m_removeKey->SetToolTip(wxEmptyString);
+		m_copyKey->SetToolTip(wxEmptyString);
+		m_addedKeyTypes->SetToolTip(wxEmptyString);
+		m_imageOnPathField->SetToolTip(wxEmptyString);
+		m_addImageOnBtn->SetToolTip(wxEmptyString);
+		m_imageOffPathField->SetToolTip(wxEmptyString);
+		m_addImageOffBtn->SetToolTip(wxEmptyString);
+		m_maskOnPathField->SetToolTip(wxEmptyString);
+		m_addMaskOnBtn->SetToolTip(wxEmptyString);
+		m_maskOffPathField->SetToolTip(wxEmptyString);
+		m_addMaskOffBtn->SetToolTip(wxEmptyString);
+		m_widthSpin->SetToolTip(wxEmptyString);
+		m_offsetSpin->SetToolTip(wxEmptyString);
+		m_offsetYSpin->SetToolTip(wxEmptyString);
+		m_mouseRectLeftSpin->SetToolTip(wxEmptyString);
+		m_mouseRectTopSpin->SetToolTip(wxEmptyString);
+		m_mouseRectWidthSpin->SetToolTip(wxEmptyString);
+		m_mouseRectHeightSpin->SetToolTip(wxEmptyString);
+		m_displayKeysSpin->SetToolTip(wxEmptyString);
+		m_firstNoteSpin->SetToolTip(wxEmptyString);
+		m_displayKeyChoice->SetToolTip(wxEmptyString);
+		m_backendMIDIkey->SetToolTip(wxEmptyString);
+		m_frontendMIDIkey->SetToolTip(wxEmptyString);
+	}
+}
+
 void GUIManualPanel::OnKeyColorInvertedRadio(wxCommandEvent& event) {
 	if (event.GetId() == ID_GUIMANUALPANEL_COLOR_INVERTED_YES) {
 		m_manual->setDispKeyColourInverted(true);

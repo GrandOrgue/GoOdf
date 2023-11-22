@@ -34,6 +34,7 @@ public:
 
 	void setManual(GUIManual *manual);
 	void updatePositionValues();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

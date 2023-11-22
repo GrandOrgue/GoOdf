@@ -298,6 +298,28 @@ void ReversiblePistonPanel::setIsFirstRemoval(bool value) {
 	m_isFirstRemoval = value;
 }
 
+void ReversiblePistonPanel::setTooltipsEnabled(bool isEnabled) {
+	if (isEnabled) {
+		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
+		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
+		m_availableStops->SetToolTip(wxT("Here all available elements are listed that the reversible piston can target. Select one element and click the button below to use it as target. NOTE: Only one element can be targeted and make sure that the target element can receive 'Input'! This is a legacy feature of GrandOrgue, the same result can be achieved with just creating another GUI Element for the target element and style it appropriately!"));
+		m_availableCouplers->SetToolTip(wxT("Here all available elements are listed that the reversible piston can target. Select one element and click the button below to use it as target. NOTE: Only one element can be targeted and make sure that the target element can receive 'Input'! This is a legacy feature of GrandOrgue, the same result can be achieved with just creating another GUI Element for the target element and style it appropriately!"));
+		m_availableSwitches->SetToolTip(wxT("Here all available elements are listed that the reversible piston can target. Select one element and click the button below to use it as target. NOTE: Only one element can be targeted and make sure that the target element can receive 'Input'! This is a legacy feature of GrandOrgue, the same result can be achieved with just creating another GUI Element for the target element and style it appropriately!"));
+		m_availableTremulants->SetToolTip(wxT("Here all available elements are listed that the reversible piston can target. Select one element and click the button below to use it as target. NOTE: Only one element can be targeted and make sure that the target element can receive 'Input'! This is a legacy feature of GrandOrgue, the same result can be achieved with just creating another GUI Element for the target element and style it appropriately!"));
+		m_objecTypeField->SetToolTip(wxT("This textfield for object type is automatically populated depending on what element is chosen."));
+		m_manualField->SetToolTip(wxT("This textfield for manual is automatically populated depending on what element is chosen."));
+	} else {
+		m_displayInvertedYes->SetToolTip(wxEmptyString);
+		m_displayInvertedNo->SetToolTip(wxEmptyString);
+		m_availableStops->SetToolTip(wxEmptyString);
+		m_availableCouplers->SetToolTip(wxEmptyString);
+		m_availableSwitches->SetToolTip(wxEmptyString);
+		m_availableTremulants->SetToolTip(wxEmptyString);
+		m_objecTypeField->SetToolTip(wxEmptyString);
+		m_manualField->SetToolTip(wxEmptyString);
+	}
+}
+
 void ReversiblePistonPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_nameField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_nameField);

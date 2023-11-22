@@ -43,10 +43,12 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
+	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
 	EVT_TREE_BEGIN_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeLeftDrag)
 	EVT_TREE_END_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeDragCompleted)
+	EVT_MOTION(GOODFFrame::OnOrganTreeMouseMotion)
 	EVT_BUTTON(ID_ADD_ENCLOSURE_BTN, GOODFFrame::OnAddNewEnclosure)
 	EVT_BUTTON(ID_ADD_TREMULANT_BTN, GOODFFrame::OnAddNewTremulant)
 	EVT_BUTTON(ID_ADD_WINDCHEST_BTN, GOODFFrame::OnAddNewWindchestgroup)
@@ -64,6 +66,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	// Start with an empty organ
 	m_organ = new Organ();
 	m_organHasBeenSaved = false;
+	m_enableTooltips = false;
 
 	// Create a file menu
 	m_fileMenu = new wxMenu();
@@ -79,6 +82,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	// Add tools menu items
 	m_toolsMenu->Append(ID_IMPORT_VOICING_DATA, wxT("Import .cmb\tCtrl+I"), wxT("Import voicing data from a .cmb (settings) file"));
+	m_toolsMenu->AppendCheckItem(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, wxT("Enable Tooltips"), wxT("Enable tooltips for certain controls"));
+	m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();
@@ -340,6 +345,11 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	else
 		SetMinSize(calculated);
 	m_Splitter->SetSashPosition(205);
+
+	// Connect mouse motion events for child windows
+	m_Splitter->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
+	leftSplitPanel->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
+	m_organTreeCtrl->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
 }
 
 GOODFFrame::~GOODFFrame() {
@@ -1911,6 +1921,92 @@ void GOODFFrame::OnOrganTreeDragCompleted(wxTreeEvent& event) {
 
 }
 
+void GOODFFrame::OnOrganTreeMouseMotion(wxMouseEvent& event) {
+	if (m_enableTooltips && !event.Dragging()) {
+		int flagsToUse = wxTREE_HITTEST_ONITEMINDENT|wxTREE_HITTEST_ONITEMLABEL;
+		wxPoint cursor = event.GetPosition();
+		wxTreeItemId itemUnderMouse = m_organTreeCtrl->HitTest(cursor, flagsToUse);
+
+		if (!itemUnderMouse.IsOk()) {
+			m_organTreeCtrl->SetToolTip(wxEmptyString);
+			event.Skip();
+			return;
+		}
+
+		if (itemUnderMouse == tree_organ) {
+			m_organTreeCtrl->SetToolTip(wxT("Set basic attributes for the whole organ here."));
+		} else if (itemUnderMouse == tree_manuals) {
+			m_organTreeCtrl->SetToolTip(wxT("Add manuals here. Best practise is to add them in rising order starting with the Pedal and then the next lowest manual and so on to the highest available. Add eventual 'trick' manuals last."));
+		} else if (itemUnderMouse == tree_windchestgrps) {
+			m_organTreeCtrl->SetToolTip(wxT("Windchestgroups represent the windchest(s) upon which the pipes are placed."));
+		} else if (itemUnderMouse == tree_enclosures) {
+			m_organTreeCtrl->SetToolTip(wxT("Enclosures represent boxes (usually around the windchests carrying the ranks/pipes) with shutters that can be opened or closed to affect the perceived sound level."));
+		} else if (itemUnderMouse == tree_tremulants) {
+			m_organTreeCtrl->SetToolTip(wxT("Tremulants are appliances that disturb the wind flow to the pipes (makes the tone tremble)."));
+		} else if (itemUnderMouse == tree_ranks) {
+			m_organTreeCtrl->SetToolTip(wxT("A rank represents a row of pipes. The main reason to create separate ranks (instead of using the internal rank of a stop) is if the organ would benefit from it. Common use cases are custom compound stops, easy re-using (borrowing) for many stops etc."));
+		} else if (itemUnderMouse == tree_switches) {
+			m_organTreeCtrl->SetToolTip(wxT("Switches are drawstop objects without any additional attributes. They can be used, for example, to trigger stop action noises or model features that cannot be done with just one stop."));
+		} else if (itemUnderMouse == tree_reversiblePistons) {
+			m_organTreeCtrl->SetToolTip(wxT("Reversible pistons are a legacy feature of GrandOrgue to allow triggering other elements from the push button. Since the new panel format was added this can easily be accomplished by just adding the same object as another GUI Element and style it appropriately!"));
+		} else if (itemUnderMouse == tree_divisionalCouplers) {
+			m_organTreeCtrl->SetToolTip(wxT("Divisional couplers couples divisionals between different divisions (manuals)."));
+		} else if (itemUnderMouse == tree_generals) {
+			m_organTreeCtrl->SetToolTip(wxT("Add old style ODF based Generals here if you really have a special reason for it, but generally it's better to use the built in setter generals available for insertion on any panel."));
+		} else if (itemUnderMouse == tree_panels) {
+			m_organTreeCtrl->SetToolTip(wxT("Left click to select and add panels for GUI display. Main panel [Panel000] is always present (automatically added) as the first panel. Any other panels can be re-arranged with drag & drop."));
+		} else {
+			wxTreeItemId parentOfItem = m_organTreeCtrl->GetItemParent(itemUnderMouse);
+			if (!parentOfItem.IsOk()) {
+				m_organTreeCtrl->SetToolTip(wxEmptyString);
+				event.Skip();
+				return;
+			}
+
+			if (parentOfItem == tree_manuals ||
+				parentOfItem == tree_windchestgrps ||
+				parentOfItem == tree_switches ||
+				parentOfItem == tree_ranks ||
+				(parentOfItem == tree_panels && !m_organTreeCtrl->GetItemText(itemUnderMouse).IsSameAs(wxT("Main Panel")))) {
+				m_organTreeCtrl->SetToolTip(wxT("It is possible to re-arrange this type of items with drag & drop. The dragged item will be placed after the target."));
+				return;
+			}
+
+			if (parentOfItem == tree_panels && m_organTreeCtrl->GetItemText(itemUnderMouse).IsSameAs(wxT("Main Panel"))) {
+				m_organTreeCtrl->SetToolTip(wxT("The main panel is the panel displayed by default for the organ."));
+				return;
+			}
+
+			wxTreeItemId grandParentOfItem = m_organTreeCtrl->GetItemParent(parentOfItem);
+			if (!grandParentOfItem.IsOk()) {
+				m_organTreeCtrl->SetToolTip(wxEmptyString);
+				event.Skip();
+				return;
+			}
+
+			if (grandParentOfItem == tree_panels && m_organTreeCtrl->GetItemText(itemUnderMouse).IsSameAs(wxT("Displaymetrics"))) {
+				m_organTreeCtrl->SetToolTip(wxT("Displaymetrics contain the basic layout settings for a panel."));
+			}
+
+			wxTreeItemId grandGrandParent = m_organTreeCtrl->GetItemParent(grandParentOfItem);
+			if (!grandGrandParent.IsOk()) {
+				m_organTreeCtrl->SetToolTip(wxEmptyString);
+				event.Skip();
+				return;
+			}
+
+			if (grandGrandParent == tree_manuals && m_organTreeCtrl->GetItemText(parentOfItem).IsSameAs(wxT("Stops"))) {
+				m_organTreeCtrl->SetToolTip(wxT("It is possible to re-arrange stops with drag & drop. The dragged stop will be placed after the target."));
+			} else if (grandGrandParent == tree_panels && m_organTreeCtrl->GetItemText(parentOfItem).IsSameAs(wxT("GUI Elements"))) {
+				m_organTreeCtrl->SetToolTip(wxT("The GUI Elements can be re-arranged with drag & drop. It is also possible to right click on an element to bring up a dialog that allows copying of properties from one element to others."));
+			}
+		}
+	} else {
+		m_organTreeCtrl->SetToolTip(wxEmptyString);
+		event.Skip();
+	}
+}
+
 void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
 	if (m_organ->getNumberOfEnclosures() < 999) {
 		int nbrToAdd = nbrEnclosureSpin->GetValue();
@@ -2727,6 +2823,34 @@ void GOODFFrame::OnImportCMB(wxCommandEvent& WXUNUSED(event)) {
 			m_stopPanel->setStop(currentStop);
 		}
 	}
+}
+
+void GOODFFrame::OnEnableTooltipsMenu(wxCommandEvent& WXUNUSED(event)) {
+	if (m_toolsMenu->IsChecked(ID_GLOBAL_SHOW_TOOLTIPS_OPTION)) {
+		m_enableTooltips = true;
+	} else {
+		m_enableTooltips = false;
+	}
+	m_organPanel->setTooltipsEnabled(m_enableTooltips);
+	m_rankPanel->setTooltipsEnabled(m_enableTooltips);
+	m_stopPanel->setTooltipsEnabled(m_enableTooltips);
+	m_manualPanel->setTooltipsEnabled(m_enableTooltips);
+	m_windchestPanel->setTooltipsEnabled(m_enableTooltips);
+	m_enclosurePanel->setTooltipsEnabled(m_enableTooltips);
+	m_tremulantPanel->setTooltipsEnabled(m_enableTooltips);
+	m_switchPanel->setTooltipsEnabled(m_enableTooltips);
+	m_reversiblePistonPanel->setTooltipsEnabled(m_enableTooltips);
+	m_divCplrPanel->setTooltipsEnabled(m_enableTooltips);
+	m_couplerPanel->setTooltipsEnabled(m_enableTooltips);
+	m_divisionalPanel->setTooltipsEnabled(m_enableTooltips);
+	m_generalPanel->setTooltipsEnabled(m_enableTooltips);
+	m_panelPanel->setTooltipsEnabled(m_enableTooltips);
+	m_dispMetricsPanel->setTooltipsEnabled(m_enableTooltips);
+	m_imagePanel->setTooltipsEnabled(m_enableTooltips);
+	m_guiButtonPanel->setTooltipsEnabled(m_enableTooltips);
+	m_guiEnclosurePanel->setTooltipsEnabled(m_enableTooltips);
+	m_guiLabelPanel->setTooltipsEnabled(m_enableTooltips);
+	m_guiManualPanel->setTooltipsEnabled(m_enableTooltips);
 }
 
 void GOODFFrame::SetupOrganMainPanel() {

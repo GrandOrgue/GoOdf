@@ -33,6 +33,7 @@ public:
 	void setImage(GoImage *image);
 	void setIsFirstRemoval(bool value);
 	void updatePositionValues();
+	void setTooltipsEnabled(bool isEnabled);
 
 private:
 	DECLARE_EVENT_TABLE()

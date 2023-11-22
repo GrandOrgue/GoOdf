@@ -137,11 +137,13 @@ private:
 	GUIManualPanel *m_guiManualPanel;
 
 	bool m_organHasBeenSaved;
+	bool m_enableTooltips;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
 	void OnOrganTreeLeftDrag(wxTreeEvent& event);
 	void OnOrganTreeDragCompleted(wxTreeEvent& event);
+	void OnOrganTreeMouseMotion(wxMouseEvent& event);
 	void OnAddNewEnclosure(wxCommandEvent& event);
 	void OnAddNewTremulant(wxCommandEvent& event);
 	void OnAddNewWindchestgroup(wxCommandEvent& event);
@@ -154,6 +156,7 @@ private:
 	void OnAddNewReversiblePiston(wxCommandEvent& event);
 	void OnAddNewPanel(wxCommandEvent& event);
 	void OnImportCMB(wxCommandEvent& event);
+	void OnEnableTooltipsMenu(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
