@@ -168,13 +168,13 @@ StopPanel::StopPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_STOP_ADD_SWITCH_BTN,
 		wxT("Add ->")
 	);
-	thirdRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALL, 5);
 	m_removeReferencedSwitch = new wxButton(
 		m_stopPanel,
 		ID_STOP_REMOVE_SWITCH_BTN,
 		wxT("<- Remove")
 	);
-	thirdRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALL, 5);
 	thirdRow2ndCol->AddStretchSpacer();
 	thirdRow->Add(thirdRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *thirdRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -430,14 +430,14 @@ StopPanel::StopPanel(wxWindow *parent) : wxPanel(parent) {
 		wxT("Add ->")
 	);
 	m_addReferencedRank->Disable();
-	refP1stRow2ndCol->Add(m_addReferencedRank, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	refP1stRow2ndCol->Add(m_addReferencedRank, 0, wxGROW|wxALL, 5);
 	m_removeReferencedRank = new wxButton(
 		m_referencedRanksPanel,
 		ID_STOP_REMOVE_RANK_BTN,
 		wxT("<- Remove")
 	);
 	m_removeReferencedRank->Disable();
-	refP1stRow2ndCol->Add(m_removeReferencedRank, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	refP1stRow2ndCol->Add(m_removeReferencedRank, 0, wxGROW|wxALL, 5);
 	refP1stRow2ndCol->AddStretchSpacer();
 	refP1stRow->Add(refP1stRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *refP1stRow3rdCol = new wxBoxSizer(wxVERTICAL);

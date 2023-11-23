@@ -81,15 +81,15 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 		ID_WC_ADD_ENCLOSURE_BTN,
 		wxT("Add ->")
 	);
-	secondRow2ndCol->Add(m_addReferencedEnclosure, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	secondRow2ndCol->Add(m_addReferencedEnclosure, 0, wxGROW|wxALL, 5);
 	m_removeReferencedEnclosure = new wxButton(
 		this,
 		ID_WC_REMOVE_ENCLOSURE_BTN,
 		wxT("<- Remove")
 	);
-	secondRow2ndCol->Add(m_removeReferencedEnclosure, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	secondRow2ndCol->Add(m_removeReferencedEnclosure, 0, wxGROW|wxALL, 5);
 	secondRow2ndCol->AddStretchSpacer();
-	secondRow->Add(secondRow2ndCol, 0, wxEXPAND|wxALIGN_CENTER);
+	secondRow->Add(secondRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *secondRow3rdCol = new wxBoxSizer(wxVERTICAL);
 	wxStaticText *chosenReferencedEncText = new wxStaticText (
 		this,
@@ -126,13 +126,13 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 		ID_WC_ADD_TREMULANT_BTN,
 		wxT("Add ->")
 	);
-	thirdRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALL, 5);
 	m_removeReferencedTremulant = new wxButton(
 		this,
 		ID_WC_REMOVE_TREMULANT_BTN,
 		wxT("<- Remove")
 	);
-	thirdRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALL, 5);
 	thirdRow2ndCol->AddStretchSpacer();
 	thirdRow->Add(thirdRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *thirdRow3rdCol = new wxBoxSizer(wxVERTICAL);

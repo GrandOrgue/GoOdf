@@ -166,13 +166,13 @@ CouplerPanel::CouplerPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_COUPLER_ADD_SWITCH_BTN,
 		wxT("Add ->")
 	);
-	secondRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	secondRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALL, 5);
 	m_removeReferencedSwitch = new wxButton(
 		this,
 		ID_COUPLER_REMOVE_SWITCH_BTN,
 		wxT("<- Remove")
 	);
-	secondRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	secondRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALL, 5);
 	secondRow2ndCol->AddStretchSpacer();
 	secondRow->Add(secondRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *secondRow3rdCol = new wxBoxSizer(wxVERTICAL);

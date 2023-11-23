@@ -153,13 +153,13 @@ TremulantPanel::TremulantPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_TREM_ADD_SWITCH_BTN,
 		wxT("Add ->")
 	);
-	thirdRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALL, 5);
 	m_removeReferencedSwitch = new wxButton(
 		this,
 		ID_TREM_REMOVE_SWITCH_BTN,
 		wxT("<- Remove")
 	);
-	thirdRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALL, 5);
 	thirdRow2ndCol->AddStretchSpacer();
 	thirdRow->Add(thirdRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *thirdRow3rdCol = new wxBoxSizer(wxVERTICAL);

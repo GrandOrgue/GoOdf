@@ -246,13 +246,13 @@ ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_MANUAL_ADD_TREMULANT_BTN,
 		wxT("Add ->")
 	);
-	sixthRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	sixthRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALL, 5);
 	m_removeReferencedTremulant = new wxButton(
 		this,
 		ID_MANUAL_REMOVE_TREMULANT_BTN,
 		wxT("<- Remove")
 	);
-	sixthRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	sixthRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALL, 5);
 	sixthRow2ndCol->AddStretchSpacer();
 	sixthRow->Add(sixthRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *sixthRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -296,13 +296,13 @@ ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 		ID_MANUAL_ADD_SWITCH_BTN,
 		wxT("Add ->")
 	);
-	seventhRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	seventhRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALL, 5);
 	m_removeReferencedSwitch = new wxButton(
 		this,
 		ID_MANUAL_REMOVE_SWITCH_BTN,
 		wxT("<- Remove")
 	);
-	seventhRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	seventhRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALL, 5);
 	seventhRow2ndCol->AddStretchSpacer();
 	seventhRow->Add(seventhRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *seventhRow3rdCol = new wxBoxSizer(wxVERTICAL);

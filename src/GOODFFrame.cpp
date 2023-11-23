@@ -113,7 +113,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	addManual = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addManSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addManBtn = new wxButton(addManual, ID_ADD_MANUAL_BTN, wxT("Create new manual"));
-	addManSizer->Add(addManBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addManSizer->Add(addManBtn, 0, wxALL, 5);
 	addManual->SetSizer(addManSizer);
 	addManual->Hide();
 
@@ -166,7 +166,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	addTremulant = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addTremSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addTremulantBtn = new wxButton(addTremulant, ID_ADD_TREMULANT_BTN, wxT("Create new tremulant"));
-	addTremSizer->Add(addTremulantBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addTremSizer->Add(addTremulantBtn, 0, wxALL, 5);
 	addTremulant->SetSizer(addTremSizer);
 	addTremulant->Hide();
 
@@ -219,28 +219,28 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	addReversiblePiston = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addPistonSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addPistonBtn = new wxButton(addReversiblePiston, ID_ADD_REVERSIBLE_PISTON_BTN, wxT("Create new reversible piston"));
-	addPistonSizer->Add(addPistonBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addPistonSizer->Add(addPistonBtn, 0, wxALL, 5);
 	addReversiblePiston->SetSizer(addPistonSizer);
 	addReversiblePiston->Hide();
 
 	addDivisionalCoupler = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addDivCplrSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addDivCplrBtn = new wxButton(addDivisionalCoupler, ID_ADD_DIV_CPLR_BTN, wxT("Create new divisional coupler"));
-	addDivCplrSizer->Add(addDivCplrBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addDivCplrSizer->Add(addDivCplrBtn, 0, wxALL, 5);
 	addDivisionalCoupler->SetSizer(addDivCplrSizer);
 	addDivisionalCoupler->Hide();
 
 	addGeneral = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addGeneralSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addGeneralBtn = new wxButton(addGeneral, ID_ADD_GENERAL_BTN, wxT("Create new general"));
-	addGeneralSizer->Add(addGeneralBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addGeneralSizer->Add(addGeneralBtn, 0, wxALL, 5);
 	addGeneral->SetSizer(addGeneralSizer);
 	addGeneral->Hide();
 
 	addPanel = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addPanelSizer = new wxBoxSizer(wxVERTICAL);
 	wxButton *addPanelBtn = new wxButton(addPanel, ID_ADD_PANEL_BTN, wxT("Create new panel"));
-	addPanelSizer->Add(addPanelBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	addPanelSizer->Add(addPanelBtn, 0, wxALL, 5);
 	addPanel->SetSizer(addPanelSizer);
 	addPanel->Hide();
 

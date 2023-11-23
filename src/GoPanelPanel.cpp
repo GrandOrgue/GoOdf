@@ -136,7 +136,7 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("Available Organ Elements")
 	);
-	organElementsCol->Add(organElementsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organElementsCol->Add(organElementsText, 0, wxALL, 5);
 	m_organElementsChoice = new wxListBox(
 		this,
 		ID_PANEL_ORGAN_ELEMENTS_CHOICE,
@@ -155,7 +155,7 @@ GoPanelPanel::GoPanelPanel(wxWindow *parent) : wxPanel(parent) {
 		wxID_STATIC,
 		wxT("Available Setter Elements")
 	);
-	setterElementsCol->Add(setterElementsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	setterElementsCol->Add(setterElementsText, 0, wxALL, 5);
 	m_setterElementsChoice = new wxListBox(
 		this,
 		ID_PANEL_SETTER_ELEMENTS_CHOICE,

@@ -175,7 +175,7 @@ GUIEnclosurePanel::GUIEnclosurePanel(wxWindow *parent) : wxPanel(parent) {
 		wxString imgNumber = wxString::Format(wxT("Image %d"), i + 1);
 		m_enclosureStyleBox->Append(imgNumber, ::wxGetApp().m_enclosureStyleBitmaps[i]);
 	}
-	positionRow->Add(m_enclosureStyleBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	positionRow->Add(m_enclosureStyleBox, 1, wxEXPAND|wxALL, 5);
 	panelSizer->Add(positionRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);

@@ -267,7 +267,7 @@ GUILabelPanel::GUILabelPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString imgNumber = wxString::Format(wxT("Label %d"), i);
 		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_labelBitmaps[i]);
 	}
-	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALL, 5);
 	thirdRow->AddStretchSpacer();
 	wxStaticText *stopColText = new wxStaticText (
 		this,

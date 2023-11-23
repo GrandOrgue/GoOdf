@@ -231,7 +231,7 @@ GUIButtonPanel::GUIButtonPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString imgNumber = wxString::Format(wxT("%d"), i + 1);
 		m_dispImageNbrBox->Append(imgNumber, ::wxGetApp().m_scaledDrawstopBitmaps[i]);
 	}
-	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirdRow->Add(m_dispImageNbrBox, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *btnRowText = new wxStaticText (
 		this,
 		wxID_STATIC,

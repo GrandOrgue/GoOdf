@@ -167,19 +167,19 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		ID_GENERAL_ADD_STOP_BTN,
 		wxT("Add ->")
 	);
-	thirdRow2ndCol->Add(m_addReferencedStop, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_addReferencedStop, 0, wxGROW|wxALL, 5);
 	m_addAllAvailableStops = new wxButton(
 		this,
 		ID_GENERAL_ADD_ALL_STOPS_BTN,
 		wxT("Add all")
 	);
-	thirdRow2ndCol->Add(m_addAllAvailableStops, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_addAllAvailableStops, 0, wxGROW|wxALL, 5);
 	m_removeReferencedStop = new wxButton(
 		this,
 		ID_GENERAL_REMOVE_STOP_BTN,
 		wxT("<- Remove")
 	);
-	thirdRow2ndCol->Add(m_removeReferencedStop, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	thirdRow2ndCol->Add(m_removeReferencedStop, 0, wxGROW|wxALL, 5);
 	thirdRow2ndCol->AddStretchSpacer();
 	thirdRow->Add(thirdRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *thirdRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -202,7 +202,7 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		wxID_STATIC,
 		wxT("Selected stop is:")
 	);
-	thirdRow4thCol->Add(stopOnOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirdRow4thCol->Add(stopOnOffText, 0, wxALL, 5);
 	wxBoxSizer *thirdRow4thColRadios = new wxBoxSizer(wxHORIZONTAL);
 	m_currentStopIsOn = new wxRadioButton(
 		this,
@@ -248,19 +248,19 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		ID_GENERAL_ADD_COUPLER_BTN,
 		wxT("Add ->")
 	);
-	fourthRow2ndCol->Add(m_addReferencedCoupler, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fourthRow2ndCol->Add(m_addReferencedCoupler, 0, wxGROW|wxALL, 5);
 	m_addAllAvailableCouplers = new wxButton(
 		this,
 		ID_GENERAL_ADD_ALL_COUPLERS_BTN,
 		wxT("Add all")
 	);
-	fourthRow2ndCol->Add(m_addAllAvailableCouplers, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fourthRow2ndCol->Add(m_addAllAvailableCouplers, 0, wxGROW|wxALL, 5);
 	m_removeReferencedCoupler = new wxButton(
 		this,
 		ID_GENERAL_REMOVE_COUPLER_BTN,
 		wxT("<- Remove")
 	);
-	fourthRow2ndCol->Add(m_removeReferencedCoupler, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fourthRow2ndCol->Add(m_removeReferencedCoupler, 0, wxGROW|wxALL, 5);
 	fourthRow2ndCol->AddStretchSpacer();
 	fourthRow->Add(fourthRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *fourthRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -283,7 +283,7 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		wxID_STATIC,
 		wxT("Selected coupler is:")
 	);
-	fourthRow4thCol->Add(couplerOnOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	fourthRow4thCol->Add(couplerOnOffText, 0, wxALL, 5);
 	wxBoxSizer *fourthRow4thColRadios = new wxBoxSizer(wxHORIZONTAL);
 	m_currentCouplerIsOn = new wxRadioButton(
 		this,
@@ -329,19 +329,19 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		ID_GENERAL_ADD_TREM_BTN,
 		wxT("Add ->")
 	);
-	fifthRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fifthRow2ndCol->Add(m_addReferencedTremulant, 0, wxGROW|wxALL, 5);
 	m_addAllAvailableTremulants = new wxButton(
 		this,
 		ID_GENERAL_ADD_ALL_TREMS_BTN,
 		wxT("Add all")
 	);
-	fifthRow2ndCol->Add(m_addAllAvailableTremulants, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fifthRow2ndCol->Add(m_addAllAvailableTremulants, 0, wxGROW|wxALL, 5);
 	m_removeReferencedTremulant = new wxButton(
 		this,
 		ID_GENERAL_REMOVE_TREM_BTN,
 		wxT("<- Remove")
 	);
-	fifthRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	fifthRow2ndCol->Add(m_removeReferencedTremulant, 0, wxGROW|wxALL, 5);
 	fifthRow2ndCol->AddStretchSpacer();
 	fifthRow->Add(fifthRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *fifthRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -364,7 +364,7 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		wxID_STATIC,
 		wxT("Selected tremulant is:")
 	);
-	fifthRow4thCol->Add(tremOnOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	fifthRow4thCol->Add(tremOnOffText, 0, wxALL, 5);
 	wxBoxSizer *fifthRow4thColRadios = new wxBoxSizer(wxHORIZONTAL);
 	m_currentTremIsOn = new wxRadioButton(
 		this,
@@ -410,19 +410,19 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		ID_GENERAL_ADD_SWITCH_BTN,
 		wxT("Add ->")
 	);
-	sixthRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	sixthRow2ndCol->Add(m_addReferencedSwitch, 0, wxGROW|wxALL, 5);
 	m_addAllAvailableSwitches = new wxButton(
 		this,
 		ID_GENERAL_ADD_ALL_SWITCHES_BTN,
 		wxT("Add all")
 	);
-	sixthRow2ndCol->Add(m_addAllAvailableSwitches, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	sixthRow2ndCol->Add(m_addAllAvailableSwitches, 0, wxGROW|wxALL, 5);
 	m_removeReferencedSwitch = new wxButton(
 		this,
 		ID_GENERAL_REMOVE_SWITCH_BTN,
 		wxT("<- Remove")
 	);
-	sixthRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	sixthRow2ndCol->Add(m_removeReferencedSwitch, 0, wxGROW|wxALL, 5);
 	sixthRow2ndCol->AddStretchSpacer();
 	sixthRow->Add(sixthRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *sixthRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -446,7 +446,7 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		wxID_STATIC,
 		wxT("Selected switch is:")
 	);
-	sixthRow4thCol->Add(switchOnOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	sixthRow4thCol->Add(switchOnOffText, 0, wxALL, 5);
 	wxBoxSizer *sixthRow4thColRadios = new wxBoxSizer(wxHORIZONTAL);
 	m_currentSwitchIsOn = new wxRadioButton(
 		this,
@@ -492,19 +492,19 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		ID_GENERAL_ADD_DIV_CPLR_BTN,
 		wxT("Add ->")
 	);
-	seventhRow2ndCol->Add(m_addReferencedDivisionalCoupler, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	seventhRow2ndCol->Add(m_addReferencedDivisionalCoupler, 0, wxGROW|wxALL, 5);
 	m_addAllAvailableDivisionalCouplers = new wxButton(
 		this,
 		ID_GENERAL_ADD_ALL_DIV_CPLRS_BTN,
 		wxT("Add all")
 	);
-	seventhRow2ndCol->Add(m_addAllAvailableDivisionalCouplers, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	seventhRow2ndCol->Add(m_addAllAvailableDivisionalCouplers, 0, wxGROW|wxALL, 5);
 	m_removeReferencedDivisionalCoupler = new wxButton(
 		this,
 		ID_GENERAL_REMOVE_DIV_CPLR_BTN,
 		wxT("<- Remove")
 	);
-	seventhRow2ndCol->Add(m_removeReferencedDivisionalCoupler, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	seventhRow2ndCol->Add(m_removeReferencedDivisionalCoupler, 0, wxGROW|wxALL, 5);
 	seventhRow2ndCol->AddStretchSpacer();
 	seventhRow->Add(seventhRow2ndCol, 0, wxEXPAND);
 	wxBoxSizer *seventhRow3rdCol = new wxBoxSizer(wxVERTICAL);
@@ -528,7 +528,7 @@ GeneralPanel::GeneralPanel(wxWindow *parent) : wxScrolledWindow(parent) {
 		wxID_STATIC,
 		wxT("Selected Div. Cplr. is:")
 	);
-	seventhRow4thCol->Add(divOnOffText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	seventhRow4thCol->Add(divOnOffText, 0, wxALL, 5);
 	wxBoxSizer *seventhRow4thColRadios = new wxBoxSizer(wxHORIZONTAL);
 	m_currentDivCplrIsOn = new wxRadioButton(
 		this,
