@@ -324,14 +324,14 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 	for (unsigned i = 0; i < m_currentPanel->getNumberOfManuals(); i++) {
 		GUIManual *currentMan = m_currentPanel->getGuiManualAt(i);
 		int manXpos = currentMan->m_renderInfo.x;
-		int manYpos = currentMan->m_renderInfo.y;
+		int manYpos = currentMan->m_renderInfo.keys_y;
 		if (currentMan->getPosX() >= 0)
 			manXpos = currentMan->getPosX();
 		if (currentMan->getPosY() >= 0) {
 			manYpos = currentMan->getPosY();
-		} else if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveManuals && i + 1 == m_currentPanel->getNumberOfManuals()) {
+		} /* else if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveManuals && i + 1 == m_currentPanel->getNumberOfManuals()) {
 			manYpos += 8;
-		}
+		} */
 		for (int j = 0; j < currentMan->getNumberOfDisplayKeys(); j++) {
 			KEY_INFO *currentKey = currentMan->getKeyInfoAt(j);
 			wxBitmap theKey = currentKey->KeyImage;
@@ -817,7 +817,7 @@ void GUIRepresentationDrawingPanel::UpdateLayout() {
 			}
 		}
 		theManual->m_renderInfo.x = (m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() - theManual->m_renderInfo.width) >> 1;
-		//theManual->m_renderInfo.width += 16;
+		theManual->m_renderInfo.width += 16;
 		if ((int)theManual->m_renderInfo.width > m_CenterWidth)
 			m_CenterWidth = theManual->m_renderInfo.width;
 	}
