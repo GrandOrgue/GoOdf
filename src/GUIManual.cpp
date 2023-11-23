@@ -779,7 +779,7 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[12];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[12];
-						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9 || key_nb % 12 == 11) {
 							// if it's any other natural key we use E as the last key
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[4];
@@ -805,7 +805,7 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[12];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[12];
-						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9 || key_nb % 12 == 11) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[4];
 							else
@@ -833,7 +833,7 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[12];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[12];
-						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9 || key_nb % 12 == 11) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[4];
 							else
@@ -858,7 +858,7 @@ void GUIManual::updateKeyInfo() {
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[12];
 							else
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[12];
-						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9) {
+						} else if (key_nb % 12 == 2 || key_nb % 12 == 4 || key_nb % 12 == 7 || key_nb % 12 == 9 || key_nb % 12 == 11) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[4];
 							else
