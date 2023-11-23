@@ -548,11 +548,39 @@ void OrganPanel::setTooltipsEnabled(bool isEnabled) {
 		selectPath->SetToolTip(wxT("Begin with setting the location for the .organ file in the file system here."));
 		wxButton *infoPath = (wxButton*) FindWindow(ID_BROWSE_FOR_INFO_PATH);
 		infoPath->SetToolTip(wxT("An organinfo file can be selected here but it is not necessary and not even supported for organ packages!"));
+		m_odfPathField->SetToolTip(wxT("The full path to where the .organ file will be written is shown here. Set it with the 'Browse' button."));
+		m_organNameField->SetToolTip(wxT("This is the file name of the .organ file. NOTE: Spaces in the filename will be removed! To 'Save as...' just change the name here and save."));
+		m_churchNameField->SetToolTip(wxT("The curch name is an important property as it's the name of the organ as shown in GrandOrgue. Make it unique for every different organ!"));
+		m_churchAddressField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_organBuilderField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_organBuildDateField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_organCommentsField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_recordingDetailsField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_infoPathField->SetToolTip(wxT("NOTE: This value is shown in GrandOrgue, but is not supported for the new organ package format! To clear any file here, click the 'Browse' button to the right and then 'Cancel'!"));
+		m_amplitudeLevelSpin->SetToolTip(wxT("Linear volume (expressed as a percentage). A value of 0 (zero) will mute sound output!"));
+		m_gainSpin->SetToolTip(wxT("Logarithmic volume. A value of 0 gain is equivalent to an amplitude level of 100."));
+		m_pitchTuningSpin->SetToolTip(wxT("Set overall pitch adjustment for 'Original temperament' of the organ here."));
+		m_trackerDelaySpin->SetToolTip(wxT("Set overall tracker delay of the organ here."));
+		m_pitchCorrectionSpin->SetToolTip(wxT("Set overall pitch adjustment for any other temperament than 'Original' for the organ here."));
 	} else {
 		wxButton *selectPath = (wxButton*) FindWindow(ID_BROWSE_FOR_ODF_PATH);
 		selectPath->SetToolTip(wxEmptyString);
 		wxButton *infoPath = (wxButton*) FindWindow(ID_BROWSE_FOR_INFO_PATH);
 		infoPath->SetToolTip(wxEmptyString);
+		m_odfPathField->SetToolTip(wxEmptyString);
+		m_organNameField->SetToolTip(wxEmptyString);
+		m_churchNameField->SetToolTip(wxEmptyString);
+		m_churchAddressField->SetToolTip(wxEmptyString);
+		m_organBuilderField->SetToolTip(wxEmptyString);
+		m_organBuildDateField->SetToolTip(wxEmptyString);
+		m_organCommentsField->SetToolTip(wxEmptyString);
+		m_recordingDetailsField->SetToolTip(wxEmptyString);
+		m_infoPathField->SetToolTip(wxEmptyString);
+		m_amplitudeLevelSpin->SetToolTip(wxEmptyString);
+		m_gainSpin->SetToolTip(wxEmptyString);
+		m_pitchTuningSpin->SetToolTip(wxEmptyString);
+		m_trackerDelaySpin->SetToolTip(wxEmptyString);
+		m_pitchCorrectionSpin->SetToolTip(wxEmptyString);
 	}
 }
 

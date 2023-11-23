@@ -694,7 +694,7 @@ void GUILabelPanel::updatePositionValues() {
 
 void GUILabelPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
-		m_labelTextField->SetToolTip(wxT("If another string is desired than the button name (or a shorter one for display reasons) it can be overridden here."));
+		m_labelTextField->SetToolTip(wxT("For a normal label the text written here is what will be shown on the label. NOTE: On some of the setter elements of GrandOrgue this property cannot be set!"));
 		m_labelFont->SetToolTip(wxT("Font face and size can be set here. The default value is derived from the display metrics control label font of the panel."));
 		m_labelColourChoice->SetToolTip(wxT("Colour of the font can be chosen here. If a custom value is chosen the picker will be activated."));
 		m_labelColourPick->SetToolTip(wxT("A custom colour can be picked here."));
