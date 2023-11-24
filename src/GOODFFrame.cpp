@@ -44,6 +44,8 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
 	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
+	EVT_MENU(ID_CLEAR_HISTORY, GOODFFrame::OnClearHistory)
+	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE9, GOODFFrame::OnRecentFileMenuChoice)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
 	EVT_TREE_BEGIN_DRAG(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeLeftDrag)
@@ -67,6 +69,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_organ = new Organ();
 	m_organHasBeenSaved = false;
 	m_enableTooltips = false;
+	m_config = new wxFileConfig(wxT("GOODF"));
 
 	// Create a file menu
 	m_fileMenu = new wxMenu();
@@ -74,6 +77,9 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	// Add file menu items
 	m_fileMenu->Append(ID_NEW_ORGAN, wxT("&New Organ\tCtrl+N"), wxT("Create a new organ"));
 	m_fileMenu->Append(ID_READ_ORGAN, wxT("Open file\tCtrl+O"), wxT("Open existing .organ file"));
+	m_recentMenu = new wxMenu();
+	m_fileMenu->AppendSubMenu(m_recentMenu, wxT("Recent Files"));
+	m_fileMenu->AppendSeparator();
 	m_fileMenu->Append(ID_WRITE_ODF, wxT("Write ODF\tCtrl+S"), wxT("Write/Save the .organ file"));
 	m_fileMenu->Append(wxID_EXIT, wxT("&Exit\tCtrl+Q"), wxT("Quit this program"));
 
@@ -84,6 +90,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_toolsMenu->Append(ID_IMPORT_VOICING_DATA, wxT("Import .cmb\tCtrl+I"), wxT("Import voicing data from a .cmb (settings) file"));
 	m_toolsMenu->AppendCheckItem(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, wxT("Enable Tooltips"), wxT("Enable tooltips for certain controls"));
 	m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
+	m_toolsMenu->Append(ID_CLEAR_HISTORY, wxT("Clear File History"), wxT("Remove all the entries in the recent file history"));
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();
@@ -100,6 +107,11 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	// Attach menu bar to frame
 	SetMenuBar(m_menuBar);
+
+	m_recentlyUsed = new wxFileHistory();
+	m_recentlyUsed->UseMenu(m_recentMenu);
+	m_recentlyUsed->AddFilesToMenu(m_recentMenu);
+	m_recentlyUsed->Load(*m_config);
 
 	// Create a top level sizer for the frame
 	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
@@ -373,6 +385,10 @@ void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
+	m_recentlyUsed->Save(*m_config);
+	m_config->Flush();
+	delete m_config;
+	delete m_recentlyUsed;
 	// Destroy the frame
 	Close();
 }
@@ -432,6 +448,7 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	m_organHasBeenSaved = true;
 	m_organ->setModified(false);
 	UpdateFrameTitle();
+	m_recentlyUsed->AddFileToHistory(fullFileName);
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
@@ -453,23 +470,27 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
 	);
 
-	if (fileDialog.ShowModal() == wxID_OK) {
-		if (m_organ) {
-			delete m_organ;
-			m_organ = NULL;
-		}
-		m_organ = new Organ();
-		removeAllItemsFromTree();
-		m_organHasBeenSaved = false;
-	} else {
+	if (fileDialog.ShowModal() != wxID_OK) {
 		return;
 	}
 
 	organFilePath = fileDialog.GetPath();
+	DoOpenOrgan(organFilePath);
+}
 
-	OrganFileParser parser(organFilePath, m_organ);
+void GOODFFrame::DoOpenOrgan(wxString filePath) {
+	if (m_organ) {
+		delete m_organ;
+		m_organ = NULL;
+	}
+	m_organ = new Organ();
+	removeAllItemsFromTree();
+	m_organHasBeenSaved = false;
+
+	OrganFileParser parser(filePath, m_organ);
 	if (parser.isOrganReady()) {
-		wxFileName f_name = wxFileName(organFilePath);
+		m_recentlyUsed->AddFileToHistory(filePath);
+		wxFileName f_name = wxFileName(filePath);
 		m_organPanel->setCurrentOrgan(m_organ);
 		m_organPanel->setOdfPath(f_name.GetPath());
 		m_organPanel->setOdfName(f_name.GetName());
@@ -2851,6 +2872,18 @@ void GOODFFrame::OnEnableTooltipsMenu(wxCommandEvent& WXUNUSED(event)) {
 	m_guiEnclosurePanel->setTooltipsEnabled(m_enableTooltips);
 	m_guiLabelPanel->setTooltipsEnabled(m_enableTooltips);
 	m_guiManualPanel->setTooltipsEnabled(m_enableTooltips);
+}
+
+void GOODFFrame::OnRecentFileMenuChoice(wxCommandEvent& event) {
+	wxString fName(m_recentlyUsed->GetHistoryFile(event.GetId() - wxID_FILE1));
+	if (!fName.IsEmpty())
+		DoOpenOrgan(fName);
+}
+
+void GOODFFrame::OnClearHistory(wxCommandEvent& WXUNUSED(event)) {
+	while (m_recentlyUsed->GetCount()) {
+		m_recentlyUsed->RemoveFileFromHistory(0);
+	}
 }
 
 void GOODFFrame::SetupOrganMainPanel() {

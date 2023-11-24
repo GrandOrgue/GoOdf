@@ -27,6 +27,8 @@
 #include <wx/treectrl.h>
 #include <wx/splitter.h>
 #include <wx/spinctrl.h>
+#include <wx/filehistory.h>
+#include <wx/fileconf.h>
 #include "EnclosurePanel.h"
 #include "TremulantPanel.h"
 #include "WindchestgroupPanel.h"
@@ -58,6 +60,7 @@ public:
 	void OnHelp(wxCommandEvent& event);
 	void OnWriteODF(wxCommandEvent& event);
 	void OnReadOrganFile(wxCommandEvent& event);
+	void DoOpenOrgan(wxString filePath);
 
 	void OrganTreeChildItemLabelChanged(wxString label);
 	void RemoveCurrentItemFromOrgan();
@@ -79,6 +82,7 @@ private:
 	DECLARE_EVENT_TABLE()
 
 	wxMenu *m_fileMenu;
+	wxMenu *m_recentMenu;
 	wxMenu *m_toolsMenu;
 	wxMenu *m_helpMenu;
 	wxMenuBar *m_menuBar;
@@ -138,6 +142,8 @@ private:
 
 	bool m_organHasBeenSaved;
 	bool m_enableTooltips;
+	wxFileHistory *m_recentlyUsed;
+	wxFileConfig *m_config;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
@@ -157,6 +163,8 @@ private:
 	void OnAddNewPanel(wxCommandEvent& event);
 	void OnImportCMB(wxCommandEvent& event);
 	void OnEnableTooltipsMenu(wxCommandEvent& event);
+	void OnRecentFileMenuChoice(wxCommandEvent& event);
+	void OnClearHistory(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
