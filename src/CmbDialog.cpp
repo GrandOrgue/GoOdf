@@ -90,6 +90,34 @@ bool CmbDialog::Create(
 void CmbDialog::CreateControls() {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 
+	wxBoxSizer *warningRow = new wxBoxSizer(wxVERTICAL);
+	wxStaticText *warningHeader = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("WARNING!!!")
+	);
+	warningHeader->SetForegroundColour(*wxRED);
+	warningHeader->SetFont(wxFont(wxFontInfo(18).Bold()));
+	warningRow->Add(warningHeader, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+	wxStaticText *warningText1 = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Only use this feature to import voicing data from a .cmb settings file that actually was created by GrandOrgue (with the 'File->Export Settings' menu option) for exactly this .organ file!")
+	);
+	warningText1->Wrap(640);
+	warningRow->Add(warningText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+	wxStaticText *warningText2 = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("In particular, if the number of ranks/stops/pipes have changed in the .organ file, there's no guarantee that the voicing data from the .cmb file will be imported correctly!")
+	);
+	warningText2->Wrap(640);
+	warningRow->Add(warningText2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+	mainSizer->Add(warningRow, 0, wxGROW|wxALL, 5);
+
+	wxStaticLine *warningDivider = new wxStaticLine(this);
+	mainSizer->Add(warningDivider, 0, wxEXPAND);
+
 	wxBoxSizer *firstRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *infoText = new wxStaticText (
 		this,
