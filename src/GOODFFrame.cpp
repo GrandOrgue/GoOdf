@@ -362,6 +362,19 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_Splitter->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
 	leftSplitPanel->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
 	m_organTreeCtrl->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
+
+	// Read settings file and apply if found
+	bool b;
+	if (m_config->Read(wxT("General/EnableTooltips"), &b)) {
+		m_enableTooltips = b;
+		if (m_enableTooltips)
+			m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, true);
+		else
+			m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
+
+		wxCommandEvent evt(wxEVT_MENU, ID_GLOBAL_SHOW_TOOLTIPS_OPTION);
+		wxPostEvent(this, evt);
+	}
 }
 
 GOODFFrame::~GOODFFrame() {
@@ -385,6 +398,7 @@ void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
+	m_config->Write(wxT("General/EnableTooltips"), m_enableTooltips);
 	m_recentlyUsed->Save(*m_config);
 	m_config->Flush();
 	delete m_config;
