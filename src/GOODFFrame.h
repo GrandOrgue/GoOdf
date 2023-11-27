@@ -144,6 +144,11 @@ private:
 	bool m_enableTooltips;
 	wxFileHistory *m_recentlyUsed;
 	wxFileConfig *m_config;
+	int m_xPosition;
+	int m_yPosition;
+	int m_frameWidth;
+	int m_frameHeight;
+	bool m_frameMaximized;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
@@ -165,9 +170,11 @@ private:
 	void OnEnableTooltipsMenu(wxCommandEvent& event);
 	void OnRecentFileMenuChoice(wxCommandEvent& event);
 	void OnClearHistory(wxCommandEvent& event);
+	void OnSizeChange(wxSizeEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
+	void UpdateFrameSizeAndPos();
 
 };
 

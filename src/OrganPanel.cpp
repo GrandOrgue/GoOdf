@@ -115,7 +115,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultSize
 	);
 	secondRow->Add(m_organNameField, 1, wxEXPAND|wxALL, 5);
-	mainSizer->Add(secondRow, 0, wxGROW|wxALL, 5);
+	mainSizer->Add(secondRow, 0, wxGROW);
 
 	wxStaticLine *topDivider = new wxStaticLine(this);
 	mainSizer->Add(topDivider, 0, wxEXPAND);

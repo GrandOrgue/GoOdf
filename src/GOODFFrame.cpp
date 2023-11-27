@@ -61,6 +61,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_BUTTON(ID_ADD_GENERAL_BTN, GOODFFrame::OnAddNewGeneral)
 	EVT_BUTTON(ID_ADD_REVERSIBLE_PISTON_BTN, GOODFFrame::OnAddNewReversiblePiston)
 	EVT_BUTTON(ID_ADD_PANEL_BTN, GOODFFrame::OnAddNewPanel)
+	EVT_SIZE(GOODFFrame::OnSizeChange)
 	EVT_CLOSE(GOODFFrame::OnClose)
 END_EVENT_TABLE()
 
@@ -350,13 +351,19 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	// from being resized to smaller size
 	SetSizerAndFit(topSizer);
 
-	// Additionally set a minimum width of 1024 x 768
+	// Additionally set a minimum width of 1024 x 800
 	wxSize calculated = GetSize();
-	if (calculated.GetWidth() < 1024 || calculated.GetHeight() < 768)
-		SetMinSize(wxSize(1024, 768));
+	if (calculated.GetWidth() < 1024 || calculated.GetHeight() < 800)
+		SetMinSize(wxSize(1024, 800));
 	else
 		SetMinSize(calculated);
 	m_Splitter->SetSashPosition(205);
+
+	m_xPosition = -1;
+	m_yPosition = -1;
+	m_frameWidth = GetSize().GetWidth();
+	m_frameHeight = GetSize().GetHeight();
+	m_frameMaximized = false;
 
 	// Connect mouse motion events for child windows
 	m_Splitter->Connect(wxEVT_MOTION, wxMouseEventHandler(GOODFFrame::OnOrganTreeMouseMotion), NULL, this);
@@ -375,6 +382,30 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 		wxCommandEvent evt(wxEVT_MENU, ID_GLOBAL_SHOW_TOOLTIPS_OPTION);
 		wxPostEvent(this, evt);
 	}
+
+	int readInt;
+	if (m_config->Read(wxT("General/FrameXPosition"), &readInt))
+		m_xPosition = readInt;
+
+	if (m_config->Read(wxT("General/FrameYPosition"), &readInt))
+		m_yPosition = readInt;
+
+	if (m_config->Read(wxT("General/FrameWidth"), &readInt))
+		m_frameWidth = readInt;
+
+	if (m_config->Read(wxT("General/FrameHeight"), &readInt))
+		m_frameHeight = readInt;
+
+	if (m_config->Read(wxT("General/FrameMaximized"), &b))
+		m_frameMaximized = b;
+
+	if (m_frameMaximized)
+		Maximize();
+	else
+		SetSize(m_xPosition, m_yPosition, m_frameWidth, m_frameHeight);
+
+	if (m_config->Read(wxT("General/SashPosition"), &readInt))
+		m_Splitter->SetSashPosition(readInt);
 }
 
 GOODFFrame::~GOODFFrame() {
@@ -398,11 +429,6 @@ void GOODFFrame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
-	m_config->Write(wxT("General/EnableTooltips"), m_enableTooltips);
-	m_recentlyUsed->Save(*m_config);
-	m_config->Flush();
-	delete m_config;
-	delete m_recentlyUsed;
 	// Destroy the frame
 	Close();
 }
@@ -426,6 +452,21 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 			}
 		}
 	}
+
+	// Write config file (settings)
+	m_config->Write(wxT("General/EnableTooltips"), m_enableTooltips);
+	UpdateFrameSizeAndPos();
+	m_config->Write(wxT("General/FrameXPosition"), m_xPosition);
+	m_config->Write(wxT("General/FrameYPosition"), m_yPosition);
+	m_config->Write(wxT("General/FrameWidth"), m_frameWidth);
+	m_config->Write(wxT("General/FrameHeight"), m_frameHeight);
+	m_config->Write(wxT("General/FrameMaximized"), m_frameMaximized);
+	m_config->Write(wxT("General/SashPosition"), m_Splitter->GetSashPosition());
+	m_recentlyUsed->Save(*m_config);
+	m_config->Flush();
+	delete m_config;
+	delete m_recentlyUsed;
+
 	// Destroy the frame
 	Destroy();
 }
@@ -2900,6 +2941,11 @@ void GOODFFrame::OnClearHistory(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
+void GOODFFrame::OnSizeChange(wxSizeEvent& event) {
+	UpdateFrameSizeAndPos();
+	event.Skip();
+}
+
 void GOODFFrame::SetupOrganMainPanel() {
 	// Main panel is created by Organ itself but we need to add it to the tree
 	wxTreeItemId mainPanel = m_organTreeCtrl->AppendItem(tree_panels, m_organ->getOrganPanelAt(0)->getName());
@@ -2988,4 +3034,14 @@ void GOODFFrame::removeAllItemsFromTree() {
 	m_organTreeCtrl->DeleteChildren(tree_divisionalCouplers);
 	m_organTreeCtrl->DeleteChildren(tree_generals);
 	m_organTreeCtrl->DeleteChildren(tree_panels);
+}
+
+void GOODFFrame::UpdateFrameSizeAndPos() {
+	if (IsMaximized())
+		m_frameMaximized = true;
+	else {
+		GetPosition(&m_xPosition, &m_yPosition);
+		GetSize(&m_frameWidth, &m_frameHeight);
+		m_frameMaximized = false;
+	}
 }
