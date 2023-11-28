@@ -22,6 +22,7 @@
 #include "GOODFFunctions.h"
 #include "GOODF.h"
 #include <wx/statline.h>
+#include <wx/accel.h>
 
 IMPLEMENT_CLASS(PipeDialog, wxDialog)
 
@@ -90,6 +91,13 @@ bool PipeDialog::Create(
 		return false;
 
 	CreateControls();
+
+	// Accelerator table for keyboard navigations
+	wxAcceleratorEntry entries[2];
+	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_PIPE_DIALOG_PREV_BTN);
+	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_PIPE_DIALOG_NEXT_BTN);
+	wxAcceleratorTable accel(2, entries);
+	this->SetAcceleratorTable(accel);
 
 	unsigned nbWc = ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups();
 	if (nbWc > 0) {
@@ -534,7 +542,7 @@ void PipeDialog::OnPrevPipeBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void PipeDialog::OnNextPipeBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_selectedPipeIndex < m_rank_pipelist.size()) {
+	if (m_selectedPipeIndex < m_rank_pipelist.size() - 1) {
 		m_selectedPipeIndex++;
 
 		m_currentPipe = GetPipePointer(m_selectedPipeIndex);
