@@ -765,7 +765,21 @@ void GUIManual::updateKeyInfo() {
 			if (m_dispKeyColourInverted) {
 				// keyboard is inverted
 				if (m_dispKeyColourWooden) {
-					if (i + 1 < m_displayKeys) {
+					if (i == 0 && !m_keys[i].IsSharp) {
+						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
+						// otherwise it should be displayed as C
+						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[12];
+						} else {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[0];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps01[0];
+						}
+					} else if (i + 1 < m_displayKeys) {
 						// this is not the last key of the manual
 						if (m_dispImageNum == 2)
 							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[key_nb % 12];
@@ -794,7 +808,21 @@ void GUIManual::updateKeyInfo() {
 						}
 					}
 				} else {
-					if (i + 1 < m_displayKeys) {
+					if (i == 0 && !m_keys[i].IsSharp) {
+						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
+						// otherwise it should be displayed as C
+						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[12];
+						} else {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[0];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps01[0];
+						}
+					} else if (i + 1 < m_displayKeys) {
 						if (m_dispImageNum == 2)
 							m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[key_nb % 12];
 						else
@@ -822,7 +850,21 @@ void GUIManual::updateKeyInfo() {
 			} else {
 				// this is a normal keyboard
 				if (m_dispKeyColourWooden) {
-					if (i + 1 < m_displayKeys) {
+					if (i == 0 && !m_keys[i].IsSharp) {
+						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
+						// otherwise it should be displayed as C
+						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[12];
+						} else {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[0];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps01[0];
+						}
+					} else if (i + 1 < m_displayKeys) {
 						if (m_dispImageNum == 2)
 							m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[key_nb % 12];
 						else
@@ -847,7 +889,21 @@ void GUIManual::updateKeyInfo() {
 						}
 					}
 				} else {
-					if (i + 1 < m_displayKeys) {
+					if (i == 0 && !m_keys[i].IsSharp) {
+						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
+						// otherwise it should be displayed as C
+						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[12];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[12];
+						} else {
+							if (m_dispImageNum == 2)
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[0];
+							else
+								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps01[0];
+						}
+					} else if (i + 1 < m_displayKeys) {
 						if (m_dispImageNum == 2)
 							m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[key_nb % 12];
 						else

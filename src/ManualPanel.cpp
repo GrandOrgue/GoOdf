@@ -548,6 +548,7 @@ void ManualPanel::OnFirstLogicalKeySpin(wxSpinEvent& WXUNUSED(event)) {
 
 void ManualPanel::OnFirstMidiNoteSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_manual->setFirstAccessibleKeyMIDINoteNumber(m_firstAccessibleKeyMIDINoteNumberSpin->GetValue());
+	UpdateAnyGuiVersion();
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
@@ -780,6 +781,7 @@ void ManualPanel::UpdateAnyGuiVersion() {
 			GUIManual *guiMan = ::wxGetApp().m_frame->m_organ->getOrganPanelAt(i)->getGuiManualAt(j);
 			if (guiMan->isReferencing(m_manual)) {
 				guiMan->setNumberOfDisplayKeys(m_manual->getNumberOfAccessibleKeys());
+				guiMan->setDisplayFirstNote(m_manual->getFirstAccessibleKeyMIDINoteNumber());
 			}
 		}
 	}
