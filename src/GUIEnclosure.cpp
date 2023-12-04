@@ -290,6 +290,10 @@ void GUIEnclosure::read(wxFileConfig *cfg) {
 	} else {
 		setTextBreakWidth(m_textRectWidth);
 	}
+	// Fix incorrect usage of DispLabelText set as empty
+	// with the intent to "hide" any text written from GO
+	if (cfg->HasEntry("DispLabelText") && getDispLabelText() == wxEmptyString)
+		setTextBreakWidth(0);
 }
 
 bool GUIEnclosure::isReferencing(Enclosure *enclosure) {

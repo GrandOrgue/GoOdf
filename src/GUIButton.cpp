@@ -300,6 +300,10 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 	} else {
 		setTextBreakWidth(m_textRectWidth - (m_textRectWidth < 50 ? 4 : 14));
 	}
+	// Fix incorrect usage of DispLabelText set as empty
+	// with the intent to "hide" any text written from GO
+	if (cfg->HasEntry("DispLabelText") && getDispLabelText() == wxEmptyString)
+		setTextBreakWidth(0);
 }
 
 void GUIButton::updateDisplayName() {
