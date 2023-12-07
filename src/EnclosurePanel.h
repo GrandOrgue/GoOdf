@@ -39,6 +39,7 @@ private:
 
 	wxTextCtrl *m_nameField;
 	wxSpinCtrl *m_ampMinLvlSpin;
+	wxSpinCtrl *m_midiInputNumberSpin;
 	wxButton *removeEnclosureBtn;
 
 	Enclosure *m_enclosure;
@@ -46,6 +47,7 @@ private:
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnAmpMinLvlChange(wxSpinEvent& event);
+	void OnMidiInputNbrSpin(wxSpinEvent& event);
 	void OnRemoveEnclosureBtn(wxCommandEvent& event);
 	void DoRemoveEnclosure();
 
