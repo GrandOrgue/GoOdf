@@ -37,6 +37,7 @@ public:
 	void setIsFirstRemoval(bool value);
 	Stop* getCurrentStop();
 	void setTooltipsEnabled(bool isEnabled);
+	RankPanel* GetInternalRankPanel();
 
 private:
 	DECLARE_EVENT_TABLE()

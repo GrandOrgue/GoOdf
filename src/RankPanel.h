@@ -38,6 +38,13 @@ public:
 	void setIsFirstRemoval(bool value);
 	Rank* getCurrentRank();
 	void setTooltipsEnabled(bool isEnabled);
+	void SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder);
+	wxString GetAttackFolderOption();
+	bool GetOneAttackOption();
+	bool GetLoadReleaseOption();
+	wxString GetReleaseFolderOption();
+	bool GetExtractTimeOption();
+	wxString GetTremFolderOption();
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -82,6 +89,12 @@ private:
 	bool m_isFirstRemoval;
 	int m_lastReferencedManual;
 	int m_lastReferencedStop;
+	wxString m_attackFolder;
+	bool m_loadOnlyOneAttack;
+	bool m_loadReleaseInAttack;
+	wxString m_releaseFolder;
+	bool m_extractTime;
+	wxString m_tremFolder;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnWindchestChoice(wxCommandEvent& event);
@@ -109,6 +122,12 @@ private:
 	void OnAddReleaseSamplesBtn(wxCommandEvent& event);
 	void OnFlexiblePipeLoadingBtn(wxCommandEvent& event);
 	void OnTreeKeyboardInput(wxTreeEvent& event);
+	void OnAttackFolderText(wxCommandEvent& event);
+	void OnOnlyOneAttachCheck(wxCommandEvent& event);
+	void OnLoadReleaseCheck(wxCommandEvent& event);
+	void OnReleaseFolderText(wxCommandEvent& event);
+	void OnExtractTimeCheck(wxCommandEvent& event);
+	void OnTremulantFolderText(wxCommandEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();
@@ -127,6 +146,7 @@ private:
 	void OnCopyPipeOffset();
 	wxTreeItemId GetPipeTreeItemAt(int index);
 	wxTreeItemId GetPipeOfSelection();
+	void OnPipeReadingOptionsChanged();
 
 };
 

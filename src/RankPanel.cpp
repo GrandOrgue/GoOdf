@@ -63,6 +63,12 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_BUTTON(ID_RANK_ADD_RELEASES_BTN, RankPanel::OnAddReleaseSamplesBtn)
 	EVT_TREE_KEY_DOWN(ID_RANK_PIPE_TREE, RankPanel::OnTreeKeyboardInput)
 	EVT_BUTTON(ID_RANK_FLEXIBLE_PIPE_LOADING_BTN, RankPanel::OnFlexiblePipeLoadingBtn)
+	EVT_TEXT(ID_RANK_ATTACK_SUBFOLDER_TEXT, RankPanel::OnAttackFolderText)
+	EVT_TEXT(ID_RANK_RELEASE_SUBFOLDER_TEXT, RankPanel::OnReleaseFolderText)
+	EVT_TEXT(ID_RANK_TREMULANT_SUBFOLDER_TEXT, RankPanel::OnTremulantFolderText)
+	EVT_CHECKBOX(ID_RANK_KEY_PRESS_TIME_OPTION, RankPanel::OnExtractTimeCheck)
+	EVT_CHECKBOX(ID_RANK_ONLY_ONE_ATK_OPTION, RankPanel::OnOnlyOneAttachCheck)
+	EVT_CHECKBOX(ID_RANK_LOAD_RELEASE_OPTION, RankPanel::OnLoadReleaseCheck)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -70,6 +76,12 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	m_isFirstRemoval = true;
 	m_lastReferencedManual = -1;
 	m_lastReferencedStop = -1;
+	m_attackFolder = wxEmptyString;
+	m_loadOnlyOneAttack = false;
+	m_loadReleaseInAttack = true;
+	m_releaseFolder = wxT("rel");
+	m_extractTime = true;
+	m_tremFolder = wxT("trem");
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -420,10 +432,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	optionsRow1->Add(extraAttackText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsAttackField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
-		ID_RANK_ATTACK_SUBFOLDER_TEXT,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxDefaultSize
+		ID_RANK_ATTACK_SUBFOLDER_TEXT
 	);
 	optionsRow1->Add(m_optionsAttackField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow1, 0, wxGROW);
@@ -435,7 +444,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_optionsOnlyOneAttack->SetValue(false);
+	m_optionsOnlyOneAttack->SetValue(m_loadOnlyOneAttack);
 	optionsRowOnlyOne->Add(m_optionsOnlyOneAttack, 0, wxALL, 2);
 	optionsRowOnlyOne->AddStretchSpacer();
 	m_optionsLoadReleaseInAttack = new wxCheckBox(
@@ -445,7 +454,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_optionsLoadReleaseInAttack->SetValue(true);
+	m_optionsLoadReleaseInAttack->SetValue(m_loadReleaseInAttack);
 	optionsRowOnlyOne->Add(m_optionsLoadReleaseInAttack, 0, wxALL, 2);
 	readingOptions->Add(optionsRowOnlyOne,0, wxGROW);
 	wxBoxSizer *optionsRow2 = new wxBoxSizer(wxHORIZONTAL);
@@ -457,10 +466,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	optionsRow2->Add(releaseFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsReleaseField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
-		ID_RANK_RELEASE_SUBFOLDER_TEXT,
-		wxT("rel"),
-		wxDefaultPosition,
-		wxDefaultSize
+		ID_RANK_RELEASE_SUBFOLDER_TEXT
 	);
 	optionsRow2->Add(m_optionsReleaseField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow2, 0, wxGROW);
@@ -472,7 +478,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	m_optionsKeyPressTime->SetValue(true);
+	m_optionsKeyPressTime->SetValue(m_extractTime);
 	optionsRow3->Add(m_optionsKeyPressTime, 0, wxALL, 2);
 	readingOptions->Add(optionsRow3, 0, wxGROW);
 	wxBoxSizer *optionsRow4 = new wxBoxSizer(wxHORIZONTAL);
@@ -484,10 +490,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	optionsRow4->Add(tremulantFolderText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 2);
 	m_optionsTremulantField = new wxTextCtrl(
 		readingOptions->GetStaticBox(),
-		ID_RANK_TREMULANT_SUBFOLDER_TEXT,
-		wxT("trem"),
-		wxDefaultPosition,
-		wxDefaultSize
+		ID_RANK_TREMULANT_SUBFOLDER_TEXT
 	);
 	optionsRow4->Add(m_optionsTremulantField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow4, 0, wxGROW);
@@ -594,6 +597,13 @@ void RankPanel::setRank(Rank *rank) {
 	m_gainSpin->SetValue(m_rank->getGain());
 	m_pitchTuningSpin->SetValue(m_rank->getPitchTuning());
 	m_trackerDelaySpin->SetValue(m_rank->getTrackerDelay());
+
+	m_optionsAttackField->ChangeValue(m_attackFolder);
+	m_optionsOnlyOneAttack->SetValue(m_loadOnlyOneAttack);
+	m_optionsLoadReleaseInAttack->SetValue(m_loadReleaseInAttack);
+	m_optionsReleaseField->ChangeValue(m_releaseFolder);
+	m_optionsKeyPressTime->SetValue(m_extractTime);
+	m_optionsTremulantField->ChangeValue(m_tremFolder);
 }
 
 Rank* RankPanel::getCurrentRank() {
@@ -658,6 +668,39 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_flexiblePipeLoadingBtn->SetToolTip(wxEmptyString);
 		m_pipeTreeCtrl->SetToolTip(wxEmptyString);
 	}
+}
+
+void RankPanel::SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder) {
+	m_attackFolder = atkFolder;
+	m_loadOnlyOneAttack = oneAttack;
+	m_loadReleaseInAttack = loadRelease;
+	m_releaseFolder = releaseFolder;
+	m_extractTime = extractTime;
+	m_tremFolder = tremFolder;
+}
+
+wxString RankPanel::GetAttackFolderOption() {
+	return m_attackFolder;
+}
+
+bool RankPanel::GetOneAttackOption() {
+	return m_loadOnlyOneAttack;
+}
+
+bool RankPanel::GetLoadReleaseOption() {
+	return m_loadReleaseInAttack;
+}
+
+wxString RankPanel::GetReleaseFolderOption() {
+	return m_releaseFolder;
+}
+
+bool RankPanel::GetExtractTimeOption() {
+	return m_extractTime;
+}
+
+wxString RankPanel::GetTremFolderOption() {
+	return m_tremFolder;
 }
 
 void RankPanel::setNameFieldValue(wxString name) {
@@ -1752,4 +1795,46 @@ void RankPanel::OnTreeKeyboardInput(wxTreeEvent& event) {
 	} else {
 		event.Skip();
 	}
+}
+
+void RankPanel::OnAttackFolderText(wxCommandEvent& WXUNUSED(event)) {
+	m_attackFolder = m_optionsAttackField->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnOnlyOneAttachCheck(wxCommandEvent& WXUNUSED(event)) {
+	m_loadOnlyOneAttack = m_optionsOnlyOneAttack->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnLoadReleaseCheck(wxCommandEvent& WXUNUSED(event)) {
+	m_loadReleaseInAttack = m_optionsLoadReleaseInAttack->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnReleaseFolderText(wxCommandEvent& WXUNUSED(event)) {
+	m_releaseFolder = m_optionsReleaseField->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnExtractTimeCheck(wxCommandEvent& WXUNUSED(event)) {
+	m_extractTime = m_optionsKeyPressTime->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnTremulantFolderText(wxCommandEvent& WXUNUSED(event)) {
+	m_tremFolder = m_optionsTremulantField->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
+void RankPanel::OnPipeReadingOptionsChanged() {
+	::wxGetApp().m_frame->SynchronizePipeReadingOptions(
+		this,
+		GetAttackFolderOption(),
+		GetOneAttackOption(),
+		GetLoadReleaseOption(),
+		GetReleaseFolderOption(),
+		GetExtractTimeOption(),
+		GetTremFolderOption()
+	);
 }

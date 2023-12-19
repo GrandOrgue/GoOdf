@@ -75,6 +75,7 @@ public:
 	void PanelGUIPropertyIsChanged();
 	void GUIElementPositionIsChanged();
 	void UpdateFrameTitle();
+	void SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder);
 
 	Organ *m_organ;
 

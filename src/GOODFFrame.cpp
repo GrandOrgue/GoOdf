@@ -33,6 +33,7 @@
 #include "CmbDialog.h"
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
@@ -406,6 +407,37 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	if (m_config->Read(wxT("General/SashPosition"), &readInt))
 		m_Splitter->SetSashPosition(readInt);
+
+	wxString atkFolder = wxEmptyString;
+	m_config->Read(wxT("Rank/AttackSubFolderOption"), &atkFolder);
+	bool oneAttack = false;
+	m_config->Read(wxT("Rank/OneAttackOnlyOption"), &oneAttack);
+	bool loadRelease = true;
+	m_config->Read(wxT("Rank/LoadReleaseOption"), &loadRelease);
+	wxString releaseFolder = wxT("rel");
+	m_config->Read(wxT("Rank/ReleaseSubFolderOption"), &releaseFolder);
+	bool extractTime = true;
+	m_config->Read(wxT("Rank/ExtractTimeOption"), &extractTime);
+	wxString tremFolder = wxT("trem");
+	m_config->Read(wxT("Rank/TremulantSubFolderOption"), &tremFolder);
+
+	m_rankPanel->SetPipeReadingOptions(
+		atkFolder,
+		oneAttack,
+		loadRelease,
+		releaseFolder,
+		extractTime,
+		tremFolder
+	);
+	m_stopPanel->GetInternalRankPanel()->SetPipeReadingOptions(
+		atkFolder,
+		oneAttack,
+		loadRelease,
+		releaseFolder,
+		extractTime,
+		tremFolder
+	);
+
 }
 
 GOODFFrame::~GOODFFrame() {
@@ -462,6 +494,12 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 	m_config->Write(wxT("General/FrameHeight"), m_frameHeight);
 	m_config->Write(wxT("General/FrameMaximized"), m_frameMaximized);
 	m_config->Write(wxT("General/SashPosition"), m_Splitter->GetSashPosition());
+	m_config->Write(wxT("Rank/AttackSubFolderOption"), m_rankPanel->GetAttackFolderOption());
+	m_config->Write(wxT("Rank/OneAttackOnlyOption"), m_rankPanel->GetOneAttackOption());
+	m_config->Write(wxT("Rank/LoadReleaseOption"), m_rankPanel->GetLoadReleaseOption());
+	m_config->Write(wxT("Rank/ReleaseSubFolderOption"), m_rankPanel->GetReleaseFolderOption());
+	m_config->Write(wxT("Rank/ExtractTimeOption"), m_rankPanel->GetExtractTimeOption());
+	m_config->Write(wxT("Rank/TremulantSubFolderOption"), m_rankPanel->GetTremFolderOption());
 	m_recentlyUsed->Save(*m_config);
 	m_config->Flush();
 	delete m_config;
@@ -3020,6 +3058,16 @@ void GOODFFrame::UpdateFrameTitle() {
 		SetTitle(::wxGetApp().m_fullAppName + wxT(" - ") + m_organPanel->getOdfName() + wxT(" (modified)"));
 	} else {
 		SetTitle(::wxGetApp().m_fullAppName + wxT(" - ") + m_organPanel->getOdfName());
+	}
+}
+
+void GOODFFrame::SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder) {
+	if (rankPanel == m_rankPanel) {
+		// The call comes from a stand alone rank so we should call the internal rank panel of the stop panel
+		m_stopPanel->GetInternalRankPanel()->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder);
+	} else {
+		// The call comes from an internal rank of a stop
+		m_rankPanel->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder);
 	}
 }
 

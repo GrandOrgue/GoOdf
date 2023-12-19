@@ -688,6 +688,10 @@ void StopPanel::setTooltipsEnabled(bool isEnabled) {
 	}
 }
 
+RankPanel* StopPanel::GetInternalRankPanel() {
+	return m_internalRankPanel;
+}
+
 void StopPanel::internalRankLogicalPipesChanged(int value) {
 	m_numberOfAccessiblePipesSpin->SetValue(value);
 	m_stop->setNumberOfAccessiblePipes(value);
