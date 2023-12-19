@@ -33,7 +33,6 @@
 #include "CmbDialog.h"
 #include <vector>
 #include <algorithm>
-#include <iostream>
 
 // Event table
 BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
