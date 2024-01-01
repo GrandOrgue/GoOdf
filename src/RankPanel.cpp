@@ -34,6 +34,7 @@
 #include "PipeCopyOffsetDialog.h"
 #include "PipeLoadingDialog.h"
 #include <algorithm>
+#include "WAVfileParser.h"
 
 // Event table
 BEGIN_EVENT_TABLE(RankPanel, wxPanel)
@@ -1313,6 +1314,23 @@ void RankPanel::OnEditAttack() {
 					atk->maxKeyPressTime = sourceAttack->maxKeyPressTime;
 					atk->maxTimeSinceLastRelease = sourceAttack->maxTimeSinceLastRelease;
 					atk->releaseEnd = sourceAttack->releaseEnd;
+
+					if (atk_dlg.GetCopyReplaceLoops()) {
+						atk->m_loops.clear();
+
+						// need a way to check that loop end point won't be larger than actual attack samples
+						unsigned maxSampleFrames = 0;
+						WAVfileParser sample(atk->fullPath);
+						if (sample.isWavOk()) {
+							maxSampleFrames = sample.getNumberOfFrames();
+						}
+						if (sourceAttack->m_loops.size()) {
+							for (Loop l: sourceAttack->m_loops) {
+								if ((unsigned) l.end < maxSampleFrames)
+									atk->m_loops.push_back(l);
+							}
+						}
+					}
 				}
 			}
 		}

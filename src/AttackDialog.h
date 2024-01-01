@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
+#include <wx/checkbox.h>
 #include "GOODFDef.h"
 #include "Attack.h"
 
@@ -66,6 +67,7 @@ public:
 
 	// Accessor
 	unsigned GetSelectedAttackIndex();
+	bool GetCopyReplaceLoops();
 
 private:
 	unsigned m_firstSelectedAttack;
@@ -95,6 +97,7 @@ private:
 	wxSpinCtrl *m_loopStartSpin;
 	wxSpinCtrl *m_loopEndSpin;
 	wxButton *m_copyPropertiesBtn;
+	wxCheckBox *m_copyReplaceLoopsCheck;
 
 	// Event methods
 	void OnPrevAttackBtn(wxCommandEvent& event);
@@ -112,7 +115,8 @@ private:
 	void OnRemoveLoopBtn(wxCommandEvent& event);
 	void OnLoopStartSpin(wxSpinEvent& event);
 	void OnLoopEndSpin(wxSpinEvent& event);
-	void OnCopyProperties(wxCommandEvent& event);
+	// void OnCopyProperties(wxCommandEvent& event);
+	void OnCopyReplaceLoopCheck(wxCommandEvent& event);
 
 	std::list<Attack>::iterator GetAttackIterator(unsigned index);
 	void SetButtonState();

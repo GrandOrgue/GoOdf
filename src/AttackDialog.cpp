@@ -43,6 +43,7 @@ BEGIN_EVENT_TABLE(AttackDialog, wxDialog)
 	EVT_BUTTON(ID_ATK_DIALOG_DELETE_LOOP_BTN, AttackDialog::OnRemoveLoopBtn)
 	EVT_SPINCTRL(ID_ATK_DIALOG_LOOP_START_SPIN, AttackDialog::OnLoopStartSpin)
 	EVT_SPINCTRL(ID_ATK_DIALOG_LOOP_END_SPIN, AttackDialog::OnLoopEndSpin)
+	EVT_CHECKBOX(ID_RANK_COPY_REPLACE_ODF_LOOPS, AttackDialog::OnCopyReplaceLoopCheck)
 END_EVENT_TABLE()
 
 AttackDialog::AttackDialog(std::list<Attack>& attack_list, unsigned selected_attack) : m_attacklist(attack_list) {
@@ -395,12 +396,13 @@ void AttackDialog::CreateControls() {
 		wxT("A loop must be selected in the listbox to the left to enable.")
 	);
 	loopPropertiesContainer->Add(commentText1, 0, wxGROW|wxALL, 5);
-	wxStaticText *commentText2 = new wxStaticText (
+	m_copyReplaceLoopsCheck = new wxCheckBox(
 		loopPropertiesContainer->GetStaticBox(),
-		wxID_STATIC,
-		wxT("Also please note that no loops will be copied to other attacks!")
+		ID_RANK_COPY_REPLACE_ODF_LOOPS,
+		wxT("Copy/replace loops to other attacks too!")
 	);
-	loopPropertiesContainer->Add(commentText2, 0, wxGROW|wxALL, 5);
+	m_copyReplaceLoopsCheck->SetValue(false);
+	loopPropertiesContainer->Add(m_copyReplaceLoopsCheck, 0, wxGROW|wxALL, 5);
 	sixthRow->Add(loopPropertiesContainer, 1, wxEXPAND|wxALL, 5);
 	mainSizer->Add(sixthRow, 1, wxGROW);
 
@@ -434,6 +436,10 @@ void AttackDialog::CreateControls() {
 
 unsigned AttackDialog::GetSelectedAttackIndex() {
 	return m_selectedAttackIndex;
+}
+
+bool AttackDialog::GetCopyReplaceLoops() {
+	return m_copyReplaceLoopsCheck->IsChecked();
 }
 
 std::list<Attack>::iterator AttackDialog::GetAttackIterator(unsigned index) {
@@ -473,16 +479,19 @@ void AttackDialog::OnLoadReleaseSelection(wxCommandEvent& event) {
 		m_currentAttack->loadRelease = false;
 	}
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnAttackVelocitySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->attackVelocity = m_attackVelocitySpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnMaxTimeSinceLastSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->maxTimeSinceLastRelease = m_maxTimeSinceLastSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnTremulantChoice(wxCommandEvent& WXUNUSED(event)) {
@@ -490,27 +499,32 @@ void AttackDialog::OnTremulantChoice(wxCommandEvent& WXUNUSED(event)) {
 		int tremChoice = m_isTremulantChoice->GetSelection() - 1;
 		m_currentAttack->isTremulant = tremChoice;
 		m_copyPropertiesBtn->Enable();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void AttackDialog::OnMaxKeyPressTimeSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->maxKeyPressTime = m_maxKeyPressTime->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnAttackStartSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->attackStart = m_attackStartSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnCuePointSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->cuePoint = m_cuePointSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnReleaseEndSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->releaseEnd = m_releaseEndSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void AttackDialog::OnLoopListSelection(wxCommandEvent& WXUNUSED(event)) {
@@ -538,6 +552,8 @@ void AttackDialog::OnAddLoopBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_loopsList->SetSelection(lastLoopIndex);
 	m_selectedLoop = m_currentAttack->getLoopAt(lastLoopIndex);
 	LoopInListSelected();
+	if (GetCopyReplaceLoops())
+		m_copyPropertiesBtn->Enable();
 }
 
 void AttackDialog::OnRemoveLoopBtn(wxCommandEvent& WXUNUSED(event)) {
@@ -556,6 +572,8 @@ void AttackDialog::OnRemoveLoopBtn(wxCommandEvent& WXUNUSED(event)) {
 			m_selectedLoop = m_currentAttack->getLoopAt(lastLoopIndex);
 			LoopInListSelected();
 		}
+		if (GetCopyReplaceLoops())
+			m_copyPropertiesBtn->Enable();
 	}
 }
 
@@ -567,6 +585,9 @@ void AttackDialog::OnLoopStartSpin(wxSpinEvent& WXUNUSED(event)) {
 	}
 	m_selectedLoop->start = value;
 	SetLoopStartAndEndRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+	if (GetCopyReplaceLoops())
+		m_copyPropertiesBtn->Enable();
 }
 
 void AttackDialog::OnLoopEndSpin(wxSpinEvent& WXUNUSED(event)) {
@@ -577,6 +598,14 @@ void AttackDialog::OnLoopEndSpin(wxSpinEvent& WXUNUSED(event)) {
 	}
 	m_selectedLoop->end = value;
 	SetLoopStartAndEndRanges();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+	if (GetCopyReplaceLoops())
+		m_copyPropertiesBtn->Enable();
+}
+
+void AttackDialog::OnCopyReplaceLoopCheck(wxCommandEvent& WXUNUSED(event)) {
+	if (GetCopyReplaceLoops())
+		m_copyPropertiesBtn->Enable();
 }
 
 void AttackDialog::SetButtonState() {
@@ -598,7 +627,7 @@ void AttackDialog::TransferAttackValuesToWindow() {
 	m_attackName->SetLabel(m_currentAttack->fileName);
 	m_attackPath->SetLabel(m_currentAttack->fullPath);
 	if (m_currentAttack->fullPath.IsSameAs(wxT("DUMMY"))) {
-		// almoast everything should be set to default and disabled
+		// almost everything should be set to default and disabled
 		m_loadReleaseYes->SetValue(true);
 		m_loadReleaseNo->SetValue(false);
 		m_attackVelocitySpin->SetValue(m_currentAttack->attackVelocity);

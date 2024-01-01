@@ -619,6 +619,7 @@ void OrganPanel::getDataFromOrgan() {
 }
 
 void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
+	wxString oldOdfPath = m_odfPath;
 	m_odfPath = GetDirectoryPath();
 	m_odfPathField->SetValue(m_odfPath);
 	m_currentOrgan->setOdfRoot(m_odfPath);
@@ -626,7 +627,8 @@ void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
 	if (!m_infoPathField->IsEmpty()) {
 		m_infoPathField->SetValue(GOODF_functions::removeBaseOdfPath(m_currentOrgan->getInfoFilename()));
 	}
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	if (!m_odfPath.IsSameAs(oldOdfPath))
+		::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 wxString OrganPanel::GetDirectoryPath() {
@@ -639,7 +641,7 @@ wxString OrganPanel::GetDirectoryPath() {
 
 	wxDirDialog dirDialog(
 		this,
-		wxT("Pick a directory"),
+		wxT("Pick a directory (Cancel will empty the field!)"),
 		defaultPath,
 		wxDD_DIR_MUST_EXIST
 	);
