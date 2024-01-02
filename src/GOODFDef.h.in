@@ -1,6 +1,6 @@
 /*
  * GOODFDef.h.in is a part of GOODF software
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -614,6 +614,9 @@ enum {
 	ID_CLEAR_HISTORY = wxID_HIGHEST + 589,
 	ID_ENCLOSURE_MIDI_INPUT_NBR_SPIN = wxID_HIGHEST + 590,
 	ID_RANK_COPY_REPLACE_ODF_LOOPS = wxID_HIGHEST + 591,
+	ID_DEFAULT_ORGAN_DIRECTORY_BTN = wxID_HIGHEST + 592,
+	ID_DEFAULT_CMB_DIRECTORY_BTN = wxID_HIGHEST + 593,
+	ID_DEFAULT_PATHS_MENU = wxID_HIGHEST + 594,
 };
 
 // Get version number from cmake

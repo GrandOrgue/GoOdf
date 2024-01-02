@@ -1,5 +1,5 @@
 /*
- * CmbDialog.h is part of GOODF.
+ * DefaultPathsDialog.h is part of GOODF.
  * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
@@ -18,39 +18,39 @@
  * You can contact the author on larspalo(at)yahoo.se
  */
 
-#ifndef CMBDIALOG_H
-#define CMBDIALOG_H
+#ifndef DEFAULTPATHSDIALOG_H
+#define DEFAULTPATHSDIALOG_H
 
 #include <wx/wx.h>
-#include "CmbOrgan.h"
-#include "CmbParser.h"
 
-class CmbDialog : public wxDialog {
-	DECLARE_CLASS(PipeLoadingDialog)
+class DefaultPathsDialog : public wxDialog {
+	DECLARE_CLASS(DefaultPathsDialog)
 	DECLARE_EVENT_TABLE()
 
 public:
 	// Constructors
-	CmbDialog();
-	CmbDialog(
+	DefaultPathsDialog(wxString defaultOrganDir, wxString defaultCmbDir);
+	DefaultPathsDialog(
+		wxString defaultOrganDir,
+		wxString defaultCmbDir,
 		wxWindow* parent,
 		wxWindowID id = wxID_ANY,
-		const wxString& caption = wxT("Extract voicing data from .cmb file"),
+		const wxString& caption = wxT("Default Paths"),
 		const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize,
 		long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
 	);
 
-	~CmbDialog();
+	~DefaultPathsDialog();
 
 	// Initialize our variables
-	void Init();
+	void Init(wxString defaultOrganDir, wxString defaultCmbDir);
 
 	// Creation
 	bool Create(
 		wxWindow* parent,
 		wxWindowID id = wxID_ANY,
-		const wxString& caption = wxT("Extract voicing data from .cmb file"),
+		const wxString& caption = wxT("Default Paths"),
 		const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize,
 		long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX
@@ -60,42 +60,23 @@ public:
 	void CreateControls();
 
 	// Accessors
-	CMB_ORGAN* GetCmbOrgan();
-	bool GetImportAmplitude();
-	bool GetImportGain();
-	bool GetImportPitchTuning();
-	bool GetImportPitchCorrection();
-	bool GetImportTrackerDelay();
+	wxString GetSelectedOrganDirectory();
+	wxString GetSelectedCmbDirectory();
 
 private:
-	CMB_ORGAN m_importedCmbOrgan;
-	CmbParser *m_cmbParser;
-	bool m_importAmplitude;
-	bool m_importGain;
-	bool m_importPitchTuning;
-	bool m_importPitchCorrection;
-	bool m_importTrackerDelay;
+	wxString m_organDirectory;
+	wxString m_cmbDirectory;
 
+	wxTextCtrl *m_organPathField;
+	wxButton *m_browseForOrganDirectoryBtn;
 	wxTextCtrl *m_cmbPathField;
-	wxButton *m_browseForCmbBtn;
-	wxStaticText *m_cmbChurchAddress;
-	wxStaticText *m_cmbOdfPath;
-	wxStaticText *m_cmbParserError;
-	wxCheckBox *m_importAmplitudeCheck;
-	wxCheckBox *m_importGainCheck;
-	wxCheckBox *m_importPitchTuningCheck;
-	wxCheckBox *m_importPitchCorrectionCheck;
-	wxCheckBox *m_importTrackerDelayCheck;
+	wxButton *m_browseForCmbDirectoryBtn;
 
 	// Event methods
-	void OnBrowseForCmbBtn(wxCommandEvent& event);
-	void OnImportAmplitudeCheck(wxCommandEvent& event);
-	void OnImportGainCheck(wxCommandEvent& event);
-	void OnImportPitchTuningCheck(wxCommandEvent& event);
-	void OnImportPitchCorrectionCheck(wxCommandEvent& event);
-	void OnImportTrackerDelayCheck(wxCommandEvent& event);
+	void OnBrowseForOrganDirectoryBtn(wxCommandEvent& event);
+	void OnBrowseForCmbDirectoryBtn(wxCommandEvent& event);
 
-	void DecideStateOfOkButton();
+	wxString GetPathToDirectory(wxString defaultPath);
 };
 
 #endif

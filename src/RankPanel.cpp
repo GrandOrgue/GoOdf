@@ -1,6 +1,6 @@
 /*
  * RankPanel.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -862,8 +862,15 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxDirDialog rankPipesPathDialog(
 		this,
@@ -1122,8 +1129,15 @@ void RankPanel::OnAddNewAttack() {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxFileDialog fileDialog(
 		this,
@@ -1164,8 +1178,15 @@ void RankPanel::OnAddNewRelease() {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxFileDialog fileDialog(
 		this,
@@ -1529,8 +1550,15 @@ void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxDirDialog rankPipesPathDialog(
 		this,
@@ -1570,8 +1598,15 @@ void RankPanel::OnAddTremulantPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxDirDialog rankPipesPathDialog(
 		this,
@@ -1616,8 +1651,15 @@ void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString defaultPath;
 	if (m_rank->getPipesRootPath() != wxEmptyString)
 		defaultPath = m_rank->getPipesRootPath();
-	else
+	else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (defaultPath == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 
 	wxDirDialog rankPipesPathDialog(
 		this,

@@ -1,6 +1,6 @@
 /*
  * GUIEnclosurePanel.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1135,8 +1135,12 @@ wxString GUIEnclosurePanel::GetPathForImageFile() {
 	} else {
 		defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
 	}
-	if (defaultPath == wxEmptyString)
-		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	if (defaultPath == wxEmptyString) {
+		if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+			defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+		else
+			defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	}
 
 	wxFileDialog fileDialog(
 		this,

@@ -1,6 +1,6 @@
 /*
  * PipeLoadingDialog.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "GOODFFunctions.h"
 #include "GOODF.h"
 #include <wx/statline.h>
+#include <wx/stdpaths.h>
 
 IMPLEMENT_CLASS(PipeLoadingDialog, wxDialog)
 
@@ -120,8 +121,15 @@ void PipeLoadingDialog::Init(
 	m_firstMidiNbr = firstMidiNbr;
 	if (baseDirectory != wxEmptyString)
 		m_baseDirectory = baseDirectory;
-	else
+	else {
 		m_baseDirectory = ::wxGetApp().m_frame->m_organ->getOdfRoot();
+		if (m_baseDirectory == wxEmptyString) {
+			if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+				m_baseDirectory = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+			else
+				m_baseDirectory = wxStandardPaths::Get().GetDocumentsDir();
+		}
+	}
 	m_attackSubfolder = attackSubfolder;
 	m_onlyOneAttack = onlyOneAttack;
 	m_loadReleaseInAttack = loadReleaseInAttack;

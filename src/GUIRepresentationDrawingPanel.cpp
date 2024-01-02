@@ -1,6 +1,6 @@
 /*
  * GUIRepresentationDrawingPanel.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,6 +293,9 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 
 	if (m_currentPanel->getNumberOfImages() > 0) {
 		for (unsigned i = 0; i < m_currentPanel->getNumberOfImages(); i++) {
+			// if the image is empty it should just be skipped
+			if (!m_currentPanel->getImageAt(i)->getBitmap().IsOk())
+				continue;
 			int imgX = m_currentPanel->getImageAt(i)->getPositionX();
 			int imgY = m_currentPanel->getImageAt(i)->getPositionY();
 			int imgWidth = m_currentPanel->getImageAt(i)->getWidth();

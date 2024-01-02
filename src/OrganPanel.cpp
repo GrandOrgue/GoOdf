@@ -1,6 +1,6 @@
 /*
  * OrganPanel.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by
@@ -636,8 +636,12 @@ wxString OrganPanel::GetDirectoryPath() {
 	wxString defaultPath;
 	if (m_odfPath != wxEmptyString)
 		defaultPath = m_odfPath;
-	else
-		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	else {
+		if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+			defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+		else
+			defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	}
 
 	wxDirDialog dirDialog(
 		this,

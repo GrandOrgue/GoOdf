@@ -1,6 +1,6 @@
 /* 
  * GOODFFrame.cpp is a part of GOODF software
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "OrganFileParser.h"
 #include "CopyElementAttributesDialog.h"
 #include "CmbDialog.h"
+#include "DefaultPathsDialog.h"
 #include <vector>
 #include <algorithm>
 
@@ -45,6 +46,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
 	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
 	EVT_MENU(ID_CLEAR_HISTORY, GOODFFrame::OnClearHistory)
+	EVT_MENU(ID_DEFAULT_PATHS_MENU, GOODFFrame::OnDefaultPathMenuChoice)
 	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE9, GOODFFrame::OnRecentFileMenuChoice)
 	EVT_TREE_SEL_CHANGED(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeSelectionChanged)
 	EVT_TREE_ITEM_RIGHT_CLICK(ID_ORGAN_TREE, GOODFFrame::OnOrganTreeRightClicked)
@@ -71,6 +73,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_organHasBeenSaved = false;
 	m_enableTooltips = false;
 	m_config = new wxFileConfig(wxT("GOODF"));
+	m_defaultOrganDirectory = wxEmptyString;
+	m_defaultCmbDirectory = wxEmptyString;
 
 	// Create a file menu
 	m_fileMenu = new wxMenu();
@@ -92,6 +96,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_toolsMenu->AppendCheckItem(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, wxT("Enable Tooltips"), wxT("Enable tooltips for certain controls"));
 	m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
 	m_toolsMenu->Append(ID_CLEAR_HISTORY, wxT("Clear File History"), wxT("Remove all the entries in the recent file history"));
+	m_toolsMenu->Append(ID_DEFAULT_PATHS_MENU, wxT("Default paths\tCtrl+P"), wxT("Set the default paths used by the application here"));
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();
@@ -407,6 +412,14 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	if (m_config->Read(wxT("General/SashPosition"), &readInt))
 		m_Splitter->SetSashPosition(readInt);
 
+	wxString pathString = wxEmptyString;
+	m_config->Read(wxT("General/DefaultOrganDirectory"), &pathString);
+	if (wxDirExists(pathString))
+		m_defaultOrganDirectory = pathString;
+	m_config->Read(wxT("General/DefaultCmbDirectory"), &pathString);
+	if (wxDirExists(pathString))
+		m_defaultCmbDirectory = pathString;
+
 	wxString atkFolder = wxEmptyString;
 	m_config->Read(wxT("Rank/AttackSubFolderOption"), &atkFolder);
 	bool oneAttack = false;
@@ -449,7 +462,7 @@ void GOODFFrame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	info.SetName(wxT("GOODF"));
 	info.SetVersion(wxT(GOODF_VERSION));
 	info.SetDescription(wxT("A software for creating and editing GrandOrgue ODFs"));
-	info.SetCopyright(wxT("Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)\nReleased under GNU GPLv3 licence"));
+	info.SetCopyright(wxT("Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)\nReleased under GNU GPLv3 licence"));
 	info.SetWebSite(wxT("https://github.com/larspalo/GOODF"));
 
 	wxAboutBox(info);
@@ -493,6 +506,8 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 	m_config->Write(wxT("General/FrameHeight"), m_frameHeight);
 	m_config->Write(wxT("General/FrameMaximized"), m_frameMaximized);
 	m_config->Write(wxT("General/SashPosition"), m_Splitter->GetSashPosition());
+	m_config->Write(wxT("General/DefaultOrganDirectory"), m_defaultOrganDirectory);
+	m_config->Write(wxT("General/DefaultCmbDirectory"), m_defaultCmbDirectory);
 	m_config->Write(wxT("Rank/AttackSubFolderOption"), m_rankPanel->GetAttackFolderOption());
 	m_config->Write(wxT("Rank/OneAttackOnlyOption"), m_rankPanel->GetOneAttackOption());
 	m_config->Write(wxT("Rank/LoadReleaseOption"), m_rankPanel->GetLoadReleaseOption());
@@ -552,11 +567,14 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 	}
 
 	wxString organFilePath;
+	wxString defaultPath = m_defaultOrganDirectory;
+	if (defaultPath == wxEmptyString)
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
 
 	wxFileDialog fileDialog(
 		this,
 		wxT("Select .organ file to open"),
-		wxStandardPaths::Get().GetDocumentsDir(),
+		defaultPath,
 		"",
 		"GrandOrgue ODF files (*.organ)|*.organ;*.ORGAN",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST
@@ -2983,6 +3001,14 @@ void GOODFFrame::OnSizeChange(wxSizeEvent& event) {
 	event.Skip();
 }
 
+void GOODFFrame::OnDefaultPathMenuChoice(wxCommandEvent& WXUNUSED(event)) {
+	DefaultPathsDialog defaultPaths(m_defaultOrganDirectory, m_defaultCmbDirectory, this);
+	if (defaultPaths.ShowModal() == wxID_OK) {
+		m_defaultOrganDirectory = defaultPaths.GetSelectedOrganDirectory();
+		m_defaultCmbDirectory = defaultPaths.GetSelectedCmbDirectory();
+	}
+}
+
 void GOODFFrame::SetupOrganMainPanel() {
 	// Main panel is created by Organ itself but we need to add it to the tree
 	wxTreeItemId mainPanel = m_organTreeCtrl->AppendItem(tree_panels, m_organ->getOrganPanelAt(0)->getName());
@@ -3068,6 +3094,14 @@ void GOODFFrame::SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString at
 		// The call comes from an internal rank of a stop
 		m_rankPanel->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder);
 	}
+}
+
+wxString GOODFFrame::GetDefaultOrganDirectory() {
+	return m_defaultOrganDirectory;
+}
+
+wxString GOODFFrame::GetDefaultCmbDirectory() {
+	return m_defaultCmbDirectory;
 }
 
 void GOODFFrame::removeAllItemsFromTree() {

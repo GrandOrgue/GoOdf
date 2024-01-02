@@ -1,6 +1,6 @@
 /*
  * AttackDialog.h is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ public:
 	// Creates the controls and sizers
 	void CreateControls();
 
-	// Accessor
+	// Accessors
 	unsigned GetSelectedAttackIndex();
 	bool GetCopyReplaceLoops();
 
@@ -115,7 +115,6 @@ private:
 	void OnRemoveLoopBtn(wxCommandEvent& event);
 	void OnLoopStartSpin(wxSpinEvent& event);
 	void OnLoopEndSpin(wxSpinEvent& event);
-	// void OnCopyProperties(wxCommandEvent& event);
 	void OnCopyReplaceLoopCheck(wxCommandEvent& event);
 
 	std::list<Attack>::iterator GetAttackIterator(unsigned index);

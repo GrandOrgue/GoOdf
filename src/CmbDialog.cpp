@@ -1,6 +1,6 @@
 /*
  * CmbDialog.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "CmbDialog.h"
 #include "GOODFDef.h"
+#include "GOODF.h"
 #include <wx/stdpaths.h>
 #include <wx/statline.h>
 
@@ -301,10 +302,13 @@ bool CmbDialog::GetImportTrackerDelay() {
 }
 
 void CmbDialog::OnBrowseForCmbBtn(wxCommandEvent& WXUNUSED(event)) {
+	wxString defaultPath = ::wxGetApp().m_frame->GetDefaultCmbDirectory();
+	if (defaultPath == wxEmptyString)
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
 	wxFileDialog fileDialog(
 		this,
 		wxT("Select .cmb file to import"),
-		wxStandardPaths::Get().GetDocumentsDir(),
+		defaultPath,
 		"",
 		"GrandOrgue CMB files (*.cmb)|*.cmb;*.CMB",
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST

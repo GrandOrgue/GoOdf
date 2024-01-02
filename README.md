@@ -1,3 +1,6 @@
+[![Release](https://img.shields.io/github/v/release/larspalo/GOODF)](https://github.com/larspalo/GOODF/releases)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 # GOODF
 
 GOODF is a tool for creating and editing organ definition files for GrandOrgue. Opening large and complex .organ files can take a little while for the software to process, so please be patient if you try it.
@@ -19,7 +22,6 @@ Rendering of the GUI panels is now possible, but it likely needs more work befor
 - Testing the ability to both write and read .organ files will need to continue so that they both works really well without any bugs.
 - The graphical rendering of panels most likely still needs more work so that it should display the panels exactly like GrandOrgue will when scaled at 100%.
 - Implementing a possibility to select multiple GUI elements on the rendered panel and move them in unison.
-- Storing user settings in a configuration file to make some choices persistent is prepared but needs further improvement.
 
 ## Building from sources
 Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.

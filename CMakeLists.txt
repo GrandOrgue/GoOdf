@@ -1,5 +1,5 @@
 # GOODF cmake build file
-# Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+# Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name and info
 project(
   GOODF
-  VERSION 0.9.0
+  VERSION 0.9.1
   DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
@@ -170,6 +170,7 @@ set(APP_SRC
   src/GUIPanelRepresentation.cpp
   src/CmbParser.cpp
   src/CmbDialog.cpp
+  src/DefaultPathsDialog.cpp
 )
 
 # add the executable

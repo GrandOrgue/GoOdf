@@ -1,6 +1,6 @@
 /*
  * GoImagePanel.cpp is part of GOODF.
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * GOODF is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,8 +290,12 @@ void GoImagePanel::setTooltipsEnabled(bool isEnabled) {
 void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString imageFilePath;
 	wxString defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
-	if (defaultPath == wxEmptyString)
-		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	if (defaultPath == wxEmptyString) {
+		if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+			defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+		else
+			defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	}
 
 	wxFileDialog fileDialog(
 		this,
@@ -326,8 +330,12 @@ void GoImagePanel::OnAddImageBtn(wxCommandEvent& WXUNUSED(event)) {
 void GoImagePanel::OnAddMaskBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxString imageFilePath;
 	wxString defaultPath = ::wxGetApp().m_frame->m_organ->getOdfRoot();
-	if (defaultPath == wxEmptyString)
-		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	if (defaultPath == wxEmptyString) {
+		if (::wxGetApp().m_frame->GetDefaultOrganDirectory() != wxEmptyString)
+			defaultPath = ::wxGetApp().m_frame->GetDefaultOrganDirectory();
+		else
+			defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+	}
 
 	wxFileDialog fileDialog(
 		this,

@@ -1,6 +1,6 @@
 /* 
  * GOODFFrame.h is a part of GOODF software
- * Copyright (C) 2023 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,8 @@ public:
 	void GUIElementPositionIsChanged();
 	void UpdateFrameTitle();
 	void SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder);
+	wxString GetDefaultOrganDirectory();
+	wxString GetDefaultCmbDirectory();
 
 	Organ *m_organ;
 
@@ -150,6 +152,8 @@ private:
 	int m_frameWidth;
 	int m_frameHeight;
 	bool m_frameMaximized;
+	wxString m_defaultOrganDirectory;
+	wxString m_defaultCmbDirectory;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
@@ -172,6 +176,7 @@ private:
 	void OnRecentFileMenuChoice(wxCommandEvent& event);
 	void OnClearHistory(wxCommandEvent& event);
 	void OnSizeChange(wxSizeEvent& event);
+	void OnDefaultPathMenuChoice(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
