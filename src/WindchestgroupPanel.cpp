@@ -70,7 +70,12 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 	secondRow1stCol->Add(availableRefEnclosuresText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableEnclosures = new wxListBox(
 		this,
-		ID_WC_AVAILABLE_ENCLOSURES
+		ID_WC_AVAILABLE_ENCLOSURES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	secondRow1stCol->Add(m_availableEnclosures, 1, wxEXPAND|wxALL, 5);
 	secondRow->Add(secondRow1stCol, 1, wxEXPAND);
@@ -99,7 +104,12 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 	secondRow3rdCol->Add(chosenReferencedEncText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedEnclosures = new wxListBox(
 		this,
-		ID_WC_REFERENCED_ENCLOSURES
+		ID_WC_REFERENCED_ENCLOSURES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	secondRow3rdCol->Add(m_referencedEnclosures, 1, wxEXPAND|wxALL, 5);
 	secondRow->Add(secondRow3rdCol, 1, wxEXPAND);
@@ -115,7 +125,12 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 	thirdRow1stCol->Add(availableRefTremText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableTremulants = new wxListBox(
 		this,
-		ID_WC_AVAILABLE_TREMULANTS
+		ID_WC_AVAILABLE_TREMULANTS,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow1stCol->Add(m_availableTremulants, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow1stCol, 1, wxEXPAND);
@@ -144,7 +159,12 @@ WindchestgroupPanel::WindchestgroupPanel(wxWindow *parent) : wxPanel(parent, wxI
 	thirdRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedTremulants = new wxListBox(
 		this,
-		ID_WC_REFERENCED_TREMULANTS
+		ID_WC_REFERENCED_TREMULANTS,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow3rdCol->Add(m_referencedTremulants, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow3rdCol, 1, wxEXPAND);
@@ -235,40 +255,68 @@ void WindchestgroupPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void WindchestgroupPanel::OnAddReferencedEnclosure(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableEnclosures->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableEnclosures->GetSelection();
-		if (!m_windchest->hasEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selected))) {
-			m_windchest->addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selected));
-			UpdateReferencedEnclosures();
-			::wxGetApp().m_frame->m_organ->setModified(true);
+	wxArrayInt selectedEnclosures;
+	m_availableEnclosures->GetSelections(selectedEnclosures);
+	bool isValidAdd = false;
+	if (!selectedEnclosures.IsEmpty()) {
+		for (unsigned i = 0; i < selectedEnclosures.GetCount(); i++) {
+			if (!m_windchest->hasEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selectedEnclosures[i]))) {
+				m_windchest->addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(selectedEnclosures[i]));
+				isValidAdd = true;
+			}
 		}
+	}
+	if (isValidAdd) {
+		UpdateReferencedEnclosures();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void WindchestgroupPanel::OnRemoveReferencedEnclosure(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedEnclosures->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedEnclosures->GetSelection();
-		m_windchest->removeEnclosureReference(m_windchest->getEnclosureAt(selected));
+	wxArrayInt selectedEnclosures;
+	m_referencedEnclosures->GetSelections(selectedEnclosures);
+	if (!selectedEnclosures.IsEmpty()) {
+		std::list<Enclosure*> enclosuresToRemove;
+		for (unsigned i = 0; i < selectedEnclosures.GetCount(); i++) {
+			enclosuresToRemove.push_back(m_windchest->getEnclosureAt(selectedEnclosures[i]));
+		}
+		for (Enclosure *e : enclosuresToRemove) {
+			m_windchest->removeEnclosureReference(e);
+		}
 		UpdateReferencedEnclosures();
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void WindchestgroupPanel::OnAddReferencedTremulant(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableTremulants->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableTremulants->GetSelection();
-		if (!m_windchest->hasTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected))) {
-			m_windchest->addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected));
-			UpdateReferencedTremulants();
-			::wxGetApp().m_frame->m_organ->setModified(true);
+	wxArrayInt selectedTremulants;
+	m_availableTremulants->GetSelections(selectedTremulants);
+	bool isValidAdd = false;
+	if (!selectedTremulants.IsEmpty()) {
+		for (unsigned i = 0; i < selectedTremulants.GetCount(); i++) {
+			if (!m_windchest->hasTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selectedTremulants[i]))) {
+				m_windchest->addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selectedTremulants[i]));
+				isValidAdd = true;
+			}
 		}
+	}
+	if (isValidAdd) {
+		UpdateReferencedTremulants();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void WindchestgroupPanel::OnRemoveReferencedTremulant(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedTremulants->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedTremulants->GetSelection();
-		m_windchest->removeTremulantReference(m_windchest->getTremulantAt(selected));
+	wxArrayInt selectedTremulants;
+	m_referencedTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty()) {
+		std::list<Tremulant*> tremulantsToRemove;
+		for (unsigned i = 0; i < selectedTremulants.GetCount(); i++) {
+			tremulantsToRemove.push_back(m_windchest->getTremulantAt(selectedTremulants[i]));
+		}
+		for (Tremulant *t : tremulantsToRemove) {
+			m_windchest->removeTremulantReference(t);
+		}
 		UpdateReferencedTremulants();
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
@@ -292,13 +340,17 @@ void WindchestgroupPanel::DoRemoveWindchest() {
 }
 
 void WindchestgroupPanel::OnEnclosureListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableEnclosures->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedEnclosures;
+	m_availableEnclosures->GetSelections(selectedEnclosures);
+	if (!selectedEnclosures.IsEmpty()) {
 		m_addReferencedEnclosure->Enable(true);
 	}
 }
 
 void WindchestgroupPanel::OnTremulantListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableTremulants->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedTremulants;
+	m_availableTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty()) {
 		m_addReferencedTremulant->Enable(true);
 	}
 }
@@ -319,13 +371,17 @@ void WindchestgroupPanel::UpdateReferencedEnclosures() {
 }
 
 void WindchestgroupPanel::OnReferencedEnclosureSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedEnclosures->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedEnclosures;
+	m_referencedEnclosures->GetSelections(selectedEnclosures);
+	if (!selectedEnclosures.IsEmpty()) {
 		m_removeReferencedEnclosure->Enable(true);
 	}
 }
 
 void WindchestgroupPanel::OnReferencedTremulantSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedTremulants->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedTremulants;
+	m_referencedTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty()) {
 		m_removeReferencedTremulant->Enable(true);
 	}
 }

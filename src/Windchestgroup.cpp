@@ -61,8 +61,8 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 	if (name == wxEmptyString)
 		name = wxString::Format(wxT("Windchest %i"), ((int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups() + 1));
 	int nbrEnclosures = static_cast<int>(cfg->ReadLong("NumberOfEnclosures", 0));
-	if (nbrEnclosures > 50)
-		nbrEnclosures = 50;
+	if (nbrEnclosures > 999)
+		nbrEnclosures = 999;
 	for (int i = 0; i < nbrEnclosures; i++) {
 		wxString encNbrStr = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
 		int encRefNbr = static_cast<int>(cfg->ReadLong(encNbrStr, 0));
@@ -71,8 +71,8 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 		}
 	}
 	int nbrTremulants = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
-	if (nbrTremulants > 10)
-		nbrTremulants = 10;
+	if (nbrTremulants > 999)
+		nbrTremulants = 999;
 	for (int i = 0; i < nbrTremulants; i++) {
 		wxString tremNbrStr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
 		int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbrStr, 0));

@@ -102,10 +102,12 @@ private:
 	wxPanel *addPanel;
 	wxButton *addWindchestBtn;
 	wxButton *addEnclosureBtn;
+	wxButton *addTremulantBtn;
 	wxButton *addRankBtn;
 	wxButton *addSwitchBtn;
 	wxSpinCtrl *nbrWindchestSpin;
 	wxSpinCtrl *nbrEnclosureSpin;
+	wxSpinCtrl *nbrTremulantSpin;
 	wxSpinCtrl *nbrRankSpin;
 	wxSpinCtrl *nbrSwitchSpin;
 	wxTreeCtrl *m_organTreeCtrl;

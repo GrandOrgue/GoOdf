@@ -266,7 +266,7 @@ void OrganFileParser::parseOrganSection() {
 
 	// parse tremulants
 	int nbrTrems = static_cast<int>(m_organFile->ReadLong("NumberOfTremulants", 0));
-	if (nbrTrems > 0 && nbrTrems < 11) {
+	if (nbrTrems > 0 && nbrTrems < 1000) {
 		for (int i = 0; i < nbrTrems; i++) {
 			m_organFile->SetPath("/");
 			wxString tremGroupName = wxT("Tremulant") + GOODF_functions::number_format(i + 1);

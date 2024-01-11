@@ -235,7 +235,12 @@ ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 	sixthRow1stCol->Add(availableRefTremText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableTremulants = new wxListBox(
 		this,
-		ID_MANUAL_AVAILABLE_TREMULANTS
+		ID_MANUAL_AVAILABLE_TREMULANTS,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	sixthRow1stCol->Add(m_availableTremulants, 1, wxEXPAND|wxALL, 5);
 	sixthRow->Add(sixthRow1stCol, 1, wxEXPAND);
@@ -264,7 +269,12 @@ ManualPanel::ManualPanel(wxWindow *parent) : wxPanel(parent) {
 	sixthRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedTremulants = new wxListBox(
 		this,
-		ID_MANUAL_REFERENCED_TREMULANTS
+		ID_MANUAL_REFERENCED_TREMULANTS,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	sixthRow3rdCol->Add(m_referencedTremulants, 1, wxEXPAND|wxALL, 5);
 	sixthRow->Add(sixthRow3rdCol, 1, wxEXPAND);
@@ -620,30 +630,48 @@ void ManualPanel::OnNewDivisionalBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void ManualPanel::OnAvailableTremSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableTremulants->GetSelection() != wxNOT_FOUND)
+	wxArrayInt selectedTremulants;
+	m_availableTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty())
 		m_addReferencedTremulant->Enable(true);
 }
 
 void ManualPanel::OnReferencedTremSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedTremulants->GetSelection() != wxNOT_FOUND)
+	wxArrayInt selectedTremulants;
+	m_referencedTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty())
 		m_removeReferencedTremulant->Enable(true);
 }
 
 void ManualPanel::OnAddReferencedTremBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableTremulants->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableTremulants->GetSelection();
-		if (!m_manual->hasTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected))) {
-			m_manual->addTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selected));
-			UpdateReferencedTremulants();
+	wxArrayInt selectedTremulants;
+	m_availableTremulants->GetSelections(selectedTremulants);
+	bool isValidAdd = false;
+	if (!selectedTremulants.IsEmpty()) {
+		for (unsigned i = 0; i < selectedTremulants.GetCount(); i++) {
+			if (!m_manual->hasTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selectedTremulants[i]))) {
+				m_manual->addTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(selectedTremulants[i]));
+				isValidAdd = true;
+			}
 		}
+	}
+	if (isValidAdd) {
+		UpdateReferencedTremulants();
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
 
 void ManualPanel::OnRemoveReferencedTremBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedTremulants->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedTremulants->GetSelection();
-		m_manual->removeTremulant(m_manual->getTremulantAt(selected));
+	wxArrayInt selectedTremulants;
+	m_referencedTremulants->GetSelections(selectedTremulants);
+	if (!selectedTremulants.IsEmpty()) {
+		std::list<Tremulant*> tremulantsToRemove;
+		for (unsigned i = 0; i < selectedTremulants.GetCount(); i++) {
+			tremulantsToRemove.push_back(m_manual->getTremulantAt(selectedTremulants[i]));
+		}
+		for (Tremulant *t : tremulantsToRemove) {
+			m_manual->removeTremulant(t);
+		}
 		UpdateReferencedTremulants();
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
@@ -666,12 +694,16 @@ void ManualPanel::OnReferencedSwitchSelection(wxCommandEvent& WXUNUSED(event)) {
 void ManualPanel::OnAddReferencedSwitchBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxArrayInt selectedSwitches;
 	m_availableSwitches->GetSelections(selectedSwitches);
+	bool isValidAdd = false;
 	if (!selectedSwitches.IsEmpty()) {
 		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
 			if (!m_manual->hasGoSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
 				m_manual->addGoSwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
+				isValidAdd = true;
 			}
 		}
+	}
+	if (isValidAdd) {
 		UpdateReferencedSwitches();
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}

@@ -183,8 +183,24 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	addTremulant = new wxPanel(m_Splitter, wxID_ANY);
 	wxBoxSizer *addTremSizer = new wxBoxSizer(wxVERTICAL);
-	wxButton *addTremulantBtn = new wxButton(addTremulant, ID_ADD_TREMULANT_BTN, wxT("Create new tremulant"));
-	addTremSizer->Add(addTremulantBtn, 0, wxALL, 5);
+	wxBoxSizer *tremulantRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *addTremText = new wxStaticText(addTremulant, wxID_STATIC, wxT("Add"));
+	tremulantRow->Add(addTremText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	nbrTremulantSpin = new wxSpinCtrl(
+		addTremulant,
+		ID_ADD_TREMULANT_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		1,
+		999,
+		1
+	);
+	tremulantRow->Add(nbrTremulantSpin, 0, wxALL, 5);
+	addTremulantBtn = new wxButton(addTremulant, ID_ADD_TREMULANT_BTN, wxT("new tremulant(s)"));
+	tremulantRow->Add(addTremulantBtn, 0, wxALL, 5);
+	addTremSizer->Add(tremulantRow, 0);
 	addTremulant->SetSizer(addTremSizer);
 	addTremulant->Hide();
 
@@ -2139,8 +2155,8 @@ void GOODFFrame::OnOrganTreeMouseMotion(wxMouseEvent& event) {
 }
 
 void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfEnclosures() < 999) {
-		int nbrToAdd = nbrEnclosureSpin->GetValue();
+	int nbrToAdd = nbrEnclosureSpin->GetValue();
+	if (m_organ->getNumberOfEnclosures() + nbrToAdd < 1000) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			Enclosure newEnclosure;
@@ -2159,14 +2175,21 @@ void GOODFFrame::OnAddNewEnclosure(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnAddNewTremulant(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfTremulants() < 10) {
-		Tremulant newTremulant;
-		m_organ->addTremulant(newTremulant);
+	int nbrToAdd = nbrTremulantSpin->GetValue();
+	if (m_organ->getNumberOfTremulants() + nbrToAdd < 1000) {
+		wxTreeItemId firstAdded;
+		for (int i = 0; i < nbrToAdd; i++) {
+			Tremulant newTremulant;
+			m_organ->addTremulant(newTremulant);
+			if (i == 0)
+				firstAdded = m_organTreeCtrl->AppendItem(tree_tremulants, newTremulant.getName());
+			else
+				m_organTreeCtrl->AppendItem(tree_tremulants, newTremulant.getName());
+		}
 		m_organ->setModified(true);
-
-		m_organTreeCtrl->SelectItem(m_organTreeCtrl->AppendItem(tree_tremulants, newTremulant.getName()));
+		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
-		wxMessageDialog msg(this, wxT("Organ cannot have more than 10 tremulants!"), wxT("Too many tremulants"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+		wxMessageDialog msg(this, wxT("Organ cannot have more than 999 tremulants!"), wxT("Too many tremulants"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
 		msg.ShowModal();
 	}
 }
@@ -2571,8 +2594,8 @@ void GOODFFrame::AddDivisionalItemToTree() {
 }
 
 void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfWindchestgroups() < 999) {
-		int nbrToAdd = nbrWindchestSpin->GetValue();
+	int nbrToAdd = nbrWindchestSpin->GetValue();
+	if (m_organ->getNumberOfWindchestgroups() + nbrToAdd < 1000) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			Windchestgroup newWindchest;
@@ -2591,8 +2614,8 @@ void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnAddNewSwitch(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfSwitches() < 999) {
-		int nbrToAdd = nbrSwitchSpin->GetValue();
+	int nbrToAdd = nbrSwitchSpin->GetValue();
+	if (m_organ->getNumberOfSwitches() + nbrToAdd < 1000) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			GoSwitch newSwitch;
@@ -2611,8 +2634,8 @@ void GOODFFrame::OnAddNewSwitch(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
-	if (m_organ->getNumberOfRanks() < 999) {
-		int nbrToAdd = nbrRankSpin->GetValue();
+	int nbrToAdd = nbrRankSpin->GetValue();
+	if (m_organ->getNumberOfRanks() + nbrToAdd < 1000) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			Rank newRank;
