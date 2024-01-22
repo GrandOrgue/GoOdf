@@ -122,6 +122,12 @@ void GUIManual::read(wxFileConfig *cfg) {
 	} else {
 		m_displayFirstNote = m_manual->getFirstAccessibleKeyMIDINoteNumber();
 	}
+	int dispKeys = static_cast<int>(cfg->ReadLong("DisplayKeys", m_manual->getNumberOfAccessibleKeys()));
+	if (dispKeys > 0 && dispKeys <= m_manual->getNumberOfAccessibleKeys()) {
+		setNumberOfDisplayKeys(dispKeys);
+	} else {
+		setNumberOfDisplayKeys(m_manual->getNumberOfAccessibleKeys());
+	}
 	for (int i = 0; i < m_displayKeys; i++) {
 		wxString dispKeyNbr = wxT("DisplayKey") + GOODF_functions::number_format(i + 1);
 		int backendMidiKeyNbr = static_cast<int>(cfg->ReadLong(dispKeyNbr, m_displayFirstNote + i));
@@ -251,12 +257,6 @@ void GUIManual::read(wxFileConfig *cfg) {
 				m_keytypes.pop_back();
 			}
 		}
-	}
-	int dispKeys = static_cast<int>(cfg->ReadLong("DisplayKeys", m_manual->getNumberOfAccessibleKeys()));
-	if (dispKeys > 0 && dispKeys <= m_manual->getNumberOfAccessibleKeys()) {
-		setNumberOfDisplayKeys(dispKeys);
-	} else {
-		setNumberOfDisplayKeys(m_manual->getNumberOfAccessibleKeys());
 	}
 	for (int i = 0; i < m_displayKeys; i++) {
 		wxString keyStr = wxT("Key") + GOODF_functions::number_format(i + 1);

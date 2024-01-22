@@ -193,7 +193,8 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	}
 
 	int nbrExtraRel = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCount"), 0));
-	if (nbrExtraRel > 0 && nbrExtraRel < 101) {
+	// Releases should only exist for pipes that are not percussive!
+	if (nbrExtraRel > 0 && nbrExtraRel < 101 && !isPercussive) {
 		for (int rel = 0; rel < nbrExtraRel; rel++) {
 			wxString relStr = pipeNr + wxT("Release") + GOODF_functions::number_format(rel + 1);
 			wxString relPath = cfg->Read(relStr, wxEmptyString);
@@ -270,32 +271,36 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 				a.maxKeyPressTime = maxKeyPress;
 			if (atkStart > -1 && atkStart < 158760001)
 				a.attackStart = atkStart;
-			if (cuePoint > -2 && cuePoint < 158760001)
-				a.cuePoint = cuePoint;
-			if (relEnd > -2 && relEnd < 158760001)
-				a.releaseEnd = relEnd;
-			for (int i = 0; i < loops; i++) {
-				Loop l;
-				wxString loopId = wxT("Loop") + GOODF_functions::number_format(i + 1);
-				int loopStart = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("Start"), 0));
-				if (loopStart > -1 && loopStart < 158760001)
-					l.start = loopStart;
-				else
-					l.start = 0;
-				int loopEnd = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("End"), 1));
-				if (loopEnd > l.start + 1 && loopEnd < 158760001)
-					l.end = loopEnd;
-				else
-					l.end = l.start + 1;
-				a.addNewLoop(l);
-			}
-			int loopXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("LoopCrossfadeLength"), 0));
-			if (loopXfade > 0 && loopXfade < 3001) {
-				a.loopCrossfadeLength = loopXfade;
-			}
-			int relXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("ReleaseCrossfadeLength"), 0));
-			if (relXfade > 0 && relXfade < 3001) {
-				a.releaseCrossfadeLength = relXfade;
+
+			// If the pipe is percussive the next keys=values should not exist and we shouldn't read them
+			if (!isPercussive) {
+				if (cuePoint > -2 && cuePoint < 158760001)
+					a.cuePoint = cuePoint;
+				if (relEnd > -2 && relEnd < 158760001)
+					a.releaseEnd = relEnd;
+				for (int i = 0; i < loops; i++) {
+					Loop l;
+					wxString loopId = wxT("Loop") + GOODF_functions::number_format(i + 1);
+					int loopStart = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("Start"), 0));
+					if (loopStart > -1 && loopStart < 158760001)
+						l.start = loopStart;
+					else
+						l.start = 0;
+					int loopEnd = static_cast<int>(cfg->ReadLong(pipeStr + loopId + wxT("End"), 1));
+					if (loopEnd > l.start + 1 && loopEnd < 158760001)
+						l.end = loopEnd;
+					else
+						l.end = l.start + 1;
+					a.addNewLoop(l);
+				}
+				int loopXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("LoopCrossfadeLength"), 0));
+				if (loopXfade > 0 && loopXfade < 3001) {
+					a.loopCrossfadeLength = loopXfade;
+				}
+				int relXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("ReleaseCrossfadeLength"), 0));
+				if (relXfade > 0 && relXfade < 3001) {
+					a.releaseCrossfadeLength = relXfade;
+				}
 			}
 			m_attacks.push_back(a);
 		} else if (mainAtkStr.StartsWith(wxT("REF")) || mainAtkStr.IsSameAs(wxT("DUMMY"), false)) {
@@ -344,8 +349,8 @@ void Pipe::writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr) {
 }
 
 void Pipe::writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr) {
-	// Deal with possible additional releases
-	if (!m_releases.empty()) {
+	// Deal with possible additional releases if not a percussive pipe
+	if (!m_releases.empty() && !isPercussive) {
 		unsigned extraReleases = m_releases.size();
 		outFile->AddLine(pipeNr + wxT("ReleaseCount=") + wxString::Format(wxT("%u"), extraReleases));
 		unsigned k = 0;
@@ -413,17 +418,17 @@ void Pipe::writeAttackStart(wxTextFile *outFile, wxString pipeNr, Attack atk) {
 }
 
 void Pipe::writeCuePoint(wxTextFile *outFile, wxString pipeNr, Attack atk) {
-	if (atk.cuePoint != -1)
+	if (atk.cuePoint != -1 && !isPercussive)
 		outFile->AddLine(pipeNr + wxT("CuePoint=") + wxString::Format(wxT("%i"), atk.cuePoint));
 }
 
 void Pipe::writeReleaseEnd(wxTextFile *outFile, wxString pipeNr, Attack atk) {
-	if (atk.releaseEnd != -1)
+	if (atk.releaseEnd != -1 && !isPercussive)
 		outFile->AddLine(pipeNr + wxT("ReleaseEnd=") + wxString::Format(wxT("%i"), atk.releaseEnd));
 }
 
 void Pipe::writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
-	if (!atk.m_loops.empty()) {
+	if (!atk.m_loops.empty() && !isPercussive) {
 		unsigned nbLoops = atk.m_loops.size();
 		outFile->AddLine(pipeNr + wxT("LoopCount=") + wxString::Format(wxT("%u"), nbLoops));
 		unsigned counter = 0;
@@ -437,12 +442,12 @@ void Pipe::writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
 }
 
 void Pipe::writeLoopXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
-	if (atk.loopCrossfadeLength)
+	if (atk.loopCrossfadeLength && !isPercussive)
 		outFile->AddLine(pipeNr + wxT("LoopCrossfadeLength=") + wxString::Format(wxT("%i"), atk.loopCrossfadeLength));
 }
 
 void Pipe::writeReleaseXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
-	if (atk.loadRelease && atk.releaseCrossfadeLength)
+	if (atk.loadRelease && atk.releaseCrossfadeLength && !isPercussive)
 		outFile->AddLine(pipeNr + wxT("ReleaseCrossfadeLength=") + wxString::Format(wxT("%i"), atk.releaseCrossfadeLength));
 }
 
