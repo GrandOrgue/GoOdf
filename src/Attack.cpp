@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -31,6 +31,8 @@ Attack::Attack() {
 	attackStart = 0;
 	cuePoint = -1;
 	releaseEnd = -1;
+	loopCrossfadeLength = 0;
+	releaseCrossfadeLength = 0;
 }
 
 Attack::Attack(const Attack& att) {
@@ -44,6 +46,8 @@ Attack::Attack(const Attack& att) {
 	attackStart = att.attackStart;
 	cuePoint = att.cuePoint;
 	releaseEnd = att.releaseEnd;
+	loopCrossfadeLength = att.loopCrossfadeLength;
+	releaseCrossfadeLength = att.releaseCrossfadeLength;
 	for (Loop l: att.m_loops) {
 		addNewLoop(l);
 	}

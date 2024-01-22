@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -141,8 +141,8 @@ enum {
 	ID_PIPE_DIALOG_WINDCHEST_CHOICE = wxID_HIGHEST + 116,
 	ID_PIPE_DIALOG_MIN_VEL_SPIN = wxID_HIGHEST + 117,
 	ID_PIPE_DIALOG_MAX_VEL_SPIN = wxID_HIGHEST + 118,
-	ID_PIPE_DIALOG_LOOP_XFADE_SPIN = wxID_HIGHEST + 119,
-	ID_PIPE_DIALOG_RELEASE_XFADE_SPIN = wxID_HIGHEST + 120,
+	ID_ATK_DIALOG_LOOP_XFADE_SPIN = wxID_HIGHEST + 119,
+	ID_ATK_DIALOG_RELEASE_XFADE_SPIN = wxID_HIGHEST + 120,
 	ID_PIPE_DIALOG_COPY_BTN = wxID_HIGHEST + 121,
 	ID_PIPE_DIALOG_COPY_TO_SPIN = wxID_HIGHEST + 122,
 	ID_REL_DIALOG_PREV_BTN = wxID_HIGHEST + 123,
@@ -618,6 +618,7 @@ enum {
 	ID_DEFAULT_CMB_DIRECTORY_BTN = wxID_HIGHEST + 593,
 	ID_DEFAULT_PATHS_MENU = wxID_HIGHEST + 594,
 	ID_ADD_TREMULANT_SPIN = wxID_HIGHEST + 595,
+	ID_REL_DIALOG_RELEASE_XFADE_SPIN = wxID_HIGHEST + 596,
 };
 
 // Get version number from cmake

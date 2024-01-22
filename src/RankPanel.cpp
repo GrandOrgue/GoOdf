@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -1335,6 +1335,8 @@ void RankPanel::OnEditAttack() {
 					atk->maxKeyPressTime = sourceAttack->maxKeyPressTime;
 					atk->maxTimeSinceLastRelease = sourceAttack->maxTimeSinceLastRelease;
 					atk->releaseEnd = sourceAttack->releaseEnd;
+					atk->loopCrossfadeLength = sourceAttack->loopCrossfadeLength;
+					atk->releaseCrossfadeLength = sourceAttack->releaseCrossfadeLength;
 
 					if (atk_dlg.GetCopyReplaceLoops()) {
 						atk->m_loops.clear();
@@ -1377,6 +1379,7 @@ void RankPanel::OnEditRelease() {
 					rel->isTremulant = sourceRelease->isTremulant;
 					rel->maxKeyPressTime = sourceRelease->maxKeyPressTime;
 					rel->releaseEnd = sourceRelease->releaseEnd;
+					rel->releaseCrossfadeLength = sourceRelease->releaseCrossfadeLength;
 				}
 			}
 		}
@@ -1466,8 +1469,6 @@ void RankPanel::OnCopyPipeOffset() {
 				target->windchest = source->windchest;
 				target->minVelocityVolume = source->minVelocityVolume;
 				target->maxVelocityVolume = source->maxVelocityVolume;
-				target->loopCrossfadeLength = source->loopCrossfadeLength;
-				target->releaseCrossfadeLength = source->releaseCrossfadeLength;
 
 				target->m_attacks.clear();
 				for (Attack atk : source->m_attacks) {

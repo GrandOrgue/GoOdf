@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -27,6 +27,7 @@ Release::Release() {
 	maxKeyPressTime = -1;
 	cuePoint = -1;
 	releaseEnd = -1;
+	releaseCrossfadeLength = 0;
 }
 
 Release::Release(const Release& rel) {
@@ -36,6 +37,7 @@ Release::Release(const Release& rel) {
 	maxKeyPressTime = rel.maxKeyPressTime;
 	cuePoint = rel.cuePoint;
 	releaseEnd = rel.releaseEnd;
+	releaseCrossfadeLength = rel.releaseCrossfadeLength;
 }
 
 Release::~Release() {

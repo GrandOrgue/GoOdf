@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -87,8 +87,6 @@ private:
 	wxChoice *m_windchestChoice;
 	wxSpinCtrlDouble *m_minVelocitySpin;
 	wxSpinCtrlDouble *m_maxVelocitySpin;
-	wxSpinCtrl *m_loopCrossfadeSpin; // 0-120
-	wxSpinCtrl *m_releaseCrossfadeSpin; // 0-200
 	wxButton *m_copyPropertiesBtn;
 	wxSpinCtrl *m_copyToNbrPipesSpin;
 	wxStaticText *m_copyInfo;
@@ -110,8 +108,6 @@ private:
 	void OnWindchestChoice(wxCommandEvent& event);
 	void OnMinVelocitySpin(wxSpinDoubleEvent& event);
 	void OnMaxVelocitySpin(wxSpinDoubleEvent& event);
-	void OnLoopCrossfadeSpin(wxSpinEvent& event);
-	void OnReleaseCrossfadeSpin(wxSpinEvent& event);
 	void OnCopyPipesSpin(wxSpinEvent& event);
 	void OnCopyPropertiesBtn(wxCommandEvent& event);
 	void OnCopyAtkRelBtn(wxCommandEvent& event);

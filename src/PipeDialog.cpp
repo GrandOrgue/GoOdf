@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -40,8 +40,6 @@ BEGIN_EVENT_TABLE(PipeDialog, wxDialog)
 	EVT_CHOICE(ID_PIPE_DIALOG_WINDCHEST_CHOICE, PipeDialog::OnWindchestChoice)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_DIALOG_MIN_VEL_SPIN, PipeDialog::OnMinVelocitySpin)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_DIALOG_MAX_VEL_SPIN, PipeDialog::OnMaxVelocitySpin)
-	EVT_SPINCTRL(ID_PIPE_DIALOG_LOOP_XFADE_SPIN, PipeDialog::OnLoopCrossfadeSpin)
-	EVT_SPINCTRL(ID_PIPE_DIALOG_RELEASE_XFADE_SPIN, PipeDialog::OnReleaseCrossfadeSpin)
 	EVT_SPINCTRL(ID_PIPE_DIALOG_COPY_TO_SPIN, PipeDialog::OnCopyPipesSpin)
 	EVT_BUTTON(ID_PIPE_DIALOG_COPY_BTN, PipeDialog::OnCopyPropertiesBtn)
 	EVT_BUTTON(ID_PIPE_DIALOG_COPY_ATK_REL_BTN, PipeDialog::OnCopyAtkRelBtn)
@@ -436,48 +434,6 @@ void PipeDialog::CreateControls() {
 	seventhRow->Add(m_maxVelocitySpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(seventhRow, 0, wxGROW);
 
-	wxBoxSizer *eighthRow = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *loopXfadeText = new wxStaticText (
-		this,
-		wxID_STATIC,
-		wxT("Loop crossfade length: ")
-	);
-	eighthRow->Add(loopXfadeText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_loopCrossfadeSpin = new wxSpinCtrl(
-		this,
-		ID_PIPE_DIALOG_LOOP_XFADE_SPIN,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxSP_ARROW_KEYS,
-		0,
-		3000,
-		0
-	);
-	eighthRow->Add(m_loopCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
-	mainSizer->Add(eighthRow, 0, wxGROW);
-
-	wxBoxSizer *ninthRow = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *relXfadeText = new wxStaticText (
-		this,
-		wxID_STATIC,
-		wxT("Release crossfade length: ")
-	);
-	ninthRow->Add(relXfadeText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	m_releaseCrossfadeSpin = new wxSpinCtrl(
-		this,
-		ID_PIPE_DIALOG_RELEASE_XFADE_SPIN,
-		wxEmptyString,
-		wxDefaultPosition,
-		wxDefaultSize,
-		wxSP_ARROW_KEYS,
-		0,
-		3000,
-		0
-	);
-	ninthRow->Add(m_releaseCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
-	mainSizer->Add(ninthRow, 0, wxGROW);
-
 	wxStaticLine *bottomDivider = new wxStaticLine(this);
 	mainSizer->Add(bottomDivider, 0, wxEXPAND);
 
@@ -617,16 +573,6 @@ void PipeDialog::OnMaxVelocitySpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
-void PipeDialog::OnLoopCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_currentPipe->loopCrossfadeLength = m_loopCrossfadeSpin->GetValue();
-	::wxGetApp().m_frame->m_organ->setModified(true);
-}
-
-void PipeDialog::OnReleaseCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
-	m_currentPipe->releaseCrossfadeLength = m_releaseCrossfadeSpin->GetValue();
-	::wxGetApp().m_frame->m_organ->setModified(true);
-}
-
 Pipe* PipeDialog::GetPipePointer(unsigned index) {
 	auto iterator = std::next(m_rank_pipelist.begin(), index);
 	return &(*iterator);
@@ -675,8 +621,6 @@ void PipeDialog::TransferPipeValuesToWindow() {
 	m_windchestChoice->SetSelection(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(m_currentPipe->windchest) - 1);
 	m_minVelocitySpin->SetValue(m_currentPipe->minVelocityVolume);
 	m_maxVelocitySpin->SetValue(m_currentPipe->maxVelocityVolume);
-	m_loopCrossfadeSpin->SetValue(m_currentPipe->loopCrossfadeLength);
-	m_releaseCrossfadeSpin->SetValue(m_currentPipe->releaseCrossfadeLength);
 	m_amplitudeLevelSpin->SetValue(m_currentPipe->amplitudeLevel);
 	m_gainSpin->SetValue(m_currentPipe->gain);
 	m_pitchTuningSpin->SetValue(m_currentPipe->pitchTuning);
@@ -711,13 +655,11 @@ void PipeDialog::OnCopyPropertiesBtn(wxCommandEvent& WXUNUSED(event)) {
 		pipe->acceptsRetuning = m_currentPipe->acceptsRetuning;
 		pipe->harmonicNumber = m_currentPipe->harmonicNumber;
 		pipe->isPercussive = m_currentPipe->isPercussive;
-		pipe->loopCrossfadeLength = m_currentPipe->loopCrossfadeLength;
 		pipe->maxVelocityVolume = m_currentPipe->maxVelocityVolume;
 		pipe->midiKeyNumber = m_currentPipe->midiKeyNumber;
 		pipe->midiPitchFraction = m_currentPipe->midiPitchFraction;
 		pipe->minVelocityVolume = m_currentPipe->minVelocityVolume;
 		pipe->pitchCorrection = m_currentPipe->pitchCorrection;
-		pipe->releaseCrossfadeLength = m_currentPipe->releaseCrossfadeLength;
 		pipe->windchest = m_currentPipe->windchest;
 		pipe->amplitudeLevel = m_currentPipe->amplitudeLevel;
 		pipe->gain = m_currentPipe->gain;

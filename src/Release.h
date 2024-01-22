@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -35,6 +35,7 @@ public:
 	int maxKeyPressTime;
 	int cuePoint;
 	int releaseEnd;
+	int releaseCrossfadeLength;
 
 };
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -33,6 +33,7 @@ BEGIN_EVENT_TABLE(ReleaseDialog, wxDialog)
 	EVT_SPINCTRL(ID_REL_DIALOG_KEYPRESS_SPIN, ReleaseDialog::OnMaxKeyPressTimeSpin)
 	EVT_SPINCTRL(ID_REL_DIALOG_CUE_SPIN, ReleaseDialog::OnCuePointSpin)
 	EVT_SPINCTRL(ID_REL_DIALOG_END_SPIN, ReleaseDialog::OnReleaseEndSpin)
+	EVT_SPINCTRL(ID_REL_DIALOG_RELEASE_XFADE_SPIN, ReleaseDialog::OnReleaseCrossfadeSpin)
 END_EVENT_TABLE()
 
 ReleaseDialog::ReleaseDialog(std::list<Release>& release_list, unsigned selected_release) : m_releaselist(release_list) {
@@ -224,6 +225,27 @@ void ReleaseDialog::CreateControls() {
 	fifthRow->Add(m_releaseEndSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(fifthRow, 0, wxGROW);
 
+	wxBoxSizer *xfadeRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *relXfadeText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Release crossfade length: ")
+	);
+	xfadeRow->Add(relXfadeText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_releaseCrossfadeSpin = new wxSpinCtrl(
+		this,
+		ID_REL_DIALOG_RELEASE_XFADE_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		3000,
+		0
+	);
+	xfadeRow->Add(m_releaseCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(xfadeRow, 0, wxGROW);
+
 	wxStaticLine *bottomDivider = new wxStaticLine(this);
 	mainSizer->Add(bottomDivider, 0, wxEXPAND);
 
@@ -310,6 +332,12 @@ void ReleaseDialog::OnReleaseEndSpin(wxSpinEvent& WXUNUSED(event)) {
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
+void ReleaseDialog::OnReleaseCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
+	m_currentRelease->releaseCrossfadeLength = m_releaseCrossfadeSpin->GetValue();
+	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
 Release* ReleaseDialog::GetReleasePointer(unsigned index) {
 	auto iterator = std::next(m_releaselist.begin(), index);
 	return &(*iterator);
@@ -344,4 +372,5 @@ void ReleaseDialog::TransferReleaseValuesToWindow() {
 	m_maxKeyPressTime->SetValue(m_currentRelease->maxKeyPressTime);
 	m_cuePointSpin->SetValue(m_currentRelease->cuePoint);
 	m_releaseEndSpin->SetValue(m_currentRelease->releaseEnd);
+	m_releaseCrossfadeSpin->SetValue(m_currentRelease->releaseCrossfadeLength);
 }

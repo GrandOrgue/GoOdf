@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -83,6 +83,7 @@ private:
 	wxSpinCtrl *m_maxKeyPressTime; // -1 - 100000
 	wxSpinCtrl *m_cuePointSpin; // -1 - 158760000
 	wxSpinCtrl *m_releaseEndSpin; // -1 - 158760000
+	wxSpinCtrl *m_releaseCrossfadeSpin; // 0-3000
 	wxButton *m_copyPropertiesBtn;
 
 	// Event methods
@@ -92,6 +93,7 @@ private:
 	void OnMaxKeyPressTimeSpin(wxSpinEvent& event);
 	void OnCuePointSpin(wxSpinEvent& event);
 	void OnReleaseEndSpin(wxSpinEvent& event);
+	void OnReleaseCrossfadeSpin(wxSpinEvent& event);
 
 	Release* GetReleasePointer(unsigned index);
 	void SetButtonState();

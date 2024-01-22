@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -38,6 +38,8 @@ BEGIN_EVENT_TABLE(AttackDialog, wxDialog)
 	EVT_SPINCTRL(ID_ATK_DIALOG_ATK_START_SPIN, AttackDialog::OnAttackStartSpin)
 	EVT_SPINCTRL(ID_ATK_DIALOG_CUE_SPIN, AttackDialog::OnCuePointSpin)
 	EVT_SPINCTRL(ID_ATK_DIALOG_END_SPIN, AttackDialog::OnReleaseEndSpin)
+	EVT_SPINCTRL(ID_ATK_DIALOG_LOOP_XFADE_SPIN, AttackDialog::OnLoopCrossfadeSpin)
+	EVT_SPINCTRL(ID_ATK_DIALOG_RELEASE_XFADE_SPIN, AttackDialog::OnReleaseCrossfadeSpin)
 	EVT_LISTBOX(ID_ATK_DIALOG_LOOP_LIST, AttackDialog::OnLoopListSelection)
 	EVT_BUTTON(ID_ATK_DIALOG_ADD_LOOP_BTN, AttackDialog::OnAddLoopBtn)
 	EVT_BUTTON(ID_ATK_DIALOG_DELETE_LOOP_BTN, AttackDialog::OnRemoveLoopBtn)
@@ -319,6 +321,46 @@ void AttackDialog::CreateControls() {
 	fifthRow->Add(m_releaseEndSpin, 0, wxEXPAND|wxALL, 5);
 	mainSizer->Add(fifthRow, 0, wxGROW);
 
+	wxBoxSizer *xfadeRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *loopXfadeText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Loop crossfade length: ")
+	);
+	xfadeRow->Add(loopXfadeText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_loopCrossfadeSpin = new wxSpinCtrl(
+		this,
+		ID_ATK_DIALOG_LOOP_XFADE_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		3000,
+		0
+	);
+	xfadeRow->Add(m_loopCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
+	xfadeRow->AddStretchSpacer();
+	wxStaticText *relXfadeText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Release crossfade length: ")
+	);
+	xfadeRow->Add(relXfadeText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_releaseCrossfadeSpin = new wxSpinCtrl(
+		this,
+		ID_ATK_DIALOG_RELEASE_XFADE_SPIN,
+		wxEmptyString,
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxSP_ARROW_KEYS,
+		0,
+		3000,
+		0
+	);
+	xfadeRow->Add(m_releaseCrossfadeSpin, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(xfadeRow, 0, wxGROW);
+
 	wxBoxSizer *sixthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *loopListContainer = new wxBoxSizer(wxVERTICAL);
 	wxStaticText *loopListText = new wxStaticText (
@@ -475,8 +517,10 @@ void AttackDialog::OnLoadReleaseSelection(wxCommandEvent& event) {
 	auto m_currentAttack = GetAttackIterator(m_selectedAttackIndex);
 	if (event.GetId() == ID_ATK_DIALOG_LOAD_REL_YES) {
 		m_currentAttack->loadRelease = true;
+		m_releaseCrossfadeSpin->Enable();
 	} else {
 		m_currentAttack->loadRelease = false;
+		m_releaseCrossfadeSpin->Disable();
 	}
 	m_copyPropertiesBtn->Enable();
 	::wxGetApp().m_frame->m_organ->setModified(true);
@@ -517,6 +561,19 @@ void AttackDialog::OnAttackStartSpin(wxSpinEvent& WXUNUSED(event)) {
 
 void AttackDialog::OnCuePointSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentAttack->cuePoint = m_cuePointSpin->GetValue();
+	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+
+void AttackDialog::OnLoopCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
+	m_currentAttack->loopCrossfadeLength = m_loopCrossfadeSpin->GetValue();
+	m_copyPropertiesBtn->Enable();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+void AttackDialog::OnReleaseCrossfadeSpin(wxSpinEvent& WXUNUSED(event)) {
+	m_currentAttack->releaseCrossfadeLength = m_releaseCrossfadeSpin->GetValue();
 	m_copyPropertiesBtn->Enable();
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -637,6 +694,8 @@ void AttackDialog::TransferAttackValuesToWindow() {
 		m_attackStartSpin->SetValue(m_currentAttack->attackStart);
 		m_cuePointSpin->SetValue(m_currentAttack->cuePoint);
 		m_releaseEndSpin->SetValue(m_currentAttack->releaseEnd);
+		m_loopCrossfadeSpin->SetValue(m_currentAttack->loopCrossfadeLength);
+		m_releaseCrossfadeSpin->SetValue(m_currentAttack->releaseCrossfadeLength);
 
 		m_loadReleaseYes->Disable();
 		m_loadReleaseNo->Disable();
@@ -651,6 +710,8 @@ void AttackDialog::TransferAttackValuesToWindow() {
 		m_deleteLoopBtn->Disable();
 		m_loopStartSpin->Disable();
 		m_loopEndSpin->Disable();
+		m_loopCrossfadeSpin->Disable();
+		m_releaseCrossfadeSpin->Disable();
 	} else {
 		WAVfileParser sample(m_currentAttack->fullPath);
 		if (sample.isWavOk()) {
@@ -680,6 +741,12 @@ void AttackDialog::TransferAttackValuesToWindow() {
 		m_attackStartSpin->SetValue(m_currentAttack->attackStart);
 		m_cuePointSpin->SetValue(m_currentAttack->cuePoint);
 		m_releaseEndSpin->SetValue(m_currentAttack->releaseEnd);
+		m_loopCrossfadeSpin->SetValue(m_currentAttack->loopCrossfadeLength);
+		m_releaseCrossfadeSpin->SetValue(m_currentAttack->releaseCrossfadeLength);
+		if (m_currentAttack->loadRelease)
+			m_releaseCrossfadeSpin->Enable();
+		else
+			m_releaseCrossfadeSpin->Disable();
 
 		UpdateLoopChoices();
 	}

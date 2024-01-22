@@ -27,29 +27,25 @@ get a pop up window with the following options;</p>
 <p>to let you borrow one or more pipes from another stop’s internal
 ranks (shortcut Ctrl+B)</p>
 <ul>
-	<li>Reset this pipe: removes all samples from the pipe and sets
-	its attack back to DUMMY (shortcut Del)
-	<li>edit pipe properties: pops up this window, to allow editing
+	<li>Copy this pipe offset to: pops up a dialog that allow to copy the selected
+	pipe to other pipes with automatic pitch tuning offset calculation (within
+	allowed range). (shortcut Ctrl+C)
+	<li>Edit pipe properties: pops up this window, to allow editing
 	of a single pipe’s parameters. (shortcut Ctrl+E)
 </ul>
 <p><img src="images/goodfhelp20_html_a30b2c67f0a59173.png" name="Image26" align="left" width="1043" height="592">
 </img>
 </p>
+<ul>
+	<li>Reset this pipe: removes all samples from the pipe and sets
+	its attack back to DUMMY (shortcut Del)
+</ul>
 <p>The above mentioned pop up menu options can also be directly accessed by
 using keyboard shortcuts when a pipe in the tree is selected.</p>
 <p>Most of the parameters are discussed under <a href="rank.html">Rank</a>.
 However there are a few new ones:</p>
 <p><b>MIDI pitch Fraction </b>Overrides the number specified in the
 wav file if this is not set to -1</p>
-<p><b>Loop crossfade length </b>(int
-0 - 120, default: 0) Crossfade length in ms between loop start and
-loop end. A cross fade requires enough samples before the start of
-the loop. 
-</p>
-<p><b>Release crossfade length</b> (int 0 - 200, default: 0)
-Crossfade length in ms between loop and the release (or other
-attacks). 0 means automatic selection. 
-</p>
 <p>If you right click on an attack sample you get the choice of
 editing the attack sample properties or deleting the attack. If you
 choose edit the following window pops up:</p>
@@ -99,6 +95,15 @@ not synth tremulants for the windchest on which this pipe is mounted</p>
 -1 - 158760000, default: -1) Allows to override the Start sample of
 the release, the end sample of the release, and the start of the
 attack. -1 means use from the wave file.
+</p>
+<p><b>Loop crossfade length </b>(int
+0 - 3000, default: 0) Crossfade length in ms between loop start and
+loop end. A crossfade requires enough samples before the start of
+the loop. 
+</p>
+<p><b>Release crossfade length</b> (int 0 - 3000, default: 0)
+Crossfade length in ms between loop and the release (or other
+attacks). 0 means automatic selection/calculation. 
 </p>
 <p>You can also create your own loops in the attack samples – see
 GrandOrgue help for more information.</p>

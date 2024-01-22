@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -35,8 +35,6 @@ Pipe::Pipe() {
 	windchest = NULL;
 	minVelocityVolume = 100;
 	maxVelocityVolume = 100;
-	loopCrossfadeLength = 0;
-	releaseCrossfadeLength = 0;
 }
 
 Pipe::Pipe(const Pipe& p) {
@@ -53,8 +51,6 @@ Pipe::Pipe(const Pipe& p) {
 	windchest = p.windchest;
 	minVelocityVolume = p.minVelocityVolume;
 	maxVelocityVolume = p.maxVelocityVolume;
-	loopCrossfadeLength = p.loopCrossfadeLength;
-	releaseCrossfadeLength = p.releaseCrossfadeLength;
 
 	for (Attack atk : p.m_attacks) {
 		m_attacks.push_back(atk);
@@ -103,6 +99,8 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 			writeLoops(outFile, pipeNr, a);
 			break;
 		}
+		writeLoopXfade(outFile, pipeNr, m_attacks.front());
+		writeReleaseXfade(outFile, pipeNr, m_attacks.front());
 
 		if ((harmonicNumber != 8 && harmonicNumber != parent->getHarmonicNumber()) || (harmonicNumber == 8 && harmonicNumber != parent->getHarmonicNumber()))
 			outFile->AddLine(pipeNr + wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
@@ -126,10 +124,6 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 		writeAdditionalAttacks(outFile, pipeNr);
 		writeAdditionalReleases(outFile, pipeNr);
 
-		if (loopCrossfadeLength != 0)
-			outFile->AddLine(pipeNr + wxT("LoopCrossfadeLength=") + wxString::Format(wxT("%i"), loopCrossfadeLength));
-		if (releaseCrossfadeLength != 0)
-			outFile->AddLine(pipeNr + wxT("ReleaseCrossfadeLength=") + wxString::Format(wxT("%i"), releaseCrossfadeLength));
 	} else {
 		writeRef(outFile, pipeNr);
 	}
@@ -186,14 +180,6 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	}
 	wxString retuningStr = cfg->Read(pipeNr + wxT("AcceptsRetuning"), wxEmptyString);
 	acceptsRetuning = GOODF_functions::parseBoolean(retuningStr, parent->doesAcceptsRetuning());
-	int loopXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("LoopCrossfadeLength"), 0));
-	if (loopXfade > 0 && loopXfade < 3001) {
-		loopCrossfadeLength = loopXfade;
-	}
-	int relXfade = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCrossfadeLength"), 0));
-	if (relXfade > 0 && relXfade < 3001) {
-		releaseCrossfadeLength = relXfade;
-	}
 
 	// the main attack is added first
 	readAttack(cfg, pipeNr);
@@ -217,6 +203,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 				int maxKeyPress = static_cast<int>(cfg->ReadLong(relStr + wxT("MaxKeyPressTime"), -1));
 				int cuePoint = static_cast<int>(cfg->ReadLong(relStr + wxT("CuePoint"), -1));
 				int relEnd = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseEnd"), -1));
+				int relXfade = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseCrossfadeLength"), 0));
 				Release r;
 				r.fileName = relPath;
 				r.fullPath = fullRelPath;
@@ -228,6 +215,8 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 					r.cuePoint = cuePoint;
 				if (relEnd > -2 && relEnd < 158760001)
 					r.releaseEnd = relEnd;
+				if (relXfade > 0 && relXfade < 3001)
+					r.releaseCrossfadeLength = relXfade;
 
 				m_releases.push_back(r);
 			}
@@ -300,6 +289,14 @@ void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
 					l.end = l.start + 1;
 				a.addNewLoop(l);
 			}
+			int loopXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("LoopCrossfadeLength"), 0));
+			if (loopXfade > 0 && loopXfade < 3001) {
+				a.loopCrossfadeLength = loopXfade;
+			}
+			int relXfade = static_cast<int>(cfg->ReadLong(pipeStr + wxT("ReleaseCrossfadeLength"), 0));
+			if (relXfade > 0 && relXfade < 3001) {
+				a.releaseCrossfadeLength = relXfade;
+			}
 			m_attacks.push_back(a);
 		} else if (mainAtkStr.StartsWith(wxT("REF")) || mainAtkStr.IsSameAs(wxT("DUMMY"), false)) {
 			Attack a;
@@ -340,6 +337,8 @@ void Pipe::writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr) {
 			writeCuePoint(outFile, attackName, atk);
 			writeReleaseEnd(outFile, attackName, atk);
 			writeLoops(outFile, attackName, atk);
+			writeLoopXfade(outFile, attackName, atk);
+			writeReleaseXfade(outFile, attackName, atk);
 		}
 	}
 }
@@ -367,6 +366,9 @@ void Pipe::writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr) {
 
 			if (rel.releaseEnd != -1)
 				outFile->AddLine(releaseName + wxT("ReleaseEnd=") + wxString::Format(wxT("%i"), rel.releaseEnd));
+
+			if (rel.releaseCrossfadeLength)
+				outFile->AddLine(releaseName + wxT("ReleaseCrossfadeLength=") + wxString::Format(wxT("%i"), rel.releaseCrossfadeLength));
 		}
 	}
 }
@@ -432,6 +434,16 @@ void Pipe::writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
 			outFile->AddLine(pipeNr + wxT("Loop") + formattedLoopNr + wxT("End=") + wxString::Format(wxT("%i"), l.end));
 		}
 	}
+}
+
+void Pipe::writeLoopXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
+	if (atk.loopCrossfadeLength)
+		outFile->AddLine(pipeNr + wxT("LoopCrossfadeLength=") + wxString::Format(wxT("%i"), atk.loopCrossfadeLength));
+}
+
+void Pipe::writeReleaseXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk) {
+	if (atk.loadRelease && atk.releaseCrossfadeLength)
+		outFile->AddLine(pipeNr + wxT("ReleaseCrossfadeLength=") + wxString::Format(wxT("%i"), atk.releaseCrossfadeLength));
 }
 
 void Pipe::updateRelativePaths() {

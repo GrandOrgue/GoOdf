@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -53,6 +53,8 @@ public:
 	void writeCuePoint(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeReleaseEnd(wxTextFile *outFile, wxString pipeNr, Attack atk);
 	void writeLoops(wxTextFile *outFile, wxString pipeNr, Attack &atk);
+	void writeLoopXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk);
+	void writeReleaseXfade(wxTextFile *outFile, wxString pipeNr, Attack &atk);
 	void updateRelativePaths();
 	void updateRefString();
 
@@ -69,8 +71,6 @@ public:
 	Windchestgroup *windchest;
 	float minVelocityVolume;
 	float maxVelocityVolume;
-	int loopCrossfadeLength;
-	int releaseCrossfadeLength;
 
 	std::list<Attack> m_attacks;
 	std::list<Release> m_releases;
