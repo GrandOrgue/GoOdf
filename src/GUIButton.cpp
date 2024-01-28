@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -53,7 +53,12 @@ GUIButton::~GUIButton() {
 }
 
 void GUIButton::write(wxTextFile *outFile) {
-	if (m_type.Contains(wxT("Divisional")) || (m_type.Contains(wxT("General")) && !m_type.IsSameAs(wxT("GeneralPrev")) && !m_type.IsSameAs(wxT("GeneralNext"))) || m_type.IsSameAs(wxT("ReversiblePiston"))) {
+	// Divisionals, Generals and Pistons are displayed as piston by default
+	// Any other type is displayed as a drawstop by default
+	if (
+		(m_type.Contains(wxT("Divisional")) && !m_type.IsSameAs(wxT("DivisionalCoupler"))) ||
+		(m_type.Contains(wxT("General")) && !m_type.IsSameAs(wxT("GeneralPrev")) && !m_type.IsSameAs(wxT("GeneralNext"))) ||
+		m_type.IsSameAs(wxT("ReversiblePiston"))) {
 		if (!m_displayAsPiston)
 			outFile->AddLine(wxT("DisplayAsPiston=N"));
 	} else {
