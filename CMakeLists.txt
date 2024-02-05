@@ -171,6 +171,7 @@ set(APP_SRC
   src/CmbParser.cpp
   src/CmbDialog.cpp
   src/DefaultPathsDialog.cpp
+  src/SampleFileInfoDialog.cpp
 )
 
 # add the executable

@@ -140,10 +140,13 @@ private:
 	void OnEditPipe();
 	void OnCreateReference();
 	void OnEditAttack();
+	void OnViewAttackSample();
 	void OnEditRelease();
+	void OnViewReleaseSample();
 	void OnRemoveSelectedAttack();
 	void OnRemoveSelectedRelease();
 	void OnCopyPipeOffset();
+	void ViewSampleDetails(wxString fullPathToSample);
 	wxTreeItemId GetPipeTreeItemAt(int index);
 	wxTreeItemId GetPipeOfSelection();
 	void OnPipeReadingOptionsChanged();

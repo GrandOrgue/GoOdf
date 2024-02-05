@@ -9,28 +9,34 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
 
 #include "WAVfileParser.h"
 #include <climits>
+#include <cstdint>
 
 wxString const WAVE_RIFF = wxT("RIFF");
 wxString const WAVE_ID = wxT("WAVE");
 wxString const WAVE_FMT = wxT("fmt ");
 wxString const WAVE_DATA = wxT("data");
+wxString const WAVE_SMPL = wxT("smpl");
+wxString const WAVE_CUE = wxT("cue ");
+wxString const WAVE_LIST = wxT("LIST");
+wxString const WAVE_INFO = wxT("INFO");
 wxString const WVPK_ID = wxT("wvpk");
 
 WAVfileParser::WAVfileParser(wxString file) {
 	m_wavpackUsed = false;
 	m_fileName = file;
 	m_errorMessage = wxEmptyString;
+	m_lastChunkSizeParsed = 0;
 
 	if (tryParsingFile(m_fileName))
 		m_wavOk = true;
@@ -52,12 +58,76 @@ bool WAVfileParser::isWavOk() {
 	return m_wavOk;
 }
 
+bool WAVfileParser::isWavPacked() {
+	return m_wavpackUsed;
+}
+
 unsigned WAVfileParser::getNumberOfFrames() {
 	return m_numberOfFrames;
 }
 
 wxString WAVfileParser::getErrorMessage() {
 	return m_errorMessage;
+}
+
+unsigned WAVfileParser::getNumberOfChannels() {
+	return (unsigned) m_NumChannels;
+}
+
+unsigned WAVfileParser::getSampleRate() {
+	return m_SampleRate;
+}
+
+unsigned WAVfileParser::getNumberOfCues() {
+	return m_cues.size();
+}
+
+CUEPOINT WAVfileParser::getCuepointAtIndex(unsigned index) {
+	return m_cues[index];
+}
+
+unsigned WAVfileParser::getNumberOfLoops() {
+	return m_loops.size();
+}
+
+LOOP WAVfileParser::getLoopAtIndex(unsigned index) {
+	return m_loops[index];
+}
+
+unsigned WAVfileParser::getBitsPerSample() {
+	return m_BitsPerSample;
+}
+
+unsigned WAVfileParser::getAudioFormat() {
+	return (unsigned) m_AudioFormat;
+}
+
+unsigned WAVfileParser::getInfoListSize() {
+	return m_infoList.size();
+}
+
+std::pair<wxString, wxString> WAVfileParser::getInfoListContentAtIndex(unsigned index) {
+	return m_infoList[index];
+}
+
+unsigned WAVfileParser::getMidiNote() {
+	return m_dwMIDIUnityNote;
+}
+
+unsigned WAVfileParser::getPitchFraction() {
+	return m_dwMIDIPitchFraction;
+}
+
+double WAVfileParser::getPitchFractionCents() {
+	return (double) m_dwMIDIPitchFraction / (double)UINT_MAX * 100.0;
+}
+
+double WAVfileParser::getPitchInHz() {
+	double cents = getPitchFractionCents();
+	int midiNote = m_dwMIDIUnityNote;
+	double midiNotePitch = 440.0 * pow(2, ((double)(midiNote - 69) / 12.0));
+	double resultingPitch = midiNotePitch * pow(2, (cents / 1200.0));
+	return resultingPitch;
 }
 
 bool WAVfileParser::tryParsingFile(wxString file) {
@@ -69,25 +139,27 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 		m_dataSize = 0;
 		bool dataFound = false;
 		bool fmtFound = false;
-		
+		bool smplFound = false;
+		bool cueFound = false;
+
 		waveFile.Read(fourCBuffer, 4);
 		if (waveFile.LastRead() != 4 || !WAVE_RIFF.IsSameAs(fourCBuffer)) {
 			if (WVPK_ID.IsSameAs(fourCBuffer))
 				m_wavpackUsed = true;
 			else
-				m_errorMessage = wxT("Not a RIFF file or a wavpack file.");
+				m_errorMessage = wxT("Not a RIFF file or a wavpack file.\n");
 			return false;
 		}
 
 		waveFile.Read(&uBuffer, 4); // filesize - 8 bytes
 		if (waveFile.LastRead() != 4) {
-			m_errorMessage = wxT("Couldn't read filesize.");
+			m_errorMessage = wxT("Couldn't read filesize.\n");
 			return false;
 		}
 
 		waveFile.Read(fourCBuffer, 4);
 		if (waveFile.LastRead() != 4 || !WAVE_ID.IsSameAs(fourCBuffer)) {
-			m_errorMessage = wxT("Not a WAVE file.");
+			m_errorMessage = wxT("Not a WAVE file.\n");
 			return false;
 		}
 		
@@ -105,6 +177,29 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 					}
 				} else if (WAVE_DATA.IsSameAs(fourCBuffer) && !dataFound && fmtFound) {
 					dataFound = true;
+				} else if (WAVE_SMPL.IsSameAs(fourCBuffer) && !smplFound) {
+					if (parseSmplChunk(waveFile)) {
+						smplFound = true;
+						continue;
+					} else {
+						// if chunk couldn't be parsed error message should already have been set
+						return false;
+					}
+				} else if (WAVE_CUE.IsSameAs(fourCBuffer) && !cueFound) {
+					if (parseCueChunk(waveFile)) {
+						cueFound = true;
+						continue;
+					} else {
+						// if chunk couldn't be parsed error message should already have been set
+						return false;
+					}
+				} else if (WAVE_LIST.IsSameAs(fourCBuffer)) {
+					if (parseInfoListChunk(waveFile)) {
+						continue;
+					} else {
+						// if chunk couldn't be parsed error message should already have been set
+						return false;
+					}
 				}
 
 			} else {
@@ -127,11 +222,11 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 			m_numberOfFrames = m_dataSize / m_BlockAlign;
 			return true;
 		} else {
-			m_errorMessage = wxT("Chunks for fmt and/or data couldn't be found.");
+			m_errorMessage += wxT("Chunks for fmt and/or data couldn't be found.\n");
 			return false;
 		}
 	} else {
-		m_errorMessage = wxT("Failed to open stream.");
+		m_errorMessage += wxT("Failed to open stream.\n");
 		return false;
 	}
 }
@@ -142,25 +237,271 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 	if (wvFile.IsOk()) {
 		char fourCBuffer[4];
 		unsigned uBuffer;
+		unsigned char uChBuffer;
 		
 		wvFile.Read(fourCBuffer, 4);
 		if (wvFile.LastRead() != 4 || !WVPK_ID.IsSameAs(fourCBuffer)) {
+			m_errorMessage += wxT("File cannot be identified as a wavpack file.\n");
 			return false;
 		}
 		
-		wvFile.SeekI(8, wxFromCurrent);
-		
+		unsigned blockSize;
 		wvFile.Read(&uBuffer, 4);
 		if (wvFile.LastRead() != 4) {
+			m_errorMessage += wxT("Wavpack block size couldn't be read.\n");
 			return false;
+		} else
+			blockSize = uBuffer;
+
+		unsigned totalBytesRead = 0;
+		// we're not interested in the wavpack version
+		wvFile.SeekI(2, wxFromCurrent);
+		totalBytesRead += 2;
+
+		// we're not really interested in upper block index bits
+		wvFile.SeekI(1, wxFromCurrent);
+		totalBytesRead += 1;
+
+		unsigned char upperTotalSamplesBits;
+		wvFile.Read(&uChBuffer, 1);
+		if (wvFile.LastRead() != 1) {
+			m_errorMessage += wxT("Upper total sample bits couldn't be read.\n");
+			return false;
+		} else
+			upperTotalSamplesBits = uChBuffer;
+		totalBytesRead += 1;
+
+		unsigned lowerTotalSamplesBits;
+		wvFile.Read(&uBuffer, 4);
+		if (wvFile.LastRead() != 4) {
+			m_errorMessage += wxT("Lower total sample bits couldn't be read.\n");
+			return false;
+		} else {
+			lowerTotalSamplesBits = uBuffer;
 		}
-		
-		m_numberOfFrames = uBuffer;
-		
-		if (m_numberOfFrames == UINT_MAX)
+		totalBytesRead += 4;
+
+		// we're not really interested in the lower block index bits either
+		wvFile.SeekI(4, wxFromCurrent);
+		totalBytesRead += 4;
+
+		// method to put together the 40 bit block index if we were interested...
+		// int64_t totalBlockIndex = (int64_t) lowerBlockIndexBits + ((int64_t) upperBlockIndexBits << 32);
+
+		// put together the 40 bit total samples, code adapted from Wavpack source include/wavpack.h macro
+		// note that for a wavpack files samples actually means frames, a complete sample for all channels
+		int64_t totalSamples;
+		if (lowerTotalSamplesBits == (uint32_t) -1) {
+			// all 1's in the lower 32 bits indicates "unknown" (regardless of upper 8 bits)
+			totalSamples = -1;
+		} else {
+			totalSamples = (int64_t) lowerTotalSamplesBits + ((int64_t) upperTotalSamplesBits << 32) - upperTotalSamplesBits;
+		}
+
+		if (totalSamples >= 0)
+			m_numberOfFrames = (unsigned) totalSamples;
+
+		// we're not really interested in number of samples in this block
+		wvFile.SeekI(4, wxFromCurrent);
+		totalBytesRead += 4;
+
+		unsigned variousFlags;
+		wvFile.Read(&uBuffer, 4);
+		if (wvFile.LastRead() != 4) {
+			m_errorMessage += wxT("Wavpack file various flags couldn't be read.\n");
 			return false;
+		} else {
+			variousFlags = uBuffer;
+		}
+		totalBytesRead += 4;
+		// from the flags available we could be interested in the following:
+		// bit 2 (stereo/mono option)
+		// bits 26-23 (samplerate)
+		unsigned bitNbr2 = (variousFlags & ( 1 << 2 )) >> 2;
+		if (bitNbr2 == 0)
+			m_NumChannels = 2;
+		else if (bitNbr2 == 1)
+			m_NumChannels = 1;
 		else
-			return true;
+			m_NumChannels = 0; // not known
+
+		unsigned mask = ((1 << 4) - 1) << 23;
+		unsigned bit23to26 = (variousFlags & mask) >> 23;
+		unsigned wavpackSamplerates[16] = {
+			6000,
+			8000,
+			9600,
+			11025,
+			12000,
+			16000,
+			22050,
+			24000,
+			32000,
+			44100,
+			48000,
+			64000,
+			88200,
+			96000,
+			192000,
+			0
+		};
+		if (bit23to26 < 16)
+			m_SampleRate = wavpackSamplerates[bit23to26];
+		else
+			m_SampleRate = 0; // not known
+
+		// wer're not really interested in the crc
+		wvFile.SeekI(4, wxFromCurrent);
+		totalBytesRead += 4;
+
+		// The 32 byte wavpack header is now read, so here comes the rest of the block or sub-blocks.
+		while (totalBytesRead < blockSize && !wvFile.Eof()) {
+			// get next block id
+			wvFile.Read(&uChBuffer, 1);
+			if (wvFile.LastRead() != 1) {
+				m_errorMessage += wxT("Block ID couldn't be read.\n");
+				break;
+			}
+			unsigned char blockId = uChBuffer;
+			totalBytesRead += 1;
+
+			// get size of sub-block
+			// wavpack word size is as unsigned short = 2 bytes
+			unsigned subBlockSize;
+			if (blockId & 0x80) {
+				// this is a large block
+				unsigned char byte1;
+				wvFile.Read(&uChBuffer, 1);
+				if (wvFile.LastRead() == 1) {
+					byte1 = uChBuffer;
+				} else {
+					m_errorMessage += wxT("Large block byte 1 couldn't be read.\n");
+					break;
+				}
+				unsigned char byte2;
+				wvFile.Read(&uChBuffer, 1);
+				if (wvFile.LastRead() == 1) {
+					byte2 = uChBuffer;
+				} else {
+					m_errorMessage += wxT("Large block byte 2 couldn't be read.\n");
+					break;
+				}
+				unsigned char byte3;
+				wvFile.Read(&uChBuffer, 1);
+				if (wvFile.LastRead() == 1) {
+					byte3 = uChBuffer;
+				} else {
+					m_errorMessage += wxT("Large block byte 3 couldn't be read.\n");
+					break;
+				}
+				subBlockSize = ((byte1 << 16) | (byte2 << 8) | (byte3)) * 2;
+				totalBytesRead += 3;
+			} else {
+				// this is a small block
+				wvFile.Read(&uChBuffer, 1);
+				if (wvFile.LastRead() == 1) {
+					subBlockSize = (unsigned) uChBuffer * 2;
+				} else {
+					m_errorMessage += wxT("Small block size couldn't be read.\n");
+					break;
+				}
+				totalBytesRead += 1;
+			}
+			unsigned bytesRead = 0;
+
+			if ((blockId & 0x3f) == 0x21) {
+				// a RIFF header is present in this block, trust but verify and then parse it
+				wvFile.Read(fourCBuffer, 4);
+				if (wvFile.LastRead() != 4 || !WAVE_RIFF.IsSameAs(fourCBuffer)) {
+					m_errorMessage += wxT("Not a RIFF file in the wavpack file.\n");
+					return false;
+				}
+				wvFile.Read(&uBuffer, 4); // filesize - 8 bytes
+				if (wvFile.LastRead() != 4) {
+					m_errorMessage += wxT("Couldn't read filesize.\n");
+					return false;
+				}
+				wvFile.Read(fourCBuffer, 4);
+				if (wvFile.LastRead() != 4 || !WAVE_ID.IsSameAs(fourCBuffer)) {
+					m_errorMessage += wxT("Not a WAVE file.n");
+					return false;
+				}
+				bytesRead += 12;
+				totalBytesRead += 12;
+
+				bool fmtFound = false;
+				bool smplFound = false;
+				bool cueFound = false;
+				while (bytesRead < subBlockSize) {
+					// get next fourcc chunk
+					wvFile.Read(fourCBuffer, 4);
+					if (wvFile.LastRead() == 4) {
+						if (WAVE_FMT.IsSameAs(fourCBuffer) && !fmtFound) {
+							if (parseFmtChunk(wvFile)) {
+								fmtFound = true;
+								bytesRead += m_lastChunkSizeParsed;
+								totalBytesRead += m_lastChunkSizeParsed;
+								continue;
+							} else {
+								// if fmt chunk couldn't be parsed error message should already have been set
+								return false;
+							}
+						} else if (WAVE_SMPL.IsSameAs(fourCBuffer) && !smplFound) {
+							if (parseSmplChunk(wvFile)) {
+								smplFound = true;
+								bytesRead += m_lastChunkSizeParsed;
+								totalBytesRead += m_lastChunkSizeParsed;
+								continue;
+							} else {
+								// if chunk couldn't be parsed error message should already have been set
+								return false;
+							}
+						} else if (WAVE_CUE.IsSameAs(fourCBuffer) && !cueFound) {
+							if (parseCueChunk(wvFile)) {
+								cueFound = true;
+								bytesRead += m_lastChunkSizeParsed;
+								totalBytesRead += m_lastChunkSizeParsed;
+								continue;
+							} else {
+								// if chunk couldn't be parsed error message should already have been set
+								return false;
+							}
+						} else if (WAVE_LIST.IsSameAs(fourCBuffer)) {
+							if (parseInfoListChunk(wvFile)) {
+								bytesRead += m_lastChunkSizeParsed;
+								totalBytesRead += m_lastChunkSizeParsed;
+								continue;
+							} else {
+								// if chunk couldn't be parsed error message should already have been set
+								return false;
+							}
+						}
+					} else {
+						break;
+					}
+
+					// get size of chunk so we know how far to skip until next chunk
+					wvFile.Read(&uBuffer, 4);
+					if (wvFile.LastRead() != 4) {
+						m_errorMessage += wxT("Size of chunk couldn't be read.\n");
+						break;
+					}
+					wvFile.SeekI(uBuffer + (uBuffer & 1), wxFromCurrent);
+					bytesRead += (uBuffer + (uBuffer & 1));
+					totalBytesRead += (uBuffer + (uBuffer & 1));
+				}
+			}
+
+
+			// check if enough bytes was read
+			if (subBlockSize > bytesRead) {
+				unsigned bytesToSkip = subBlockSize - bytesRead;
+				wvFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+				totalBytesRead += (bytesToSkip + (bytesToSkip & 1));
+			}
+		}
+
+		return true;
 	} else {
 		return false;
 	}
@@ -172,7 +513,7 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 
 	wavFile.Read(&uBuffer, 4);
 	if (wavFile.LastRead() != 4 || uBuffer < 16) {
-		m_errorMessage = wxT("Couldn't read fmt chunk size.");
+		m_errorMessage += wxT("Couldn't read fmt chunk size.\n");
 		return false;
 	}
 	unsigned fmtChunkSize = uBuffer;
@@ -182,11 +523,11 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 		if(uShBuffer == 1 || uShBuffer == 3 || uShBuffer == 65534)
 			m_AudioFormat = uShBuffer; // we only support PCM, IEEE_FLOAT and EXTENSIBLE
 		else {
-			m_errorMessage = wxT("Unsupported wave format detected.");
+			m_errorMessage += wxT("Unsupported wave format detected.\n");
 			return false;
 		}
 	} else {
-		m_errorMessage = wxT("Couldn't read audio format.");
+		m_errorMessage += wxT("Couldn't read audio format.\n");
 		return false;
 	}
 
@@ -194,7 +535,7 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 	if (wavFile.LastRead() == 2) {
 		m_NumChannels = uShBuffer;
 	} else {
-		m_errorMessage = wxT("Couldn't read number of channels.");
+		m_errorMessage += wxT("Couldn't read number of channels.\n");
 		return false;
 	}
 
@@ -202,7 +543,7 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 	if (wavFile.LastRead() == 4) {
 		m_SampleRate = uBuffer;
 	} else {
-		m_errorMessage = wxT("Couldn't read samplerate.");
+		m_errorMessage += wxT("Couldn't read samplerate.\n");
 		return false;
 	}
 
@@ -210,7 +551,7 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 	if (wavFile.LastRead() == 4) {
 		m_ByteRate = uBuffer;
 	} else {
-		m_errorMessage = wxT("Couldn't read byte rate.");
+		m_errorMessage += wxT("Couldn't read byte rate.\n");
 		return false;
 	}
 
@@ -218,7 +559,7 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 	if (wavFile.LastRead() == 2) {
 		m_BlockAlign = uShBuffer;
 	} else {
-		m_errorMessage = wxT("Couldn't read block align.");
+		m_errorMessage += wxT("Couldn't read block align.\n");
 		return false;
 	}
 
@@ -226,19 +567,272 @@ bool WAVfileParser::parseFmtChunk(wxFFileInputStream &wavFile) {
 	if (wavFile.LastRead() == 2) {
 		m_BitsPerSample = uShBuffer;
 	} else {
-		m_errorMessage = wxT("Couldn't read bits per sample.");
+		m_errorMessage += wxT("Couldn't read bits per sample.\n");
 		return false;
 	}
 
 	if (m_BlockAlign != (m_NumChannels * m_BitsPerSample / 8)) {
-		m_errorMessage = wxT("Block align doesn't match (nChannels*bitsPerSample/8).");
+		m_errorMessage += wxT("Block align doesn't match (nChannels*bitsPerSample/8).\n");
 		return false;
 	}
 
 	if (fmtChunkSize > 16) {
 		unsigned bytesToSkip = fmtChunkSize - 16;
 		wavFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+		m_lastChunkSizeParsed = 16 + (bytesToSkip + (bytesToSkip & 1));
 		return true;
+	} else {
+		m_lastChunkSizeParsed = fmtChunkSize;
+		return true;
+	}
+
+	return true;
+}
+
+bool WAVfileParser::parseSmplChunk(wxFFileInputStream &wavFile) {
+	unsigned uBuffer;
+
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() != 4) {
+		m_errorMessage += wxT("Couldn't read smpl chunk size.\n");
+		return false;
+	}
+	unsigned smplChunkSize = uBuffer;
+	unsigned bytesRead = 0;
+
+	// we're not interested in:
+	// dwManufacturer 4 bytes
+	// dwProduct 4 bytes
+	// dwSamplePeriod 4 bytes
+	wavFile.SeekI(12, wxFromCurrent);
+	bytesRead += 12;
+
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() == 4) {
+		m_dwMIDIUnityNote = uBuffer;
+		bytesRead += 4;
+	} else {
+		m_errorMessage += wxT("Couldn't read dwMIDIUnityNote.\n");
+		return false;
+	}
+
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() == 4) {
+		m_dwMIDIPitchFraction = uBuffer;
+		bytesRead += 4;
+	} else {
+		m_errorMessage += wxT("Couldn't read dwMIDIPitchFraction.\n");
+		return false;
+	}
+
+	// we're not interested in:
+	// dwSMPTEFormat 4 bytes
+	// dwSMPTEOffset 4 bytes
+	wavFile.SeekI(8, wxFromCurrent);
+	bytesRead += 8;
+
+	unsigned numberOfLoops = 0;
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() == 4) {
+		numberOfLoops = uBuffer;
+		bytesRead += 4;
+	} else {
+		m_errorMessage += wxT("Couldn't read cSampleLoops.\n");
+		return false;
+	}
+
+	// we're not interested in:
+	// cbSamplerData 4 bytes
+	wavFile.SeekI(4, wxFromCurrent);
+	bytesRead += 4;
+
+	for (unsigned i = 0; i < numberOfLoops; i++) {
+		LOOP l;
+
+		wavFile.Read(&uBuffer, 4);
+		if (wavFile.LastRead() == 4) {
+			l.dwIdentifier = uBuffer;
+			bytesRead += 4;
+		} else {
+			m_errorMessage += wxT("Couldn't read dwIdentifier.\n");
+			return false;
+		}
+
+		// not interested in dwType 4 bytes
+		wavFile.SeekI(4, wxFromCurrent);
+		bytesRead += 4;
+
+		wavFile.Read(&uBuffer, 4);
+		if (wavFile.LastRead() == 4) {
+			l.dwStart = uBuffer;
+			bytesRead += 4;
+		} else {
+			m_errorMessage += wxT("Couldn't read dwStart.\n");
+			return false;
+		}
+
+		wavFile.Read(&uBuffer, 4);
+		if (wavFile.LastRead() == 4) {
+			l.dwEnd = uBuffer;
+			bytesRead += 4;
+		} else {
+			m_errorMessage += wxT("Couldn't read dwEnd.\n");
+			return false;
+		}
+
+		// not interested in:
+		// dwFraction 4 bytes
+		// dwPlayCount 4 bytes
+		wavFile.SeekI(8, wxFromCurrent);
+		bytesRead += 8;
+
+		m_loops.push_back(l);
+	}
+
+	if (smplChunkSize > bytesRead) {
+		unsigned bytesToSkip = smplChunkSize - bytesRead;
+		wavFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+		m_lastChunkSizeParsed = bytesRead + (bytesToSkip + (bytesToSkip & 1));
+	} else {
+		m_lastChunkSizeParsed = bytesRead;
+	}
+
+	return true;
+}
+
+bool WAVfileParser::parseCueChunk(wxFFileInputStream &wavFile) {
+	unsigned uBuffer;
+
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() != 4) {
+		m_errorMessage += wxT("Couldn't read cue chunk size.\n");
+		return false;
+	}
+	unsigned cueChunkSize = uBuffer;
+	unsigned bytesRead = 0;
+
+	unsigned cueCount = 0;
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() != 4) {
+		m_errorMessage += wxT("Couldn't read cue count.\n");
+		return false;
+	}
+	cueCount = uBuffer;
+	bytesRead += 4;
+
+	for (unsigned i = 0; i < cueCount; i++) {
+		CUEPOINT c;
+
+		wavFile.Read(&uBuffer, 4);
+		if (wavFile.LastRead() == 4) {
+			c.dwName = uBuffer;
+			bytesRead += 4;
+		} else {
+			m_errorMessage += wxT("Couldn't read dwName.\n");
+			return false;
+		}
+
+		// not interested in:
+		// dwPosition 4 bytes
+		// fccChunk 4 bytes
+		// dwChunkStart 4 bytes
+		// dwBlockStart 4 bytes
+		wavFile.SeekI(16, wxFromCurrent);
+		bytesRead += 16;
+
+		wavFile.Read(&uBuffer, 4);
+		if (wavFile.LastRead() == 4) {
+			c.dwSampleOffset = uBuffer;
+			bytesRead += 4;
+		} else {
+			m_errorMessage += wxT("Couldn't read dwSampleOffset.\n");
+			return false;
+		}
+
+		m_cues.push_back(c);
+	}
+
+	if (cueChunkSize > bytesRead) {
+		unsigned bytesToSkip = cueChunkSize - bytesRead;
+		wavFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+		m_lastChunkSizeParsed = bytesRead + (bytesToSkip + (bytesToSkip & 1));
+	} else {
+		m_lastChunkSizeParsed = bytesRead;
+	}
+
+	return true;
+}
+
+bool WAVfileParser::parseInfoListChunk(wxFFileInputStream &wavFile) {
+	unsigned uBuffer;
+	char fourCBuffer[4];
+	unsigned char uChBuffer;
+
+	wavFile.Read(&uBuffer, 4);
+	if (wavFile.LastRead() != 4) {
+		m_errorMessage += wxT("Couldn't read LIST chunk size.\n");
+		return false;
+	}
+	unsigned listChunkSize = uBuffer;
+	unsigned bytesRead = 0;
+
+	wavFile.Read(fourCBuffer, 4);
+	if (wavFile.LastRead() != 4) {
+		m_errorMessage += wxT("Couldn't read next four characters.\n");
+		return false;
+	} else {
+		bytesRead += 4;
+		if (WAVE_INFO.IsSameAs(fourCBuffer)) {
+			// now start reading the four charater keys and the info string values
+
+			while (bytesRead < listChunkSize) {
+				wxString theKey = wxEmptyString;
+				wavFile.Read(fourCBuffer, 4);
+				if (wavFile.LastRead() != 4) {
+					m_errorMessage += wxT("Couldn't read next four characters for this key.\n");
+					break;
+				} else {
+					theKey = fourCBuffer;
+					bytesRead += 4;
+				}
+
+				// after each key is the length of the string including zero terminating character and possibly padding to even length
+				unsigned totalStringLength;
+				wxString theValue = wxEmptyString;
+				wavFile.Read(&uBuffer, 4);
+				if (wavFile.LastRead() != 4) {
+					m_errorMessage += wxT("Couldn't read string length of a LIST INFO chunk.\n");
+					break;
+				}
+				bytesRead += 4;
+				if (uBuffer % 2 == 0)
+					totalStringLength = uBuffer;
+				else
+					totalStringLength = uBuffer + 1;
+				for (unsigned i = 0; i < totalStringLength; i++) {
+					unsigned char oneByte;
+					wavFile.Read(&uChBuffer, 1);
+					if (wavFile.LastRead() == 1) {
+						oneByte = uChBuffer;
+						bytesRead += 1;
+					} else {
+						break;
+					}
+					if (oneByte != 0x00)
+						theValue += oneByte;
+				}
+
+				m_infoList.push_back(std::make_pair(theKey, theValue));
+			}
+		}
+	}
+
+	if (listChunkSize > bytesRead) {
+		unsigned bytesToSkip = listChunkSize - bytesRead;
+		wavFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+		m_lastChunkSizeParsed = bytesRead + (bytesToSkip + (bytesToSkip & 1));
+	} else {
+		m_lastChunkSizeParsed = bytesRead;
 	}
 
 	return true;

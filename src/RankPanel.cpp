@@ -35,6 +35,7 @@
 #include "PipeLoadingDialog.h"
 #include <algorithm>
 #include "WAVfileParser.h"
+#include "SampleFileInfoDialog.h"
 
 // Event table
 BEGIN_EVENT_TABLE(RankPanel, wxPanel)
@@ -963,11 +964,13 @@ void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 	) {
 		// for an attack
 		mnu.Append(ID_PIPE_MENU_EDIT_ATTACK, "Edit attack properties\tCtrl+E");
+		mnu.Append(ID_PIPE_MENU_VIEW_ATTACK_SAMPLE_DETAILS, "View sample file details\tCtrl+D");
 		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_ATTACK, "Delete attack\tDel");
 		showMenu = true;
 	} else if (m_pipeTreeCtrl->GetItemText(m_pipeTreeCtrl->GetItemParent(selectedItem)) == wxT("Release(s)")) {
 		// for a release
 		mnu.Append(ID_PIPE_MENU_EDIT_RELEASE, "Edit release properties\tCtrl+E");
+		mnu.Append(ID_PIPE_MENU_VIEW_RELEASE_SAMPLE_DETAILS, "View sample file details\tCtrl+D");
 		mnu.Append(ID_PIPE_MENU_REMOVE_SELECTED_RELEASE, "Delete release\tDel");
 		showMenu = true;
 	}
@@ -1009,6 +1012,12 @@ void RankPanel::OnPopupMenuClick(wxCommandEvent &evt) {
 			break;
 		case ID_PIPE_MENU_COPY_PIPE_OFFSET:
 			OnCopyPipeOffset();
+			break;
+		case ID_PIPE_MENU_VIEW_ATTACK_SAMPLE_DETAILS:
+			OnViewAttackSample();
+			break;
+		case ID_PIPE_MENU_VIEW_RELEASE_SAMPLE_DETAILS:
+			OnViewReleaseSample();
 			break;
 	}
 }
@@ -1361,6 +1370,22 @@ void RankPanel::OnEditAttack() {
 	}
 }
 
+void RankPanel::OnViewAttackSample() {
+	wxTreeItemId selectedPipe = GetPipeOfSelection();
+	int selectedPipeIndex = GetItemIndexRelativeParent(selectedPipe);
+	Pipe *currentPipe = m_rank->getPipeAt(selectedPipeIndex);
+	int selectedAttack = GetSelectedItemIndexRelativeParent();
+
+	if (selectedAttack < 0)
+		return;
+
+	if ((unsigned) selectedAttack >= currentPipe->m_attacks.size())
+		return;
+
+	auto attackIterator = std::next(currentPipe->m_attacks.begin(), selectedAttack);
+	ViewSampleDetails(attackIterator->fullPath);
+}
+
 void RankPanel::OnEditRelease() {
 	wxTreeItemId selectedPipe = GetPipeOfSelection();
 	int selectedPipeIndex = GetItemIndexRelativeParent(selectedPipe);
@@ -1385,6 +1410,22 @@ void RankPanel::OnEditRelease() {
 		}
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
+}
+
+void RankPanel::OnViewReleaseSample() {
+	wxTreeItemId selectedPipe = GetPipeOfSelection();
+	int selectedPipeIndex = GetItemIndexRelativeParent(selectedPipe);
+	Pipe *currentPipe = m_rank->getPipeAt(selectedPipeIndex);
+	int selectedRelease = GetSelectedItemIndexRelativeParent();
+
+	if (selectedRelease < 0)
+		return;
+
+	if ((unsigned) selectedRelease >= currentPipe->m_releases.size())
+		return;
+
+	auto releaseIterator = std::next(currentPipe->m_releases.begin(), selectedRelease);
+	ViewSampleDetails(releaseIterator->fullPath);
 }
 
 void RankPanel::OnRemoveSelectedAttack() {
@@ -1492,6 +1533,11 @@ void RankPanel::OnCopyPipeOffset() {
 			::wxGetApp().m_frame->m_organ->setModified(true);
 		}
 	}
+}
+
+void RankPanel::ViewSampleDetails(wxString fullPathToSample) {
+	SampleFileInfoDialog infoDialog(fullPathToSample, this);
+	infoDialog.ShowModal();
 }
 
 wxTreeItemId RankPanel::GetPipeTreeItemAt(int index) {
@@ -1835,6 +1881,12 @@ void RankPanel::OnTreeKeyboardInput(wxTreeEvent& event) {
 				else
 					event.Skip();
 				break;
+			case 'D':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnViewAttackSample();
+				else
+					event.Skip();
+				break;
 			default:
 				event.Skip();
 		}
@@ -1847,6 +1899,12 @@ void RankPanel::OnTreeKeyboardInput(wxTreeEvent& event) {
 			case 'E':
 				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
 					OnEditRelease();
+				else
+					event.Skip();
+				break;
+			case 'D':
+				if (event.GetKeyEvent().GetModifiers() == wxMOD_CONTROL)
+					OnViewReleaseSample();
 				else
 					event.Skip();
 				break;
