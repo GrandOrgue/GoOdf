@@ -54,6 +54,7 @@ private:
 	wxSpinCtrl *m_numberOfLogicalPipesSpin; // 1 - 192
 	wxSpinCtrl *m_harmonicNumberSpin; // 1 - 1024, default 8, calculates 64 / rank_size
 	wxStaticText *m_calculatedLength;
+	wxButton *setHarmonicNbrFromEmbeddedPitchBtn;
 	wxSpinCtrlDouble *m_pitchCorrectionSpin; // -1800 - 1800
 	wxChoice *m_windchestChoice;
 	wxRadioButton *m_isPercussiveYes;
@@ -101,6 +102,7 @@ private:
 	void OnMidiNoteSpin(wxSpinEvent& event);
 	void OnLogicalPipeSpin(wxSpinEvent& event);
 	void OnHarmonicNbrSpin(wxSpinEvent& event);
+	void OnSetHarmonicNbrBtn(wxCommandEvent& event);
 	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
 	void OnPercussiveSelection(wxCommandEvent& event);
 	void OnMinVelocitySpin(wxSpinDoubleEvent& event);

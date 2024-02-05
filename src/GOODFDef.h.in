@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -621,6 +621,8 @@ enum {
 	ID_REL_DIALOG_RELEASE_XFADE_SPIN = wxID_HIGHEST + 596,
 	ID_PIPE_MENU_VIEW_ATTACK_SAMPLE_DETAILS = wxID_HIGHEST + 597,
 	ID_PIPE_MENU_VIEW_RELEASE_SAMPLE_DETAILS = wxID_HIGHEST + 598,
+	ID_DOUBLE_ENTRY_DIALOG_SPIN = wxID_HIGHEST + 599,
+	ID_RANK_SET_HN_FROM_PITCH_BTN = wxID_HIGHEST + 600,
 };
 
 // Get version number from cmake

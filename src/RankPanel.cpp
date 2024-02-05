@@ -36,6 +36,8 @@
 #include <algorithm>
 #include "WAVfileParser.h"
 #include "SampleFileInfoDialog.h"
+#include "DoubleEntryDialog.h"
+#include <cmath>
 
 // Event table
 BEGIN_EVENT_TABLE(RankPanel, wxPanel)
@@ -44,6 +46,7 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_SPINCTRL(ID_RANK_FIRST_MIDI_NOTE_SPIN, RankPanel::OnMidiNoteSpin)
 	EVT_SPINCTRL(ID_RANK_LOGICAL_PIPES_SPIN, RankPanel::OnLogicalPipeSpin)
 	EVT_SPINCTRL(ID_RANK_HARMONIC_NBR_SPIN, RankPanel::OnHarmonicNbrSpin)
+	EVT_BUTTON(ID_RANK_SET_HN_FROM_PITCH_BTN, RankPanel::OnSetHarmonicNbrBtn)
 	EVT_SPINCTRLDOUBLE(ID_RANK_PITCH_CORR_SPIN, RankPanel::OnPitchCorrectionSpin)
 	EVT_RADIOBUTTON(ID_RANK_PERCUSSIVE_YES, RankPanel::OnPercussiveSelection)
 	EVT_RADIOBUTTON(ID_RANK_PERCUSSIVE_NO, RankPanel::OnPercussiveSelection)
@@ -159,6 +162,12 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	panelSizer->Add(secondRow, 0, wxGROW);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
+	setHarmonicNbrFromEmbeddedPitchBtn = new wxButton(
+		this,
+		ID_RANK_SET_HN_FROM_PITCH_BTN,
+		wxT("Calculate HN")
+	);
+	thirdRow->Add(setHarmonicNbrFromEmbeddedPitchBtn, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	wxStaticText *harmonicNumberText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -816,6 +825,57 @@ void RankPanel::OnHarmonicNbrSpin(wxSpinEvent& WXUNUSED(event)) {
 	m_rank->setHarmonicNumber(harmonicNbr);
 	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(harmonicNbr));
 	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+void RankPanel::OnSetHarmonicNbrBtn(wxCommandEvent& WXUNUSED(event)) {
+	DoubleEntryDialog referencePitchDlg(
+		this,
+		wxT("Embedded pitch info in the first attack plus any PitchTuning for every pipe in this rank\nwill be compared against reference pitch and expected MIDI number\nto set the HarmonicNumber for each pipe in this rank (and the rank itself).\n\nThus you should make sure to have adjusted PitchTuning properly for the pipes\nespecially if samples are re-used for extension of compass."),
+		wxT("8' reference pitch for a1 (A4) in Hz"),
+		440,
+		220,
+		880,
+		wxID_ANY,
+		wxT("Choose reference pitch")
+	);
+	if (referencePitchDlg.ShowModal() == wxID_OK && referencePitchDlg.TransferDataFromWindow()) {
+		double referencePitch = referencePitchDlg.GetValue();
+		int pipeMIDInote = m_rank->getFirstMidiNoteNumber();
+		bool foundFirstHarmonicNbr = false;
+		for (auto& p : m_rank->m_pipes) {
+			if (p.isFirstAttackRefPath()) {
+				pipeMIDInote++;
+				continue;
+			}
+			for (auto& atk : p.m_attacks) {
+				if (atk.fullPath.IsSameAs(wxT("DUMMY"))) {
+					pipeMIDInote++;
+					continue;
+				} else {
+					WAVfileParser atkFile(atk.fullPath);
+					if (atkFile.isWavOk()) {
+						double embeddedPitch = atkFile.getPitchInHz();
+						double effectivePitch = embeddedPitch * pow(2, (p.pitchTuning / 1200.0));
+						double expectedEightFootPitch = referencePitch * pow(2, ((double)(pipeMIDInote - 69) / 12.0));
+						double pitchRatio = effectivePitch / expectedEightFootPitch;
+						int harmonicNbr = round(8.0f * pitchRatio);
+						p.harmonicNumber = harmonicNbr;
+						if (!foundFirstHarmonicNbr) {
+							m_rank->setHarmonicNumber(harmonicNbr);
+							foundFirstHarmonicNbr = true;
+						}
+						break;
+					}
+				}
+			}
+			pipeMIDInote++;
+		}
+		if (foundFirstHarmonicNbr) {
+			m_harmonicNumberSpin->SetValue(m_rank->getHarmonicNumber());
+			m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_rank->getHarmonicNumber()));
+			::wxGetApp().m_frame->m_organ->setModified(true);
+		}
+	}
 }
 
 void RankPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {

@@ -8,18 +8,18 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and info
 project(
   GOODF
-  VERSION 0.9.1
+  VERSION 0.9.2
   DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
@@ -172,6 +172,7 @@ set(APP_SRC
   src/CmbDialog.cpp
   src/DefaultPathsDialog.cpp
   src/SampleFileInfoDialog.cpp
+  src/DoubleEntryDialog.cpp
 )
 
 # add the executable
