@@ -36,6 +36,16 @@ WAVfileParser::WAVfileParser(wxString file) {
 	m_wavpackUsed = false;
 	m_fileName = file;
 	m_errorMessage = wxEmptyString;
+	m_AudioFormat = 0;
+	m_NumChannels = 0;
+	m_SampleRate = 0;
+	m_ByteRate = 0;
+	m_BlockAlign = 0;
+	m_BitsPerSample = 0;
+	m_dataSize = 0;
+	m_numberOfFrames = 0;
+	m_dwMIDIUnityNote = 0;
+	m_dwMIDIPitchFraction = 0;
 	m_lastChunkSizeParsed = 0;
 
 	if (tryParsingFile(m_fileName))
