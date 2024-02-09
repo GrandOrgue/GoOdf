@@ -48,7 +48,7 @@ private:
 	std::vector<GUI_OBJECT> m_guiObjects;
 	bool m_isFirstRender;
 	wxOverlay m_overlay;
-	int m_selectedObjectIndex;
+	int m_selectedObjectIndex; // the last selected (clicked) element
 	bool m_isDraggingObject;
 	wxCoord m_startDragX;
 	wxCoord m_startDragY;

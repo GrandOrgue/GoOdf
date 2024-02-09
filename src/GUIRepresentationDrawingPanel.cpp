@@ -86,12 +86,14 @@ void GUIRepresentationDrawingPanel::OnLeftClick(wxMouseEvent& event) {
 			if (m_guiObjects[i].boundingRect.Contains(xPos, yPos)) {
 				m_selectedObjectIndex = i;
 				m_guiObjects[i].isSelected = true;
+				/*
 				for (unsigned j = 0; j < m_guiObjects.size(); j++){
 					if (m_guiObjects[j].isSelected && j != (unsigned) i){
 						m_guiObjects[j].isSelected = false;
 					}
 				}
 				break;
+				*/
 			}
 		}
 		if (m_selectedObjectIndex < 0) {
@@ -115,18 +117,25 @@ void GUIRepresentationDrawingPanel::OnMouseMotion(wxMouseEvent& event) {
 		overlaydc.Clear();
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
-		int xPos = m_guiObjects[m_selectedObjectIndex].boundingRect.x + m_currentDragX - m_startDragX;
-		int yPos = m_guiObjects[m_selectedObjectIndex].boundingRect.y + m_currentDragY - m_startDragY;
-		wxRect tempOutline(
-			xPos,
-			yPos,
-			m_guiObjects[m_selectedObjectIndex].boundingRect.width,
-			m_guiObjects[m_selectedObjectIndex].boundingRect.height
-		);
-		dc.DrawRectangle(tempOutline);
-		dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-		dc.SetTextForeground(*wxYELLOW);
-		dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
+		int xOffset = m_currentDragX - m_startDragX;
+		int yOffset = m_currentDragY - m_startDragY;
+
+		for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+			if (m_guiObjects[i].isSelected) {
+				int xPos = m_guiObjects[i].boundingRect.x + xOffset;
+				int yPos = m_guiObjects[i].boundingRect.y + yOffset;
+				wxRect tempOutline(
+					xPos,
+					yPos,
+					m_guiObjects[i].boundingRect.width,
+					m_guiObjects[i].boundingRect.height
+				);
+				dc.DrawRectangle(tempOutline);
+				dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+				dc.SetTextForeground(*wxYELLOW);
+				dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
+			}
+		}
 	}
 }
 
@@ -134,18 +143,25 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 	if (m_selectedObjectIndex >= 0 && m_isDraggingObject) {
 		m_currentDragX = event.GetX();
 		m_currentDragY = event.GetY();
-		int finalXpos = m_guiObjects[m_selectedObjectIndex].boundingRect.x + m_currentDragX - m_startDragX;
-		int finalYpos = m_guiObjects[m_selectedObjectIndex].boundingRect.y + m_currentDragY - m_startDragY;
+		int finalXoffset = m_currentDragX - m_startDragX;
+		int finalYoffset = m_currentDragY - m_startDragY;
 
-		if (m_guiObjects[m_selectedObjectIndex].element) {
-			m_guiObjects[m_selectedObjectIndex].element->setPosX(finalXpos);
-			m_guiObjects[m_selectedObjectIndex].element->setPosY(finalYpos);
-		} else if (m_guiObjects[m_selectedObjectIndex].img) {
-			m_guiObjects[m_selectedObjectIndex].img->setPositionX(finalXpos);
-			m_guiObjects[m_selectedObjectIndex].img->setPositionY(finalYpos);
+		for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+			if (m_guiObjects[i].isSelected) {
+				int finalXpos = m_guiObjects[i].boundingRect.x + finalXoffset;
+				int finalYpos = m_guiObjects[i].boundingRect.y + finalYoffset;
+
+				if (m_guiObjects[i].element) {
+					m_guiObjects[i].element->setPosX(finalXpos);
+					m_guiObjects[i].element->setPosY(finalYpos);
+				} else if (m_guiObjects[m_selectedObjectIndex].img) {
+					m_guiObjects[i].img->setPositionX(finalXpos);
+					m_guiObjects[i].img->setPositionY(finalYpos);
+				}
+				m_guiObjects[i].boundingRect.x = finalXpos;
+				m_guiObjects[i].boundingRect.y = finalYpos;
+			}
 		}
-		m_guiObjects[m_selectedObjectIndex].boundingRect.x = finalXpos;
-		m_guiObjects[m_selectedObjectIndex].boundingRect.y = finalYpos;
 
 		m_isDraggingObject = false;
 		// reset all drag coordinates
@@ -162,36 +178,42 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 
 void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 	if (m_selectedObjectIndex > -1) {
-		int xPos = m_guiObjects[m_selectedObjectIndex].boundingRect.x;
-		int yPos = m_guiObjects[m_selectedObjectIndex].boundingRect.y;
+		int xOffset = 0;
+		int yOffset = 0;
 
 		if (event.IsKeyInCategory(WXK_CATEGORY_NAVIGATION)) {
 			switch (event.GetKeyCode()) {
 				case WXK_LEFT:
-					xPos -= 1;
+					xOffset -= 1;
 					break;
 				case WXK_UP:
-					yPos -= 1;
+					yOffset -= 1;
 					break;
 				case WXK_RIGHT:
-					xPos += 1;
+					xOffset += 1;
 					break;
 				case WXK_DOWN:
-					yPos += 1;
+					yOffset += 1;
 					break;
 				default:
 					break;
 			}
 
-			if (m_guiObjects[m_selectedObjectIndex].element) {
-				m_guiObjects[m_selectedObjectIndex].element->setPosX(xPos);
-				m_guiObjects[m_selectedObjectIndex].element->setPosY(yPos);
-			} else if (m_guiObjects[m_selectedObjectIndex].img) {
-				m_guiObjects[m_selectedObjectIndex].img->setPositionX(xPos);
-				m_guiObjects[m_selectedObjectIndex].img->setPositionY(yPos);
+			for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+				if (m_guiObjects[i].isSelected) {
+					int xPos = m_guiObjects[i].boundingRect.x + xOffset;
+					int yPos = m_guiObjects[i].boundingRect.y + yOffset;
+					if (m_guiObjects[i].element) {
+						m_guiObjects[i].element->setPosX(xPos);
+						m_guiObjects[i].element->setPosY(yPos);
+					} else if (m_guiObjects[i].img) {
+						m_guiObjects[i].img->setPositionX(xPos);
+						m_guiObjects[i].img->setPositionY(yPos);
+					}
+					m_guiObjects[i].boundingRect.x = xPos;
+					m_guiObjects[i].boundingRect.y = yPos;
+				}
 			}
-			m_guiObjects[m_selectedObjectIndex].boundingRect.x = xPos;
-			m_guiObjects[m_selectedObjectIndex].boundingRect.y = yPos;
 			::wxGetApp().m_frame->GUIElementPositionIsChanged();
 
 			wxClientDC dc(this);
@@ -199,16 +221,22 @@ void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 			overlaydc.Clear();
 			dc.SetBrush(*wxTRANSPARENT_BRUSH);
 			dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
-			wxRect tempOutline(
-				xPos,
-				yPos,
-				m_guiObjects[m_selectedObjectIndex].boundingRect.width,
-				m_guiObjects[m_selectedObjectIndex].boundingRect.height
-			);
-			dc.DrawRectangle(tempOutline);
-			dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-			dc.SetTextForeground(*wxYELLOW);
-			dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
+			for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+				if (m_guiObjects[i].isSelected) {
+					int xPos = m_guiObjects[i].boundingRect.x;
+					int yPos = m_guiObjects[i].boundingRect.y;
+					wxRect tempOutline(
+						xPos,
+						yPos,
+						m_guiObjects[m_selectedObjectIndex].boundingRect.width,
+						m_guiObjects[m_selectedObjectIndex].boundingRect.height
+					);
+					dc.DrawRectangle(tempOutline);
+					dc.SetFont(wxFont(8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+					dc.SetTextForeground(*wxYELLOW);
+					dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
+				}
+			}
 
 			return;
 		} else {
@@ -553,7 +581,10 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 		overlaydc.Clear();
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_DOT));
-		dc.DrawRectangle(m_guiObjects[m_selectedObjectIndex].boundingRect);
+		for (unsigned i = 0; i < m_guiObjects.size(); i++) {
+			if (m_guiObjects[i].isSelected)
+				dc.DrawRectangle(m_guiObjects[i].boundingRect);
+		}
 	}
 	m_isFirstRender = false;
 }
