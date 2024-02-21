@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get dependencies
       run: sudo apt-get install -y build-essential cmake libwxgtk3.0-gtk3-dev imagemagick
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Cache wxCrossbuild
       id: cache-wxcross
@@ -87,7 +87,7 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/download-artifact@v3
       with:
@@ -108,7 +108,7 @@ jobs:
       with:
         draft: false
         prerelease: false
-        body: Relsease files created from GitHub action runners.
+        body: Release files created from GitHub action runners.
         files: |
-          GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
-          GoOdf-${{env.release_version}}-windows.x86.zip
+          GoOdf-${{github.ref_name}}-linux/GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
+          GoOdf-${{github.ref_name}}-windows/GoOdf-${{env.release_version}}-windows.x86.zip
