@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=GoOdf
+GenericName=GrandOrgue ODF editor
+Comment=GoOdf - Software for creating and editing GO ODFs
+Exec=GoOdf
+Icon=GoOdf
+Terminal=false
+Type=Application
+Categories=Audio;AudioVideo;Music;
+MimeType=audio/x-wav;audio/wav;
