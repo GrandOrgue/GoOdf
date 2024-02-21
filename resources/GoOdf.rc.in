@@ -1,3 +1,3 @@
 #include "wx/msw/wx.rc"
-ApplicationIcon ICON "GOODF.ico"
-ICONPRG ICON "GOODF.ico"
+ApplicationIcon ICON "GoOdf.ico"
+ICONPRG ICON "GoOdf.ico"
