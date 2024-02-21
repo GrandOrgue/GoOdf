@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -29,6 +29,7 @@ BEGIN_EVENT_TABLE(GUIRepresentationDrawingPanel, wxPanel)
 	EVT_LEFT_DOWN(GUIRepresentationDrawingPanel::OnLeftClick)
 	EVT_MOTION(GUIRepresentationDrawingPanel::OnMouseMotion)
 	EVT_LEFT_UP(GUIRepresentationDrawingPanel::OnLeftRelease)
+	EVT_RIGHT_DOWN(GUIRepresentationDrawingPanel::OnRightDown)
 	EVT_KEY_DOWN(GUIRepresentationDrawingPanel::OnKeyboardInput)
 	EVT_CHAR(GUIRepresentationDrawingPanel::OnKeyboardInput)
 	EVT_KEY_UP(GUIRepresentationDrawingPanel::OnKeyRelease)
@@ -40,10 +41,15 @@ GUIRepresentationDrawingPanel::GUIRepresentationDrawingPanel(wxWindow *parent) :
 	m_isFirstRender = true;
 	m_selectedObjectIndex = -1;
 	m_isDraggingObject = false;
+	m_isSelecting = false;
+	m_hasSelection = false;
+	NotChangingTheSelection();
 	m_currentDragX = -1;
 	m_currentDragY = -1;
 	m_startDragX = -1;
 	m_startDragY = -1;
+	m_selectionChangingWidth = 0;
+	m_selectionChangingHeight = 0;
 	m_HackY = 0;
 	m_EnclosureY = 0;
 	m_CenterY = 0;
@@ -86,20 +92,42 @@ void GUIRepresentationDrawingPanel::OnLeftClick(wxMouseEvent& event) {
 			if (m_guiObjects[i].boundingRect.Contains(xPos, yPos)) {
 				m_selectedObjectIndex = i;
 				m_guiObjects[i].isSelected = true;
-				/*
-				for (unsigned j = 0; j < m_guiObjects.size(); j++){
-					if (m_guiObjects[j].isSelected && j != (unsigned) i){
-						m_guiObjects[j].isSelected = false;
-					}
-				}
-				break;
-				*/
 			}
 		}
 		if (m_selectedObjectIndex < 0) {
 			for (unsigned i = 0; i < m_guiObjects.size(); i++) {
 				m_guiObjects[i].isSelected = false;
 			}
+
+			// a selection box/rectangle could be allowed so a click outside an existing should remove selection
+			// and prepare for starting a new selection if none already exists
+			if (m_hasSelection) {
+				if(!m_selectionRect.Contains(xPos, yPos)) {
+					m_hasSelection = false;
+					m_selectionRect.SetSize(wxDefaultSize);
+					m_selectionRect.SetPosition(wxDefaultPosition);
+					NotChangingTheSelection();
+				} else {
+					if (m_selectionRectLeftUpCorner.Contains(xPos, yPos)) {
+						m_changingLeftUpCorner = true;
+					} else if (m_selectionRectLeftDownCorner.Contains(xPos, yPos)) {
+						m_changingLeftDownCorner = true;
+					} else if (m_selectionRectRightUpCorner.Contains(xPos, yPos)) {
+						m_changingRightUpCorner = true;
+					} else if (m_selectionRectRightDownCorner.Contains(xPos, yPos)) {
+						m_changingRightDownCorner = true;
+					} else {
+						NotChangingTheSelection();
+					}
+				}
+			} else {
+				NotChangingTheSelection();
+			}
+		} else {
+			m_hasSelection = false;
+			m_selectionRect.SetSize(wxDefaultSize);
+			m_selectionRect.SetPosition(wxDefaultPosition);
+			NotChangingTheSelection();
 		}
 		DoPaintNow();
 	} else {
@@ -136,7 +164,121 @@ void GUIRepresentationDrawingPanel::OnMouseMotion(wxMouseEvent& event) {
 				dc.DrawText(wxString::Format(wxT("(%i, %i)"), xPos, yPos), xPos + 1, yPos + 1);
 			}
 		}
+	} else if (m_selectedObjectIndex < 0 && event.Dragging() && !IsSelectionChanging()) {
+		// this means we're creating a selection
+		if (!m_isSelecting) {
+			// the first time we set an origin
+			m_selectionRect.SetPosition(wxPoint(m_startDragX, m_startDragY));
+		}
+		m_isSelecting = true;
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+
+		if (m_currentDragX < 0)
+			m_currentDragX = 0;
+		if (m_currentDragX > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+			m_currentDragX = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+		if (m_currentDragY < 0)
+			m_currentDragY = 0;
+		if (m_currentDragY > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+			m_currentDragY = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+
+		wxClientDC dc(this);
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(wxColour(*wxRED), 1, wxPENSTYLE_DOT_DASH));
+		int xOffset = m_currentDragX - m_startDragX;
+		int yOffset = m_currentDragY - m_startDragY;
+		m_selectionRect.SetSize(wxSize(xOffset, yOffset));
+		dc.DrawRectangle(m_selectionRect);
+	} else if (m_hasSelection && !event.Dragging()) {
+		wxCoord currentX = event.GetX();
+		wxCoord currentY = event.GetY();
+		if (m_selectionRect.Contains(currentX, currentY)) {
+			wxClientDC dc(this);
+			wxDCOverlay overlaydc(m_overlay, &dc);
+			overlaydc.Clear();
+			dc.SetBrush(*wxTRANSPARENT_BRUSH);
+			if (m_selectionRectLeftUpCorner.Contains(currentX, currentY)) {
+				dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_SOLID));
+				dc.DrawRectangle(m_selectionRectLeftUpCorner);
+			} else if (m_selectionRectLeftDownCorner.Contains(currentX, currentY)) {
+				dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_SOLID));
+				dc.DrawRectangle(m_selectionRectLeftDownCorner);
+			} else if (m_selectionRectRightUpCorner.Contains(currentX, currentY)) {
+				dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_SOLID));
+				dc.DrawRectangle(m_selectionRectRightUpCorner);
+			} else if (m_selectionRectRightDownCorner.Contains(currentX, currentY)) {
+				dc.SetPen(wxPen(wxColour(*wxYELLOW), 1, wxPENSTYLE_SOLID));
+				dc.DrawRectangle(m_selectionRectRightDownCorner);
+			} else {
+				// all corners for adjusting selection rectangle
+				dc.SetPen(wxPen(wxColour(*wxGREEN), 1, wxPENSTYLE_SOLID));
+				dc.DrawLine(m_selectionRectLeftUpCorner.GetBottomLeft(), m_selectionRectLeftUpCorner.GetBottomRight());
+				dc.DrawLine(m_selectionRectLeftUpCorner.GetBottomRight(), m_selectionRectLeftUpCorner.GetTopRight());
+
+				dc.DrawLine(m_selectionRectRightUpCorner.GetTopLeft(), m_selectionRectRightUpCorner.GetBottomLeft());
+				dc.DrawLine(m_selectionRectRightUpCorner.GetBottomLeft(), m_selectionRectRightUpCorner.GetBottomRight());
+
+				dc.DrawLine(m_selectionRectRightDownCorner.GetBottomLeft(), m_selectionRectRightDownCorner.GetTopLeft());
+				dc.DrawLine(m_selectionRectRightDownCorner.GetTopLeft(), m_selectionRectRightDownCorner.GetTopRight());
+
+				dc.DrawLine(m_selectionRectLeftDownCorner.GetTopLeft(), m_selectionRectLeftDownCorner.GetTopRight());
+				dc.DrawLine(m_selectionRectLeftDownCorner.GetTopRight(), m_selectionRectLeftDownCorner.GetBottomRight());
+			}
+			dc.SetPen(wxPen(wxColour(*wxGREEN), 1, wxPENSTYLE_DOT));
+			dc.DrawRectangle(m_selectionRect);
+		} else {
+			Refresh();
+		}
+	} else if (m_hasSelection && event.Dragging() && IsSelectionChanging()) {
+		// the current (already existing) selection is changing
+		if (!m_isSelecting) {
+			// the first time we set an origin which should be the diagonal corner
+			// also the width and height needs to be adjusted accordingly
+			if (m_changingLeftUpCorner) {
+				m_selectionRect.SetPosition(m_selectionRectRightDownCorner.GetBottomRight());
+				m_selectionChangingWidth = -m_selectionRect.GetWidth();
+				m_selectionChangingHeight = -m_selectionRect.GetHeight();
+			} else if (m_changingLeftDownCorner) {
+				m_selectionRect.SetPosition(m_selectionRectRightUpCorner.GetTopRight());
+				m_selectionChangingWidth = -m_selectionRect.GetWidth();
+				m_selectionChangingHeight = m_selectionRect.GetHeight();
+			} else if (m_changingRightUpCorner) {
+				m_selectionRect.SetPosition(m_selectionRectLeftDownCorner.GetBottomLeft());
+				m_selectionChangingWidth = m_selectionRect.GetWidth();
+				m_selectionChangingHeight = -m_selectionRect.GetHeight();
+			} else if (m_changingRightDownCorner) {
+				m_selectionRect.SetPosition(m_selectionRectLeftUpCorner.GetTopLeft());
+				m_selectionChangingWidth = m_selectionRect.GetWidth();
+				m_selectionChangingHeight = m_selectionRect.GetHeight();
+			}
+		}
+		m_isSelecting = true;
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+
+		if (m_selectionRect.GetPosition().x + m_selectionChangingWidth + m_currentDragX - m_startDragX < 0)
+			m_currentDragX = m_startDragX - m_selectionRect.GetPosition().x - m_selectionChangingWidth;
+		if (m_selectionRect.GetPosition().x + m_selectionChangingWidth + m_currentDragX - m_startDragX > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+			m_currentDragX = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() + m_startDragX - m_selectionRect.GetPosition().x - m_selectionChangingWidth;
+		if (m_selectionRect.GetPosition().y + m_selectionChangingHeight + m_currentDragY - m_startDragY < 0)
+			m_currentDragY = m_startDragY - m_selectionRect.GetPosition().y - m_selectionChangingHeight;
+		if (m_selectionRect.GetPosition().y + m_selectionChangingHeight + m_currentDragY - m_startDragY > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+			m_currentDragY = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() + m_startDragY - m_selectionRect.GetPosition().y - m_selectionChangingHeight;
+
+		wxClientDC dc(this);
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(wxColour(*wxRED), 1, wxPENSTYLE_DOT_DASH));
+		int xOffset = m_selectionChangingWidth + m_currentDragX - m_startDragX;
+		int yOffset = m_selectionChangingHeight + m_currentDragY - m_startDragY;
+		m_selectionRect.SetSize(wxSize(xOffset, yOffset));
+		dc.DrawRectangle(m_selectionRect);
 	}
+	event.Skip();
 }
 
 void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
@@ -172,8 +314,196 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 
 		::wxGetApp().m_frame->GUIElementPositionIsChanged();
 		DoPaintNow();
+	} else if (m_selectedObjectIndex < 0 && m_isSelecting && !IsSelectionChanging()) {
+		m_isSelecting = false;
+		m_hasSelection = true;
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+
+		// limit selection position within the panel
+		if (m_currentDragX < 0)
+			m_currentDragX = 0;
+		if (m_currentDragX > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+			m_currentDragX = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+		if (m_currentDragY < 0)
+			m_currentDragY = 0;
+		if (m_currentDragY > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+			m_currentDragY = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+
+		// calculate and set position and size for the whole selection rectrangle
+		int width;
+		int height;
+		int xCoord;
+		int yCoord;
+		if (m_currentDragX < m_startDragX) {
+			width = m_startDragX - m_currentDragX;
+			xCoord = m_currentDragX;
+		} else {
+			width = m_currentDragX - m_startDragX;
+			xCoord = m_startDragX;
+		}
+		if (m_currentDragY < m_startDragY) {
+			height = m_startDragY - m_currentDragY;
+			yCoord = m_currentDragY;
+		} else {
+			height = m_currentDragY - m_startDragY;
+			yCoord = m_startDragY;
+		}
+		m_selectionRect.SetPosition(wxPoint(xCoord, yCoord));
+		m_selectionRect.SetSize(wxSize(width, height));
+
+		// reset all drag coordinates
+		m_currentDragX = -1;
+		m_currentDragY = -1;
+		m_startDragX = -1;
+		m_startDragY = -1;
+
+		// calculate all active mouse rect sections for adjusting the selection rectangle
+		wxPoint leftUp = m_selectionRect.GetLeftTop();
+		wxPoint rightUp = m_selectionRect.GetTopRight();
+		wxPoint rightDown = m_selectionRect.GetBottomRight();
+		wxPoint leftDown = m_selectionRect.GetBottomLeft();
+		int rectWidth = m_selectionRect.GetWidth();
+		int rectHeight = m_selectionRect.GetHeight();
+		wxSize selectionRectSize(rectWidth / 4, rectHeight / 4);
+		m_selectionRectLeftUpCorner.SetPosition(leftUp);
+		m_selectionRectLeftUpCorner.SetSize(selectionRectSize);
+		m_selectionRectLeftDownCorner.SetPosition(wxPoint(leftDown.x, leftDown.y - selectionRectSize.GetHeight() + 1));
+		m_selectionRectLeftDownCorner.SetSize(selectionRectSize);
+		m_selectionRectRightUpCorner.SetPosition(wxPoint(rightUp.x - selectionRectSize.GetWidth() + 1, rightUp.y));
+		m_selectionRectRightUpCorner.SetSize(selectionRectSize);
+		m_selectionRectRightDownCorner.SetPosition(wxPoint(rightDown.x - selectionRectSize.GetWidth() + 1, rightDown.y - selectionRectSize.GetHeight() + 1));
+		m_selectionRectRightDownCorner.SetSize(selectionRectSize);
+
+		DoPaintNow();
+	} else if (m_hasSelection && m_isSelecting && IsSelectionChanging()) {
+		m_isSelecting = false;
+		m_hasSelection = true;
+		m_currentDragX = event.GetX();
+		m_currentDragY = event.GetY();
+
+
+		if (m_selectionRect.GetPosition().x + m_selectionChangingWidth + m_currentDragX - m_startDragX < 0)
+			m_currentDragX = m_startDragX - m_selectionRect.GetPosition().x - m_selectionChangingWidth;
+		if (m_selectionRect.GetPosition().x + m_selectionChangingWidth + m_currentDragX - m_startDragX > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+			m_currentDragX = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue() + m_startDragX - m_selectionRect.GetPosition().x - m_selectionChangingWidth;
+		if (m_selectionRect.GetPosition().y + m_selectionChangingHeight + m_currentDragY - m_startDragY < 0)
+			m_currentDragY = m_startDragY - m_selectionRect.GetPosition().y - m_selectionChangingHeight;
+		if (m_selectionRect.GetPosition().y + m_selectionChangingHeight + m_currentDragY - m_startDragY > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+			m_currentDragY = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue() + m_startDragY - m_selectionRect.GetPosition().y - m_selectionChangingHeight;
+
+		int finalWidth = m_selectionChangingWidth + m_currentDragX - m_startDragX;
+		int finalHeight = m_selectionChangingHeight + m_currentDragY - m_startDragY;
+		m_selectionRect.SetSize(wxSize(finalWidth, finalHeight));
+
+		// calculate and set position and size for the whole selection rectrangle
+		int width;
+		int height;
+		int xCoord;
+		int yCoord;
+		if (m_currentDragX < m_selectionRect.GetPosition().x) {
+			width = (m_selectionRect.GetWidth() * -1) + 1;
+			xCoord = m_selectionRect.GetPosition().x + m_selectionRect.GetWidth();
+		} else {
+			width = m_selectionRect.GetWidth() + 1;
+			xCoord = m_selectionRect.GetPosition().x;
+		}
+		if (m_currentDragY < m_selectionRect.GetPosition().y) {
+			height = (m_selectionRect.GetHeight() * -1) + 1;
+			yCoord = m_selectionRect.GetPosition().y + m_selectionRect.GetHeight();
+		} else {
+			height = m_selectionRect.GetHeight() + 1;
+			yCoord = m_selectionRect.GetPosition().y;
+		}
+		if (width > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue())
+			width = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
+		if (height > m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue())
+			height = m_currentPanel->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
+		m_selectionRect.SetPosition(wxPoint(xCoord, yCoord));
+		m_selectionRect.SetSize(wxSize(width, height));
+
+		// reset all drag coordinates
+		m_currentDragX = -1;
+		m_currentDragY = -1;
+		m_startDragX = -1;
+		m_startDragY = -1;
+		NotChangingTheSelection();
+
+		// calculate all active mouse rect sections for adjusting the selection rectangle
+		wxPoint leftUp = m_selectionRect.GetLeftTop();
+		wxPoint rightUp = m_selectionRect.GetTopRight();
+		wxPoint rightDown = m_selectionRect.GetBottomRight();
+		wxPoint leftDown = m_selectionRect.GetBottomLeft();
+		int rectWidth = m_selectionRect.GetWidth();
+		int rectHeight = m_selectionRect.GetHeight();
+		wxSize selectionRectSize(rectWidth / 4, rectHeight / 4);
+		m_selectionRectLeftUpCorner.SetPosition(leftUp);
+		m_selectionRectLeftUpCorner.SetSize(selectionRectSize);
+		m_selectionRectLeftDownCorner.SetPosition(wxPoint(leftDown.x, leftDown.y - selectionRectSize.GetHeight() + 1));
+		m_selectionRectLeftDownCorner.SetSize(selectionRectSize);
+		m_selectionRectRightUpCorner.SetPosition(wxPoint(rightUp.x - selectionRectSize.GetWidth() + 1, rightUp.y));
+		m_selectionRectRightUpCorner.SetSize(selectionRectSize);
+		m_selectionRectRightDownCorner.SetPosition(wxPoint(rightDown.x - selectionRectSize.GetWidth() + 1, rightDown.y - selectionRectSize.GetHeight() + 1));
+		m_selectionRectRightDownCorner.SetSize(selectionRectSize);
+
+		DoPaintNow();
 	}
 	event.Skip();
+}
+
+void GUIRepresentationDrawingPanel::OnRightDown(wxMouseEvent& event) {
+	if (m_hasSelection) {
+		wxCoord xPos = event.GetX();
+		wxCoord yPos = event.GetY();
+		if (m_selectionRect.Contains(xPos, yPos)) {
+			wxMenu selectionMenu;
+			selectionMenu.Append(ID_CONVERT_SELECTION_CONTAINING, "Select contained elements");
+			selectionMenu.Append(ID_CONVERT_SELECTION_INTERSECTING, "Select intersecting elements");
+			selectionMenu.Connect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUIRepresentationDrawingPanel::OnPopupMenuClick), NULL, this);
+			PopupMenu(&selectionMenu);
+		} else {
+			event.Skip();
+		}
+	} else {
+		event.Skip();
+	}
+}
+
+void GUIRepresentationDrawingPanel::OnPopupMenuClick(wxCommandEvent& event) {
+	switch(event.GetId()) {
+		case ID_CONVERT_SELECTION_CONTAINING:
+			SelectContainedElements();
+			break;
+		case ID_CONVERT_SELECTION_INTERSECTING:
+			SelectIntersectingElements();
+			break;
+	}
+}
+
+void GUIRepresentationDrawingPanel::SelectContainedElements() {
+	if (m_hasSelection) {
+		for (int i = (int) m_guiObjects.size() - 1; i >= 0; i--) {
+			if (m_selectionRect.Contains(m_guiObjects[i].boundingRect)) {
+				m_selectedObjectIndex = i;
+				m_guiObjects[i].isSelected = true;
+				m_hasSelection = false;
+			}
+		}
+		Refresh();
+	}
+}
+
+void GUIRepresentationDrawingPanel::SelectIntersectingElements() {
+	if (m_hasSelection) {
+		for (int i = (int) m_guiObjects.size() - 1; i >= 0; i--) {
+			if (m_selectionRect.Intersects(m_guiObjects[i].boundingRect)) {
+				m_selectedObjectIndex = i;
+				m_guiObjects[i].isSelected = true;
+				m_hasSelection = false;
+			}
+		}
+		Refresh();
+	}
 }
 
 void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
@@ -261,8 +591,7 @@ void GUIRepresentationDrawingPanel::OnKeyRelease(wxKeyEvent& event) {
 
 void GUIRepresentationDrawingPanel::DoPaintNow() {
 	if (this->IsShown()) {
-		wxClientDC dc(this);
-		RenderPanel(dc);
+		Refresh();
 	}
 }
 
@@ -360,9 +689,7 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 			manXpos = currentMan->getPosX();
 		if (currentMan->getPosY() >= 0) {
 			manYpos = currentMan->getPosY();
-		} /* else if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveManuals && i + 1 == m_currentPanel->getNumberOfManuals()) {
-			manYpos += 8;
-		} */
+		}
 		for (int j = 0; j < currentMan->getNumberOfDisplayKeys(); j++) {
 			KEY_INFO *currentKey = currentMan->getKeyInfoAt(j);
 			wxBitmap theKey = currentKey->KeyImage;
@@ -585,6 +912,27 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 			if (m_guiObjects[i].isSelected)
 				dc.DrawRectangle(m_guiObjects[i].boundingRect);
 		}
+	} else if (m_hasSelection) {
+		wxDCOverlay overlaydc(m_overlay, &dc);
+		overlaydc.Clear();
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(wxColour(*wxGREEN), 1, wxPENSTYLE_DOT_DASH));
+		dc.DrawRectangle(m_selectionRect);
+
+		// corners for adjusting selection rectangle
+		dc.SetPen(wxPen(wxColour(*wxGREEN), 1, wxPENSTYLE_SOLID));
+		dc.DrawLine(m_selectionRectLeftUpCorner.GetBottomLeft(), m_selectionRectLeftUpCorner.GetBottomRight());
+		dc.DrawLine(m_selectionRectLeftUpCorner.GetBottomRight(), m_selectionRectLeftUpCorner.GetTopRight());
+
+		dc.DrawLine(m_selectionRectRightUpCorner.GetTopLeft(), m_selectionRectRightUpCorner.GetBottomLeft());
+		dc.DrawLine(m_selectionRectRightUpCorner.GetBottomLeft(), m_selectionRectRightUpCorner.GetBottomRight());
+
+		dc.DrawLine(m_selectionRectRightDownCorner.GetBottomLeft(), m_selectionRectRightDownCorner.GetTopLeft());
+		dc.DrawLine(m_selectionRectRightDownCorner.GetTopLeft(), m_selectionRectRightDownCorner.GetTopRight());
+
+		dc.DrawLine(m_selectionRectLeftDownCorner.GetTopLeft(), m_selectionRectLeftDownCorner.GetTopRight());
+		dc.DrawLine(m_selectionRectLeftDownCorner.GetTopRight(), m_selectionRectLeftDownCorner.GetBottomRight());
+
 	}
 	m_isFirstRender = false;
 }
@@ -865,6 +1213,22 @@ void GUIRepresentationDrawingPanel::UpdateLayout() {
 	m_CenterY -= GetJambTopHeight();
 	if (m_currentPanel->getDisplayMetrics()->m_dispTrimAboveExtraRows)
 		m_CenterY -= 8;
+}
+
+void GUIRepresentationDrawingPanel::NotChangingTheSelection() {
+	m_changingLeftUpCorner = false;
+	m_changingLeftDownCorner = false;
+	m_changingRightUpCorner = false;
+	m_changingRightDownCorner = false;
+	m_selectionChangingWidth = 0;
+	m_selectionChangingHeight = 0;
+}
+
+bool GUIRepresentationDrawingPanel::IsSelectionChanging() {
+	if (m_changingLeftUpCorner || m_changingLeftDownCorner || m_changingRightUpCorner || m_changingRightDownCorner)
+		return true;
+	else
+		return false;
 }
 
 wxString GUIRepresentationDrawingPanel::BreakTextLine(wxString text, int textBreakWidth, wxDC& dc) {

@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -50,10 +50,23 @@ private:
 	wxOverlay m_overlay;
 	int m_selectedObjectIndex; // the last selected (clicked) element
 	bool m_isDraggingObject;
+	bool m_isSelecting;
+	bool m_hasSelection;
 	wxCoord m_startDragX;
 	wxCoord m_startDragY;
 	wxCoord m_currentDragX;
 	wxCoord m_currentDragY;
+	wxRect m_selectionRect;
+	wxRect m_selectionRectLeftUpCorner;
+	wxRect m_selectionRectLeftDownCorner;
+	wxRect m_selectionRectRightUpCorner;
+	wxRect m_selectionRectRightDownCorner;
+	bool m_changingLeftUpCorner;
+	bool m_changingLeftDownCorner;
+	bool m_changingRightUpCorner;
+	bool m_changingRightDownCorner;
+	int m_selectionChangingWidth;
+	int m_selectionChangingHeight;
 
 	int m_HackY;
 	int m_EnclosureY;
@@ -85,6 +98,8 @@ private:
 	int GetCenterX();
 	int GetHackY();
 	void UpdateLayout();
+	void NotChangingTheSelection();
+	bool IsSelectionChanging();
 
 	void OnPaintEvent(wxPaintEvent& event);
 	void DoPaintNow();
@@ -95,6 +110,10 @@ private:
 	void OnLeftClick(wxMouseEvent& event);
 	void OnMouseMotion(wxMouseEvent& event);
 	void OnLeftRelease(wxMouseEvent& event);
+	void OnRightDown(wxMouseEvent& event);
+	void OnPopupMenuClick(wxCommandEvent& event);
+	void SelectContainedElements();
+	void SelectIntersectingElements();
 	void OnKeyboardInput(wxKeyEvent& event);
 	void OnKeyRelease(wxKeyEvent& event);
 	void OnPanelSize(wxSizeEvent& event);
