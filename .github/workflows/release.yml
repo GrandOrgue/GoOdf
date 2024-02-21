@@ -33,8 +33,8 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: GOODF-${{github.ref_name}}-linux
-        path: ${{github.workspace}}/build/GOODF*.tar.gz
+        name: GoOdf-${{github.ref_name}}-linux
+        path: ${{github.workspace}}/build/GoOdf*.tar.gz
 
   build-cross-windows:
     runs-on: ubuntu-20.04
@@ -79,8 +79,8 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: GOODF-${{github.ref_name}}-windows
-        path: ${{github.workspace}}/crossbuild/GOODF*.zip
+        name: GoOdf-${{github.ref_name}}-windows
+        path: ${{github.workspace}}/crossbuild/GoOdf*.zip
 
   release:
     needs: [ build-linux, build-cross-windows ]
@@ -91,11 +91,11 @@ jobs:
 
     - uses: actions/download-artifact@v3
       with:
-        name: GOODF-${{github.ref_name}}-linux
+        name: GoOdf-${{github.ref_name}}-linux
 
     - uses: actions/download-artifact@v3
       with:
-        name: GOODF-${{github.ref_name}}-windows
+        name: GoOdf-${{github.ref_name}}-windows
 
     - name: Remove Starting v From Tag
       id: remove_v
@@ -110,5 +110,5 @@ jobs:
         prerelease: false
         body: Relsease files created from GitHub action runners.
         files: |
-          GOODF-${{env.release_version}}-linux.x86_64.tar.gz
-          GOODF-${{env.release_version}}-windows.x86.zip
+          GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
+          GoOdf-${{env.release_version}}-windows.x86.zip

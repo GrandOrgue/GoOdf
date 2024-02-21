@@ -31,7 +31,7 @@ IMPLEMENT_APP(GOODF)
 
 bool GOODF::OnInit() {
 	// Create fullAppName with version from cmake
-	m_fullAppName = wxT("GOODF ");
+	m_fullAppName = wxT("GoOdf ");
 	m_fullAppName.Append(wxT(GOODF_VERSION));
 
 	// Create the frame window
@@ -46,7 +46,7 @@ bool GOODF::OnInit() {
 	// the help controller
 	wxFileSystem::AddHandler(new wxZipFSHandler);
 	m_helpController = new wxHtmlHelpController();
-	m_helpController->AddBook(wxFileName(ResourceDir + wxFILE_SEP_PATH + wxT("GOODF/help/help.zip")));
+	m_helpController->AddBook(wxFileName(ResourceDir + wxFILE_SEP_PATH + wxT("GoOdf/help/help.zip")));
 	m_helpController->SetFrameParameters(wxT("%s"), wxDefaultSize, wxDefaultPosition);
 
 	// Load icons
@@ -54,7 +54,7 @@ bool GOODF::OnInit() {
 	wxInitAllImageHandlers();
 	wxString iconPath = ResourceDir + wxFILE_SEP_PATH + wxT("icons") + wxFILE_SEP_PATH + wxT("hicolor");
 	wxString appsPath = wxT("apps");
-	wxString imgPath = appsPath + wxFILE_SEP_PATH + wxT("GOODF.png");
+	wxString imgPath = appsPath + wxFILE_SEP_PATH + wxT("GoOdf.png");
 	m_icons = wxIconBundle(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("16x16") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
 	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("24x24") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));
 	m_icons.AddIcon(wxIcon(iconPath + wxFILE_SEP_PATH + wxT("32x32") + wxFILE_SEP_PATH + imgPath, wxBITMAP_TYPE_PNG));

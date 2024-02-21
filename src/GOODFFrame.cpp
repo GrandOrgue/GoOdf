@@ -72,7 +72,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_organ = new Organ();
 	m_organHasBeenSaved = false;
 	m_enableTooltips = false;
-	m_config = new wxFileConfig(wxT("GOODF"));
+	m_config = new wxFileConfig(wxT("GoOdf"));
 	m_defaultOrganDirectory = wxEmptyString;
 	m_defaultCmbDirectory = wxEmptyString;
 
@@ -103,7 +103,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	// Add help menu items
 	m_helpMenu->Append(wxID_ABOUT, wxT("&About..."), wxT("Show about dialog"));
-	m_helpMenu->Append(wxID_HELP, wxT("&GOODF Help \tF1"), wxT("Show application help"));
+	m_helpMenu->Append(wxID_HELP, wxT("&GoOdf Help \tF1"), wxT("Show application help"));
 
 	// Create a menu bar and append the menus to it
 	m_menuBar = new wxMenuBar();
@@ -475,11 +475,11 @@ GOODFFrame::~GOODFFrame() {
 
 void GOODFFrame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxAboutDialogInfo info;
-	info.SetName(wxT("GOODF"));
+	info.SetName(wxT("GoOdf"));
 	info.SetVersion(wxT(GOODF_VERSION));
 	info.SetDescription(wxT("A software for creating and editing GrandOrgue ODFs"));
 	info.SetCopyright(wxT("Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)\nReleased under GNU GPLv3 licence"));
-	info.SetWebSite(wxT("https://github.com/larspalo/GOODF"));
+	info.SetWebSite(wxT("https://github.com/GrandOrgue/GoOdf"));
 
 	wxAboutBox(info);
 }
@@ -2688,6 +2688,7 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 		m_organPanel->setCurrentOrgan(m_organ);
 		m_organPanel->setOdfPath(wxEmptyString);
 		m_organPanel->setOdfName(wxEmptyString);
+		SetTitle(::wxGetApp().m_fullAppName);
 	}
 }
 

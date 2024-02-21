@@ -1,4 +1,4 @@
-# GOODF cmake build file
+# GoOdf cmake build file
 # Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@ cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and info
 project(
-  GOODF
-  VERSION 0.9.2
-  DESCRIPTION "GOODF - Software for creating and editing GrandOrgue ODFs"
+  GoOdf
+  VERSION 0.10.0
+  DESCRIPTION "GoOdf - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
 
