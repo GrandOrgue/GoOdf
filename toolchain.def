@@ -9,7 +9,7 @@ SET(CMAKE_RC_COMPILER x86_64-w64-mingw32-windres)
 SET(PKG_CONFIG_EXECUTABLE x86_64-w64-mingw32-pkg-config)
 
 # here is the target environment located
-SET(CMAKE_FIND_ROOT_PATH  /usr/x86_64-w64-mingw32)
+SET(CMAKE_FIND_ROOT_PATH  /usr/x86_64-w64-mingw32 /home/runner/work/GoOdf/GoOdf/wxCross)
 
 # adjust the default behaviour of the FIND_XXX() commands:
 # search headers and libraries in the target environment, search 

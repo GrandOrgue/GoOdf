@@ -42,16 +42,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache wxCrossbuild
+      id: cache-wxcross
+      uses: actions/cache@v4
+      with:
+        path: ${{github.workspace}}/wxCross
+        key: wxCrossbuild
+
+
     - name: Get dependencies
       run: sudo apt-get install -y wget build-essential cmake pkg-config g++-mingw-w64-x86-64 imagemagick
 
-    - name: Get wxWidgets
+    - name: Cross compile wxWidgets
+      if: steps.cache-wxcross.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/GrandOrgue/WxWidgetsCross/releases/download/3.2.3-1.go/wxwidgets3-mingw-w64_3.2.3-1.go_all.deb
-
-    - name: Install wxWidgets
-      run: |
-        sudo apt-get install -y ./wxwidgets3-mingw-w64_3.2.3-1.go_all.deb
+        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4.tar.bz2
+        tar -xf wxWidgets-3.2.4.tar.bz2
+        mkdir wxCross
+        cd wxWidgets-3.2.4
+        mkdir win-ur-static
+        cd win-ur-static
+        ../configure --host=x86_64-w64-mingw32 --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
+        make
+        make install
+        cd ..
+        cd ..
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/crossbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=toolchain.def
