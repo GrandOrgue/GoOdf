@@ -234,9 +234,9 @@ set(
   CPACK_PACKAGE_DESCRIPTION
   "${CMAKE_PROJECT_NAME}"
 )
-set(CPACK_PACKAGE_VERSION_MAJOR "${GOODF_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${GOODF_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION ${GOODF_VERSION})
+set(CPACK_PACKAGE_VERSION_MAJOR "${GoOdf_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${GoOdf_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION ${GoOdf_VERSION})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_PACKAGE_CONTACT "larspalo@yahoo.se")
@@ -245,7 +245,7 @@ set(CPACK_SOURCE_IGNORE_FILES ".gitignore" "/build/")
 if(WIN32)
   set(CPACK_SYSTEM_NAME "windows")
   set(CPACK_GENERATOR ZIP)
-  set(CMAKE_SYSTEM_PROCESSOR "x86")
+  set(CMAKE_SYSTEM_PROCESSOR "x86_64")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CPACK_SYSTEM_NAME "linux")
   set(CPACK_GENERATOR TGZ)
@@ -258,7 +258,7 @@ message(STATUS "
 ============================================================================
 CMake Generator            : ${CMAKE_GENERATOR}
 Project name               : ${CMAKE_PROJECT_NAME}
-Project version            : ${GOODF_VERSION}
+Project version            : ${GoOdf_VERSION}
 Build type                 : ${CMAKE_BUILD_TYPE}
 Install prefix             : ${CMAKE_INSTALL_PREFIX}
 Output directory           : ${CMAKE_BINARY_DIR}

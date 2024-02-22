@@ -31,7 +31,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: cpack
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: GoOdf-${{github.ref_name}}-linux
         path: ${{github.workspace}}/build/GoOdf*.tar.gz
@@ -42,30 +42,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Cache wxCrossbuild
-      id: cache-wxcross
-      uses: actions/cache@v3
-      with:
-        path: ${{github.workspace}}/wxCross
-        key: wxCrossbuild
-
     - name: Get dependencies
-      run: sudo apt-get install -y wget build-essential cmake pkg-config libwxgtk3.0-gtk3-dev gcc-mingw-w64-i686 g++-mingw-w64-i686 imagemagick
+      run: sudo apt-get install -y wget build-essential cmake pkg-config g++-mingw-w64-x86-64 imagemagick
 
-    - name: Cross compile wxWidgets
-      if: steps.cache-wxcross.outputs.cache-hit != 'true'
+    - name: Get wxWidgets
       run: |
-        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2.1/wxWidgets-3.2.2.1.tar.bz2
-        tar -xf wxWidgets-3.2.2.1.tar.bz2
-        mkdir wxCross
-        cd wxWidgets-3.2.2.1
-        mkdir win-ur-static
-        cd win-ur-static
-        ../configure --host=i686-w64-mingw32 --build=i686-linux --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
-        make
-        make install
-        cd ..
-        cd ..
+        wget https://github.com/GrandOrgue/WxWidgetsCross/releases/download/3.2.3-1.go/wxwidgets3-mingw-w64_3.2.3-1.go_all.deb
+
+    - name: Install wxWidgets
+      run: |
+        sudo apt-get install -y ./wxwidgets3-mingw-w64_3.2.3-1.go_all.deb
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/crossbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=toolchain.def
@@ -77,7 +63,7 @@ jobs:
       working-directory: ${{github.workspace}}/crossbuild
       run: cpack
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: GoOdf-${{github.ref_name}}-windows
         path: ${{github.workspace}}/crossbuild/GoOdf*.zip
@@ -89,11 +75,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: GoOdf-${{github.ref_name}}-linux
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: GoOdf-${{github.ref_name}}-windows
 
@@ -110,5 +96,5 @@ jobs:
         prerelease: false
         body: Release files created from GitHub action runners.
         files: |
-          GoOdf-${{github.ref_name}}-linux/GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
-          GoOdf-${{github.ref_name}}-windows/GoOdf-${{env.release_version}}-windows.x86.zip
+          GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
+          GoOdf-${{env.release_version}}-windows.x86_64.zip
