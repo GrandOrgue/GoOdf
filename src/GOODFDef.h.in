@@ -628,6 +628,6 @@ enum {
 };
 
 // Get version number from cmake
-#define GOODF_VERSION "@GOODF_VERSION@"
+#define GOODF_VERSION "@GoOdf_VERSION@"
 
 #endif
