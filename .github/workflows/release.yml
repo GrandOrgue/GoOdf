@@ -1,9 +1,6 @@
 name: Release
 
-on:
-  push:
-    tags:
-      - 'v*.*.*'
+on: [push]
 
 permissions:
   contents: write
@@ -19,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Get dependencies
-      run: sudo apt-get install -y build-essential cmake libwxgtk3.0-gtk3-dev imagemagick
+      run: ${{github.workspace}}/scripts/prepare-ubuntu.sh
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -36,40 +33,65 @@ jobs:
         name: GoOdf-${{github.ref_name}}-linux
         path: ${{github.workspace}}/build/GoOdf*.tar.gz
 
+  build-appimage:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Get dependencies
+      run: ${{github.workspace}}/scripts/prepare-ubuntu-appimage.sh
+
+    - name: Read version file
+      shell: bash
+      working-directory: ${{github.workspace}}
+      id: read_version
+      run: |
+        VERSION_TXT=$(< version.txt)
+        echo "app_version=${VERSION_TXT}" >> $GITHUB_ENV
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=/usr
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Install
+      working-directory: ${{github.workspace}}/build
+      run: make install DESTDIR=AppDir
+
+    - name: Create Appimage
+      working-directory: ${{github.workspace}}/build
+      run: |
+        echo "DEPLOY_GTK_VERSION=3" >> $GITHUB_ENV
+        echo "APPIMAGE_EXTRACT_AND_RUN=1" >> $GITHUB_ENV
+        linuxdeploy-x86_64.AppImage --appdir AppDir -e ./bin/GoOdf -d ./share/GoOdf/applications/GoOdf.desktop -i ./share/icons/hicolor/256x256/apps/GoOdf.png --plugin gtk
+        appimagetool-x86_64.AppImage --no-appstream AppDir GoOdf-${{env.app_version}}.x86_64.AppImage
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: GoOdf-${{github.ref_name}}-AppImage
+        path: ${{github.workspace}}/build/GoOdf*.AppImage
+
+
   build-cross-windows:
     runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Cache wxCrossbuild
-      id: cache-wxcross
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/wxCross
-        key: wxCrossbuild
-
-
     - name: Get dependencies
-      run: sudo apt-get install -y wget build-essential cmake pkg-config g++-mingw-w64-x86-64 imagemagick
+      run: ${{github.workspace}}/scripts/prepare-ubuntu-cross.sh
 
-    - name: Cross compile wxWidgets
-      if: steps.cache-wxcross.outputs.cache-hit != 'true'
+    - name: Get cross-compiled wxWidgets
       run: |
-        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4.tar.bz2
-        tar -xf wxWidgets-3.2.4.tar.bz2
-        mkdir wxCross
-        cd wxWidgets-3.2.4
-        mkdir win-ur-static
-        cd win-ur-static
-        ../configure --host=x86_64-w64-mingw32 --prefix=${{github.workspace}}/wxCross --enable-unicode --disable-shared
-        make
-        make install
-        cd ..
-        cd ..
+        wget https://github.com/larspalo/WxWidgetsCross/releases/download/3.2.3-2.go/wxwidgets3-mingw-w64-static_3.2.3-2.go_all.deb
+        sudo apt-get install -y ./wxwidgets3-mingw-w64-static_3.2.3-2.go_all.deb
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/crossbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=toolchain.def
+      run: cmake -B ${{github.workspace}}/crossbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/toolchain.def
 
     - name: Build
       run: cmake --build ${{github.workspace}}/crossbuild --config ${{env.BUILD_TYPE}}
@@ -84,7 +106,8 @@ jobs:
         path: ${{github.workspace}}/crossbuild/GoOdf*.zip
 
   release:
-    needs: [ build-linux, build-cross-windows ]
+    if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
+    needs: [ build-linux, build-appimage, build-cross-windows ]
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
@@ -93,6 +116,10 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: GoOdf-${{github.ref_name}}-linux
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: GoOdf-${{github.ref_name}}-AppImage
 
     - uses: actions/download-artifact@v4
       with:
@@ -112,4 +139,5 @@ jobs:
         body: Release files created from GitHub action runners.
         files: |
           GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
+          GoOdf-${{env.release_version}}.x86_64.AppImage
           GoOdf-${{env.release_version}}-windows.x86_64.zip
