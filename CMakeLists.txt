@@ -16,10 +16,18 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+# read PROGRAM_VERSION from file
+if(EXISTS "${CMAKE_SOURCE_DIR}/version.txt")
+  file(READ "${CMAKE_SOURCE_DIR}/version.txt" PROGRAM_VERSION)
+  string(STRIP "${PROGRAM_VERSION}" PROGRAM_VERSION)
+else()
+  message(FATAL_ERROR "File ${CMAKE_SOURCE_DIR}/version.txt not found")
+endif()
+
 # Set the project name and info
 project(
   GoOdf
-  VERSION 0.10.0
+  VERSION "${PROGRAM_VERSION}"
   DESCRIPTION "GoOdf - Software for creating and editing GrandOrgue ODFs"
   LANGUAGES CXX C
 )
