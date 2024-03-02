@@ -527,7 +527,7 @@ void ManualPanel::OnPedalCheckbox(wxCommandEvent& WXUNUSED(event)) {
 		m_manual->setIsPedal(true);
 	else
 		m_manual->setIsPedal(false);
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	::wxGetApp().m_frame->m_organ->organElementHasChanged();
 }
 
 void ManualPanel::OnLogicalKeysSpin(wxSpinEvent& WXUNUSED(event)) {

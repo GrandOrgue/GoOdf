@@ -47,5 +47,5 @@ bool GUIDivisionalCoupler::isReferencing(DivisionalCoupler *divCplr) {
 }
 
 void GUIDivisionalCoupler::updateDisplayName() {
-	setDisplayName(m_divCoupler->getName());
+	setDisplayName(m_divCoupler->getName() + wxT(" (Divisional coupler)"));
 }

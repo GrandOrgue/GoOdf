@@ -54,5 +54,5 @@ bool GUISwitch::isReferencing(GoSwitch *sw) {
 
 void GUISwitch::updateDisplayName() {
 	if (m_switch)
-		setDisplayName(m_switch->getName());
+		setDisplayName(m_switch->getName() + wxT(" (Switch[") + GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switch)) + wxT("])"));
 }

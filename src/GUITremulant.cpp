@@ -51,5 +51,5 @@ bool GUITremulant::isReferencing(Tremulant *tremulant) {
 }
 
 void GUITremulant::updateDisplayName() {
-	setDisplayName(m_tremulant->getName());
+	setDisplayName(m_tremulant->getName() + wxT(" (Tremulant[") + GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(m_tremulant)) + wxT("])"));
 }

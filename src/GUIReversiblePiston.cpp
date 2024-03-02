@@ -48,5 +48,5 @@ bool GUIReversiblePiston::isReferencing(ReversiblePiston *reversiblePiston) {
 }
 
 void GUIReversiblePiston::updateDisplayName() {
-	setDisplayName(m_reversiblePiston->getName());
+	setDisplayName(m_reversiblePiston->getName() + wxT(" (Reversible piston)"));
 }

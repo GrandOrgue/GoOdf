@@ -376,7 +376,7 @@ bool GUIManual::isReferencing(Manual *man) {
 }
 
 void GUIManual::updateDisplayName() {
-	setDisplayName(m_manual->getName());
+	setDisplayName(m_manual->getName() + wxT(" (Manual[") + GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganManual(m_manual)) + wxT("])"));
 }
 
 Manual* GUIManual::getManual() {

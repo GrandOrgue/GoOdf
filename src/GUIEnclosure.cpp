@@ -302,7 +302,7 @@ bool GUIEnclosure::isReferencing(Enclosure *enclosure) {
 
 void GUIEnclosure::updateDisplayName() {
 	if (m_enclosure)
-		setDisplayName(m_enclosure->getName());
+		setDisplayName(m_enclosure->getName() + wxT(" (Enclosure)"));
 }
 
 wxBitmap GUIEnclosure::getBitmap() {

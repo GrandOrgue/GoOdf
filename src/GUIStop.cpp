@@ -50,5 +50,5 @@ bool GUIStop::isReferencing(Stop *stop) {
 }
 
 void GUIStop::updateDisplayName() {
-	setDisplayName(m_stop->getName());
+	setDisplayName(m_stop->getName() + wxT(" (Stop in ") + m_stop->getOwningManual()->getName() + wxT(")"));
 }

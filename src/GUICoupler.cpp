@@ -50,5 +50,5 @@ bool GUICoupler::isReferencing(Coupler *cplr) {
 }
 
 void GUICoupler::updateDisplayName() {
-	setDisplayName(m_coupler->getName());
+	setDisplayName(m_coupler->getName() + wxT(" (Coupler in ") + m_coupler->getOwningManual()->getName() + wxT(")"));
 }

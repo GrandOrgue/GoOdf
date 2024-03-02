@@ -54,5 +54,5 @@ bool GUIDivisional::isReferencing(Divisional *divisional) {
 
 void GUIDivisional::updateDisplayName() {
 	if (m_divisional)
-		setDisplayName(m_divisional->getName());
+		setDisplayName(m_divisional->getName() + wxT(" (Divisional in ") + m_divisional->getOwningManual()->getName() + wxT(")"));
 }
