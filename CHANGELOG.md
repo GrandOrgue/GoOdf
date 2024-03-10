@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Click/drag adjustment within selection rectangle should not select/change underlying elements.
+- Text rendering on enclosure GUI element.
 
 ## [0.10.0] - 2024-02-22
 

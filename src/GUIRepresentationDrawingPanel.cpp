@@ -814,7 +814,12 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 						encElement->getTextRectWidth(),
 						encElement->getTextRectHeight()
 					);
-					dc.DrawLabel(BreakTextLine(encElement->getElementName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
+					wxString textToDisplay;
+					if (encElement->getDispLabelText() != wxEmptyString)
+						textToDisplay = encElement->getDispLabelText();
+					else
+						textToDisplay = encElement->getElementName();
+					dc.DrawLabel(BreakTextLine(textToDisplay, encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
 				}
 				if (m_isFirstRender) {
 					GUI_OBJECT theEnclosure;
