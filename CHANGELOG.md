@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AppImage build is now available.
 - Show what element actually is represented by each Gui Element.
 
+### Fixed
+
+- Click/drag adjustment within selection rectangle should not select/change underlying elements.
+
 ## [0.10.0] - 2024-02-22
 
 ### Added

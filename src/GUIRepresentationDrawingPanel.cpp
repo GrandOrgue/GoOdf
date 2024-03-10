@@ -89,7 +89,9 @@ void GUIRepresentationDrawingPanel::OnLeftClick(wxMouseEvent& event) {
 		m_startDragY = yPos;
 		m_selectedObjectIndex = -1;
 		for (int i = (int) m_guiObjects.size() - 1; i >= 0; i--) {
-			if (m_guiObjects[i].boundingRect.Contains(xPos, yPos)) {
+			if ((m_guiObjects[i].boundingRect.Contains(xPos, yPos) && !m_hasSelection) ||
+				(m_guiObjects[i].boundingRect.Contains(xPos, yPos) && !m_selectionRect.Contains(xPos, yPos))
+			) {
 				m_selectedObjectIndex = i;
 				m_guiObjects[i].isSelected = true;
 			}
