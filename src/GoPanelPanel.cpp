@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -406,71 +406,71 @@ void GoPanelPanel::OnElementChoiceBtn(wxCommandEvent& WXUNUSED(event)) {
 				if (organElement.first == wxT("Manual")) {
 					GUIElement *choice = new GUIManual(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganManualAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Stop")) {
 					GUIElement *choice = new GUIStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganStopAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Coupler")) {
 					GUIElement *choice = new GUICoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Divisional")) {
 					GUIElement *choice = new GUIDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Enclosure")) {
 					GUIElement *choice = new GUIEnclosure(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Tremulant")) {
 					GUIElement *choice = new GUITremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("Switch")) {
 					GUIElement *choice = new GUISwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("ReversiblePiston")) {
 					GUIElement *choice = new GUIReversiblePiston(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getReversiblePistonAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("DivisionalCoupler")) {
 					GUIElement *choice = new GUIDivisionalCoupler(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganDivisionalCouplerAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				} else if (organElement.first == wxT("General")) {
 					GUIElement *choice = new GUIGeneral(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second));
 					choice->setOwningPanel(m_panel);
-					choice->setDisplayName(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+					choice->updateDisplayName();
 					choice->setDefaultFont(m_panel->getDisplayMetrics()->m_dispControlLabelFont);
 					m_panel->addGuiElement(choice);
-					::wxGetApp().m_frame->AddGuiElementToTree(::wxGetApp().m_frame->m_organ->getOrganGeneralAt(organElement.second)->getName());
+					::wxGetApp().m_frame->AddGuiElementToTree(choice->getDisplayName());
 				}
 			}
 		} else if (m_setterElementsChoice->GetSelection() != wxNOT_FOUND) {

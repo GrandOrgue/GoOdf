@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -55,4 +55,11 @@ bool GUISwitch::isReferencing(GoSwitch *sw) {
 void GUISwitch::updateDisplayName() {
 	if (m_switch)
 		setDisplayName(m_switch->getName() + wxT(" (Switch[") + GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganSwitch(m_switch)) + wxT("])"));
+}
+
+wxString GUISwitch::getElementName() {
+	if (m_switch)
+		return m_switch->getName();
+	else
+		return getDisplayName();
 }

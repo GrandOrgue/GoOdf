@@ -746,7 +746,7 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 					if (btnElement->getDispLabelText() != wxEmptyString)
 						textToDisplay = btnElement->getDispLabelText();
 					else
-						textToDisplay = btnElement->getDisplayName();
+						textToDisplay = btnElement->getElementName();
 					if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
 						wxString combinationNbr = textToDisplay.Mid(19);
 						long theNbr;
@@ -814,7 +814,7 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 						encElement->getTextRectWidth(),
 						encElement->getTextRectHeight()
 					);
-					dc.DrawLabel(BreakTextLine(encElement->getDisplayName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
+					dc.DrawLabel(BreakTextLine(encElement->getElementName(), encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
 				}
 				if (m_isFirstRender) {
 					GUI_OBJECT theEnclosure;

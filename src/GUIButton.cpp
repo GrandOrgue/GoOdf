@@ -333,6 +333,10 @@ wxBitmap GUIButton::getBitmap() {
 	}
 }
 
+wxString GUIButton::getElementName() {
+	return wxEmptyString;
+}
+
 int GUIButton::getDispButtonCol() const {
 	return m_dispButtonCol;
 }

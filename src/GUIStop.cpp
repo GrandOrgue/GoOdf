@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -51,4 +51,8 @@ bool GUIStop::isReferencing(Stop *stop) {
 
 void GUIStop::updateDisplayName() {
 	setDisplayName(m_stop->getName() + wxT(" (Stop in ") + m_stop->getOwningManual()->getName() + wxT(")"));
+}
+
+wxString GUIStop::getElementName() {
+	return m_stop->getName();
 }

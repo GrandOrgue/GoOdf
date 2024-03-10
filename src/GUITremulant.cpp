@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -52,4 +52,8 @@ bool GUITremulant::isReferencing(Tremulant *tremulant) {
 
 void GUITremulant::updateDisplayName() {
 	setDisplayName(m_tremulant->getName() + wxT(" (Tremulant[") + GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganTremulant(m_tremulant)) + wxT("])"));
+}
+
+wxString GUITremulant::getElementName() {
+	return m_tremulant->getName();
 }
