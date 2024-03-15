@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -51,10 +51,35 @@ public:
 	wxString getName();
 	void setName(wxString name);
 
+	float getAmplitudeLevel();
+	void setAmplitudeLevel(float amplitudeLevel);
+	float getGain();
+	void setGain(float gain);
+	float getPitchTuning();
+	void setPitchTuning(float pitchTuning);
+	unsigned getTrackerDelay();
+	void setTrackerDelay(unsigned trackerDelay);
+	float getPitchCorrection();
+	void setPitchCorrection(float pitchCorrection);
+	bool getIsPercussive();
+	void setIsPercussive(bool percussive);
+	bool getHasIndependentRelease();
+	void setHasIndependentRelease(bool independentRel);
+	bool isPipesOnThisWindchest();
+	void applyPercussiveRecursively();
+	void applyHasIndependentReleaseRecursively();
+
 private:
 	wxString name;
 	std::list<Enclosure *> m_Enclosures;
 	std::list<Tremulant *> m_Tremulants;
+	float m_amplitudeLevel;
+	float m_gain;
+	float m_pitchTuning;
+	float m_pitchCorrection;
+	unsigned m_trackerDelay;
+	bool m_isPercussive;
+	bool m_hasIndependentRelease;
 };
 
 #endif

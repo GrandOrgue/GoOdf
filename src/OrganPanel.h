@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General wxLicense for more details.
  *
  * You should have received a copy of the GNU General wxLicense
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -69,6 +69,10 @@ private:
 	wxSpinCtrlDouble *m_pitchTuningSpin;
 	wxSpinCtrl *m_trackerDelaySpin;
 	wxSpinCtrlDouble *m_pitchCorrectionSpin;
+	wxRadioButton *m_isPercussiveYes;
+	wxRadioButton *m_isPercussiveNo;
+	wxRadioButton *m_hasIndependentReleaseYes;
+	wxRadioButton *m_hasIndependentReleaseNo;
 	wxButton *m_newOrganBtn;
 
 	void getDataFromOrgan();
@@ -92,6 +96,8 @@ private:
 	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
 	void OnTrackerDelaySpin(wxSpinEvent& event);
 	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
+	void OnPercussiveSelection(wxCommandEvent& event);
+	void OnIndependentReleaseSelection(wxCommandEvent& event);
 	void OnNewOrganBtn(wxCommandEvent& event);
 };
 

@@ -9,7 +9,7 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -23,6 +23,7 @@
 
 Pipe::Pipe() {
 	isPercussive = false;
+	hasIndependentRelease = false;
 	amplitudeLevel = 100;
 	gain = 0;
 	pitchTuning = 0;
@@ -39,6 +40,7 @@ Pipe::Pipe() {
 
 Pipe::Pipe(const Pipe& p) {
 	isPercussive = p.isPercussive;
+	hasIndependentRelease = p.hasIndependentRelease;
 	amplitudeLevel = p.amplitudeLevel;
 	gain = p.gain;
 	pitchTuning = p.pitchTuning;
@@ -73,9 +75,15 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 		outFile->AddLine(fullLine);
 
 		if (isPercussive != parent->isPercussive()) {
-			if (isPercussive)
+			if (isPercussive) {
 				outFile->AddLine(pipeNr + wxT("Percussive=Y"));
-			else
+				if (hasIndependentRelease != parent->isIndependentRelease()) {
+					if (hasIndependentRelease)
+						outFile->AddLine(pipeNr + wxT("HasIndependentRelease=Y"));
+					else
+						outFile->AddLine(pipeNr + wxT("HasIndependentRelease=N"));
+				}
+			} else
 				outFile->AddLine(pipeNr + wxT("Percussive=N"));
 		}
 		if (amplitudeLevel != 100)
@@ -132,6 +140,8 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	wxString cfgBoolValue = cfg->Read(pipeNr + wxT("Percussive"), wxEmptyString);
 	isPercussive = GOODF_functions::parseBoolean(cfgBoolValue, parent->isPercussive());
+	cfgBoolValue = cfg->Read(pipeNr + wxT("HasIndependentRelease"), wxEmptyString);
+	hasIndependentRelease = GOODF_functions::parseBoolean(cfgBoolValue, parent->isIndependentRelease());
 	float ampLvl = static_cast<float>(cfg->ReadDouble(pipeNr + wxT("AmplitudeLevel"), 100.0f));
 	if (ampLvl >= 0 && ampLvl <= 1000) {
 		amplitudeLevel = ampLvl;
@@ -193,8 +203,10 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	}
 
 	int nbrExtraRel = static_cast<int>(cfg->ReadLong(pipeNr + wxT("ReleaseCount"), 0));
-	// Releases should only exist for pipes that are not percussive!
-	if (nbrExtraRel > 0 && nbrExtraRel < 101 && !isPercussive) {
+	// Releases should only exist for pipes that are not percussive without independent release!
+	if ((nbrExtraRel > 0 && nbrExtraRel < 101 && !isPercussive) ||
+		(nbrExtraRel > 0 && nbrExtraRel < 101 && isPercussive && hasIndependentRelease)
+		) {
 		for (int rel = 0; rel < nbrExtraRel; rel++) {
 			wxString relStr = pipeNr + wxT("Release") + GOODF_functions::number_format(rel + 1);
 			wxString relPath = cfg->Read(relStr, wxEmptyString);
@@ -350,7 +362,9 @@ void Pipe::writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr) {
 
 void Pipe::writeAdditionalReleases(wxTextFile *outFile, wxString pipeNr) {
 	// Deal with possible additional releases if not a percussive pipe
-	if (!m_releases.empty() && !isPercussive) {
+	if ((!m_releases.empty() && !isPercussive) ||
+		(!m_releases.empty() && isPercussive && hasIndependentRelease)
+		) {
 		unsigned extraReleases = m_releases.size();
 		outFile->AddLine(pipeNr + wxT("ReleaseCount=") + wxString::Format(wxT("%u"), extraReleases));
 		unsigned k = 0;
@@ -457,5 +471,18 @@ void Pipe::updateRelativePaths() {
 	}
 	for (Release& r : m_releases) {
 		r.fileName = GOODF_functions::removeBaseOdfPath(r.fullPath);
+	}
+}
+
+bool Pipe::isIndependentRelease() {
+	return hasIndependentRelease;
+}
+
+void Pipe::setIndependentRelease(bool independent) {
+	this->hasIndependentRelease = independent;
+
+	if (!independent && isPercussive) {
+		if (!m_releases.empty())
+			m_releases.clear();
 	}
 }

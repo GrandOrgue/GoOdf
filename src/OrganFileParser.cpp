@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -169,6 +169,12 @@ void OrganFileParser::parseOrganSection() {
 	long trackerDelay = m_organFile->ReadLong("TrackerDelay", 0);
 	if (trackerDelay >= 0 && trackerDelay <= 10000) {
 		m_organ->setTrackerDelay(static_cast<unsigned>(trackerDelay));
+	}
+	cfgBoolValue = m_organFile->Read("Percussive", wxEmptyString);
+	m_organ->setIsPercussive(GOODF_functions::parseBoolean(cfgBoolValue, false));
+	if (m_organ->getIsPercussive()) {
+		cfgBoolValue = m_organFile->Read("HasIndependentRelease", wxEmptyString);
+		m_organ->setHasIndependentRelease(GOODF_functions::parseBoolean(cfgBoolValue, false));
 	}
 	cfgBoolValue = m_organFile->Read("HasPedals", wxEmptyString);
 	m_organ->setHasPedals(GOODF_functions::parseBoolean(cfgBoolValue, false), true);

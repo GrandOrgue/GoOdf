@@ -9,7 +9,7 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -31,6 +31,8 @@ BEGIN_EVENT_TABLE(PipeDialog, wxDialog)
 	EVT_BUTTON(ID_PIPE_DIALOG_NEXT_BTN, PipeDialog::OnNextPipeBtn)
 	EVT_RADIOBUTTON(ID_PIPE_DIALOG_PERCUSSIVE_YES, PipeDialog::OnPercussiveSelection)
 	EVT_RADIOBUTTON(ID_PIPE_DIALOG_PERCUSSIVE_NO, PipeDialog::OnPercussiveSelection)
+	EVT_RADIOBUTTON(ID_PIPE_INDEPENDENT_RELEASE_YES, PipeDialog::OnIndependentReleaseSelection)
+	EVT_RADIOBUTTON(ID_PIPE_INDEPENDENT_RELEASE_NO, PipeDialog::OnIndependentReleaseSelection)
 	EVT_SPINCTRL(ID_PIPE_DIALOG_HARMONIC_SPIN, PipeDialog::OnHarmonicNbrSpin)
 	EVT_SPINCTRL(ID_PIPE_DIALOG_MIDI_NOTE_SPIN, PipeDialog::OnMidiNoteSpin)
 	EVT_SPINCTRLDOUBLE(ID_PIPE_DIALOG_PITCH_FRACTION_SPIN, PipeDialog::OnMidiPitchFractionSpin)
@@ -170,6 +172,32 @@ void PipeDialog::CreateControls() {
 	);
 	secondRow->Add(m_isPercussiveNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_isPercussiveNo->SetValue(true);
+	secondRow->AddStretchSpacer();
+	wxStaticText *independentReleaseText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Independent release: ")
+	);
+	secondRow->Add(independentReleaseText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseYes = new wxRadioButton(
+		this,
+		ID_PIPE_INDEPENDENT_RELEASE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_hasIndependentReleaseYes->SetValue(false);
+	secondRow->Add(m_hasIndependentReleaseYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo = new wxRadioButton(
+		this,
+		ID_PIPE_INDEPENDENT_RELEASE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	secondRow->Add(m_hasIndependentReleaseNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo->SetValue(true);
 	secondRow->AddStretchSpacer();
 	wxStaticText *acceptRetuningText = new wxStaticText (
 		this,
@@ -512,8 +540,24 @@ void PipeDialog::OnNextPipeBtn(wxCommandEvent& WXUNUSED(event)) {
 void PipeDialog::OnPercussiveSelection(wxCommandEvent& event) {
 	if (event.GetId() == ID_PIPE_DIALOG_PERCUSSIVE_YES) {
 		m_currentPipe->isPercussive = true;
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
 	} else {
 		m_currentPipe->isPercussive = false;
+		// HasIndependentRelease requires that Percussive=Y
+		m_currentPipe->setIndependentRelease(false);
+		m_hasIndependentReleaseNo->SetValue(true);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
+	}
+	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+void PipeDialog::OnIndependentReleaseSelection(wxCommandEvent& event) {
+	if (event.GetId() == ID_PIPE_INDEPENDENT_RELEASE_YES) {
+		m_currentPipe->setIndependentRelease(true);
+	} else {
+		m_currentPipe->setIndependentRelease(false);
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -594,12 +638,21 @@ void PipeDialog::SetButtonState() {
 
 void PipeDialog::TransferPipeValuesToWindow() {
 	m_pipeLabel->SetLabel(wxString::Format(wxT("Pipe%s"), GOODF_functions::number_format(m_selectedPipeIndex + 1)));
+	if (m_currentPipe->hasIndependentRelease) {
+		m_hasIndependentReleaseYes->SetValue(true);
+	} else {
+		m_hasIndependentReleaseNo->SetValue(true);
+	}
 	if (m_currentPipe->isPercussive) {
 		m_isPercussiveYes->SetValue(true);
-		m_isPercussiveNo->SetValue(false);
+		// m_isPercussiveNo->SetValue(false);
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
 	} else {
-		m_isPercussiveYes->SetValue(false);
+		// m_isPercussiveYes->SetValue(false);
 		m_isPercussiveNo->SetValue(true);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
 	}
 	m_harmonicNbrSpin->SetValue(m_currentPipe->harmonicNumber);
 	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_currentPipe->harmonicNumber));
@@ -655,6 +708,7 @@ void PipeDialog::OnCopyPropertiesBtn(wxCommandEvent& WXUNUSED(event)) {
 		pipe->acceptsRetuning = m_currentPipe->acceptsRetuning;
 		pipe->harmonicNumber = m_currentPipe->harmonicNumber;
 		pipe->isPercussive = m_currentPipe->isPercussive;
+		pipe->hasIndependentRelease = m_currentPipe->hasIndependentRelease;
 		pipe->maxVelocityVolume = m_currentPipe->maxVelocityVolume;
 		pipe->midiKeyNumber = m_currentPipe->midiKeyNumber;
 		pipe->midiPitchFraction = m_currentPipe->midiPitchFraction;

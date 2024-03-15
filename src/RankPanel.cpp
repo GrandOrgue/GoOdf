@@ -9,7 +9,7 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -50,6 +50,8 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_SPINCTRLDOUBLE(ID_RANK_PITCH_CORR_SPIN, RankPanel::OnPitchCorrectionSpin)
 	EVT_RADIOBUTTON(ID_RANK_PERCUSSIVE_YES, RankPanel::OnPercussiveSelection)
 	EVT_RADIOBUTTON(ID_RANK_PERCUSSIVE_NO, RankPanel::OnPercussiveSelection)
+	EVT_RADIOBUTTON(ID_RANK_INDEPENDENT_RELEASE_YES, RankPanel::OnIndependentReleaseSelection)
+	EVT_RADIOBUTTON(ID_RANK_INDEPENDENT_RELEASE_NO, RankPanel::OnIndependentReleaseSelection)
 	EVT_SPINCTRLDOUBLE(ID_RANK_MIN_VEL_VOL_SPIN, RankPanel::OnMinVelocitySpin)
 	EVT_SPINCTRLDOUBLE(ID_RANK_MAX_VEL_VOL_SPIN, RankPanel::OnMaxVelocitySpin)
 	EVT_RADIOBUTTON(ID_RANK_ACC_RETUNING_YES, RankPanel::OnRetuningSelection)
@@ -381,6 +383,32 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	sixthRow->Add(m_isPercussiveNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_isPercussiveNo->SetValue(true);
 	sixthRow->AddStretchSpacer();
+	wxStaticText *independentReleaseText = new wxStaticText (
+		this,
+		wxID_STATIC,
+		wxT("Independent release: ")
+	);
+	sixthRow->Add(independentReleaseText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseYes = new wxRadioButton(
+		this,
+		ID_RANK_INDEPENDENT_RELEASE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	m_hasIndependentReleaseYes->SetValue(false);
+	sixthRow->Add(m_hasIndependentReleaseYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo = new wxRadioButton(
+		this,
+		ID_RANK_INDEPENDENT_RELEASE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	sixthRow->Add(m_hasIndependentReleaseNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo->SetValue(true);
+	sixthRow->AddStretchSpacer();
 	wxStaticText *acceptsRetuningText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -588,12 +616,21 @@ void RankPanel::setRank(Rank *rank) {
 	m_harmonicNumberSpin->SetValue(m_rank->getHarmonicNumber());
 	m_calculatedLength->SetLabelText(GOODF_functions::getFootLengthSize(m_rank->getHarmonicNumber()));
 	m_pitchCorrectionSpin->SetValue(m_rank->getPitchCorrection());
+	if (m_rank->isIndependentRelease()) {
+		m_hasIndependentReleaseYes->SetValue(true);
+	} else {
+		m_hasIndependentReleaseNo->SetValue(true);
+	}
 	if (m_rank->isPercussive()) {
 		m_isPercussiveYes->SetValue(true);
-		m_isPercussiveNo->SetValue(false);
+		// m_isPercussiveNo->SetValue(false);
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
 	} else {
 		m_isPercussiveNo->SetValue(true);
-		m_isPercussiveYes->SetValue(false);
+		// m_isPercussiveYes->SetValue(false);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
 	}
 	m_minVelocityVolumeSpin->SetValue(m_rank->getMinVelocityVolume());
 	m_maxVelocityVolumeSpin->SetValue(m_rank->getMaxVelocityVolume());
@@ -628,8 +665,10 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_harmonicNumberSpin->SetToolTip(wxT("This value together with MIDI note and PitchFraction affects the automatic re-tuning in different temperaments."));
 		m_pitchCorrectionSpin->SetToolTip(wxT("Adjust the tuning in other temperaments than Original with this value."));
 		m_windchestChoice->SetToolTip(wxT("Place the rank on a windchest here."));
-		m_isPercussiveYes->SetToolTip(wxT("A percussive rank has samples that is played once from start to end."));
+		m_isPercussiveYes->SetToolTip(wxT("A percussive rank has attack samples that is played once from start to end."));
 		m_isPercussiveNo->SetToolTip(wxT("A non-percussive rank has samples with loops and release(s)."));
+		m_hasIndependentReleaseYes->SetToolTip(wxT("Requires that Percussive is set to yes. When this also is set to yes, percussive pipes should now have separately defined releases that are played independently of the attacks. The value can be inherited down to any [Pipe] in this rank."));
+		m_hasIndependentReleaseNo->SetToolTip(wxT("Percussive pipes are played 'as is' without any loop or release handling. The value can be inherited down to any [Pipe] in this rank."));
 		m_minVelocityVolumeSpin->SetToolTip(wxT("If the rank should be velocity sensitive this value should be something else than 100 and decide the lower range."));
 		m_maxVelocityVolumeSpin->SetToolTip(wxT("If the rank should be velocity sensitive this value should be something else than 100 and decide the upper range."));
 		m_acceptsRetuningYes->SetToolTip(wxT("Enable automatic re-tuning when changing temperaments."));
@@ -658,6 +697,8 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_windchestChoice->SetToolTip(wxEmptyString);
 		m_isPercussiveYes->SetToolTip(wxEmptyString);
 		m_isPercussiveNo->SetToolTip(wxEmptyString);
+		m_hasIndependentReleaseYes->SetToolTip(wxEmptyString);
+		m_hasIndependentReleaseNo->SetToolTip(wxEmptyString);
 		m_minVelocityVolumeSpin->SetToolTip(wxEmptyString);
 		m_maxVelocityVolumeSpin->SetToolTip(wxEmptyString);
 		m_acceptsRetuningYes->SetToolTip(wxEmptyString);
@@ -739,6 +780,48 @@ void RankPanel::OnWindchestChoice(wxCommandEvent& WXUNUSED(event)) {
 	if (m_windchestChoice->GetSelection() != wxNOT_FOUND) {
 		unsigned selectedIndex = m_windchestChoice->GetSelection();
 		m_rank->setWindchest(::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(selectedIndex));
+
+		// Should Percussive and HasIndependentRelease values be applied to the rank recursively from the windchest?
+		// Only bother to ask if Percussive for the windchest is set to true
+		if (m_rank->getWindchest()->getIsPercussive()) {
+			wxString windchestGrp = wxString::Format(wxT("[WindchestGroup%0.3d] with name "), selectedIndex + 1);
+			wxString windchestName = m_rank->getWindchest()->getName();
+			wxString wPercussive = wxT(" has Percussive=");
+			if (m_rank->getWindchest()->getIsPercussive())
+				wPercussive += wxT("Y");
+			else
+				wPercussive += wxT("N");
+			wxString wIndepRel = wxT(" and HasIndependentRelease=");
+			if (m_rank->getWindchest()->getHasIndependentRelease())
+				wIndepRel += wxT("Y");
+			else
+				wIndepRel += wxT("N");
+			wxString question = wxT("\n\nDo you want to apply these values to this rank and it's pipes?");
+			wxString fullText = windchestGrp + windchestName + wPercussive + wIndepRel + question;
+			wxMessageDialog msg(this, fullText, wxT("Apply windchest values recursively?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply values to rank and all pipes of the rank
+				bool percussiveValue = m_rank->getWindchest()->getIsPercussive();
+				bool indepRelValue = m_rank->getWindchest()->getHasIndependentRelease();
+				m_rank->setPercussive(percussiveValue);
+				m_rank->setIndependentRelease(indepRelValue);
+				for (Pipe &p : m_rank->m_pipes) {
+					p.isPercussive = percussiveValue;
+					p.setIndependentRelease(indepRelValue);
+				}
+
+				// now the panel radiobuttons should also be updated
+				if (m_rank->isPercussive())
+					m_isPercussiveYes->SetValue(true);
+				else
+					m_isPercussiveNo->SetValue(true);
+				if (m_rank->isIndependentRelease())
+					m_hasIndependentReleaseYes->SetValue(true);
+				else
+					m_hasIndependentReleaseNo->SetValue(true);
+			}
+		}
+
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
 }
@@ -885,13 +968,81 @@ void RankPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 
 void RankPanel::OnPercussiveSelection(wxCommandEvent& event) {
 	if (event.GetId() == ID_RANK_PERCUSSIVE_YES) {
-
 		m_rank->setPercussive(true);
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
+
+		if (!m_rank->hasOnlyDummyPipes()) {
+			// ask if this should be applied to existing pipes
+			wxMessageDialog msg(this, wxT("Do you want the Percussive value to be applied recursively to existing pipes?"), wxT("Apply to existing pipes?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply Percussive=Y value to all pipes of the rank
+				for (Pipe &p : m_rank->m_pipes) {
+					p.isPercussive = true;
+				}
+			}
+
+			// a purely percussive rank should not have any releases!
+			for (Pipe &p : m_rank->m_pipes) {
+
+				if (p.isPercussive && !p.hasIndependentRelease) {
+					if (!p.m_releases.empty())
+						p.m_releases.clear();
+				}
+			}
+		}
 
 	} else {
-
 		m_rank->setPercussive(false);
+		// HasIndependentRelease requires that Percussive=Y
+		m_rank->setIndependentRelease(false);
+		m_hasIndependentReleaseNo->SetValue(true);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
 
+		if (!m_rank->hasOnlyDummyPipes()) {
+			// ask if this should be applied to existing pipes
+			wxMessageDialog msg(this, wxT("Do you want the Percussive (and also HasIndependentRelease) value to be applied recursively to existing pipes?"), wxT("Apply to existing pipes?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply false value for all pipes of the rank
+				for (Pipe &p : m_rank->m_pipes) {
+					p.isPercussive = false;
+					p.setIndependentRelease(false);
+				}
+			}
+		}
+	}
+	RebuildPipeTree();
+	UpdatePipeTree();
+	::wxGetApp().m_frame->m_organ->setModified(true);
+}
+
+void RankPanel::OnIndependentReleaseSelection(wxCommandEvent& event) {
+	if (event.GetId() == ID_RANK_INDEPENDENT_RELEASE_YES) {
+		m_rank->setIndependentRelease(true);
+
+		if (!m_rank->hasOnlyDummyPipes()) {
+			// ask if this should be applied to existing pipes
+			wxMessageDialog msg(this, wxT("Do you want the HasIndependentRelease value to be applied recursively to existing pipes?"), wxT("Apply to existing pipes?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply Percussive=Y value to all pipes of the rank
+				for (Pipe &p : m_rank->m_pipes) {
+					p.setIndependentRelease(true);
+				}
+			}
+		}
+	} else {
+		m_rank->setIndependentRelease(false);
+		if (!m_rank->hasOnlyDummyPipes()) {
+			// ask if this should be applied to existing pipes
+			wxMessageDialog msg(this, wxT("Do you want the HasIndependentRelease value to be applied recursively to existing pipes?"), wxT("Apply to existing pipes?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply false value for all pipes of the rank
+				for (Pipe &p : m_rank->m_pipes) {
+					p.setIndependentRelease(false);
+				}
+			}
+		}
 	}
 	RebuildPipeTree();
 	UpdatePipeTree();
@@ -1010,7 +1161,11 @@ void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 	if (m_pipeTreeCtrl->GetItemParent(selectedItem) == m_tree_rank_root) {
 		// for a pipe selection
 		mnu.Append(ID_PIPE_MENU_ADD_ATTACK, "Add new attack from...\tCtrl+A");
-		mnu.Append(ID_PIPE_MENU_ADD_RELEASE, "Add new release from...\tCtrl+R");
+		if (!m_rank->getPipeAt(GetSelectedItemIndexRelativeParent())->isPercussive ||
+			(m_rank->getPipeAt(GetSelectedItemIndexRelativeParent())->isPercussive && m_rank->getPipeAt(GetSelectedItemIndexRelativeParent())->hasIndependentRelease)
+		) {
+			mnu.Append(ID_PIPE_MENU_ADD_RELEASE, "Add new release from...\tCtrl+R");
+		}
 		mnu.Append(ID_PIPE_MENU_CREATE_REFERENCE, "Borrow pipe...\tCtrl+B");
 		mnu.Append(ID_PIPE_MENU_COPY_PIPE_OFFSET, "Copy this pipe offset to...\tCtrl+C");
 		mnu.Append(ID_PIPE_MENU_EDIT_PIPE, "Edit pipe properties\tCtrl+E");
@@ -1094,28 +1249,19 @@ void RankPanel::UpdatePipeTree() {
 			currentPipe = m_pipeTreeCtrl->GetNextChild(m_tree_rank_root, cookie);
 		}
 
-		if (m_rank->isPercussive()) {
-			// we can just dump the (attacks of the) pipes into the tree (if they exist)
-			if (!p.m_attacks.empty()) {
-				for (Attack atk : p.m_attacks) {
-					m_pipeTreeCtrl->AppendItem(currentPipe, atk.fileName);
-				}
-			}
-		} else {
-			// we must handle attacks and releases separately
-			wxTreeItemId releases = m_pipeTreeCtrl->GetLastChild(currentPipe);
-			wxTreeItemId attacks = m_pipeTreeCtrl->GetPrevSibling(releases);
+		wxTreeItemId releases = m_pipeTreeCtrl->GetLastChild(currentPipe);
+		wxTreeItemId attacks = m_pipeTreeCtrl->GetPrevSibling(releases);
 
-			for (Attack atk : p.m_attacks) {
-				m_pipeTreeCtrl->AppendItem(attacks, atk.fileName);
-			}
+		for (Attack atk : p.m_attacks) {
+			m_pipeTreeCtrl->AppendItem(attacks, atk.fileName);
+		}
 
-			if (!p.m_releases.empty()) {
-				for (Release rel : p.m_releases) {
-					m_pipeTreeCtrl->AppendItem(releases, rel.fileName);
-				}
+		if (!p.m_releases.empty()) {
+			for (Release rel : p.m_releases) {
+				m_pipeTreeCtrl->AppendItem(releases, rel.fileName);
 			}
 		}
+
 	}
 }
 
@@ -1126,12 +1272,8 @@ void RankPanel::RebuildPipeTree() {
 		wxString pipeName = wxT("Pipe") + GOODF_functions::number_format(i + 1);
 		wxTreeItemId thisPipe = m_pipeTreeCtrl->AppendItem(m_tree_rank_root, pipeName);
 
-		// for a percussive rank there's no release(s) to load but
-		// otherwise there can be both attacks and releases for this pipe
-		if (!m_rank->isPercussive()) {
-			m_pipeTreeCtrl->AppendItem(thisPipe, wxT("Attack(s)"));
-			m_pipeTreeCtrl->AppendItem(thisPipe, wxT("Release(s)"));
-		}
+		m_pipeTreeCtrl->AppendItem(thisPipe, wxT("Attack(s)"));
+		m_pipeTreeCtrl->AppendItem(thisPipe, wxT("Release(s)"));
 	}
 }
 

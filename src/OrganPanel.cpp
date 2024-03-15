@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General wxLicense for more details.
  *
  * You should have received a copy of the GNU General wxLicense
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -57,6 +57,10 @@ BEGIN_EVENT_TABLE(OrganPanel, wxPanel)
 	EVT_SPINCTRLDOUBLE(ID_ORGAN_PITCH_SPIN, OrganPanel::OnPitchTuningSpin)
 	EVT_SPINCTRL(ID_ORGAN_TRACKER_DELAY_SPIN, OrganPanel::OnTrackerDelaySpin)
 	EVT_SPINCTRLDOUBLE(ID_ORGAN_PITCH_CORRECTION_SPIN, OrganPanel::OnPitchCorrectionSpin)
+	EVT_RADIOBUTTON(ID_ORGAN_PERCUSSIVE_YES, OrganPanel::OnPercussiveSelection)
+	EVT_RADIOBUTTON(ID_ORGAN_PERCUSSIVE_NO, OrganPanel::OnPercussiveSelection)
+	EVT_RADIOBUTTON(ID_ORGAN_INDEPENDENT_RELEASE_YES, OrganPanel::OnIndependentReleaseSelection)
+	EVT_RADIOBUTTON(ID_ORGAN_INDEPENDENT_RELEASE_NO, OrganPanel::OnIndependentReleaseSelection)
 	EVT_BUTTON(ID_NEW_ORGAN, OrganPanel::OnNewOrganBtn)
 END_EVENT_TABLE()
 
@@ -276,15 +280,13 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultSize
 	);
 	tenthRow->Add(m_interManualNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	organProperties->Add(tenthRow, 0, wxGROW);
-
-	wxBoxSizer *eleventhRow = new wxBoxSizer(wxHORIZONTAL);
+	tenthRow->AddStretchSpacer();
 	wxStaticText *intraManualText = new wxStaticText (
 		organProperties->GetStaticBox(),
 		wxID_STATIC,
 		wxT("Divisionals store intramanual couplers: ")
 	);
-	eleventhRow->Add(intraManualText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	tenthRow->Add(intraManualText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_intraManualYes = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_INTRA_MAN_RB_YES,
@@ -294,7 +296,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxRB_GROUP
 	);
 	m_intraManualYes->SetValue(true);
-	eleventhRow->Add(m_intraManualYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	tenthRow->Add(m_intraManualYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_intraManualNo = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_INTRA_MAN_RB_NO,
@@ -302,16 +304,16 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	eleventhRow->Add(m_intraManualNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	organProperties->Add(eleventhRow, 0, wxGROW);
+	tenthRow->Add(m_intraManualNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(tenthRow, 0, wxGROW);
 
-	wxBoxSizer *twelfthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *eleventhRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *storeTremulantsText = new wxStaticText (
 		organProperties->GetStaticBox(),
 		wxID_STATIC,
 		wxT("Divisionals store tremulants: ")
 	);
-	twelfthRow->Add(storeTremulantsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	eleventhRow->Add(storeTremulantsText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeTremulantsYes = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_TREM_YES,
@@ -321,7 +323,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxRB_GROUP
 	);
 	m_storeTremulantsYes->SetValue(true);
-	twelfthRow->Add(m_storeTremulantsYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	eleventhRow->Add(m_storeTremulantsYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeTremulantsNo = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_TREM_NO,
@@ -329,16 +331,16 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	twelfthRow->Add(m_storeTremulantsNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	organProperties->Add(twelfthRow, 0, wxGROW);
+	eleventhRow->Add(m_storeTremulantsNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(eleventhRow, 0, wxGROW);
 
-	wxBoxSizer *thirteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *twelfthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *storeDivCouplersText = new wxStaticText (
 		organProperties->GetStaticBox(),
 		wxID_STATIC,
 		wxT("Generals store divisional couplers: ")
 	);
-	thirteenthRow->Add(storeDivCouplersText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	twelfthRow->Add(storeDivCouplersText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeDivCouplersYes = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_DIV_CPLRS_YES,
@@ -348,7 +350,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxRB_GROUP
 	);
 	m_storeDivCouplersYes->SetValue(true);
-	thirteenthRow->Add(m_storeDivCouplersYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	twelfthRow->Add(m_storeDivCouplersYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeDivCouplersNo = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_DIV_CPLRS_NO,
@@ -356,16 +358,16 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	thirteenthRow->Add(m_storeDivCouplersNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-	organProperties->Add(thirteenthRow, 0, wxGROW);
+	twelfthRow->Add(m_storeDivCouplersNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(twelfthRow, 0, wxGROW);
 
-	wxBoxSizer *fourteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *thirteenthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *storeNonDisplayedText = new wxStaticText (
 		organProperties->GetStaticBox(),
 		wxID_STATIC,
 		wxT("Combinations store non displayed drawstops: ")
 	);
-	fourteenthRow->Add(storeNonDisplayedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirteenthRow->Add(storeNonDisplayedText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeNonDisplayedYes = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_NON_DISP_YES,
@@ -375,7 +377,7 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxRB_GROUP
 	);
 	m_storeNonDisplayedYes->SetValue(true);
-	fourteenthRow->Add(m_storeNonDisplayedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirteenthRow->Add(m_storeNonDisplayedYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	m_storeNonDisplayedNo = new wxRadioButton(
 		organProperties->GetStaticBox(),
 		ID_STORE_NON_DISP_NO,
@@ -383,7 +385,61 @@ OrganPanel::OrganPanel(Organ *organ, wxWindow *parent) : wxPanel (
 		wxDefaultPosition,
 		wxDefaultSize
 	);
-	fourteenthRow->Add(m_storeNonDisplayedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	thirteenthRow->Add(m_storeNonDisplayedNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	organProperties->Add(thirteenthRow, 0, wxGROW);
+
+	wxBoxSizer *fourteenthRow = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *isPercussiveText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Percussive: ")
+	);
+	fourteenthRow->Add(isPercussiveText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_isPercussiveYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_PERCUSSIVE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	fourteenthRow->Add(m_isPercussiveYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_isPercussiveNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_PERCUSSIVE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fourteenthRow->Add(m_isPercussiveNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_isPercussiveNo->SetValue(true);
+	fourteenthRow->AddStretchSpacer();
+	wxStaticText *independentReleaseText = new wxStaticText (
+		organProperties->GetStaticBox(),
+		wxID_STATIC,
+		wxT("Has independent release: ")
+	);
+	fourteenthRow->Add(independentReleaseText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseYes = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_INDEPENDENT_RELEASE_YES,
+		wxT("Yes"),
+		wxDefaultPosition,
+		wxDefaultSize,
+		wxRB_GROUP
+	);
+	fourteenthRow->Add(m_hasIndependentReleaseYes, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo = new wxRadioButton(
+		organProperties->GetStaticBox(),
+		ID_ORGAN_INDEPENDENT_RELEASE_NO,
+		wxT("No"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	fourteenthRow->Add(m_hasIndependentReleaseNo, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	m_hasIndependentReleaseNo->SetValue(true);
+	m_hasIndependentReleaseYes->Enable(false);
+	m_hasIndependentReleaseNo->Enable(false);
 	organProperties->Add(fourteenthRow, 0, wxGROW);
 
 	wxBoxSizer *fifteenthRow = new wxBoxSizer(wxHORIZONTAL);
@@ -562,6 +618,10 @@ void OrganPanel::setTooltipsEnabled(bool isEnabled) {
 		m_pitchTuningSpin->SetToolTip(wxT("Set overall pitch adjustment for 'Original temperament' of the organ here."));
 		m_trackerDelaySpin->SetToolTip(wxT("Set overall tracker delay of the organ here."));
 		m_pitchCorrectionSpin->SetToolTip(wxT("Set overall pitch adjustment for any other temperament than 'Original' for the organ here."));
+		m_isPercussiveYes->SetToolTip(wxT("A percussive samples are played once from start to end. The value can be passed down to any [Rank] and pipes placed on this windchest."));
+		m_isPercussiveNo->SetToolTip(wxT("Non-percussive samples have loops and release(s). The value can be inherited down to any [WindchestGroup], [Rank] and [Pipe]."));
+		m_hasIndependentReleaseYes->SetToolTip(wxT("Requires that Percussive is set to yes. When this also is set to yes, percussive pipes should have separately defined releases that are played independently of the attacks. The value can be inherited down to any [WindchestGroup], [Rank] and [Pipe]."));
+		m_hasIndependentReleaseNo->SetToolTip(wxT("Percussive pipes are played 'as is' without any loop or release handling. The value can be inherited down to any [WindchestGroup], [Rank] and [Pipe]."));
 	} else {
 		wxButton *selectPath = (wxButton*) FindWindow(ID_BROWSE_FOR_ODF_PATH);
 		selectPath->SetToolTip(wxEmptyString);
@@ -581,6 +641,10 @@ void OrganPanel::setTooltipsEnabled(bool isEnabled) {
 		m_pitchTuningSpin->SetToolTip(wxEmptyString);
 		m_trackerDelaySpin->SetToolTip(wxEmptyString);
 		m_pitchCorrectionSpin->SetToolTip(wxEmptyString);
+		m_hasIndependentReleaseYes->SetToolTip(wxEmptyString);
+		m_hasIndependentReleaseNo->SetToolTip(wxEmptyString);
+		m_isPercussiveYes->SetToolTip(wxEmptyString);
+		m_isPercussiveNo->SetToolTip(wxEmptyString);
 	}
 }
 
@@ -612,10 +676,24 @@ void OrganPanel::getDataFromOrgan() {
 		m_storeNonDisplayedYes->SetValue(true);
 	else
 		m_storeNonDisplayedNo->SetValue(true);
+	if (m_currentOrgan->getHasIndependentRelease())
+		m_hasIndependentReleaseYes->SetValue(true);
+	else
+		m_hasIndependentReleaseNo->SetValue(true);
+	if (m_currentOrgan->getIsPercussive()) {
+		m_isPercussiveYes->SetValue(true);
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
+	} else {
+		m_isPercussiveNo->SetValue(true);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
+	}
 	m_amplitudeLevelSpin->SetValue(m_currentOrgan->getAmplitudeLevel());
 	m_gainSpin->SetValue(m_currentOrgan->getGain());
 	m_pitchTuningSpin->SetValue(m_currentOrgan->getPitchTuning());
 	m_trackerDelaySpin->SetValue(m_currentOrgan->getTrackerDelay());
+	m_pitchCorrectionSpin->SetValue(m_currentOrgan->getPitchCorrection());
 }
 
 void OrganPanel::OnBrowseForOrganPath(wxCommandEvent& WXUNUSED(event)) {
@@ -806,25 +884,78 @@ void OrganPanel::OnNewOrganBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void OrganPanel::OnAmplitudeLevelSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setAmplitudeLevel(m_amplitudeLevelSpin->GetValue());
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	m_currentOrgan->setModified(true);
 }
 
 void OrganPanel::OnGainSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setGain(m_gainSpin->GetValue());
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	m_currentOrgan->setModified(true);
 }
 
 void OrganPanel::OnPitchTuningSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setPitchTuning(m_pitchTuningSpin->GetValue());
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	m_currentOrgan->setModified(true);
 }
 
 void OrganPanel::OnTrackerDelaySpin(wxSpinEvent& WXUNUSED(event)) {
 	m_currentOrgan->setTrackerDelay(m_trackerDelaySpin->GetValue());
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	m_currentOrgan->setModified(true);
 }
 
 void OrganPanel::OnPitchCorrectionSpin(wxSpinDoubleEvent& WXUNUSED(event)) {
 	m_currentOrgan->setPitchCorrection(m_pitchCorrectionSpin->GetValue());
-	::wxGetApp().m_frame->m_organ->setModified(true);
+	m_currentOrgan->setModified(true);
+}
+
+void OrganPanel::OnPercussiveSelection(wxCommandEvent& event) {
+	if (event.GetId() == ID_ORGAN_PERCUSSIVE_YES) {
+		m_currentOrgan->setIsPercussive(true);
+		m_hasIndependentReleaseYes->Enable();
+		m_hasIndependentReleaseNo->Enable();
+
+		if (m_currentOrgan->getNumberOfWindchestgroups()) {
+			// ask if this should be applied to existing windchests
+			wxMessageDialog msg(this, wxT("Do you want the Percussive=Y value to be applied to existing windchestgroups recursively?\n\nWARNING! Purely percussive pipes cannot have any releases, so any existing releases in a pipe on this windchest will be removed!"), wxT("Apply to existing windchestgroups recursively?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply Percussive value to all windchestgroups
+				for (unsigned i = 0; i < m_currentOrgan->getNumberOfWindchestgroups(); i++) {
+					Windchestgroup *w = m_currentOrgan->getOrganWindchestgroupAt(i);
+					w->setIsPercussive(true);
+					if (w->isPipesOnThisWindchest())
+						w->applyPercussiveRecursively();
+				}
+			}
+		}
+	} else {
+		m_currentOrgan->setIsPercussive(false);
+		// HasIndependentRelease requires that Percussive=Y so it must now be set to false
+		m_currentOrgan->setHasIndependentRelease(false);
+		m_hasIndependentReleaseNo->SetValue(true);
+		m_hasIndependentReleaseYes->Enable(false);
+		m_hasIndependentReleaseNo->Enable(false);
+
+		if (m_currentOrgan->getNumberOfWindchestgroups()) {
+			// ask if this should be applied to existing windchests
+			wxMessageDialog msg(this, wxT("Do you want the Percussive=N value to be applied to existing windchestgroups recursively?"), wxT("Apply to existing windchestgroups recursively?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+			if (msg.ShowModal() == wxID_YES) {
+				// apply Percussive value to all windchestgroups
+				for (unsigned i = 0; i < m_currentOrgan->getNumberOfWindchestgroups(); i++) {
+					Windchestgroup *w = m_currentOrgan->getOrganWindchestgroupAt(i);
+					w->setIsPercussive(true);
+					if (w->isPipesOnThisWindchest())
+						w->applyPercussiveRecursively();
+				}
+			}
+		}
+	}
+	m_currentOrgan->setModified(true);
+}
+
+void OrganPanel::OnIndependentReleaseSelection(wxCommandEvent& event) {
+	if (event.GetId() == ID_ORGAN_INDEPENDENT_RELEASE_YES) {
+		m_currentOrgan->setHasIndependentRelease(true);
+	} else {
+		m_currentOrgan->setHasIndependentRelease(false);
+	}
+	m_currentOrgan->setModified(true);
 }

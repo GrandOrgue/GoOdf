@@ -9,7 +9,7 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -77,6 +77,8 @@ private:
 	wxButton *m_nextPipeBtn;
 	wxRadioButton *m_isPercussiveYes;
 	wxRadioButton *m_isPercussiveNo;
+	wxRadioButton *m_hasIndependentReleaseYes;
+	wxRadioButton *m_hasIndependentReleaseNo;
 	wxSpinCtrl *m_harmonicNbrSpin;
 	wxStaticText *m_calculatedLength;
 	wxSpinCtrl *m_midiKeyNbrSpin; // -1 - 127
@@ -100,6 +102,7 @@ private:
 	void OnPrevPipeBtn(wxCommandEvent& event);
 	void OnNextPipeBtn(wxCommandEvent& event);
 	void OnPercussiveSelection(wxCommandEvent& event);
+	void OnIndependentReleaseSelection(wxCommandEvent& event);
 	void OnHarmonicNbrSpin(wxSpinEvent& event);
 	void OnMidiNoteSpin(wxSpinEvent& event);
 	void OnMidiPitchFractionSpin(wxSpinDoubleEvent& event);

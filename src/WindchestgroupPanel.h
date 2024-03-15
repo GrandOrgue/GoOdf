@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -22,6 +22,7 @@
 #define WINDCHESTPANEL_H
 
 #include <wx/wx.h>
+#include <wx/spinctrl.h>
 #include "Windchestgroup.h"
 
 class WindchestgroupPanel : public wxPanel {
@@ -45,6 +46,15 @@ private:
 	wxListBox *m_referencedTremulants;
 	wxButton *m_addReferencedTremulant;
 	wxButton *m_removeReferencedTremulant;
+	wxSpinCtrlDouble *m_amplitudeLevelSpin;
+	wxSpinCtrlDouble *m_gainSpin;
+	wxSpinCtrlDouble *m_pitchTuningSpin;
+	wxSpinCtrl *m_trackerDelaySpin;
+	wxSpinCtrlDouble *m_pitchCorrectionSpin;
+	wxRadioButton *m_isPercussiveYes;
+	wxRadioButton *m_isPercussiveNo;
+	wxRadioButton *m_hasIndependentReleaseYes;
+	wxRadioButton *m_hasIndependentReleaseNo;
 	wxButton *removeWindchestBtn;
 
 	Windchestgroup *m_windchest;
@@ -63,6 +73,13 @@ private:
 	void OnReferencedEnclosureSelection(wxCommandEvent& event);
 	void OnReferencedTremulantSelection(wxCommandEvent& event);
 	void UpdateReferencedTremulants();
+	void OnAmplitudeLevelSpin(wxSpinDoubleEvent& event);
+	void OnGainSpin(wxSpinDoubleEvent& event);
+	void OnPitchTuningSpin(wxSpinDoubleEvent& event);
+	void OnTrackerDelaySpin(wxSpinEvent& event);
+	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
+	void OnPercussiveSelection(wxCommandEvent& event);
+	void OnIndependentReleaseSelection(wxCommandEvent& event);
 
 };
 

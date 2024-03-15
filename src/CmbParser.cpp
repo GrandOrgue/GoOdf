@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -57,6 +57,17 @@ bool CmbParser::readCmbFile(wxString fileName, CMB_ORGAN *cmbOrgan) {
 				// An [Organ] section is found
 
 				parseSection(&iniFile, wxT("Organ"), cmbOrgan);
+
+				bool lookForWindchest = true;
+				int windchestNbr = 1;
+				while (lookForWindchest) {
+					wxString windchestName = wxString::Format(wxT("WindchestGroup%0.3d"), windchestNbr);
+					if (parseSection(&iniFile, windchestName, cmbOrgan)) {
+						windchestNbr++;
+					} else {
+						lookForWindchest = false;
+					}
+				}
 
 				bool lookForRank = true;
 				int rankNbr = 1;
@@ -131,7 +142,7 @@ bool CmbParser::parseSection(wxFileConfig *ini, wxString section, CMB_ORGAN *cmb
 	int trackerDelay;
 	parseInt(ini, wxT("Delay"), &trackerDelay, 0);
 
-	if (!section.IsSameAs(wxT("Organ"))) {
+	if (!section.IsSameAs(wxT("Organ")) && !section.StartsWith(wxT("WindchestGroup"))) {
 		CMB_ELEMENT_WITH_PIPES elementWithPipes;
 		elementWithPipes.attributes.amplitude = amplitude;
 		elementWithPipes.attributes.gain = gain;
@@ -152,6 +163,14 @@ bool CmbParser::parseSection(wxFileConfig *ini, wxString section, CMB_ORGAN *cmb
 		} else if (section.StartsWith(wxT("Stop"))) {
 			cmbOrgan->cmbStops.push_back(elementWithPipes);
 		}
+	} else if (section.StartsWith(wxT("WindchestGroup"))) {
+		CMB_ELEMENT windchest;
+		windchest.amplitude = amplitude;
+		windchest.gain = gain;
+		windchest.pitchTuning = pitchTuning;
+		windchest.pitchCorrection = pitchCorrection;
+		windchest.trackerDelay = trackerDelay;
+		cmbOrgan->cmbWindchests.push_back(windchest);
 	} else {
 		wxString churchName;
 		parseString(ini, wxT("ChurchName"), &churchName, wxEmptyString);

@@ -11,12 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display.
 - Option to import rank definitions from other .organ files.
+- HasIndependentRelease option for percussive ranks and pipes.
+- Percussive and HasIndependentRelease is also possible to set at [Organ] and [WindchestGroup999] levels.
+- AmplitudeLevel, Gain, PitchTuning, PitchCorrection and TrackerDelay is now available for [WindchestGroup999].
 
 ### Changed
 
 - Build system now allow testing builds in between releases.
 - AppImage build is now available.
 - Show what element actually is represented by each Gui Element.
+- Percussive and HasIndependentRelease (default false) values are inherited from [Organ]->[WindchestGroup]->[Rank]->[Pipe]. Note that this change in behaviour will cause new odfs produced/saved to be incompatible with earlier versions of GrandOrgue
 
 ### Fixed
 

@@ -9,11 +9,11 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -2599,6 +2599,8 @@ void GOODFFrame::OnAddNewWindchestgroup(wxCommandEvent& WXUNUSED(event)) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			Windchestgroup newWindchest;
+			newWindchest.setIsPercussive(m_organ->getIsPercussive());
+			newWindchest.setHasIndependentRelease(m_organ->getHasIndependentRelease());
 			m_organ->addWindchestgroup(newWindchest);
 			if (i == 0)
 				firstAdded = m_organTreeCtrl->AppendItem(tree_windchestgrps, newWindchest.getName());
@@ -2639,6 +2641,8 @@ void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
 		wxTreeItemId firstAdded;
 		for (int i = 0; i < nbrToAdd; i++) {
 			Rank newRank;
+			newRank.setPercussive(m_organ->getIsPercussive());
+			newRank.setIndependentRelease(m_organ->getHasIndependentRelease());
 			m_organ->addRank(newRank);
 			if (i == 0)
 				firstAdded = m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName());
@@ -2777,8 +2781,11 @@ void GOODFFrame::OnImportCMB(wxCommandEvent& WXUNUSED(event)) {
 	if (importCmb.ShowModal() == wxID_OK) {
 		CMB_ORGAN *imported = importCmb.GetCmbOrgan();
 
-		if (m_organ->getNumberOfRanks() != imported->cmbRanks.size() || m_organ->getNumberOfStops() != imported->cmbStops.size()) {
-			wxMessageDialog dlg(this, wxT("The number of ranks/stops in the imported cmb doesn't match current organ! Do you want to import selected data to what is possible anyway?"), wxT("Are you really sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		if (m_organ->getNumberOfRanks() != imported->cmbRanks.size() ||
+			m_organ->getNumberOfStops() != imported->cmbStops.size() ||
+			m_organ->getNumberOfWindchestgroups() != imported->cmbWindchests.size()
+		) {
+			wxMessageDialog dlg(this, wxT("The number of windchests/ranks/stops in the imported cmb doesn't match current organ! Do you want to import selected data to what is possible anyway?"), wxT("Are you really sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 			if (dlg.ShowModal() != wxID_YES) {
 				return;
 			}
@@ -2818,6 +2825,50 @@ void GOODFFrame::OnImportCMB(wxCommandEvent& WXUNUSED(event)) {
 		}
 		if (importCmb.GetImportTrackerDelay()) {
 			m_organ->setTrackerDelay(imported->attributes.trackerDelay);
+		}
+
+		unsigned windchestIdx = 0;
+		for (CMB_ELEMENT &w : imported->cmbWindchests) {
+			if (m_organ->getNumberOfWindchestgroups() > windchestIdx) {
+				Windchestgroup *windchest = m_organ->getOrganWindchestgroupAt(windchestIdx);
+
+				if (importCmb.GetImportAmplitude())
+					windchest->setAmplitudeLevel(w.amplitude);
+				if (importCmb.GetImportGain())
+					windchest->setGain(w.gain);
+				if (importCmb.GetImportPitchTuning()) {
+					float pitchT = windchest->getPitchTuning() + w.pitchTuning;
+					if (pitchT >= -1800 && pitchT <= 1800) {
+						windchest->setPitchTuning(pitchT);
+					} else {
+						wxMessageDialog pTerr(this, wxT("The PitchTuning value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pTerr.ShowModal() == wxID_YES) {
+							if (pitchT > 1800)
+								windchest->setPitchTuning(1800);
+							else if (pitchT < -1800)
+								windchest->setPitchTuning(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportPitchCorrection()) {
+					float pitchC = windchest->getPitchCorrection() + w.pitchCorrection;
+					if (pitchC >= -1800 && pitchC <= 1800) {
+						windchest->setPitchCorrection(pitchC);
+					} else {
+						wxMessageDialog pCerr(this, wxT("The PitchCorrection value would be out of bounds! Do you want to set it to max allowed value?"), wxT("Value is out of bounds!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+						if (pCerr.ShowModal() == wxID_YES) {
+							if (pitchC > 1800)
+								windchest->setPitchCorrection(1800);
+							else if (pitchC < -1800)
+								windchest->setPitchCorrection(-1800);
+						}
+					}
+				}
+				if (importCmb.GetImportTrackerDelay()) {
+					windchest->setTrackerDelay(w.trackerDelay);
+				}
+			}
+			windchestIdx++;
 		}
 
 		unsigned stopIdx = 0;

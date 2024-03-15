@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -34,7 +34,8 @@ Rank::Rank() {
 	harmonicNumber = 8;
 	pitchCorrection = 0;
 	windchest = NULL;
-	percussive = false;
+	percussive = ::wxGetApp().m_frame->m_organ->getIsPercussive();
+	hasIndependentRelease = ::wxGetApp().m_frame->m_organ->getHasIndependentRelease();
 	minVelocityVolume = 100;
 	maxVelocityVolume = 100;
 	acceptsRetuning = true;
@@ -66,10 +67,20 @@ void Rank::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
 	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
 	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
-	if (percussive)
-		outFile->AddLine(wxT("Percussive=Y"));
-	else
-		outFile->AddLine(wxT("Percussive=N"));
+	if (percussive != windchest->getIsPercussive()) {
+		if (percussive) {
+			outFile->AddLine(wxT("Percussive=Y"));
+			if (hasIndependentRelease != windchest->getHasIndependentRelease()) {
+				if (hasIndependentRelease) {
+					outFile->AddLine(wxT("HasIndependentRelease=Y"));
+				} else {
+					outFile->AddLine(wxT("HasIndependentRelease=N"));
+				}
+			}
+		} else {
+			outFile->AddLine(wxT("Percussive=N"));
+		}
+	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
 	if (maxVelocityVolume != 100)
@@ -103,10 +114,16 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
 	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
 	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
-	if (percussive)
-		outFile->AddLine(wxT("Percussive=Y"));
-	else
-		outFile->AddLine(wxT("Percussive=N"));
+	if (percussive != windchest->getIsPercussive()) {
+		if (percussive) {
+			outFile->AddLine(wxT("Percussive=Y"));
+			if (hasIndependentRelease) {
+				outFile->AddLine(wxT("HasIndependentRelease=Y"));
+			}
+		} else {
+			outFile->AddLine(wxT("Percussive=N"));
+		}
+	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
 	if (maxVelocityVolume != 100)
@@ -164,6 +181,10 @@ void Rank::read(wxFileConfig *cfg) {
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
+	if (isPercussive()) {
+		wxString independentReleaseStr = cfg->Read("HasIndependentRelease", wxEmptyString);
+		hasIndependentRelease = GOODF_functions::parseBoolean(independentReleaseStr, false);
+	}
 	float minVelocity = static_cast<float>(cfg->ReadDouble("MinVelocityVolume", 100.0f));
 	if (minVelocity >= 0 && minVelocity <= 1000) {
 		setMinVelocityVolume(minVelocity);
@@ -278,10 +299,28 @@ bool Rank::isPercussive() const {
 
 void Rank::setPercussive(bool percussive) {
 	this->percussive = percussive;
-
+/*
 	for (std::list<Pipe>::iterator pipe = m_pipes.begin(); pipe != m_pipes.end(); ++pipe) {
 		pipe->isPercussive = this->percussive;
+		if (percussive && !pipe->hasIndependentRelease) {
+			if (!pipe->m_releases.empty())
+				pipe->m_releases.clear();
+		}
 	}
+*/
+}
+
+bool Rank::isIndependentRelease() {
+	return hasIndependentRelease;
+}
+
+void Rank::setIndependentRelease(bool independent) {
+	this->hasIndependentRelease = independent;
+/*
+	for (std::list<Pipe>::iterator pipe = m_pipes.begin(); pipe != m_pipes.end(); ++pipe) {
+		pipe->setIndependentRelease(this->hasIndependentRelease);
+	}
+*/
 }
 
 float Rank::getPitchCorrection() const {
@@ -1404,6 +1443,7 @@ wxString Rank::getOnlyFileName(wxString path) {
 
 void Rank::setupPipeProperties(Pipe &pipe) {
 	pipe.isPercussive = this->percussive;
+	pipe.hasIndependentRelease = this->hasIndependentRelease;
 	pipe.harmonicNumber = this->harmonicNumber;
 	pipe.acceptsRetuning = this->acceptsRetuning;
 	pipe.windchest = this->windchest;

@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General wxLicense for more details.
  *
  * You should have received a copy of the GNU General wxLicense
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -45,6 +45,8 @@ Organ::Organ() {
 	m_pitchTuning = 0.0f;
 	m_pitchCorrection = 0.0f;
 	m_trackerDelay = 0;
+	m_isPercussive = false;
+	m_hasIndependentRelease = false;
 	populateSetterElements();
 	updateOrganElements();
 
@@ -129,6 +131,12 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), m_pitchCorrection));
 	if (m_trackerDelay != 0)
 		outFile->AddLine(wxT("TrackerDelay=") + wxString::Format(wxT("%u"), m_trackerDelay));
+	if (m_isPercussive) {
+		outFile->AddLine(wxT("Percussive=Y"));
+		if (m_hasIndependentRelease) {
+			outFile->AddLine(wxT("HasIndependentRelease=Y"));
+		}
+	}
 	outFile->AddLine(wxT(""));
 
 	// counter used in all the ranged loops below
@@ -406,6 +414,22 @@ float Organ::getPitchCorrection() {
 
 void Organ::setPitchCorrection(float pitchCorrection) {
 	m_pitchCorrection = pitchCorrection;
+}
+
+bool Organ::getIsPercussive() {
+	return m_isPercussive;
+}
+
+void Organ::setIsPercussive(bool percussive) {
+	m_isPercussive = percussive;
+}
+
+bool Organ::getHasIndependentRelease() {
+	return m_hasIndependentRelease;
+}
+
+void Organ::setHasIndependentRelease(bool independentRel) {
+	m_hasIndependentRelease = independentRel;
 }
 
 wxString Organ::getRecordingDetails() {

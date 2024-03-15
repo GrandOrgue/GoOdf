@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General wxLicense for more details.
  *
  * You should have received a copy of the GNU General wxLicense
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo DOT se
  */
@@ -81,6 +81,10 @@ public:
 	void setTrackerDelay(unsigned trackerDelay);
 	float getPitchCorrection();
 	void setPitchCorrection(float pitchCorrection);
+	bool getIsPercussive();
+	void setIsPercussive(bool percussive);
+	bool getHasIndependentRelease();
+	void setHasIndependentRelease(bool independentRel);
 
 	Enclosure* getOrganEnclosureAt(unsigned index);
 	unsigned getNumberOfEnclosures();
@@ -202,6 +206,8 @@ private:
 	float m_pitchTuning;
 	float m_pitchCorrection;
 	unsigned m_trackerDelay;
+	bool m_isPercussive;
+	bool m_hasIndependentRelease;
 
 	// The stuff the organ has
 	wxArrayString m_setterElements;

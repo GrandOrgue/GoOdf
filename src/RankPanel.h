@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -59,6 +59,8 @@ private:
 	wxChoice *m_windchestChoice;
 	wxRadioButton *m_isPercussiveYes;
 	wxRadioButton *m_isPercussiveNo;
+	wxRadioButton *m_hasIndependentReleaseYes;
+	wxRadioButton *m_hasIndependentReleaseNo;
 	wxSpinCtrlDouble *m_minVelocityVolumeSpin; // 0 - 1000, 100 == no change
 	wxSpinCtrlDouble *m_maxVelocityVolumeSpin; // 0 - 1000, 100 == no change
 	wxRadioButton *m_acceptsRetuningYes;
@@ -105,6 +107,7 @@ private:
 	void OnSetHarmonicNbrBtn(wxCommandEvent& event);
 	void OnPitchCorrectionSpin(wxSpinDoubleEvent& event);
 	void OnPercussiveSelection(wxCommandEvent& event);
+	void OnIndependentReleaseSelection(wxCommandEvent& event);
 	void OnMinVelocitySpin(wxSpinDoubleEvent& event);
 	void OnMaxVelocitySpin(wxSpinDoubleEvent& event);
 	void OnRetuningSelection(wxCommandEvent& event);
