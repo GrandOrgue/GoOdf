@@ -181,6 +181,7 @@ set(APP_SRC
   src/DefaultPathsDialog.cpp
   src/SampleFileInfoDialog.cpp
   src/DoubleEntryDialog.cpp
+  src/StopRankImportDialog.cpp
 )
 
 # add the executable

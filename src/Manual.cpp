@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -110,7 +110,7 @@ void Manual::write(wxTextFile *outFile) {
 	}
 }
 
-void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
+void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Organ *readOrgan) {
 	m_name = cfg->Read("Name", wxEmptyString);
 	int logicalKeys = static_cast<int>(cfg->ReadLong("NumberOfLogicalKeys", 1));
 	if (logicalKeys > 0 && logicalKeys < 193) {
@@ -144,22 +144,22 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 		}
 	}
 	int nbrSwitches = static_cast<int>(cfg->ReadLong("NumberOfSwitches", 0));
-	if (nbrSwitches > 0 && nbrSwitches <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+	if (nbrSwitches > 0 && nbrSwitches <= (int) readOrgan->getNumberOfSwitches()) {
 		for (int i = 0; i < nbrSwitches; i++) {
 			wxString switchNbr = wxT("Switch") + GOODF_functions::number_format(i + 1);
 			int swRefNbr = static_cast<int>(cfg->ReadLong(switchNbr, 0));
-			if (swRefNbr > 0 && swRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
-				addGoSwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+			if (swRefNbr > 0 && swRefNbr <= (int) readOrgan->getNumberOfSwitches()) {
+				addGoSwitch(readOrgan->getOrganSwitchAt(swRefNbr - 1));
 			}
 		}
 	}
 	int nbrTrems = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
-	if (nbrTrems > 0 && nbrTrems <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
+	if (nbrTrems > 0 && nbrTrems <= (int) readOrgan->getNumberOfTremulants()) {
 		for (int i = 0; i < nbrTrems; i++) {
 			wxString tremNbr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
 			int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbr, 0));
-			if (tremRefNbr > 0 && tremRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
-				addTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremRefNbr - 1));
+			if (tremRefNbr > 0 && tremRefNbr <= (int) readOrgan->getNumberOfTremulants()) {
+				addTremulant(readOrgan->getOrganTremulantAt(tremRefNbr - 1));
 			}
 		}
 	}
@@ -175,20 +175,20 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 			if (cfg->HasGroup(stopGroup)) {
 				cfg->SetPath(wxT("/") + stopGroup);
 				Stop s;
-				s.read(cfg, useOldPanelFormat, this);
-				::wxGetApp().m_frame->m_organ->addStop(s, true);
-				addStop(::wxGetApp().m_frame->m_organ->getOrganStopAt(::wxGetApp().m_frame->m_organ->getNumberOfStops() - 1));
+				s.read(cfg, useOldPanelFormat, this, readOrgan);
+				readOrgan->addStop(s, true);
+				addStop(readOrgan->getOrganStopAt(readOrgan->getNumberOfStops() - 1));
 				if (s.isDisplayed()) {
 					// we must also create a GUI element for that stop from this group information
 					int lastStopIdx = m_stops.size() - 1;
 					GUIElement *guiStop = new GUIStop(getStopAt(lastStopIdx));
-					guiStop->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiStop->setOwningPanel(readOrgan->getOrganPanelAt(0));
 					guiStop->setDisplayName(s.getName());
-					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiStop);
+					readOrgan->getOrganPanelAt(0)->addGuiElement(guiStop);
 
 					GUIStop *stopElement = dynamic_cast<GUIStop*>(guiStop);
 					if (stopElement) {
-						stopElement->read(cfg, false);
+						stopElement->read(cfg, false, readOrgan);
 					}
 				}
 			}
@@ -197,7 +197,7 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
 	cfg->SetPath(wxT("/") + manId);
 }
 
-void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
+void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Organ *readOrgan) {
 	int nbrCouplers = static_cast<int>(cfg->ReadLong("NumberOfCouplers", 0));
 
 	if (nbrCouplers > 0 && nbrCouplers < 1000) {
@@ -210,20 +210,20 @@ void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString ma
 			if (cfg->HasGroup(couplerGroup)) {
 				cfg->SetPath(wxT("/") + couplerGroup);
 				Coupler c;
-				c.read(cfg, useOldPanelFormat, this);
-				::wxGetApp().m_frame->m_organ->addCoupler(c, true);
-				addCoupler(::wxGetApp().m_frame->m_organ->getOrganCouplerAt(::wxGetApp().m_frame->m_organ->getNumberOfCouplers() - 1));
+				c.read(cfg, useOldPanelFormat, this, readOrgan);
+				readOrgan->addCoupler(c, true);
+				addCoupler(readOrgan->getOrganCouplerAt(readOrgan->getNumberOfCouplers() - 1));
 				if (c.isDisplayed()) {
 					// we must also create a GUI element for that coupler from this group information
 					int lastCplrIdx = m_couplers.size() - 1;
 					GUIElement *guiCplr = new GUICoupler(getCouplerAt(lastCplrIdx));
-					guiCplr->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiCplr->setOwningPanel(readOrgan->getOrganPanelAt(0));
 					guiCplr->setDisplayName(c.getName());
-					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiCplr);
+					readOrgan->getOrganPanelAt(0)->addGuiElement(guiCplr);
 
 					GUICoupler *cplrElement = dynamic_cast<GUICoupler*>(guiCplr);
 					if (cplrElement) {
-						cplrElement->read(cfg, false);
+						cplrElement->read(cfg, false, readOrgan);
 					}
 				}
 			}
@@ -231,7 +231,7 @@ void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString ma
 	}
 }
 
-void Manual::readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId) {
+void Manual::readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Organ *readOrgan) {
 	int nbrDivisionals = static_cast<int>(cfg->ReadLong("NumberOfDivisionals", 0));
 	if (nbrDivisionals > 0 && nbrDivisionals < 1000) {
 		for (int i = 0; i < nbrDivisionals; i++) {
@@ -244,19 +244,19 @@ void Manual::readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString
 				cfg->SetPath(wxT("/") + divGroup);
 				Divisional d;
 				d.read(cfg, useOldPanelFormat, this);
-				::wxGetApp().m_frame->m_organ->addDivisional(d, true);
-				addDivisional(::wxGetApp().m_frame->m_organ->getOrganDivisionalAt(::wxGetApp().m_frame->m_organ->getNumberOfDivisionals() - 1));
+				readOrgan->addDivisional(d, true);
+				addDivisional(readOrgan->getOrganDivisionalAt(readOrgan->getNumberOfDivisionals() - 1));
 				if (d.isDisplayed()) {
 					// we must also create a GUI element for that divisional from this group information
 					int lastDivIdx = m_divisionals.size() - 1;
 					GUIElement *guiDiv = new GUIDivisional(getDivisionalAt(lastDivIdx));
-					guiDiv->setOwningPanel(::wxGetApp().m_frame->m_organ->getOrganPanelAt(0));
+					guiDiv->setOwningPanel(readOrgan->getOrganPanelAt(0));
 					guiDiv->setDisplayName(d.getName());
-					::wxGetApp().m_frame->m_organ->getOrganPanelAt(0)->addGuiElement(guiDiv);
+					readOrgan->getOrganPanelAt(0)->addGuiElement(guiDiv);
 
 					GUIDivisional *divElement = dynamic_cast<GUIDivisional*>(guiDiv);
 					if (divElement) {
-						divElement->read(cfg, true);
+						divElement->read(cfg, true, readOrgan);
 					}
 				}
 			}

@@ -126,6 +126,7 @@ public:
 	void removeReferenceToRankInStops(Rank *rank);
 	void updateManualPipeReferences(int sourceIdx, int newIdx);
 	void updatePipeReferencesFromPedalChoice();
+	Stop* getStopFromRefString(wxString refString);
 	Manual* getOrganManualAt(unsigned index);
 	unsigned getNumberOfManuals();
 	unsigned getIndexOfOrganManual(Manual *manual);

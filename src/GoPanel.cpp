@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -80,7 +80,7 @@ void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
 	}
 }
 
-void GoPanel::read(wxFileConfig *cfg, wxString panelId) {
+void GoPanel::read(wxFileConfig *cfg, wxString panelId, Organ *readOrgan) {
 	if (panelId != wxT("Panel000"))
 		m_name = cfg->Read("Name", wxEmptyString);
 	m_group = cfg->Read("Group", wxEmptyString);
@@ -97,7 +97,7 @@ void GoPanel::read(wxFileConfig *cfg, wxString panelId) {
 				GoImage img;
 				img.setOwningPanelWidth(m_displayMetrics.m_dispScreenSizeHoriz.getNumericalValue());
 				img.setOwningPanelHeight(m_displayMetrics.m_dispScreenSizeVert.getNumericalValue());
-				bool imgIsOk = img.read(cfg);
+				bool imgIsOk = img.read(cfg, readOrgan);
 				if (imgIsOk)
 					addImage(img);
 			}

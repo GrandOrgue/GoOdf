@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -113,7 +113,7 @@ void GUIManual::write(wxTextFile *outFile) {
 	}
 }
 
-void GUIManual::read(wxFileConfig *cfg) {
+void GUIManual::read(wxFileConfig *cfg, Organ *readOrgan) {
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
 	int dispFirstNote = static_cast<int>(cfg->ReadLong("DisplayFirstNote", m_manual->getFirstAccessibleKeyMIDINoteNumber()));
@@ -187,7 +187,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 			wxString keyImageOn = wxT("ImageOn_") + keyType;
 			wxString cfgImgOn = cfg->Read(keyImageOn, wxEmptyString);
 			if (cfgImgOn != wxEmptyString) {
-				wxString fullImgOnPath = GOODF_functions::checkIfFileExist(cfgImgOn);
+				wxString fullImgOnPath = GOODF_functions::checkIfFileExist(cfgImgOn, readOrgan);
 				if (fullImgOnPath != wxEmptyString) {
 					wxImage img = wxImage(fullImgOnPath);
 					if (img.IsOk()) {
@@ -203,7 +203,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 						wxString keyImageOff = wxT("ImageOff_") + keyType;
 						wxString cfgImgOff = cfg->Read(keyImageOff, wxEmptyString);
 						if (cfgImgOff != wxEmptyString) {
-							wxString fullImgOffPath = GOODF_functions::checkIfFileExist(cfgImgOff);
+							wxString fullImgOffPath = GOODF_functions::checkIfFileExist(cfgImgOff, readOrgan);
 							if (fullImgOffPath != wxEmptyString) {
 								type->ImageOff.setImage(fullImgOffPath);
 							}
@@ -211,7 +211,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 						wxString keyMaskOn = wxT("MaskOn_") + keyType;
 						wxString cfgMaskOn = cfg->Read(keyMaskOn, wxEmptyString);
 						if (cfgMaskOn != wxEmptyString) {
-							wxString fullMaskOnPath = GOODF_functions::checkIfFileExist(cfgMaskOn);
+							wxString fullMaskOnPath = GOODF_functions::checkIfFileExist(cfgMaskOn, readOrgan);
 							if (fullMaskOnPath != wxEmptyString) {
 								type->ImageOn.setMask(fullMaskOnPath);
 							}
@@ -219,7 +219,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 						wxString keyMaskOff = wxT("MaskOff_") + keyType;
 						wxString cfgMaskOff = cfg->Read(keyMaskOff, wxEmptyString);
 						if (cfgMaskOff != wxEmptyString) {
-							wxString fullMaskOffPath = GOODF_functions::checkIfFileExist(cfgMaskOff);
+							wxString fullMaskOffPath = GOODF_functions::checkIfFileExist(cfgMaskOff, readOrgan);
 							if (fullMaskOffPath != wxEmptyString) {
 								type->ImageOff.setMask(fullMaskOffPath);
 							}
@@ -265,7 +265,7 @@ void GUIManual::read(wxFileConfig *cfg) {
 		KEYTYPE *type = getKeytypeAt(m_keytypes.size() - 1);
 		bool keepKeyType = false;
 		if (keyImgOn != wxEmptyString) {
-			wxString fullImgOnPath = GOODF_functions::checkIfFileExist(keyImgOn);
+			wxString fullImgOnPath = GOODF_functions::checkIfFileExist(keyImgOn, readOrgan);
 			if (fullImgOnPath != wxEmptyString) {
 				wxImage img = wxImage(fullImgOnPath);
 				if (img.IsOk()) {
@@ -280,21 +280,21 @@ void GUIManual::read(wxFileConfig *cfg) {
 					keepKeyType = true;
 					wxString keyImgOff = cfg->Read(keyStr + wxT("ImageOff"), wxEmptyString);
 					if (keyImgOff != wxEmptyString) {
-						wxString fullImgOffPath = GOODF_functions::checkIfFileExist(keyImgOff);
+						wxString fullImgOffPath = GOODF_functions::checkIfFileExist(keyImgOff, readOrgan);
 						if (fullImgOffPath != wxEmptyString) {
 							type->ImageOff.setImage(fullImgOffPath);
 						}
 					}
 					wxString keyMskOn = cfg->Read(keyStr + wxT("MaskOn"), wxEmptyString);
 					if (keyMskOn != wxEmptyString) {
-						wxString fullMskOnPath = GOODF_functions::checkIfFileExist(keyMskOn);
+						wxString fullMskOnPath = GOODF_functions::checkIfFileExist(keyMskOn, readOrgan);
 						if (fullMskOnPath != wxEmptyString) {
 							type->ImageOn.setMask(fullMskOnPath);
 						}
 					}
 					wxString keyMskOff = cfg->Read(keyStr + wxT("MaskOff"), wxEmptyString);
 					if (keyMskOff != wxEmptyString) {
-						wxString fullMaskOffPath = GOODF_functions::checkIfFileExist(keyMskOff);
+						wxString fullMaskOffPath = GOODF_functions::checkIfFileExist(keyMskOff, readOrgan);
 						if (fullMaskOffPath != wxEmptyString) {
 							type->ImageOff.setMask(fullMaskOffPath);
 						}

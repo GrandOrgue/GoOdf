@@ -28,14 +28,17 @@
 #include <wx/dir.h>
 #include <wx/fileconf.h>
 
+class Organ;
+
 class Rank {
 public:
 	Rank();
+	Rank(const Rank& r);
 	~Rank();
 
 	void write(wxTextFile *outFile);
 	void writeFromStop(wxTextFile *outFile);
-	void read(wxFileConfig *cfg);
+	void read(wxFileConfig *cfg, Organ *readOrgan);
 
 	bool doesAcceptsRetuning() const;
 	void setAcceptsRetuning(bool acceptsRetuning);

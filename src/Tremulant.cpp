@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -46,8 +46,8 @@ void Tremulant::write(wxTextFile *outFile) {
 	}
 }
 
-void Tremulant::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
-	Drawstop::read(cfg, usingOldPanelFormat);
+void Tremulant::read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrgan) {
+	Drawstop::read(cfg, usingOldPanelFormat, readOrgan);
 	wxString typeValue = cfg->Read("TremulantType", wxT("Synth"));
 	if (typeValue.IsSameAs(wxT("Synth"), false)) {
 		tremType = typeValue;
@@ -71,7 +71,7 @@ void Tremulant::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 		tremType = typeValue;
 	}
 	if (name == wxEmptyString)
-		name = wxString::Format(wxT("Tremulant %i"), ((int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants() + 1));
+		name = wxString::Format(wxT("Tremulant %i"), ((int) readOrgan->getNumberOfTremulants() + 1));
 }
 
 int Tremulant::getAmpModDepth() {

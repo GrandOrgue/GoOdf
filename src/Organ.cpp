@@ -1133,6 +1133,40 @@ void Organ::updatePipeReferencesFromPedalChoice() {
 	}
 }
 
+Stop* Organ::getStopFromRefString(wxString refString) {
+	if (refString.StartsWith(wxT("REF:"))) {
+		wxString manStr = refString.Mid(4, 3);
+		long manIdxValue;
+		if (manStr.ToLong(&manIdxValue)) {
+			if (manIdxValue - 1 < (int) getNumberOfManuals()) {
+				Manual *man;
+				if (m_hasPedals) {
+					man = getOrganManualAt(manIdxValue);
+				} else {
+					man = getOrganManualAt(manIdxValue - 1);
+				}
+				wxString stopStr = refString.Mid(8, 3);
+				long stopNbr;
+				if (stopStr.ToLong(&stopNbr)) {
+					if (stopNbr - 1 < (int) man->getNumberOfStops()) {
+						return man->getStopAt(stopNbr - 1);
+					} else {
+						return NULL;
+					}
+				} else {
+					return NULL;
+				}
+			} else {
+				return NULL;
+			}
+		} else {
+			return NULL;
+		}
+	} else {
+		return NULL;
+	}
+}
+
 Manual* Organ::getOrganManualAt(unsigned index) {
 	auto iterator = std::next(m_Manuals.begin(), index);
 	return &(*iterator);

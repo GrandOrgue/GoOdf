@@ -29,6 +29,7 @@
 #include <wx/fileconf.h>
 
 class Rank;
+class Organ;
 
 class Pipe {
 public:
@@ -37,8 +38,8 @@ public:
 	~Pipe();
 
 	void write(wxTextFile *outFile, wxString pipeNr, Rank *parent);
-	void read(wxFileConfig *cfg, wxString pipeNr, Rank *parent);
-	void readAttack(wxFileConfig *cfg, wxString pipeStr);
+	void read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrgan);
+	void readAttack(wxFileConfig *cfg, wxString pipeStr, Organ *readOrgan);
 
 	bool isFirstAttackRefPath();
 	void writeAdditionalAttacks(wxTextFile *outFile, wxString pipeNr);

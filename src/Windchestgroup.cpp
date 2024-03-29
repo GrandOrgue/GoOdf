@@ -83,18 +83,18 @@ void Windchestgroup::write(wxTextFile *outFile) {
 	}
 }
 
-void Windchestgroup::read(wxFileConfig *cfg) {
+void Windchestgroup::read(wxFileConfig *cfg, Organ *readOrgan) {
 	name = cfg->Read("Name", wxEmptyString);
 	if (name == wxEmptyString)
-		name = wxString::Format(wxT("Windchest %i"), ((int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups() + 1));
+		name = wxString::Format(wxT("Windchest %i"), ((int) readOrgan->getNumberOfWindchestgroups() + 1));
 	int nbrEnclosures = static_cast<int>(cfg->ReadLong("NumberOfEnclosures", 0));
 	if (nbrEnclosures > 999)
 		nbrEnclosures = 999;
 	for (int i = 0; i < nbrEnclosures; i++) {
 		wxString encNbrStr = wxT("Enclosure") + GOODF_functions::number_format(i + 1);
 		int encRefNbr = static_cast<int>(cfg->ReadLong(encNbrStr, 0));
-		if (encRefNbr > 0 && encRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfEnclosures()) {
-			addEnclosureReference(::wxGetApp().m_frame->m_organ->getOrganEnclosureAt(encRefNbr - 1));
+		if (encRefNbr > 0 && encRefNbr <= (int) readOrgan->getNumberOfEnclosures()) {
+			addEnclosureReference(readOrgan->getOrganEnclosureAt(encRefNbr - 1));
 		}
 	}
 	int nbrTremulants = static_cast<int>(cfg->ReadLong("NumberOfTremulants", 0));
@@ -103,8 +103,8 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 	for (int i = 0; i < nbrTremulants; i++) {
 		wxString tremNbrStr = wxT("Tremulant") + GOODF_functions::number_format(i + 1);
 		int tremRefNbr = static_cast<int>(cfg->ReadLong(tremNbrStr, 0));
-		if (tremRefNbr > 0 && tremRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
-			addTremulantReference(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremRefNbr - 1));
+		if (tremRefNbr > 0 && tremRefNbr <= (int) readOrgan->getNumberOfTremulants()) {
+			addTremulantReference(readOrgan->getOrganTremulantAt(tremRefNbr - 1));
 		}
 	}
 
@@ -125,10 +125,9 @@ void Windchestgroup::read(wxFileConfig *cfg) {
 		setTrackerDelay(static_cast<unsigned>(trackerDelay));
 	}
 	wxString cfgBoolValue = cfg->Read("Percussive", wxEmptyString);
-	setIsPercussive(GOODF_functions::parseBoolean(cfgBoolValue, ::wxGetApp().m_frame->m_organ->getIsPercussive()));
+	setIsPercussive(GOODF_functions::parseBoolean(cfgBoolValue, readOrgan->getIsPercussive()));
 	cfgBoolValue = cfg->Read("HasIndependentRelease", wxEmptyString);
-	setHasIndependentRelease(GOODF_functions::parseBoolean(cfgBoolValue, ::wxGetApp().m_frame->m_organ->getHasIndependentRelease()));
-
+	setHasIndependentRelease(GOODF_functions::parseBoolean(cfgBoolValue, readOrgan->getHasIndependentRelease()));
 }
 
 Enclosure* Windchestgroup::getEnclosureAt(unsigned index) {

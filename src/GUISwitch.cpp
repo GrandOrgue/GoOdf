@@ -44,8 +44,8 @@ void GUISwitch::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
-void GUISwitch::read(wxFileConfig *cfg) {
-	GUIButton::read(cfg, false);
+void GUISwitch::read(wxFileConfig *cfg, Organ *readOrgan) {
+	GUIButton::read(cfg, false, readOrgan);
 }
 
 bool GUISwitch::isReferencing(GoSwitch *sw) {

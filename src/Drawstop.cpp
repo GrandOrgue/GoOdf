@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -73,7 +73,7 @@ void Drawstop::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("StoreInGeneral=N"));
 }
 
-void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrgan) {
 	Button::read(cfg, usingOldPanelFormat);
 	function = cfg->Read("Function", wxT("Input"));
 	if (!function.IsSameAs(wxT("Input"), false)) {
@@ -87,9 +87,9 @@ void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
 			wxString swNbrId = wxT("Switch") + GOODF_functions::number_format(i + 1);
 			int swRefNbr = static_cast<int>(cfg->ReadLong(swNbrId, 0));
 			// if the number of the referenced switch is lower than the number of switches in the organ it's ok
-			if (swRefNbr > 0 && swRefNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
+			if (swRefNbr > 0 && swRefNbr <= (int) readOrgan->getNumberOfSwitches()) {
 				// but the index of the switch is actually one lower than in the organ file
-				addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(swRefNbr - 1));
+				addSwitchReference(readOrgan->getOrganSwitchAt(swRefNbr - 1));
 			}
 		}
 	}

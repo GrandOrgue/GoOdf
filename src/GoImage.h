@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -25,13 +25,15 @@
 #include <wx/textfile.h>
 #include <wx/fileconf.h>
 
+class Organ;
+
 class GoImage {
 public:
 	GoImage();
 	~GoImage();
 
 	void write(wxTextFile *outFile);
-	bool read(wxFileConfig *cfg);
+	bool read(wxFileConfig *cfg, Organ *readOrgan);
 
 	int getHeight() const;
 	void setHeight(int height);

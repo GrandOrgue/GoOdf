@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -59,38 +59,38 @@ void ReversiblePiston::write(wxTextFile *outFile) {
 	}
 }
 
-void ReversiblePiston::read(wxFileConfig *cfg, bool usingOldPanelFormat) {
+void ReversiblePiston::read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrgan) {
 	Button::read(cfg, usingOldPanelFormat);
 	wxString type = cfg->Read("ObjectType", wxEmptyString);
 	if (type.IsSameAs(wxT("STOP"), false)) {
 		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
-		if (manNbr >= 0 && manNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
-			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+		if (manNbr >= 0 && manNbr <= (int) readOrgan->getNumberOfManuals()) {
+			if (!readOrgan->doesHavePedals())
 				manNbr -= 1;
 			int stopNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
-			if (stopNbr > 0 && stopNbr <= (int) ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfStops()) {
-				setStop(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getStopAt(stopNbr - 1));
+			if (stopNbr > 0 && stopNbr <= (int) readOrgan->getOrganManualAt(manNbr)->getNumberOfStops()) {
+				setStop(readOrgan->getOrganManualAt(manNbr)->getStopAt(stopNbr - 1));
 			}
 		}
 	} else if (type.IsSameAs(wxT("COUPLER"), false)) {
 		int manNbr = static_cast<int>(cfg->ReadLong("ManualNumber", -1));
-		if (manNbr >= 0 && manNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
-			if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+		if (manNbr >= 0 && manNbr <= (int) readOrgan->getNumberOfManuals()) {
+			if (!readOrgan->doesHavePedals())
 				manNbr -= 1;
 			int couplerNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
-			if (couplerNbr > 0 && couplerNbr <= (int) ::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getNumberOfCouplers()) {
-				setCoupler(::wxGetApp().m_frame->m_organ->getOrganManualAt(manNbr)->getCouplerAt(couplerNbr - 1));
+			if (couplerNbr > 0 && couplerNbr <= (int) readOrgan->getOrganManualAt(manNbr)->getNumberOfCouplers()) {
+				setCoupler(readOrgan->getOrganManualAt(manNbr)->getCouplerAt(couplerNbr - 1));
 			}
 		}
 	} else if (type.IsSameAs(wxT("SWITCH"), false)) {
 		int switchNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
-		if (switchNbr > 0 && switchNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfSwitches()) {
-			setSwitch(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(switchNbr - 1));
+		if (switchNbr > 0 && switchNbr <= (int) readOrgan->getNumberOfSwitches()) {
+			setSwitch(readOrgan->getOrganSwitchAt(switchNbr - 1));
 		}
 	} else if (type.IsSameAs(wxT("TREMULANT"), false)) {
 		int tremNbr = static_cast<int>(cfg->ReadLong("ObjectNumber", 0));
-		if (tremNbr > 0 && tremNbr <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfTremulants()) {
-			setTremulant(::wxGetApp().m_frame->m_organ->getOrganTremulantAt(tremNbr - 1));
+		if (tremNbr > 0 && tremNbr <= (int) readOrgan->getNumberOfTremulants()) {
+			setTremulant(readOrgan->getOrganTremulantAt(tremNbr - 1));
 		}
 	}
 }

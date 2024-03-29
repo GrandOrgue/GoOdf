@@ -132,7 +132,7 @@ void GUIEnclosure::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
-void GUIEnclosure::read(wxFileConfig *cfg) {
+void GUIEnclosure::read(wxFileConfig *cfg, Organ *readOrgan) {
 	wxString colorStr = cfg->Read("DispLabelColour", wxT("WHITE"));
 	int colorIdx = getDispLabelColour()->getColorNames().Index(colorStr, false);
 	if (colorIdx != wxNOT_FOUND) {
@@ -175,9 +175,9 @@ void GUIEnclosure::read(wxFileConfig *cfg) {
 			wxString bmpStr = wxT("Bitmap") + GOODF_functions::number_format(i + 1);
 			wxString maskStr = wxT("Mask") + GOODF_functions::number_format(i + 1);
 			wxString relBmpPath = cfg->Read(bmpStr, wxEmptyString);
-			wxString fullBmpPath = GOODF_functions::checkIfFileExist(relBmpPath);
+			wxString fullBmpPath = GOODF_functions::checkIfFileExist(relBmpPath, readOrgan);
 			wxString relMaskPath = cfg->Read(maskStr, wxEmptyString);
-			wxString fullMaskPath = GOODF_functions::checkIfFileExist(relMaskPath);
+			wxString fullMaskPath = GOODF_functions::checkIfFileExist(relMaskPath, readOrgan);
 			if (fullBmpPath != wxEmptyString) {
 				wxImage img = wxImage(fullBmpPath);
 				if (img.IsOk()) {

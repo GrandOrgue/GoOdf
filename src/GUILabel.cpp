@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -125,7 +125,7 @@ void GUILabel::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
-void GUILabel::read(wxFileConfig *cfg) {
+void GUILabel::read(wxFileConfig *cfg, Organ *readOrgan) {
 	wxString cfgBoolValue = cfg->Read("FreeXPlacement", wxEmptyString);
 	m_freeXPlacement = GOODF_functions::parseBoolean(cfgBoolValue, true);
 	cfgBoolValue = cfg->Read("FreeYPlacement", wxEmptyString);
@@ -199,7 +199,7 @@ void GUILabel::read(wxFileConfig *cfg) {
 		}
 	}
 	wxString img = cfg->Read("Image", wxEmptyString);
-	wxString fullImgPath = GOODF_functions::checkIfFileExist(img);
+	wxString fullImgPath = GOODF_functions::checkIfFileExist(img, readOrgan);
 	if (fullImgPath != wxEmptyString) {
 		wxImage realImage = wxImage(fullImgPath);
 		if (realImage.IsOk()) {
@@ -211,7 +211,7 @@ void GUILabel::read(wxFileConfig *cfg) {
 		}
 	}
 	wxString mask = cfg->Read("Mask", wxEmptyString);
-	wxString fullMaskPath = GOODF_functions::checkIfFileExist(mask);
+	wxString fullMaskPath = GOODF_functions::checkIfFileExist(mask, readOrgan);
 	if (fullMaskPath != wxEmptyString) {
 		m_image.setMask(fullMaskPath);
 	}

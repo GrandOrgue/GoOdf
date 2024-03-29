@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -36,7 +36,6 @@ Coupler::Coupler() : Drawstop() {
 	m_couplerType = wxT("Normal");
 	m_firstMIDINoteNumber = 0;
 	m_numberOfKeys = 127;
-
 }
 
 Coupler::~Coupler() {
@@ -83,16 +82,16 @@ void Coupler::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("NumberOfKeys=") + wxString::Format(wxT("%i"), m_numberOfKeys));
 }
 
-void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual) {
+void Coupler::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *owning_manual, Organ *readOrgan) {
 	m_owningManual = owning_manual;
-	Drawstop::read(cfg, usingOldPanelFormat);
+	Drawstop::read(cfg, usingOldPanelFormat, readOrgan);
 	wxString cfgBoolValue = cfg->Read("UnisonOff", wxEmptyString);
 	m_unisonOff = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int destMan = static_cast<int>(cfg->ReadLong("DestinationManual", -1));
-	if (destMan >= 0 && destMan <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfManuals()) {
-		if (!::wxGetApp().m_frame->m_organ->doesHavePedals())
+	if (destMan >= 0 && destMan <= (int) readOrgan->getNumberOfManuals()) {
+		if (!readOrgan->doesHavePedals())
 			destMan -= 1;
-		m_destinationManual = ::wxGetApp().m_frame->m_organ->getOrganManualAt(destMan);
+		m_destinationManual = readOrgan->getOrganManualAt(destMan);
 	}
 	int destShift = static_cast<int>(cfg->ReadLong("DestinationKeyshift", 0));
 	if (destShift > -25 && destShift < 25) {

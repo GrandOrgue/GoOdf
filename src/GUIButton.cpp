@@ -9,7 +9,7 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -141,7 +141,7 @@ void GUIButton::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TextBreakWidth=") + wxString::Format(wxT("%i"), m_textBreakWidth));
 }
 
-void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
+void GUIButton::read(wxFileConfig *cfg, bool isPiston, Organ *readOrgan) {
 	wxString cfgBoolValue = cfg->Read("DisplayAsPiston", wxEmptyString);
 	m_displayAsPiston = GOODF_functions::parseBoolean(cfgBoolValue, isPiston);
 	wxString colorStr = cfg->Read("DispLabelColour", wxT("DARK RED"));
@@ -185,7 +185,7 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 		if (imageNbr > 0 && imageNbr < 6)
 			m_dispImageNum = imageNbr;
 	} else {
-		if (imageNbr > 0 && imageNbr < 7)
+		if (imageNbr > 0 && imageNbr < 8)
 			m_dispImageNum = imageNbr;
 	}
 	int btnRow = static_cast<int>(cfg->ReadLong("DispButtonRow", 1));
@@ -201,7 +201,7 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 	if (stopCol > 0 && stopCol <= (stopRow > 99 ? getOwningPanel()->getDisplayMetrics()->m_dispExtraDrawstopCols : getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols))
 		m_dispDrawstopCol = stopCol;
 	wxString image_on = cfg->Read("ImageOn", wxEmptyString);
-	m_imageOn = GOODF_functions::checkIfFileExist(image_on);
+	m_imageOn = GOODF_functions::checkIfFileExist(image_on, readOrgan);
 	if (m_imageOn != wxEmptyString) {
 		wxImage img = wxImage(m_imageOn);
 		if (img.IsOk()) {
@@ -220,11 +220,11 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston) {
 		}
 	}
 	wxString image_off = cfg->Read("ImageOff", wxEmptyString);
-	m_imageOff = GOODF_functions::checkIfFileExist(image_off);
+	m_imageOff = GOODF_functions::checkIfFileExist(image_off, readOrgan);
 	wxString mask_on = cfg->Read("MaskOn", wxEmptyString);
-	m_maskOn = GOODF_functions::checkIfFileExist(mask_on);
+	m_maskOn = GOODF_functions::checkIfFileExist(mask_on, readOrgan);
 	wxString mask_off = cfg->Read("MaskOff", wxEmptyString);
-	m_maskOff = GOODF_functions::checkIfFileExist(mask_off);
+	m_maskOff = GOODF_functions::checkIfFileExist(mask_off, readOrgan);
 	int thePanelWidth = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue();
 	int thePanelHeight = getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue();
 	int posX = static_cast<int>(cfg->ReadLong("PositionX", -1));

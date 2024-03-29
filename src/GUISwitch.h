@@ -26,13 +26,15 @@
 #include "GoSwitch.h"
 #include "GUIButton.h"
 
+class Organ;
+
 class GUISwitch : public GUIButton {
 public:
 	GUISwitch(GoSwitch *sw);
 	virtual ~GUISwitch();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg);
+	void read(wxFileConfig *cfg, Organ *readOrgan);
 
 	bool isReferencing(GoSwitch *sw);
 	void updateDisplayName();

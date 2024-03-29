@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -27,6 +27,7 @@
 #include "Button.h"
 
 class GoSwitch;
+class Organ;
 
 class Drawstop : public Button {
 public:
@@ -34,7 +35,7 @@ public:
 	~Drawstop();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrgan);
 
 	bool isDefaultToEngaged();
 	void setDefaultToEngaged(bool defaultToEngaged);

@@ -32,6 +32,7 @@
 #include "CopyElementAttributesDialog.h"
 #include "CmbDialog.h"
 #include "DefaultPathsDialog.h"
+#include "StopRankImportDialog.h"
 #include <vector>
 #include <algorithm>
 
@@ -44,6 +45,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_NEW_ORGAN, GOODFFrame::OnNewOrgan)
 	EVT_MENU(ID_READ_ORGAN, GOODFFrame::OnReadOrganFile)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
+	EVT_MENU(ID_IMPORT_STOP_RANK, GOODFFrame::OnImportStopRank)
 	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
 	EVT_MENU(ID_CLEAR_HISTORY, GOODFFrame::OnClearHistory)
 	EVT_MENU(ID_DEFAULT_PATHS_MENU, GOODFFrame::OnDefaultPathMenuChoice)
@@ -93,6 +95,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 
 	// Add tools menu items
 	m_toolsMenu->Append(ID_IMPORT_VOICING_DATA, wxT("Import .cmb\tCtrl+I"), wxT("Import voicing data from a .cmb (settings) file"));
+	m_toolsMenu->Append(ID_IMPORT_STOP_RANK, wxT("Import Stops/Ranks\tCtrl+R"), wxT("Import stops/ranks from another (working) .organ file"));
 	m_toolsMenu->AppendCheckItem(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, wxT("Enable Tooltips"), wxT("Enable tooltips for certain controls"));
 	m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
 	m_toolsMenu->Append(ID_CLEAR_HISTORY, wxT("Clear File History"), wxT("Remove all the entries in the recent file history"));
@@ -2552,6 +2555,34 @@ void GOODFFrame::AddStopItemToTree() {
 	m_organ->setModified(true);
 }
 
+void GOODFFrame::AddStopItemForManual(wxString stopName, unsigned manIndex) {
+	if (manIndex < m_organ->getNumberOfManuals() && manIndex < m_organTreeCtrl->GetChildrenCount(tree_manuals)) {
+		unsigned numChildrens = m_organTreeCtrl->GetChildrenCount(tree_manuals);
+		wxTreeItemIdValue cookie;
+		wxTreeItemId theManual;
+		for (unsigned i = 0; i < numChildrens; i++) {
+
+			if (i == 0)
+				theManual = m_organTreeCtrl->GetFirstChild(tree_manuals, cookie);
+			else
+				theManual = m_organTreeCtrl->GetNextChild(tree_manuals, cookie);
+			if (i == manIndex)
+				break;
+		}
+
+		wxTreeItemId divisionalChild = m_organTreeCtrl->GetLastChild(theManual);
+		wxTreeItemId couplerChild = m_organTreeCtrl->GetPrevSibling(divisionalChild);
+		wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
+		m_organTreeCtrl->AppendItem(stopChild, stopName);
+		m_organ->setModified(true);
+	}
+}
+
+void GOODFFrame::AddRankItemToTree(wxString rankName) {
+	m_organTreeCtrl->AppendItem(tree_ranks, rankName);
+	m_organ->setModified(true);
+}
+
 void GOODFFrame::SelectStopItemInTree(int nbrAdded) {
 	wxTreeItemId selectedManual = m_organTreeCtrl->GetSelection();
 	wxTreeItemId divisionalChild = m_organTreeCtrl->GetLastChild(selectedManual);
@@ -3082,6 +3113,42 @@ void GOODFFrame::OnDefaultPathMenuChoice(wxCommandEvent& WXUNUSED(event)) {
 		m_defaultOrganDirectory = defaultPaths.GetSelectedOrganDirectory();
 		m_defaultCmbDirectory = defaultPaths.GetSelectedCmbDirectory();
 	}
+}
+
+void GOODFFrame::OnImportStopRank(wxCommandEvent& WXUNUSED(event)) {
+	wxString organFilePath;
+	wxString defaultPath = m_defaultOrganDirectory;
+	if (defaultPath == wxEmptyString)
+		defaultPath = wxStandardPaths::Get().GetDocumentsDir();
+
+	wxFileDialog fileDialog(
+		this,
+		wxT("Select .organ file to import stops/ranks from"),
+		defaultPath,
+		"",
+		"GrandOrgue ODF files (*.organ)|*.organ;*.ORGAN",
+		wxFD_OPEN|wxFD_FILE_MUST_EXIST
+	);
+
+	if (fileDialog.ShowModal() != wxID_OK) {
+		return;
+	}
+
+	organFilePath = fileDialog.GetPath();
+
+	Organ *sourceOrgan = new Organ();
+
+	OrganFileParser parser(organFilePath, sourceOrgan);
+	if (parser.isOrganReady()) {
+		StopRankImportDialog importDialog(sourceOrgan, m_organ, this);
+		importDialog.ShowModal();
+
+	} else {
+		wxMessageDialog msg(this, wxT("The selected .organ file could not be parsed for importing any stops/ranks!"), wxT("Failure to parse .organ file"), wxOK|wxCENTRE|wxICON_ERROR);
+		msg.ShowModal();
+	}
+
+	delete sourceOrgan;
 }
 
 void GOODFFrame::SetupOrganMainPanel() {

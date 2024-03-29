@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -26,6 +26,8 @@
 #include <wx/filename.h>
 #include <vector>
 #include "GOODF.h"
+
+class Organ;
 
 namespace GOODF_functions {
 
@@ -71,11 +73,11 @@ namespace GOODF_functions {
 		return stringToReturn;
 	}
 
-	inline wxString checkIfFileExist(wxString relativePath) {
+	inline wxString checkIfFileExist(wxString relativePath, Organ *currentOrgan) {
 		if (relativePath != wxEmptyString) {
 			if (relativePath.StartsWith(wxT("./")) || relativePath.StartsWith(wxT(".\\")))
 				relativePath.erase(0, 2);
-			wxString fullFilePath = ::wxGetApp().m_frame->m_organ->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
+			wxString fullFilePath = currentOrgan->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
 			wxFileName theFile = wxFileName(fullFilePath, wxPATH_DOS);
 			if (theFile.FileExists()) {
 				return theFile.GetFullPath();

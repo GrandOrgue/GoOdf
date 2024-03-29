@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to create new panel from selection on existing panel display.
-- Option to import rank definitions from other .organ files.
+- Option to import stop/rank definitions from other .organ files.
 - HasIndependentRelease option for percussive ranks and pipes.
 - Percussive and HasIndependentRelease is also possible to set at [Organ] and [WindchestGroup999] levels.
 - AmplitudeLevel, Gain, PitchTuning, PitchCorrection and TrackerDelay is now available for [WindchestGroup999].
@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Click/drag adjustment within selection rectangle should not select/change underlying elements.
 - Text rendering on enclosure GUI element.
+- Reading gui drawstop button element image number 7.
 
 ## [0.10.0] - 2024-02-22
 

@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -66,9 +66,9 @@ void Stop::write(wxTextFile *outFile) {
 
 }
 
-void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manual) {
+void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manual, Organ *readOrgan) {
 	m_owningManual = owning_manual;
-	Drawstop::read(cfg, usingOldPanelFormat);
+	Drawstop::read(cfg, usingOldPanelFormat, readOrgan);
 	int firstPipeKeyNbr = static_cast<int>(cfg->ReadLong("FirstAccessiblePipeLogicalKeyNumber", 1));
 	if (firstPipeKeyNbr > 0 && firstPipeKeyNbr < 129) {
 		m_FirstAccessiblePipeLogicalKeyNumber = firstPipeKeyNbr;
@@ -82,15 +82,15 @@ void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manu
 		m_FirstAccessiblePipeLogicalPipeNumber = firstPipePipeNbr;
 	}
 	int nbrRanks = static_cast<int>(cfg->ReadLong("NumberOfRanks", 0));
-	if (nbrRanks > 0 && nbrRanks <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfRanks()) {
+	if (nbrRanks > 0 && nbrRanks <= (int) readOrgan->getNumberOfRanks()) {
 		// this stop uses references to ranks
 		m_usingInternalRank = false;
 		for (int i = 0; i < nbrRanks; i++) {
 			wxString rankNbrStr = wxT("Rank") + GOODF_functions::number_format(i + 1);
 			int refRank = static_cast<int>(cfg->ReadLong(rankNbrStr, 0));
-			if (refRank > 0 && refRank <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfRanks()) {
+			if (refRank > 0 && refRank <= (int) readOrgan->getNumberOfRanks()) {
 				RankReference rankRef;
-				rankRef.m_rankReference = ::wxGetApp().m_frame->m_organ->getOrganRankAt(refRank - 1);
+				rankRef.m_rankReference = readOrgan->getOrganRankAt(refRank - 1);
 				int firstPipe = static_cast<int>(cfg->ReadLong(rankNbrStr + "FirstPipeNumber", 1));
 				if (firstPipe > 0 && firstPipe <= rankRef.m_rankReference->getNumberOfLogicalPipes()) {
 					rankRef.m_firstPipeNumber = firstPipe;
@@ -111,7 +111,7 @@ void Stop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual* owning_manu
 	} else {
 		// this stop uses an internal rank that must be read
 		m_usingInternalRank = true;
-		m_internalRank.read(cfg);
+		m_internalRank.read(cfg, readOrgan);
 		m_internalRank.setFirstMidiNoteNumber(m_owningManual->getFirstAccessibleKeyMIDINoteNumber());
 	}
 }

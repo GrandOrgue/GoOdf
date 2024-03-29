@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -65,11 +65,11 @@ void GoImage::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("TileOffsetY=") + wxString::Format(wxT("%i"), m_tileOffsetY));
 }
 
-bool GoImage::read(wxFileConfig *cfg) {
+bool GoImage::read(wxFileConfig *cfg, Organ *readOrgan) {
 	bool imageIsValid = false;
 
 	wxString relImgPath = cfg->Read("Image", wxEmptyString);
-	wxString imgPath = GOODF_functions::checkIfFileExist(relImgPath);
+	wxString imgPath = GOODF_functions::checkIfFileExist(relImgPath, readOrgan);
 	if (imgPath != wxEmptyString) {
 		wxImage img = wxImage(imgPath);
 		if (img.IsOk()) {
@@ -94,7 +94,7 @@ bool GoImage::read(wxFileConfig *cfg) {
 			}
 		}
 		wxString relMaskPath = cfg->Read("Mask", wxEmptyString);
-		wxString maskPath = GOODF_functions::checkIfFileExist(relMaskPath);
+		wxString maskPath = GOODF_functions::checkIfFileExist(relMaskPath, readOrgan);
 		if (maskPath != wxEmptyString) {
 			wxImage mask = wxImage(maskPath);
 			if (mask.IsOk()) {

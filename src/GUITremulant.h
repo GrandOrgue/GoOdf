@@ -26,13 +26,15 @@
 #include "Tremulant.h"
 #include "GUIButton.h"
 
+class Organ;
+
 class GUITremulant : public GUIButton {
 public:
 	GUITremulant(Tremulant *tremulant);
 	~GUITremulant();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg);
+	void read(wxFileConfig *cfg, Organ *readOrgan);
 
 	bool isReferencing(Tremulant *tremulant);
 	void updateDisplayName();

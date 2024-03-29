@@ -28,13 +28,15 @@
 #include "Enclosure.h"
 #include "Tremulant.h"
 
+class Organ;
+
 class Windchestgroup {
 public:
 	Windchestgroup();
 	~Windchestgroup();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg);
+	void read(wxFileConfig *cfg, Organ *readOrgan);
 
 	Enclosure* getEnclosureAt(unsigned index);
 	unsigned getNumberOfEnclosures();

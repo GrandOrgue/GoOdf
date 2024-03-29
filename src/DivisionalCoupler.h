@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -26,13 +26,15 @@
 #include "Drawstop.h"
 #include "Manual.h"
 
+class Organ;
+
 class DivisionalCoupler : public Drawstop {
 public:
 	DivisionalCoupler();
 	~DivisionalCoupler();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg, bool usingOldPanelFormat);
+	void read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrgan);
 
 	bool hasBiDirectionalCoupling();
 	void setBiDirectionalCoupling(bool isBiDirectional);

@@ -137,7 +137,7 @@ void Pipe::write(wxTextFile *outFile, wxString pipeNr, Rank *parent) {
 	}
 }
 
-void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
+void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrgan) {
 	wxString cfgBoolValue = cfg->Read(pipeNr + wxT("Percussive"), wxEmptyString);
 	isPercussive = GOODF_functions::parseBoolean(cfgBoolValue, parent->isPercussive());
 	cfgBoolValue = cfg->Read(pipeNr + wxT("HasIndependentRelease"), wxEmptyString);
@@ -175,8 +175,8 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 		pitchCorrection = pitchCorr;
 	}
 	int windchestRef = static_cast<int>(cfg->ReadLong(pipeNr + wxT("WindchestGroup"), 0));
-	if (windchestRef > 0 && windchestRef <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups()) {
-		windchest = ::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(windchestRef - 1);
+	if (windchestRef > 0 && windchestRef <= (int) readOrgan->getNumberOfWindchestgroups()) {
+		windchest = readOrgan->getOrganWindchestgroupAt(windchestRef - 1);
 	} else {
 		windchest = parent->getWindchest();
 	}
@@ -192,13 +192,13 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	acceptsRetuning = GOODF_functions::parseBoolean(retuningStr, parent->doesAcceptsRetuning());
 
 	// the main attack is added first
-	readAttack(cfg, pipeNr);
+	readAttack(cfg, pipeNr, readOrgan);
 	// next any additional attacks
 	int nbrExtraAtks = static_cast<int>(cfg->ReadLong(pipeNr + wxT("AttackCount"), 0));
 	if (nbrExtraAtks > 0 && nbrExtraAtks < 101) {
 		for (int atk = 0; atk < nbrExtraAtks; atk++) {
 			wxString atkStr = pipeNr + wxT("Attack") + GOODF_functions::number_format(atk + 1);
-			readAttack(cfg, atkStr);
+			readAttack(cfg, atkStr, readOrgan);
 		}
 	}
 
@@ -210,7 +210,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 		for (int rel = 0; rel < nbrExtraRel; rel++) {
 			wxString relStr = pipeNr + wxT("Release") + GOODF_functions::number_format(rel + 1);
 			wxString relPath = cfg->Read(relStr, wxEmptyString);
-			wxString fullRelPath = GOODF_functions::checkIfFileExist(relPath);
+			wxString fullRelPath = GOODF_functions::checkIfFileExist(relPath, readOrgan);
 			if (fullRelPath != wxEmptyString) {
 				int isTrem = static_cast<int>(cfg->ReadLong(relStr + wxT("IsTremulant"), -1));
 				int maxKeyPress = static_cast<int>(cfg->ReadLong(relStr + wxT("MaxKeyPressTime"), -1));
@@ -250,11 +250,11 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent) {
 	}
 }
 
-void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr) {
+void Pipe::readAttack(wxFileConfig *cfg, wxString pipeStr, Organ *readOrgan) {
 	wxString mainAtkStr = cfg->Read(pipeStr, wxEmptyString);
 	if (mainAtkStr != wxEmptyString) {
 		// the pipe can have a relative path to a sample file or start with REF
-		wxString fullAtkPath = GOODF_functions::checkIfFileExist(mainAtkStr);
+		wxString fullAtkPath = GOODF_functions::checkIfFileExist(mainAtkStr, readOrgan);
 		if (fullAtkPath != wxEmptyString) {
 			wxString loadReleaseStr = cfg->Read(pipeStr + wxT("LoadRelease"), wxEmptyString);
 			int atkVel = static_cast<int>(cfg->ReadLong(pipeStr + wxT("AttackVelocity"), 0));

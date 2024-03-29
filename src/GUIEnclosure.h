@@ -30,13 +30,15 @@
 #include <list>
 #include "Enclosure.h"
 
+class Organ;
+
 class GUIEnclosure : public GUIElement {
 public:
 	GUIEnclosure(Enclosure *enclosure);
 	~GUIEnclosure();
 
 	void write(wxTextFile *outFile);
-	void read(wxFileConfig *cfg);
+	void read(wxFileConfig *cfg, Organ *readOrgan);
 
 	bool isReferencing(Enclosure *enclosure);
 	void updateDisplayName();
@@ -99,9 +101,6 @@ protected:
 	wxFont m_dispLabelFont; // (string, default: empty)
 	wxString m_dispLabelText; // (string, default: Name of the button)
 	int m_enclosureStyle; // (integer 1 - 4, default: implementation dependent)
-	// int m_bitmapCount; (integer 1 - 128, default: implementation dependent)
-	// Bitmap999 (string, default: use internal bitmap)
-	// Mask999 (string, default: empty)
 	std::list<GoImage> m_bitmaps;
 	int m_width; // (integer 0 - panel width, default: bitmap width)
 	int m_height; // (integer 0 - panel height, default: bitmap height)

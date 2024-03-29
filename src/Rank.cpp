@@ -44,6 +44,29 @@ Rank::Rank() {
 	createDummyPipes();
 }
 
+Rank::Rank(const Rank& r) {
+	name = r.name;
+	firstMidiNoteNumber = r.firstMidiNoteNumber;
+	numberOfLogicalPipes = r.numberOfLogicalPipes;
+	amplitudeLevel = r.amplitudeLevel;
+	gain = r.gain;
+	pitchTuning = r.pitchTuning;
+	trackerDelay = r.trackerDelay;
+	harmonicNumber = r.harmonicNumber;
+	pitchCorrection = r.pitchCorrection;
+	windchest = r.windchest;
+	percussive = r.percussive;
+	hasIndependentRelease = r.hasIndependentRelease;
+	minVelocityVolume = r.minVelocityVolume;
+	maxVelocityVolume = r.maxVelocityVolume;
+	acceptsRetuning = r.acceptsRetuning;
+	m_latestPipesRootPath = r.m_latestPipesRootPath;
+
+	for (Pipe p : r.m_pipes) {
+		m_pipes.push_back(p);
+	}
+}
+
 Rank::~Rank() {
 
 }
@@ -141,7 +164,7 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 	}
 }
 
-void Rank::read(wxFileConfig *cfg) {
+void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	name = cfg->Read("Name", wxEmptyString);
 	int firstMIDInote = static_cast<int>(cfg->ReadLong("FirstMidiNoteNumber", 36));
 	if (firstMIDInote > -1 && firstMIDInote < 257) {
@@ -176,8 +199,8 @@ void Rank::read(wxFileConfig *cfg) {
 		setPitchCorrection(pitchCorr);
 	}
 	int windchestRef = static_cast<int>(cfg->ReadLong("WindchestGroup", 1));
-	if (windchestRef > 0 && windchestRef <= (int) ::wxGetApp().m_frame->m_organ->getNumberOfWindchestgroups()) {
-		setWindchest(::wxGetApp().m_frame->m_organ->getOrganWindchestgroupAt(windchestRef - 1));
+	if (windchestRef > 0 && windchestRef <= (int) readOrgan->getNumberOfWindchestgroups()) {
+		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
@@ -200,7 +223,7 @@ void Rank::read(wxFileConfig *cfg) {
 	for (int i = 0; i < numberOfLogicalPipes; i++) {
 		Pipe p;
 		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);
-		p.read(cfg, pipeNbr, this);
+		p.read(cfg, pipeNbr, this, readOrgan);
 		m_pipes.push_back(p);
 	}
 }
@@ -299,15 +322,6 @@ bool Rank::isPercussive() const {
 
 void Rank::setPercussive(bool percussive) {
 	this->percussive = percussive;
-/*
-	for (std::list<Pipe>::iterator pipe = m_pipes.begin(); pipe != m_pipes.end(); ++pipe) {
-		pipe->isPercussive = this->percussive;
-		if (percussive && !pipe->hasIndependentRelease) {
-			if (!pipe->m_releases.empty())
-				pipe->m_releases.clear();
-		}
-	}
-*/
 }
 
 bool Rank::isIndependentRelease() {
@@ -316,11 +330,6 @@ bool Rank::isIndependentRelease() {
 
 void Rank::setIndependentRelease(bool independent) {
 	this->hasIndependentRelease = independent;
-/*
-	for (std::list<Pipe>::iterator pipe = m_pipes.begin(); pipe != m_pipes.end(); ++pipe) {
-		pipe->setIndependentRelease(this->hasIndependentRelease);
-	}
-*/
 }
 
 float Rank::getPitchCorrection() const {
@@ -390,8 +399,6 @@ void Rank::readPipes(
 
 	if (!pipeRoot.IsOpened())
 		return;
-
-	//clearAllPipes();
 
 	int count = 0;
 	for (int i = startPipeIdx; i < startPipeIdx + totalNbrOfPipes; i++) {
@@ -1037,7 +1044,7 @@ void Rank::addTremulantToPipes(
 		bool cont = pipeRoot.GetFirst(&folder, wxT("*"), wxDIR_DIRS);
 		while (cont) {
 			allFolders.Add(folder);
-		    cont = pipeRoot.GetNext(&folder);
+			cont = pipeRoot.GetNext(&folder);
 		}
 
 		if (!allFolders.IsEmpty()) {

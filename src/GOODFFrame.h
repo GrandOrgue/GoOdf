@@ -66,6 +66,8 @@ public:
 	void RemoveCurrentItemFromOrgan();
 
 	void AddStopItemToTree();
+	void AddStopItemForManual(wxString stopName, unsigned manIndex);
+	void AddRankItemToTree(wxString rankName);
 	void SelectStopItemInTree(int nbrAdded);
 	void AddCouplerItemToTree();
 	void AddDivisionalItemToTree();
@@ -179,6 +181,7 @@ private:
 	void OnClearHistory(wxCommandEvent& event);
 	void OnSizeChange(wxSizeEvent& event);
 	void OnDefaultPathMenuChoice(wxCommandEvent& event);
+	void OnImportStopRank(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
