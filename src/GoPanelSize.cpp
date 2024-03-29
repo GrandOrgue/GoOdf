@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -39,7 +39,7 @@ int GoPanelSize::getNumericalValue() const {
 }
 
 void GoPanelSize::setNumericalValue(int value) {
-	if (value > 99 && value < 4001) {
+	if (value > 99 && value < 32001) {
 		m_numericalValue = value;
 		m_selectedSizeNameIndex = 4;
 	}

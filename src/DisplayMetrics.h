@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -42,8 +42,8 @@ public:
 	wxBitmap getKeyVertBg();
 	wxBitmap getInsetBg();
 
-	GoPanelSize m_dispScreenSizeHoriz; // 100 - 4000, SMALL = 800, MEDIUM = 1007, MEDIUM LARGE = 1263, LARGE = 1583
-	GoPanelSize m_dispScreenSizeVert; // 100 - 4000, SMALL = 500, MEDIUM = 663, MEDIUM LARGE = 855, LARGE = 1095
+	GoPanelSize m_dispScreenSizeHoriz; // 100 - 32000, SMALL = 800, MEDIUM = 1007, MEDIUM LARGE = 1263, LARGE = 1583
+	GoPanelSize m_dispScreenSizeVert; // 100 - 32000, SMALL = 500, MEDIUM = 663, MEDIUM LARGE = 855, LARGE = 1095
 	int m_dispDrawstopBackgroundImageNum;
 	int m_dispConsoleBackgroundImageNum;
 	int m_dispKeyHorizBackgroundImageNum;

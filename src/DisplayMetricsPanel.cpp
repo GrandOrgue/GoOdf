@@ -9,11 +9,11 @@
  *
  * GOODF is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF.  If not, see <https://www.gnu.org/licenses/>.
+ * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -110,7 +110,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		100,
-		4000,
+		32000,
 		800
 	);
 	firstRow->Add(m_screenSizeHorizSpin, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
@@ -139,7 +139,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		wxSP_ARROW_KEYS,
 		100,
-		4000,
+		32000,
 		500
 	);
 	firstHalfRow->Add(m_screenSizeVertSpin, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);

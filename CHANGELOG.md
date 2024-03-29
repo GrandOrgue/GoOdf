@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build system now allow testing builds in between releases.
 - AppImage build is now available.
 - Show what element actually is represented by each Gui Element.
-- Percussive and HasIndependentRelease (default false) values are inherited from [Organ]->[WindchestGroup]->[Rank]->[Pipe]. Note that this change in behaviour will cause new odfs produced/saved to be incompatible with earlier versions of GrandOrgue
+- Percussive and HasIndependentRelease (default false) values are inherited from [Organ]->[WindchestGroup]->[Rank]->[Pipe]. Note that this change in behaviour will cause new odfs produced/saved to be incompatible with earlier versions of GrandOrgue.
+- Increased maximum allowed panel size to 32000 pixels.
 
 ### Fixed
 
