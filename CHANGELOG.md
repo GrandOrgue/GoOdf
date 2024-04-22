@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display.
 
+## [0.11.1] - 2024-04-22
+
+### Changed
+
+- CMake build system now take changes to version.txt file into account.
+
+### Fixed
+
+- Crash when writing .organ file and a rank tried to access non existant windchest.
+- Loading of an .organ file with only a pedal as manual.
+
 ## [0.11.0] - 2024-03-30
 
 ### Added

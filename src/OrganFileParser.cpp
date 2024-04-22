@@ -330,7 +330,7 @@ void OrganFileParser::parseOrganSection() {
 	// needs to be parsed after all manuals have been added to the organ
 	// and then the divisionals need to be added after the couplers
 	int nbrManuals = static_cast<int>(m_organFile->ReadLong("NumberOfManuals", 0));
-	if (nbrManuals > 0 && nbrManuals < 17) {
+	if ((nbrManuals > 0 && nbrManuals < 17) || (nbrManuals == 0 && m_organ->doesHavePedals())) {
 		if (m_organ->doesHavePedals())
 			nbrManuals += 1;
 		for (int i = 0; i < nbrManuals; i++) {

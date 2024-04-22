@@ -88,20 +88,22 @@ void Rank::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 	if (pitchCorrection != 0)
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
-	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
-	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
-	if (percussive != windchest->getIsPercussive()) {
-		if (percussive) {
-			outFile->AddLine(wxT("Percussive=Y"));
-			if (hasIndependentRelease != windchest->getHasIndependentRelease()) {
-				if (hasIndependentRelease) {
-					outFile->AddLine(wxT("HasIndependentRelease=Y"));
-				} else {
-					outFile->AddLine(wxT("HasIndependentRelease=N"));
+	if (windchest) {
+		wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
+		outFile->AddLine(wxT("WindchestGroup=") + wcRef);
+		if (percussive != windchest->getIsPercussive()) {
+			if (percussive) {
+				outFile->AddLine(wxT("Percussive=Y"));
+				if (hasIndependentRelease != windchest->getHasIndependentRelease()) {
+					if (hasIndependentRelease) {
+						outFile->AddLine(wxT("HasIndependentRelease=Y"));
+					} else {
+						outFile->AddLine(wxT("HasIndependentRelease=N"));
+					}
 				}
+			} else {
+				outFile->AddLine(wxT("Percussive=N"));
 			}
-		} else {
-			outFile->AddLine(wxT("Percussive=N"));
 		}
 	}
 	if (minVelocityVolume != 100)
@@ -135,16 +137,18 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		outFile->AddLine(wxT("HarmonicNumber=") + wxString::Format(wxT("%i"), harmonicNumber));
 	if (pitchCorrection != 0)
 		outFile->AddLine(wxT("PitchCorrection=") + wxString::Format(wxT("%f"), pitchCorrection));
-	wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
-	outFile->AddLine(wxT("WindchestGroup=") + wcRef);
-	if (percussive != windchest->getIsPercussive()) {
-		if (percussive) {
-			outFile->AddLine(wxT("Percussive=Y"));
-			if (hasIndependentRelease) {
-				outFile->AddLine(wxT("HasIndependentRelease=Y"));
+	if (windchest) {
+		wxString wcRef = GOODF_functions::number_format(::wxGetApp().m_frame->m_organ->getIndexOfOrganWindchest(windchest));
+		outFile->AddLine(wxT("WindchestGroup=") + wcRef);
+		if (percussive != windchest->getIsPercussive()) {
+			if (percussive) {
+				outFile->AddLine(wxT("Percussive=Y"));
+				if (hasIndependentRelease) {
+					outFile->AddLine(wxT("HasIndependentRelease=Y"));
+				}
+			} else {
+				outFile->AddLine(wxT("Percussive=N"));
 			}
-		} else {
-			outFile->AddLine(wxT("Percussive=N"));
 		}
 	}
 	if (minVelocityVolume != 100)
@@ -198,7 +202,7 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	if (pitchCorr >= -1800 && pitchCorr <= 1800) {
 		setPitchCorrection(pitchCorr);
 	}
-	int windchestRef = static_cast<int>(cfg->ReadLong("WindchestGroup", 1));
+	int windchestRef = static_cast<int>(cfg->ReadLong("WindchestGroup", 0));
 	if (windchestRef > 0 && windchestRef <= (int) readOrgan->getNumberOfWindchestgroups()) {
 		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
 	}
