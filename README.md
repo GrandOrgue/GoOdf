@@ -28,6 +28,12 @@ Rendering of the GUI panels is now possible, but it likely needs more work befor
 ## Building from sources
 Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.
 
+The source code can be obtained (if git is available) with:
+
+```
+git clone https://github.com/GrandOrgue/GoOdf.git
+```
+
 The build process on Linux is simple. In the GoOdf base directory, just create and cd into a separate build directory
 
 ```
