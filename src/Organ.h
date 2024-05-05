@@ -184,6 +184,7 @@ public:
 	void updateRelativePipePaths();
 	bool isModified();
 	void setModified(bool modified);
+	void doInheritLegacyXfades();
 
 private:
 	wxString m_odfRoot;

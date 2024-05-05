@@ -21,6 +21,7 @@
 #include "OrganFileParser.h"
 #include <wx/filename.h>
 #include <wx/image.h>
+#include "GOODF.h"
 #include "GOODFFunctions.h"
 #include "GUITremulant.h"
 #include "GUISwitch.h"
@@ -320,6 +321,25 @@ void OrganFileParser::parseOrganSection() {
 				Rank r;
 				r.read(m_organFile, m_organ);
 				m_organ->addRank(r);
+				if (!::wxGetApp().m_frame->IsParsingLegacyXfades()) {
+					bool rankUsesLegacyXfades = false;
+					for (Pipe& p : r.m_pipes) {
+						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
+							// This is certainly a legacy x-fade!
+							wxLogWarning("%s uses a Pipe999ReleaseCrossfadeLength with LoadRelease=N, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", r.getName());
+							rankUsesLegacyXfades = true;
+						}
+						if (p.m_attacks.size() > 1 && p.m_attacks.front().loopCrossfadeLength) {
+							// LoopCrossfadeLength is set for main attack, but should it be inherited by other attacks?
+							wxLogWarning("%s uses Pipe999LoopCrossfadeLength with more than one attack. If this value should be inherited, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", r.getName());
+							rankUsesLegacyXfades = true;
+						}
+						if (rankUsesLegacyXfades) {
+							::wxGetApp().m_frame->GetLogWindow()->Show(true);
+							break;
+						}
+					}
+				}
 			}
 		}
 		m_organFile->SetPath("/Organ");

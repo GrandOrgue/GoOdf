@@ -178,6 +178,25 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Org
 				s.read(cfg, useOldPanelFormat, this, readOrgan);
 				readOrgan->addStop(s, true);
 				addStop(readOrgan->getOrganStopAt(readOrgan->getNumberOfStops() - 1));
+				if (s.isUsingInternalRank() && !::wxGetApp().m_frame->IsParsingLegacyXfades()) {
+					bool rankUsesLegacyXfades = false;
+					for (Pipe& p : s.getInternalRank()->m_pipes) {
+						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
+							// This is certainly a legacy x-fade!
+							wxLogWarning("%s uses a Pipe999ReleaseCrossfadeLength with LoadRelease=N, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", s.getName());
+							rankUsesLegacyXfades = true;
+						}
+						if (p.m_attacks.size() > 1 && p.m_attacks.front().loopCrossfadeLength) {
+							// LoopCrossfadeLength is set for main attack, but should it be inherited by other attacks?
+							wxLogWarning("%s uses Pipe999LoopCrossfadeLength with more than one attack. If this value should be inherited, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", s.getName());
+							rankUsesLegacyXfades = true;
+						}
+						if (rankUsesLegacyXfades) {
+							::wxGetApp().m_frame->GetLogWindow()->Show(true);
+							break;
+						}
+					}
+				}
 				if (s.isDisplayed()) {
 					// we must also create a GUI element for that stop from this group information
 					int lastStopIdx = m_stops.size() - 1;

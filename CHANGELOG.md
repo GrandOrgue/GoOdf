@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display.
 
+## [0.12.0] - 2024-05-05
+
+### Added
+
+- Option to parse/convert/copy legacy loop/release X-fades that are supposed to be inherited by other pipe attacks/releases (like they did in a version pre GO 3.14.0) when opening an .organ file.
+- Log window to display some messages/warnings/hints etc.
+
 ## [0.11.1] - 2024-04-22
 
 ### Changed

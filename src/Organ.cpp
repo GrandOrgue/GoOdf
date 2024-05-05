@@ -1920,3 +1920,68 @@ void Organ::setModified(bool modified) {
 	m_isModified = modified;
 	::wxGetApp().m_frame->UpdateFrameTitle();
 }
+
+void Organ::doInheritLegacyXfades() {
+	for (Rank& r : m_Ranks) {
+		for (Pipe& p : r.m_pipes) {
+			if (!p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+				int loopXfadeValue = p.m_attacks.front().loopCrossfadeLength;
+				int releaseXfadeValue = p.m_attacks.front().releaseCrossfadeLength;
+
+				// any additional attacks should inherit x-fade values if they are not set already
+				if (p.m_attacks.size() > 1) {
+					bool isFirst = true;
+					for (Attack& a : p.m_attacks) {
+						if (!isFirst) {
+							if (a.loopCrossfadeLength == 0)
+								a.loopCrossfadeLength = loopXfadeValue;
+							if (a.releaseCrossfadeLength == 0)
+								a.releaseCrossfadeLength = releaseXfadeValue;
+						}
+						isFirst = false;
+					}
+				}
+
+				// any separate releases should inherit release x-fade value if it's not set already
+				if (p.m_releases.size()) {
+					for (Release& r : p.m_releases) {
+						if (r.releaseCrossfadeLength == 0)
+							r.releaseCrossfadeLength = releaseXfadeValue;
+					}
+				}
+			}
+		}
+	}
+	for (Stop& s : m_Stops) {
+		if (s.isUsingInternalRank()) {
+			for (Pipe& p : s.getInternalRank()->m_pipes) {
+				if (!p.m_attacks.front().fileName.StartsWith(wxT("REF:"))) {
+					int loopXfadeValue = p.m_attacks.front().loopCrossfadeLength;
+					int releaseXfadeValue = p.m_attacks.front().releaseCrossfadeLength;
+
+					// any additional attacks should inherit x-fade values if they are not set already
+					if (p.m_attacks.size() > 1) {
+						bool isFirst = true;
+						for (Attack& a : p.m_attacks) {
+							if (!isFirst) {
+								if (a.loopCrossfadeLength == 0)
+									a.loopCrossfadeLength = loopXfadeValue;
+								if (a.releaseCrossfadeLength == 0)
+									a.releaseCrossfadeLength = releaseXfadeValue;
+							}
+							isFirst = false;
+						}
+					}
+
+					// any separate releases should inherit release x-fade value if it's not set already
+					if (p.m_releases.size()) {
+						for (Release& r : p.m_releases) {
+							if (r.releaseCrossfadeLength == 0)
+								r.releaseCrossfadeLength = releaseXfadeValue;
+						}
+					}
+				}
+			}
+		}
+	}
+}

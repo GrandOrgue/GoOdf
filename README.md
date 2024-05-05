@@ -24,6 +24,7 @@ Rendering of the GUI panels is now possible, but it likely needs more work befor
 - Testing the ability to both write and read .organ files will need to continue so that they both works really well without any bugs.
 - The graphical rendering of panels most likely still needs more work so that it should display the panels exactly like GrandOrgue will when scaled at 100%.
 - Converting selection on existing GUI Panel display to a new panel.
+- Improve log window usage for different messages/warnings that could be useful for users.
 
 ## Building from sources
 Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.
