@@ -564,7 +564,8 @@ void OrganFileParser::createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch)
 void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
 	GUIElement *label = new GUILabel();
 	label->setOwningPanel(targetPanel);
-	label->setDisplayName(wxT("GUI Label"));
+	// label->setDisplayName(wxT("GUI Label"));
+	label->updateDisplayName();
 	label->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispGroupLabelFont);
 	targetPanel->addGuiElement(label);
 

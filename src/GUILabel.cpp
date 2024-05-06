@@ -265,6 +265,19 @@ void GUILabel::read(wxFileConfig *cfg, Organ *readOrgan) {
 	}
 }
 
+void GUILabel::updateDisplayName() {
+	if (m_type.IsSameAs(wxT("Label")) && m_name != wxEmptyString) {
+		wxString dispName;
+		if (m_name.Len() > 13)
+			dispName = m_name.Left(10) + wxT("...");
+		else
+			dispName = m_name;
+		setDisplayName(wxT("GUI Label (") + dispName + wxT(")"));
+	} else {
+		setDisplayName(wxT("GUI Label"));
+	}
+}
+
 bool GUILabel::isDispAtTopOfDrawstopCol() const {
 	return m_dispAtTopOfDrawstopCol;
 }

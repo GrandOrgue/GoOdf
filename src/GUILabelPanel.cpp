@@ -764,6 +764,8 @@ void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString content = m_labelTextField->GetValue();
 	GOODF_functions::CheckForStartingWhitespace(&content, m_labelTextField);
 	m_label->setName(m_labelTextField->GetValue());
+	m_label->updateDisplayName();
+	::wxGetApp().m_frame->OrganTreeChildItemLabelChanged(m_label->getDisplayName());
 	::wxGetApp().m_frame->PanelGUIPropertyIsChanged();
 }
 

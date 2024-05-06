@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display.
 
+### Changed
+
+- Gui Label elements update their display name in tree to be easier to identify.
+
 ## [0.12.0] - 2024-05-05
 
 ### Added

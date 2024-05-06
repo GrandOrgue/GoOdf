@@ -39,6 +39,8 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
 
+	void updateDisplayName();
+
 	bool isDispAtTopOfDrawstopCol() const;
 	void setDispAtTopOfDrawstopCol(bool dispAtTopOfDrawstopCol);
 	int getDispDrawstopCol() const;
