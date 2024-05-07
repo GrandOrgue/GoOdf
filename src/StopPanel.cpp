@@ -727,8 +727,17 @@ void StopPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString selectedText = m_functionChoice->GetString(m_functionChoice->GetSelection());
 	m_stop->setFunction(selectedText);
 	if (m_stop->getFunction().IsSameAs(wxT("Input"))) {
-		m_availableSwitches->Deselect(m_availableSwitches->GetSelection());
-		m_referencedSwitches->Deselect(m_referencedSwitches->GetSelection());
+		if (m_stop->getNumberOfSwitches()) {
+			m_stop->removeAllSwitchReferences();
+			m_referencedSwitches->Clear();
+		}
+		wxArrayInt existingSelections;
+		m_availableSwitches->GetSelections(existingSelections);
+		if (!existingSelections.IsEmpty()) {
+			for (unsigned i = 0; i < existingSelections.GetCount(); i++) {
+				m_availableSwitches->Deselect(existingSelections[i]);
+			}
+		}
 		m_availableSwitches->Enable(false);
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
@@ -736,6 +745,12 @@ void StopPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
+		if (m_stop->getFunction().IsSameAs(wxT("NOT"), false) && m_stop->getNumberOfSwitches() > 1) {
+			while (m_stop->getNumberOfSwitches() > 1) {
+				m_stop->removeSwitchReferenceAt(m_stop->getNumberOfSwitches() - 1);
+				UpdateReferencedSwitches();
+			}
+		}
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -822,7 +837,9 @@ void StopPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_availableSwitches->GetSelections(selectedSwitches);
 	if (!selectedSwitches.IsEmpty()) {
 		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
-			if (!m_stop->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+			if (!m_stop->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i])) &&
+				(!(m_stop->getFunction().IsSameAs(wxT("NOT"), false) && m_stop->getNumberOfSwitches()))
+			) {
 				m_stop->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
 			}
 		}

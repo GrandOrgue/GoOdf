@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to create new panel from selection on existing panel display.
+- Option to duplicate an existing panel.
 
 ### Changed
 
 - Gui Label elements update their display name in tree to be easier to identify.
+- Changing function to Input when it was something else now also removes any existing Switch references.
+- Changing function to Not when having more than one Switch reference removes all but the first reference.
+- Divisional coupler switch listboxes now allow multiple selection like other drawstop types.
+
+### Fixed
+
+- Warn about and ignore read duplicate Switch entries.
 
 ## [0.12.0] - 2024-05-05
 

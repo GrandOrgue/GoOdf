@@ -133,7 +133,12 @@ DivisionalCouplerPanel::DivisionalCouplerPanel(wxWindow *parent) : wxPanel(paren
 	thirdRow1stCol->Add(availableReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_availableSwitches = new wxListBox(
 		this,
-		ID_DIV_CPLR_AVAILABLE_SWITCHES
+		ID_DIV_CPLR_AVAILABLE_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow1stCol->Add(m_availableSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow1stCol, 1, wxEXPAND);
@@ -162,7 +167,12 @@ DivisionalCouplerPanel::DivisionalCouplerPanel(wxWindow *parent) : wxPanel(paren
 	thirdRow3rdCol->Add(chosenReferencesText, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 	m_referencedSwitches = new wxListBox(
 		this,
-		ID_DIV_CPLR_REFERENCED_SWITCHES
+		ID_DIV_CPLR_REFERENCED_SWITCHES,
+		wxDefaultPosition,
+		wxDefaultSize,
+		0,
+		NULL,
+		wxLB_EXTENDED
 	);
 	thirdRow3rdCol->Add(m_referencedSwitches, 1, wxEXPAND|wxALL, 5);
 	thirdRow->Add(thirdRow3rdCol, 1, wxEXPAND);
@@ -462,8 +472,17 @@ void DivisionalCouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString selectedText = m_functionChoice->GetString(m_functionChoice->GetSelection());
 	m_divCplr->setFunction(selectedText);
 	if (m_divCplr->getFunction().IsSameAs(wxT("Input"))) {
-		m_availableSwitches->Deselect(m_availableSwitches->GetSelection());
-		m_referencedSwitches->Deselect(m_referencedSwitches->GetSelection());
+		if (m_divCplr->getNumberOfSwitches()) {
+			m_divCplr->removeAllSwitchReferences();
+			m_referencedSwitches->Clear();
+		}
+		wxArrayInt existingSelections;
+		m_availableSwitches->GetSelections(existingSelections);
+		if (!existingSelections.IsEmpty()) {
+			for (unsigned i = 0; i < existingSelections.GetCount(); i++) {
+				m_availableSwitches->Deselect(existingSelections[i]);
+			}
+		}
 		m_availableSwitches->Enable(false);
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
@@ -471,6 +490,12 @@ void DivisionalCouplerPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
+		if (m_divCplr->getFunction().IsSameAs(wxT("NOT"), false) && m_divCplr->getNumberOfSwitches() > 1) {
+			while (m_divCplr->getNumberOfSwitches() > 1) {
+				m_divCplr->removeSwitchReferenceAt(m_divCplr->getNumberOfSwitches() - 1);
+				UpdateReferencedSwitches();
+			}
+		}
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -576,33 +601,49 @@ void DivisionalCouplerPanel::OnReferencedManualSelection(wxCommandEvent& WXUNUSE
 }
 
 void DivisionalCouplerPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_availableSwitches->GetSelection();
-		if (!m_divCplr->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected))) {
-			m_divCplr->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selected));
-			UpdateReferencedSwitches();
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			if (!m_divCplr->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i])) &&
+				(!(m_divCplr->getFunction().IsSameAs(wxT("NOT"), false) && m_divCplr->getNumberOfSwitches()))
+			) {
+				m_divCplr->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
+			}
 		}
+		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
-	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnRemoveSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
-		unsigned selected = (unsigned) m_referencedSwitches->GetSelection();
-		m_divCplr->removeSwitchReference(m_divCplr->getSwitchAtIndex(selected));
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
+		std::list<GoSwitch*> switchesToRemove;
+		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
+			switchesToRemove.push_back(m_divCplr->getSwitchAtIndex(selectedSwitches[i]));
+		}
+		for (GoSwitch *sw : switchesToRemove) {
+			m_divCplr->removeSwitchReference(sw);
+		}
 		UpdateReferencedSwitches();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
-	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void DivisionalCouplerPanel::OnSwitchListboxSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_availableSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_availableSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_addReferencedSwitch->Enable(true);
 	}
 }
 
 void DivisionalCouplerPanel::OnReferencedSwitchSelection(wxCommandEvent& WXUNUSED(event)) {
-	if (m_referencedSwitches->GetSelection() != wxNOT_FOUND) {
+	wxArrayInt selectedSwitches;
+	m_referencedSwitches->GetSelections(selectedSwitches);
+	if (!selectedSwitches.IsEmpty()) {
 		m_removeReferencedSwitch->Enable(true);
 	}
 }

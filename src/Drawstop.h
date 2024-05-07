@@ -49,6 +49,7 @@ public:
 	unsigned getIndexOfSwitch(GoSwitch *switchToFind);
 	void removeSwitchReference(GoSwitch *sw);
 	void removeSwitchReferenceAt(unsigned index);
+	void removeAllSwitchReferences();
 	bool hasSwitchReference(GoSwitch *sw);
 	bool isStoreInDivisional();
 	void setStoreInDivisional(bool storeInDivisional);

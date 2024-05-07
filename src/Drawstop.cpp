@@ -89,7 +89,13 @@ void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrga
 			// if the number of the referenced switch is lower than the number of switches in the organ it's ok
 			if (swRefNbr > 0 && swRefNbr <= (int) readOrgan->getNumberOfSwitches()) {
 				// but the index of the switch is actually one lower than in the organ file
-				addSwitchReference(readOrgan->getOrganSwitchAt(swRefNbr - 1));
+				// also check that it's not already added
+				if (!hasSwitchReference(readOrgan->getOrganSwitchAt(swRefNbr - 1)))
+					addSwitchReference(readOrgan->getOrganSwitchAt(swRefNbr - 1));
+				else {
+					wxLogWarning("Switch%0.3d (%s) is already added to %s! This additional switch entry will be ignored!", swRefNbr, readOrgan->getOrganSwitchAt(swRefNbr - 1)->getName(), getName());
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
+				}
 			}
 		}
 	}
@@ -165,6 +171,10 @@ void Drawstop::removeSwitchReferenceAt(unsigned index) {
 	std::list<GoSwitch *>::iterator it = m_switches.begin();
 	std::advance(it, index);
 	m_switches.erase(it);
+}
+
+void Drawstop::removeAllSwitchReferences() {
+	m_switches.clear();
 }
 
 bool Drawstop::hasSwitchReference(GoSwitch *sw) {

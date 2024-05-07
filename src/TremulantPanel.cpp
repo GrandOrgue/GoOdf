@@ -541,8 +541,17 @@ void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString selectedText = m_functionChoice->GetString(m_functionChoice->GetSelection());
 	m_tremulant->setFunction(selectedText);
 	if (m_tremulant->getFunction().IsSameAs(wxT("Input"))) {
-		m_availableSwitches->Deselect(m_availableSwitches->GetSelection());
-		m_referencedSwitches->Deselect(m_referencedSwitches->GetSelection());
+		if (m_tremulant->getNumberOfSwitches()) {
+			m_tremulant->removeAllSwitchReferences();
+			m_referencedSwitches->Clear();
+		}
+		wxArrayInt existingSelections;
+		m_availableSwitches->GetSelections(existingSelections);
+		if (!existingSelections.IsEmpty()) {
+			for (unsigned i = 0; i < existingSelections.GetCount(); i++) {
+				m_availableSwitches->Deselect(existingSelections[i]);
+			}
+		}
 		m_availableSwitches->Enable(false);
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
@@ -550,6 +559,12 @@ void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
+		if (m_tremulant->getFunction().IsSameAs(wxT("NOT"), false) && m_tremulant->getNumberOfSwitches() > 1) {
+			while (m_tremulant->getNumberOfSwitches() > 1) {
+				m_tremulant->removeSwitchReferenceAt(m_tremulant->getNumberOfSwitches() - 1);
+				UpdateReferencedSwitches();
+			}
+		}
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -680,7 +695,9 @@ void TremulantPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_availableSwitches->GetSelections(selectedSwitches);
 	if (!selectedSwitches.IsEmpty()) {
 		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
-			if (!m_tremulant->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+			if (!m_tremulant->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i])) &&
+				(!(m_tremulant->getFunction().IsSameAs(wxT("NOT"), false) && m_tremulant->getNumberOfSwitches()))
+			) {
 				m_tremulant->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
 			}
 		}

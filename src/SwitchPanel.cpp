@@ -412,6 +412,17 @@ void SwitchPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 	wxString selectedText = m_functionChoice->GetString(m_functionChoice->GetSelection());
 	m_switch->setFunction(selectedText);
 	if (m_switch->getFunction().IsSameAs(wxT("Input"))) {
+		if (m_switch->getNumberOfSwitches()) {
+			m_switch->removeAllSwitchReferences();
+			m_referencedSwitches->Clear();
+		}
+		wxArrayInt existingSelections;
+		m_availableSwitches->GetSelections(existingSelections);
+		if (!existingSelections.IsEmpty()) {
+			for (unsigned i = 0; i < existingSelections.GetCount(); i++) {
+				m_availableSwitches->Deselect(existingSelections[i]);
+			}
+		}
 		m_availableSwitches->Enable(false);
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
@@ -421,6 +432,12 @@ void SwitchPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_referencedSwitches->Enable(true);
 		m_addReferencedSwitch->Enable(true);
 		m_removeReferencedSwitch->Enable(true);
+		if (m_switch->getFunction().IsSameAs(wxT("NOT"), false) && m_switch->getNumberOfSwitches() > 1) {
+			while (m_switch->getNumberOfSwitches() > 1) {
+				m_switch->removeSwitchReferenceAt(m_switch->getNumberOfSwitches() - 1);
+				UpdateReferencedSwitches();
+			}
+		}
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }
@@ -507,7 +524,9 @@ void SwitchPanel::OnAddSwitchReferenceBtn(wxCommandEvent& WXUNUSED(event)) {
 	m_availableSwitches->GetSelections(selectedSwitches);
 	if (!selectedSwitches.IsEmpty()) {
 		for (unsigned i = 0; i < selectedSwitches.GetCount(); i++) {
-			if (!m_switch->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]))) {
+			if (!m_switch->hasSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i])) &&
+				(!(m_switch->getFunction().IsSameAs(wxT("NOT"), false) && m_switch->getNumberOfSwitches()))
+			) {
 				m_switch->addSwitchReference(::wxGetApp().m_frame->m_organ->getOrganSwitchAt(selectedSwitches[i]));
 			}
 		}
