@@ -6,7 +6,7 @@
 		<ul>
 			<li>
 				<object type="text/sitemap">
-					<param name="Name" value="GOODF Help">
+					<param name="Name" value="GoOdf Help">
 					<param name="ID" value=1>
 					<param name="Local" value="goodf.html">
 				</object>
@@ -148,7 +148,7 @@
 					</ul>
 					<li>
 						<object type="text/sitemap">
-							<param name="Name" value="Using GOODF">
+							<param name="Name" value="Using GoOdf">
 							<param name="ID" value=23>
 							<param name="Local" value="usinggoodf.html">
 						</object>

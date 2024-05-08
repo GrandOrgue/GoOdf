@@ -1,19 +1,19 @@
 /*
- * Manual.cpp is part of GOODF.
+ * Manual.cpp is part of GoOdf.
  * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
- * GOODF is free software: you can redistribute it and/or modify
+ * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GOODF is distributed in the hope that it will be useful,
+ * GoOdf is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
+ * along with GoOdf. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -183,12 +183,7 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Org
 					for (Pipe& p : s.getInternalRank()->m_pipes) {
 						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
 							// This is certainly a legacy x-fade!
-							wxLogWarning("%s uses a Pipe999ReleaseCrossfadeLength with LoadRelease=N, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", s.getName());
-							rankUsesLegacyXfades = true;
-						}
-						if (p.m_attacks.size() > 1 && p.m_attacks.front().loopCrossfadeLength) {
-							// LoopCrossfadeLength is set for main attack, but should it be inherited by other attacks?
-							wxLogWarning("%s uses Pipe999LoopCrossfadeLength with more than one attack. If this value should be inherited, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", s.getName());
+							wxLogWarning("[Stop%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N, maybe check Tools->Parse Legacy X-fades before opening this .organ file!", readOrgan->getNumberOfStops(), s.getName());
 							rankUsesLegacyXfades = true;
 						}
 						if (rankUsesLegacyXfades) {
@@ -210,6 +205,9 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Org
 						stopElement->read(cfg, false, readOrgan);
 					}
 				}
+			} else {
+				wxLogWarning("[%s] section couldn't be found!", stopGroup);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 	}
@@ -245,6 +243,9 @@ void Manual::readCouplers(wxFileConfig *cfg, bool useOldPanelFormat, wxString ma
 						cplrElement->read(cfg, false, readOrgan);
 					}
 				}
+			} else {
+				wxLogWarning("[%s] section couldn't be found!", couplerGroup);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 	}
@@ -278,6 +279,9 @@ void Manual::readDivisionals(wxFileConfig *cfg, bool useOldPanelFormat, wxString
 						divElement->read(cfg, true, readOrgan);
 					}
 				}
+			} else {
+				wxLogWarning("[%s] section couldn't be found!", divGroup);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 	}

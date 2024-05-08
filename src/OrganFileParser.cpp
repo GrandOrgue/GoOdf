@@ -1,19 +1,19 @@
 /*
- * OrganFileParser.cpp is part of GOODF.
+ * OrganFileParser.cpp is part of GoOdf.
  * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
- * GOODF is free software: you can redistribute it and/or modify
+ * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GOODF is distributed in the hope that it will be useful,
+ * GoOdf is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
+ * along with GoOdf. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -199,6 +199,10 @@ void OrganFileParser::parseOrganSection() {
 					bool imgIsOk = img.read(m_organFile, m_organ);
 					if (imgIsOk)
 						m_organ->getOrganPanelAt(0)->addImage(img);
+					else {
+						wxLogWarning("%s is not possible to parse and use!", imgGroupName);
+						::wxGetApp().m_frame->GetLogWindow()->Show(true);
+					}
 				}
 			}
 			m_organFile->SetPath("/Organ");
@@ -214,6 +218,9 @@ void OrganFileParser::parseOrganSection() {
 				if (m_organFile->HasGroup(labelGroupName)) {
 					m_organFile->SetPath(wxT("/") + labelGroupName);
 					createGUILabel(m_organ->getOrganPanelAt(0));
+				} else {
+					wxLogWarning("%s couldn't be found!", labelGroupName);
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 			m_organFile->SetPath("/Organ");
@@ -244,7 +251,9 @@ void OrganFileParser::parseOrganSection() {
 					int lastEnclosureIdx = m_organ->getNumberOfEnclosures() - 1;
 					createGUIEnclosure(m_organ->getOrganPanelAt(0), m_organ->getOrganEnclosureAt(lastEnclosureIdx));
 				}
-
+			} else {
+				wxLogWarning("%s couldn't be found!", enclosureGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -266,6 +275,9 @@ void OrganFileParser::parseOrganSection() {
 					int lastSwitchIdx = m_organ->getNumberOfSwitches() - 1;
 					createGUISwitch(m_organ->getOrganPanelAt(0), m_organ->getOrganSwitchAt(lastSwitchIdx));
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", switchGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -287,6 +299,9 @@ void OrganFileParser::parseOrganSection() {
 					int lastTremIdx = m_organ->getNumberOfTremulants() - 1;
 					createGUITremulant(m_organ->getOrganPanelAt(0), m_organ->getOrganTremulantAt(lastTremIdx));
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", tremGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -304,6 +319,9 @@ void OrganFileParser::parseOrganSection() {
 				Windchestgroup windchest;
 				windchest.read(m_organFile, m_organ);
 				m_organ->addWindchestgroup(windchest);
+			} else {
+				wxLogWarning("%s couldn't be found!", windchestGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -326,12 +344,7 @@ void OrganFileParser::parseOrganSection() {
 					for (Pipe& p : r.m_pipes) {
 						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
 							// This is certainly a legacy x-fade!
-							wxLogWarning("%s uses a Pipe999ReleaseCrossfadeLength with LoadRelease=N, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", r.getName());
-							rankUsesLegacyXfades = true;
-						}
-						if (p.m_attacks.size() > 1 && p.m_attacks.front().loopCrossfadeLength) {
-							// LoopCrossfadeLength is set for main attack, but should it be inherited by other attacks?
-							wxLogWarning("%s uses Pipe999LoopCrossfadeLength with more than one attack. If this value should be inherited, perhaps use Tools->Parse Legacy X-fades when opening this .organ file!", r.getName());
+							wxLogWarning("[Rank%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N, maybe check Tools->Parse Legacy X-fades before opening this .organ file!", m_organ->getNumberOfRanks(), r.getName());
 							rankUsesLegacyXfades = true;
 						}
 						if (rankUsesLegacyXfades) {
@@ -340,6 +353,9 @@ void OrganFileParser::parseOrganSection() {
 						}
 					}
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", rankGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -374,6 +390,9 @@ void OrganFileParser::parseOrganSection() {
 					if (manGroupName.IsSameAs(wxT("Manual000")))
 						m_organ->getOrganPanelAt(0)->setHasPedals(true);
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", manGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 
@@ -423,6 +442,9 @@ void OrganFileParser::parseOrganSection() {
 					unsigned lastPistonIdx = m_organ->getNumberOfReversiblePistons() - 1;
 					createGUIPiston(m_organ->getOrganPanelAt(0), m_organ->getReversiblePistonAt(lastPistonIdx));
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", pistonGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -444,6 +466,9 @@ void OrganFileParser::parseOrganSection() {
 					unsigned lastIdx = m_organ->getNumberOfOrganDivisionalCouplers() - 1;
 					createGUIDivCplr(m_organ->getOrganPanelAt(0), m_organ->getOrganDivisionalCouplerAt(lastIdx));
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", divCplrGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -465,6 +490,9 @@ void OrganFileParser::parseOrganSection() {
 					unsigned lastIdx = m_organ->getNumberOfGenerals() - 1;
 					createGUIGeneral(m_organ->getOrganPanelAt(0), m_organ->getOrganGeneralAt(lastIdx));
 				}
+			} else {
+				wxLogWarning("%s couldn't be found!", generalGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -485,6 +513,9 @@ void OrganFileParser::parseOrganSection() {
 					if (elementType != wxEmptyString) {
 						createFromSetterElement(m_organ->getOrganPanelAt(0), elementType);
 					}
+				} else {
+					wxLogWarning("%s couldn't be found!", setterGroupName);
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 		}
@@ -513,6 +544,9 @@ void OrganFileParser::parseOrganSection() {
 				p.read(m_organFile, panelGroupName, m_organ);
 				m_organ->addPanel(p);
 				parsePanelElements(m_organ->getOrganPanelAt(m_organ->getNumberOfPanels() - 1), panelGroupName);
+			} else {
+				wxLogWarning("%s couldn't be found!", panelGroupName);
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -564,7 +598,6 @@ void OrganFileParser::createGUISwitch(GoPanel *targetPanel, GoSwitch *theSwitch)
 void OrganFileParser::createGUILabel(GoPanel *targetPanel) {
 	GUIElement *label = new GUILabel();
 	label->setOwningPanel(targetPanel);
-	// label->setDisplayName(wxT("GUI Label"));
 	label->updateDisplayName();
 	label->setDefaultFont(targetPanel->getDisplayMetrics()->m_dispGroupLabelFont);
 	targetPanel->addGuiElement(label);
@@ -839,9 +872,15 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 						// the type can also be a valid setter element
 						createFromSetterElement(targetPanel, elementType);
 					}
+				} else {
+					wxLogWarning("%s%s couldn't be found!", panelId, elementGroupName);
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 			m_organFile->SetPath(wxT("/") + panelId);
+		} else {
+			wxLogWarning("NumberOfGUIElements=%d is invalid in %s!", nbrGuiElements, panelId);
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
 		}
 	} else {
 		// old style panel elements are read in another way, but they will be converted to the new style
@@ -1033,7 +1072,6 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 				m_organFile->SetPath(wxT("/") + thePath);
 				createGUILabel(targetPanel);
 			}
-
 			m_organFile->SetPath(wxT("/") + panelId);
 		}
 	}

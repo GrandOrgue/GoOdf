@@ -1,19 +1,19 @@
 /*
- * Pipe.cpp is part of GOODF.
+ * Pipe.cpp is part of GoOdf.
  * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
  *
- * GOODF is free software: you can redistribute it and/or modify
+ * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GOODF is distributed in the hope that it will be useful,
+ * GoOdf is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GOODF. If not, see <https://www.gnu.org/licenses/>.
+ * along with GoOdf. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can contact the author on larspalo(at)yahoo.se
  */
@@ -234,6 +234,12 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 				m_releases.push_back(r);
 			}
 		}
+	} else if (nbrExtraRel > 0 && isPercussive) {
+		if (nbrExtraRel > 1)
+			wxLogWarning("Separate releases found in %s %s that is percussive! Ignoring them.", parent->getName(), pipeNr);
+		else
+			wxLogWarning("Separate release found in %s %s that is percussive! Ignoring it.", parent->getName(), pipeNr);
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 
 	// finally a sanity check to see that there is at least one valid attack in the pipe
@@ -242,6 +248,8 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 		a.fileName = wxT("DUMMY");
 		a.fullPath = wxT("DUMMY");
 		m_attacks.push_back(a);
+		wxLogWarning("No valid pipe could be added for %s %s! Setting it to DUMMY.", parent->getName(), pipeNr);
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	} else {
 		// update the pipes root path of parent rank from the main attack
 		wxFileName fileName = m_attacks.front().fullPath;
