@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to create new panel from selection on existing panel display.
 - Option to duplicate an existing panel.
 
+### Changed
+
+- Tools->Parse Legacy X-fades option naming to Import Legacy X-fades and to act directly on the currently open organ file.
+
 ## [0.12.1] - 2024-05-08
 
 ### Changed

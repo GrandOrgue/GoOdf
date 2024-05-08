@@ -178,12 +178,12 @@ void Manual::read(wxFileConfig *cfg, bool useOldPanelFormat, wxString manId, Org
 				s.read(cfg, useOldPanelFormat, this, readOrgan);
 				readOrgan->addStop(s, true);
 				addStop(readOrgan->getOrganStopAt(readOrgan->getNumberOfStops() - 1));
-				if (s.isUsingInternalRank() && !::wxGetApp().m_frame->IsParsingLegacyXfades()) {
+				if (s.isUsingInternalRank()) {
 					bool rankUsesLegacyXfades = false;
 					for (Pipe& p : s.getInternalRank()->m_pipes) {
 						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
 							// This is certainly a legacy x-fade!
-							wxLogWarning("[Stop%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N, maybe check Tools->Parse Legacy X-fades before opening this .organ file!", readOrgan->getNumberOfStops(), s.getName());
+							wxLogWarning("[Stop%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N! You might want to use Tools->Import Legacy X-fades.", readOrgan->getNumberOfStops(), s.getName());
 							rankUsesLegacyXfades = true;
 						}
 						if (rankUsesLegacyXfades) {

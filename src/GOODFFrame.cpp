@@ -47,7 +47,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
 	EVT_MENU(ID_IMPORT_STOP_RANK, GOODFFrame::OnImportStopRank)
 	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
-	EVT_MENU(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, GOODFFrame::OnParseLegacyXfadesMenu)
+	EVT_MENU(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, GOODFFrame::OnImportLegacyXfadesMenu)
 	EVT_MENU(ID_CLEAR_HISTORY, GOODFFrame::OnClearHistory)
 	EVT_MENU(ID_DEFAULT_PATHS_MENU, GOODFFrame::OnDefaultPathMenuChoice)
 	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE9, GOODFFrame::OnRecentFileMenuChoice)
@@ -78,7 +78,6 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_config = new wxFileConfig(wxT("GoOdf"));
 	m_defaultOrganDirectory = wxEmptyString;
 	m_defaultCmbDirectory = wxEmptyString;
-	m_parseLegacyXfades = false;
 	m_logWindow = new wxLogWindow(this, wxT("Log messages"), false, false);
 	wxLog::SetActiveTarget(m_logWindow);
 
@@ -102,10 +101,11 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_toolsMenu->Append(ID_IMPORT_STOP_RANK, wxT("Import Stops/Ranks\tCtrl+R"), wxT("Import stops/ranks from another (working) .organ file"));
 	m_toolsMenu->AppendCheckItem(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, wxT("Enable Tooltips"), wxT("Enable tooltips for certain controls"));
 	m_toolsMenu->Check(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, false);
-	m_toolsMenu->AppendCheckItem(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, wxT("Parse Legacy X-fades"), wxT("When opening an .organ file, make attacks/releases inherit LoopCrossfadeLength & ReleaseCrossfadeLength values like pre GO v3.14.0"));
-	m_toolsMenu->Check(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, false);
+	m_toolsMenu->Append(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, wxT("Import Legacy X-fades"), wxT("Make extra attacks/releases inherit LoopCrossfadeLength & ReleaseCrossfadeLength values like pre GO v3.14.0"));
 	m_toolsMenu->Append(ID_CLEAR_HISTORY, wxT("Clear File History"), wxT("Remove all the entries in the recent file history"));
 	m_toolsMenu->Append(ID_DEFAULT_PATHS_MENU, wxT("Default paths\tCtrl+P"), wxT("Set the default paths used by the application here"));
+
+	m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, false);
 
 	// Create a help menu
 	m_helpMenu = new wxMenu();
@@ -689,8 +689,6 @@ void GOODFFrame::DoOpenOrgan(wxString filePath) {
 			RebuildPanelGuiElementsInTree(i);
 		}
 		UpdateFrameTitle();
-		if (m_parseLegacyXfades)
-			m_organ->doInheritLegacyXfades();
 	} else {
 		if (m_organ) {
 			delete m_organ;
@@ -707,6 +705,7 @@ void GOODFFrame::DoOpenOrgan(wxString filePath) {
 	}
 	m_organ->organElementHasChanged(true);
 	m_organTreeCtrl->SelectItem(tree_organ);
+	SetImportXfadeMenuItemState();
 }
 
 void GOODFFrame::OrganTreeChildItemLabelChanged(wxString label) {
@@ -2361,6 +2360,7 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			m_organ->removeRankAt(selectedIndex);
 			m_organTreeCtrl->Delete(selected);
 			m_organTreeCtrl->SelectItem(nextToSelect);
+			SetImportXfadeMenuItemState();
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Stops"))) {
@@ -2393,6 +2393,7 @@ void GOODFFrame::RemoveCurrentItemFromOrgan() {
 			}
 			m_organTreeCtrl->Delete(selected);
 			m_organTreeCtrl->SelectItem(nextToSelect);
+			SetImportXfadeMenuItemState();
 		}
 
 		if (m_organTreeCtrl->GetItemText(parentId).IsSameAs(wxT("Couplers"))) {
@@ -2564,6 +2565,7 @@ void GOODFFrame::AddStopItemToTree() {
 	wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
 	m_organTreeCtrl->AppendItem(stopChild, wxT("New Stop"));
 	m_organ->setModified(true);
+	SetImportXfadeMenuItemState();
 }
 
 void GOODFFrame::AddStopItemForManual(wxString stopName, unsigned manIndex) {
@@ -2572,7 +2574,6 @@ void GOODFFrame::AddStopItemForManual(wxString stopName, unsigned manIndex) {
 		wxTreeItemIdValue cookie;
 		wxTreeItemId theManual;
 		for (unsigned i = 0; i < numChildrens; i++) {
-
 			if (i == 0)
 				theManual = m_organTreeCtrl->GetFirstChild(tree_manuals, cookie);
 			else
@@ -2586,12 +2587,14 @@ void GOODFFrame::AddStopItemForManual(wxString stopName, unsigned manIndex) {
 		wxTreeItemId stopChild = m_organTreeCtrl->GetPrevSibling(couplerChild);
 		m_organTreeCtrl->AppendItem(stopChild, stopName);
 		m_organ->setModified(true);
+		SetImportXfadeMenuItemState();
 	}
 }
 
 void GOODFFrame::AddRankItemToTree(wxString rankName) {
 	m_organTreeCtrl->AppendItem(tree_ranks, rankName);
 	m_organ->setModified(true);
+	SetImportXfadeMenuItemState();
 }
 
 void GOODFFrame::SelectStopItemInTree(int nbrAdded) {
@@ -2691,6 +2694,7 @@ void GOODFFrame::OnAddNewRank(wxCommandEvent& WXUNUSED(event)) {
 			else
 				m_organTreeCtrl->AppendItem(tree_ranks, newRank.getName());
 		}
+		SetImportXfadeMenuItemState();
 		m_organ->setModified(true);
 		m_organTreeCtrl->SelectItem(firstAdded);
 	} else {
@@ -2738,6 +2742,7 @@ void GOODFFrame::OnNewOrgan(wxCommandEvent& WXUNUSED(event)) {
 		SetTitle(::wxGetApp().m_fullAppName);
 		RecreateLogWindow();
 	}
+	SetImportXfadeMenuItemState();
 }
 
 void GOODFFrame::OnAddNewManual(wxCommandEvent& WXUNUSED(event)) {
@@ -3164,13 +3169,12 @@ void GOODFFrame::OnImportStopRank(wxCommandEvent& WXUNUSED(event)) {
 	delete sourceOrgan;
 }
 
-void GOODFFrame::OnParseLegacyXfadesMenu(wxCommandEvent& event) {
-	// ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION
-	if (m_toolsMenu->IsChecked(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION)) {
-		m_parseLegacyXfades = true;
-	} else {
-		m_parseLegacyXfades = false;
-	}
+void GOODFFrame::OnImportLegacyXfadesMenu(wxCommandEvent& WXUNUSED(event)) {
+	wxMessageDialog dlg(this, wxT("Loop- and ReleaseCrossfadeLength values of first attack in every pipe for all ranks/stops will be copied to any extra attacks/releases that just have a default value in order to re-create the x-fade behaviour pre GO v3.14.0! Do you want to proceed?"), wxT("X-fade values will be 'imported'!"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+	if (dlg.ShowModal() != wxID_YES)
+		return;
+
+	m_organ->doInheritLegacyXfades();
 }
 
 void GOODFFrame::SetupOrganMainPanel() {
@@ -3272,10 +3276,6 @@ wxLogWindow* GOODFFrame::GetLogWindow() {
 	return m_logWindow;
 }
 
-bool GOODFFrame::IsParsingLegacyXfades() {
-	return m_parseLegacyXfades;
-}
-
 void GOODFFrame::removeAllItemsFromTree() {
 	m_organTreeCtrl->DeleteChildren(tree_manuals);
 	m_organTreeCtrl->DeleteChildren(tree_windchestgrps);
@@ -3304,4 +3304,11 @@ void GOODFFrame::RecreateLogWindow() {
 	delete m_logWindow;
 	m_logWindow = new wxLogWindow(this, wxT("Log messages"), false, false);
 	wxLog::SetActiveTarget(m_logWindow);
+}
+
+void GOODFFrame::SetImportXfadeMenuItemState() {
+	if (!m_organ->getNumberOfRanks() && !m_organ->getNumberOfStops())
+		m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, false);
+	else
+		m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, true);
 }

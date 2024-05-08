@@ -81,7 +81,6 @@ public:
 	wxString GetDefaultOrganDirectory();
 	wxString GetDefaultCmbDirectory();
 	wxLogWindow* GetLogWindow();
-	bool IsParsingLegacyXfades();
 
 	Organ *m_organ;
 
@@ -161,7 +160,6 @@ private:
 	bool m_frameMaximized;
 	wxString m_defaultOrganDirectory;
 	wxString m_defaultCmbDirectory;
-	bool m_parseLegacyXfades;
 
 	void OnOrganTreeSelectionChanged(wxTreeEvent& event);
 	void OnOrganTreeRightClicked(wxTreeEvent& event);
@@ -186,12 +184,13 @@ private:
 	void OnSizeChange(wxSizeEvent& event);
 	void OnDefaultPathMenuChoice(wxCommandEvent& event);
 	void OnImportStopRank(wxCommandEvent& event);
-	void OnParseLegacyXfadesMenu(wxCommandEvent& event);
+	void OnImportLegacyXfadesMenu(wxCommandEvent& event);
 
 	void SetupOrganMainPanel();
 	void removeAllItemsFromTree();
 	void UpdateFrameSizeAndPos();
 	void RecreateLogWindow();
+	void SetImportXfadeMenuItemState();
 
 };
 

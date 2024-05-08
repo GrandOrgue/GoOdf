@@ -339,18 +339,16 @@ void OrganFileParser::parseOrganSection() {
 				Rank r;
 				r.read(m_organFile, m_organ);
 				m_organ->addRank(r);
-				if (!::wxGetApp().m_frame->IsParsingLegacyXfades()) {
-					bool rankUsesLegacyXfades = false;
-					for (Pipe& p : r.m_pipes) {
-						if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
-							// This is certainly a legacy x-fade!
-							wxLogWarning("[Rank%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N, maybe check Tools->Parse Legacy X-fades before opening this .organ file!", m_organ->getNumberOfRanks(), r.getName());
-							rankUsesLegacyXfades = true;
-						}
-						if (rankUsesLegacyXfades) {
-							::wxGetApp().m_frame->GetLogWindow()->Show(true);
-							break;
-						}
+				bool rankUsesLegacyXfades = false;
+				for (Pipe& p : r.m_pipes) {
+					if (!p.m_attacks.front().loadRelease && p.m_attacks.front().releaseCrossfadeLength) {
+						// This is certainly a legacy x-fade!
+						wxLogWarning("[Rank%0.3d] %s uses Pipe999ReleaseCrossfadeLength with LoadRelease=N! You might want to use Tools->Import Legacy X-fades.", m_organ->getNumberOfRanks(), r.getName());
+						rankUsesLegacyXfades = true;
+					}
+					if (rankUsesLegacyXfades) {
+						::wxGetApp().m_frame->GetLogWindow()->Show(true);
+						break;
 					}
 				}
 			} else {
