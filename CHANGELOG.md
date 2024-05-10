@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tools->Parse Legacy X-fades option naming to Import Legacy X-fades and to act directly on the currently open organ file.
 
+### Fixed
+
+- Setter element labels retain their naming identification from type in the tree.
+
 ## [0.12.1] - 2024-05-08
 
 ### Changed
