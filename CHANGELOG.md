@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Setter element labels retain their naming identification from type in the tree.
+- Clicking on a GUI Element on the panel representation view should only select the uppermost element and not all underlying elements too.
 
 ## [0.12.1] - 2024-05-08
 

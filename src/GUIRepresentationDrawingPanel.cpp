@@ -94,6 +94,7 @@ void GUIRepresentationDrawingPanel::OnLeftClick(wxMouseEvent& event) {
 			) {
 				m_selectedObjectIndex = i;
 				m_guiObjects[i].isSelected = true;
+				break;
 			}
 		}
 		if (m_selectedObjectIndex < 0) {
