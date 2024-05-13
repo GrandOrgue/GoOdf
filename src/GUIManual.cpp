@@ -767,8 +767,13 @@ void GUIManual::updateKeyInfo() {
 				if (m_dispKeyColourWooden) {
 					if (i == 0 && !m_keys[i].IsSharp) {
 						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
-						// otherwise it should be displayed as C
-						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+						// otherwise it should be displayed as C unless next key also would be a natural for any reason
+						bool nextIsNatural = false;
+						if (m_displayKeys > 1) {
+							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
+							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
+						}
+						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualWoodenKeysBmps02[12];
 							else
@@ -810,8 +815,13 @@ void GUIManual::updateKeyInfo() {
 				} else {
 					if (i == 0 && !m_keys[i].IsSharp) {
 						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
-						// otherwise it should be displayed as C
-						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+						// otherwise it should be displayed as C unless next key also would be a natural for any reason
+						bool nextIsNatural = false;
+						if (m_displayKeys > 1) {
+							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
+							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
+						}
+						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_invertedManualKeysBmps02[12];
 							else
@@ -852,8 +862,13 @@ void GUIManual::updateKeyInfo() {
 				if (m_dispKeyColourWooden) {
 					if (i == 0 && !m_keys[i].IsSharp) {
 						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
-						// otherwise it should be displayed as C
-						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+						// otherwise it should be displayed as C unless next key also would be a natural for any reason
+						bool nextIsNatural = false;
+						if (m_displayKeys > 1) {
+							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
+							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
+						}
+						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_woodenManualKeysBmps02[12];
 							else
@@ -891,8 +906,13 @@ void GUIManual::updateKeyInfo() {
 				} else {
 					if (i == 0 && !m_keys[i].IsSharp) {
 						// this is the first key and it's a natural so if it's an E or B then it should be displayed as a whole
-						// otherwise it should be displayed as C
-						if (key_nb % 12 == 4 || key_nb % 12 == 11) {
+						// otherwise it should be displayed as C unless next key also would be a natural for any reason
+						bool nextIsNatural = false;
+						if (m_displayKeys > 1) {
+							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
+							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
+						}
+						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
 							if (m_dispImageNum == 2)
 								m_keys[i].KeyImage = ::wxGetApp().m_manualKeyBmps02[12];
 							else

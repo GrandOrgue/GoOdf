@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Setter element labels retain their naming identification from type in the tree.
 - Clicking on a GUI Element on the panel representation view should only select the uppermost element and not all underlying elements too.
+- Display first key of a manual as a whole even if not an E or B provided second key is displayed as a natural.
 
 ## [0.12.1] - 2024-05-08
 
