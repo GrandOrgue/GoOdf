@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Tools->Parse Legacy X-fades option naming to Import Legacy X-fades and to act directly on the currently open organ file.
+- Size of right side panels to have an uniform minimum size.
+- All row distances in displaymetrics panel are equal.
 
 ### Fixed
 

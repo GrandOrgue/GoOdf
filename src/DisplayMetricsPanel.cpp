@@ -160,7 +160,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_drawstopBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	secondRow->Add(m_drawstopBackground, 1, wxEXPAND, 0);
+	secondRow->Add(m_drawstopBackground, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *consoleBgText = new wxStaticText(
 		this,
 		wxID_STATIC,
@@ -175,8 +175,8 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_consoleBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	secondRow->Add(m_consoleBackground, 1, wxEXPAND, 0);
-	panelSizer->Add(secondRow, 1, wxEXPAND);
+	secondRow->Add(m_consoleBackground, 1, wxEXPAND|wxALL, 5);
+	panelSizer->Add(secondRow, 1, wxEXPAND, 0);
 
 	wxBoxSizer *thirdRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *keyHorizBgText = new wxStaticText (
@@ -193,7 +193,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_keyHorizBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	thirdRow->Add(m_keyHorizBackground, 1, wxEXPAND, 0);
+	thirdRow->Add(m_keyHorizBackground, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *keyVertBgText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -208,7 +208,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_keyVertBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	thirdRow->Add(m_keyVertBackground, 1, wxEXPAND, 0);
+	thirdRow->Add(m_keyVertBackground, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *drawstopInsetBgText = new wxStaticText (
 		this,
 		wxID_STATIC,
@@ -223,8 +223,8 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxString woodNumber = wxString::Format(wxT("%d"), i + 1);
 		m_drawstopInsetBackground->Append(woodNumber, ::wxGetApp().m_scaledWoodBitmaps[i]);
 	}
-	thirdRow->Add(m_drawstopInsetBackground, 1, wxEXPAND, 0);
-	panelSizer->Add(thirdRow, 0, wxGROW);
+	thirdRow->Add(m_drawstopInsetBackground, 1, wxEXPAND|wxALL, 5);
+	panelSizer->Add(thirdRow, 1, wxEXPAND|wxALL, 0);
 
 	wxBoxSizer *fourthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *controlFontText = new wxStaticText(
@@ -237,7 +237,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_CTRL_LABEL_FONT
 	);
-	fourthRow->Add(m_controlLabelFont, 1, wxEXPAND, 0);
+	fourthRow->Add(m_controlLabelFont, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *groupFontText = new wxStaticText(
 		this,
 		wxID_STATIC,
@@ -248,8 +248,8 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_GROUP_LABEL_FONT
 	);
-	fourthRow->Add(m_groupLabelFont, 1, wxEXPAND, 0);
-	panelSizer->Add(fourthRow, 1, wxEXPAND);
+	fourthRow->Add(m_groupLabelFont, 1, wxEXPAND|wxALL, 5);
+	panelSizer->Add(fourthRow, 0, wxEXPAND);
 
 	wxBoxSizer *fifthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *shortcutFontText = new wxStaticText(
@@ -262,7 +262,7 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		this,
 		ID_SHORTCUT_KEY_LABEL_FONT
 	);
-	fifthRow->Add(m_shortcutKeyLabelFont, 1, wxEXPAND, 0);
+	fifthRow->Add(m_shortcutKeyLabelFont, 1, wxEXPAND|wxALL, 5);
 	wxStaticText *shortcutColourText = new wxStaticText(
 		this,
 		wxID_STATIC,
@@ -276,13 +276,13 @@ DisplayMetricsPanel::DisplayMetricsPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		m_colors
 	);
-	fifthRow->Add(m_shortcutKeyLabelColour, 1, wxEXPAND, 0);
+	fifthRow->Add(m_shortcutKeyLabelColour, 1, wxEXPAND|wxALL, 5);
 	m_shortcutKeyColourPick = new wxColourPickerCtrl(
 		this,
 		ID_SHORTCUT_COLOUR_PICKER
 	);
-	fifthRow->Add(m_shortcutKeyColourPick, 1, wxEXPAND, 0);
-	panelSizer->Add(fifthRow, 1, wxEXPAND);
+	fifthRow->Add(m_shortcutKeyColourPick, 1, wxEXPAND|wxALL, 5);
+	panelSizer->Add(fifthRow, 0, wxEXPAND);
 
 	wxBoxSizer *sixthRow = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *drawstopColText = new wxStaticText (

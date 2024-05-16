@@ -373,7 +373,106 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_organPanel = new OrganPanel(m_organ, m_Splitter);
 
 	leftSplitPanel->SetMinSize(leftSplitPanel->GetSizer()->GetMinSize());
-	m_organPanel->SetMinSize(m_organPanel->GetSizer()->GetMinSize());
+
+	wxSize largestMinSize = m_organPanel->GetSizer()->GetMinSize();
+	if (largestMinSize.GetWidth() < m_enclosurePanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_enclosurePanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_tremulantPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_tremulantPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_windchestPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_windchestPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_switchPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_switchPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_rankPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_rankPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_stopPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_stopPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_manualPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_manualPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_couplerPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_couplerPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_divisionalPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_divisionalPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_divCplrPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_divCplrPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_generalPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_generalPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_reversiblePistonPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_reversiblePistonPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_panelPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_panelPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_dispMetricsPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_dispMetricsPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_imagePanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_imagePanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_guiButtonPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_guiButtonPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_guiEnclosurePanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_guiEnclosurePanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_guiLabelPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_guiLabelPanel->GetSizer()->GetMinSize().GetWidth());
+	if (largestMinSize.GetWidth() < m_guiManualPanel->GetSizer()->GetMinSize().GetWidth())
+		largestMinSize.SetWidth(m_guiManualPanel->GetSizer()->GetMinSize().GetWidth());
+
+	if (largestMinSize.GetHeight() < m_enclosurePanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_enclosurePanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_tremulantPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_tremulantPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_windchestPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_windchestPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_switchPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_switchPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_rankPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_rankPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_stopPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_stopPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_manualPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_manualPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_couplerPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_couplerPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_divisionalPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_divisionalPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_divCplrPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_divCplrPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_generalPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_generalPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_reversiblePistonPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_reversiblePistonPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_panelPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_panelPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_dispMetricsPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_dispMetricsPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_imagePanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_imagePanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_guiButtonPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_guiButtonPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_guiEnclosurePanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_guiEnclosurePanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_guiLabelPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_guiLabelPanel->GetSizer()->GetMinSize().GetHeight());
+	if (largestMinSize.GetHeight() < m_guiManualPanel->GetSizer()->GetMinSize().GetHeight())
+		largestMinSize.SetHeight(m_guiManualPanel->GetSizer()->GetMinSize().GetHeight());
+
+	m_organPanel->SetMinSize(largestMinSize);
+	m_enclosurePanel->SetMinSize(largestMinSize);
+	m_tremulantPanel->SetMinSize(largestMinSize);
+	m_windchestPanel->SetMinSize(largestMinSize);
+	m_switchPanel->SetMinSize(largestMinSize);
+	m_rankPanel->SetMinSize(largestMinSize);
+	m_stopPanel->SetMinSize(largestMinSize);
+	m_manualPanel->SetMinSize(largestMinSize);
+	m_couplerPanel->SetMinSize(largestMinSize);
+	m_divisionalPanel->SetMinSize(largestMinSize);
+	m_divCplrPanel->SetMinSize(largestMinSize);
+	m_generalPanel->SetMinSize(largestMinSize);
+	m_reversiblePistonPanel->SetMinSize(largestMinSize);
+	m_panelPanel->SetMinSize(largestMinSize);
+	m_dispMetricsPanel->SetMinSize(largestMinSize);
+	m_imagePanel->SetMinSize(largestMinSize);
+	m_guiButtonPanel->SetMinSize(largestMinSize);
+	m_guiEnclosurePanel->SetMinSize(largestMinSize);
+	m_guiLabelPanel->SetMinSize(largestMinSize);
+	m_guiManualPanel->SetMinSize(largestMinSize);
 
 	m_Splitter->SplitVertically(leftSplitPanel, m_organPanel);
 
