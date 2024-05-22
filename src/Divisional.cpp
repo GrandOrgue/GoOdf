@@ -136,12 +136,17 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			wxString tremId = cfg->Read(tremNbr, wxEmptyString);
 			long value = 0;
 			if (tremId.ToLong(&value)) {
-				if (value > 0) {
-					// the tremulant is on
-					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(value - 1), true));
+				if (labs(value) <= (int) m_owningManual->getNumberOfTremulants()) {
+					if (value > 0) {
+						// the tremulant is on
+						m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(value - 1), true));
+					} else {
+						// the tremulant is off
+						m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(labs(value) - 1), false));
+					}
 				} else {
-					// the tremulant is off
-					m_tremulants.push_back(std::make_pair(m_owningManual->getTremulantAt(labs(value) - 1), false));
+					wxLogError("%s value %s is out of range for divisional '%s' since manual '%s' only lists %u tremulants!", tremNbr, tremId, name, m_owningManual->getName(), m_owningManual->getNumberOfTremulants());
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 		}
@@ -153,12 +158,17 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 			wxString swId = cfg->Read(swNbr, wxEmptyString);
 			long value = 0;
 			if (swId.ToLong(&value)) {
-				if (value > 0) {
-					// the switch is on
-					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(value - 1), true));
+				if (labs(value) <= (int) m_owningManual->getNumberOfGoSwitches()) {
+					if (value > 0) {
+						// the switch is on
+						m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(value - 1), true));
+					} else {
+						// the switch is off
+						m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(labs(value) - 1), false));
+					}
 				} else {
-					// the switch is off
-					m_switches.push_back(std::make_pair(m_owningManual->getGoSwitchAt(labs(value) - 1), false));
+					wxLogError("%s value %s is out of range for divisional '%s' since manual '%s' only lists %u switches!", swNbr, swId, name, m_owningManual->getName(), m_owningManual->getNumberOfGoSwitches());
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 		}

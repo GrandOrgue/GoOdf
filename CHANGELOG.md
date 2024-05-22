@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Option to create new panel from selection on existing panel display.
-- Option to duplicate an existing panel.
+- Option to create new panel from selection on existing panel display. (TODO)
+- Option to duplicate an existing panel. (TODO)
+- Option to load pipe samples with Pipe999IsTremulant value set to be played, if the associated wave-based tremulant is off. (TODO)
+
+## [0.12.2] - 2024-05-22
 
 ### Changed
 
@@ -23,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Setter element labels retain their naming identification from type in the tree.
 - Clicking on a GUI Element on the panel representation view should only select the uppermost element and not all underlying elements too.
 - Display first key of a manual as a whole even if not an E or B provided second key is displayed as a natural.
+- Crash and add log entries if divisional referenced a tremulant or switch number higher than available on the manual in question.
 
 ## [0.12.1] - 2024-05-08
 
