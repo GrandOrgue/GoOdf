@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to duplicate an existing panel. (TODO)
 - Option to load pipe samples with Pipe999IsTremulant value set to be played, if the associated wave-based tremulant is off. (TODO)
 
+### Fixed
+
+- Bug that prevented removal of last switch from available switches for stops and couplers.
+
 ## [0.12.2] - 2024-05-22
 
 ### Changed
