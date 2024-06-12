@@ -588,6 +588,9 @@ void StopPanel::setStop(Stop *stop) {
 
 		m_availableSwitches->Clear();
 		m_availableSwitches->InsertItems(organSwitches, 0);
+	} else {
+		if (m_availableSwitches->GetCount())
+			m_availableSwitches->Clear();
 	}
 
 	UpdateReferencedSwitches();
