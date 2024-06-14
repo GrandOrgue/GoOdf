@@ -607,6 +607,9 @@ void StopPanel::setStop(Stop *stop) {
 
 		m_availableRanks->Clear();
 		m_availableRanks->InsertItems(organRanks, 0);
+	} else {
+		if (m_availableRanks->GetCount())
+			m_availableRanks->Clear();
 	}
 
 	UpdateReferencedRanks();
