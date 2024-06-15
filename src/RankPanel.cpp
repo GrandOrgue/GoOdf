@@ -120,7 +120,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 		wxDefaultSize,
 		availableWindchests
 	);
-	firstRow->Add(m_windchestChoice, 0, wxALL, 5);
+	firstRow->Add(m_windchestChoice, 0, wxEXPAND|wxALL, 5);
 	panelSizer->Add(firstRow, 0, wxGROW);
 
 	wxBoxSizer *secondRow = new wxBoxSizer(wxHORIZONTAL);
@@ -623,12 +623,10 @@ void RankPanel::setRank(Rank *rank) {
 	}
 	if (m_rank->isPercussive()) {
 		m_isPercussiveYes->SetValue(true);
-		// m_isPercussiveNo->SetValue(false);
 		m_hasIndependentReleaseYes->Enable();
 		m_hasIndependentReleaseNo->Enable();
 	} else {
 		m_isPercussiveNo->SetValue(true);
-		// m_isPercussiveYes->SetValue(false);
 		m_hasIndependentReleaseYes->Enable(false);
 		m_hasIndependentReleaseNo->Enable(false);
 	}
@@ -652,6 +650,9 @@ void RankPanel::setRank(Rank *rank) {
 	m_optionsReleaseField->ChangeValue(m_releaseFolder);
 	m_optionsKeyPressTime->SetValue(m_extractTime);
 	m_optionsTremulantField->ChangeValue(m_tremFolder);
+
+	// Force updating layout
+	Layout();
 }
 
 Rank* RankPanel::getCurrentRank() {
@@ -1144,7 +1145,6 @@ void RankPanel::OnClearPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 	wxMessageDialog msg(this, wxT("Are you really sure you want to clear all pipes?"), wxT("Are you sure?"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 	if (msg.ShowModal() == wxID_YES) {
-		// m_rank->clearAllPipes();
 		m_rank->createDummyPipes();
 		RebuildPipeTree();
 		UpdatePipeTree();
