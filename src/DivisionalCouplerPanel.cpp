@@ -386,6 +386,9 @@ void DivisionalCouplerPanel::setDivisionalCoupler(DivisionalCoupler *divCplr) {
 		}
 		m_availableSwitches->Clear();
 		m_availableSwitches->InsertItems(organSwitches, 0);
+	} else {
+		if (m_availableSwitches->GetCount())
+			m_availableSwitches->Clear();
 	}
 	UpdateReferencedSwitches();
 	m_addReferencedSwitch->Disable();
@@ -400,6 +403,9 @@ void DivisionalCouplerPanel::setDivisionalCoupler(DivisionalCoupler *divCplr) {
 		}
 		m_availableManuals->Clear();
 		m_availableManuals->InsertItems(organManuals, 0);
+	} else {
+		if (m_availableManuals->GetCount())
+			m_availableManuals->Clear();
 	}
 	UpdateReferencedManuals();
 	m_addReferencedManual->Disable();

@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Bug that prevented removal of last switch from list of available switches for stops, couplers and tremulants.
+- Bug that prevented removal of last switch from list of available switches for stops, couplers, tremulants and divisional couplers.
 - Bug that prevented removal of last rank from list of available ranks for stops.
+- Bug that prevented removal of last manual from list of available manuals for divisional couplers.
 - Updating windchest wxChoice size for rank (and stop internal rank) to expand as needed.
 
 ## [0.12.2] - 2024-05-22
