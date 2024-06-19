@@ -159,7 +159,7 @@ jobs:
 
   release:
     if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
-    needs: [ build-linux, build-appimage, build-cross-windows ]
+    needs: [ build-linux, build-appimage, build-cross-windows, build-macos-x86, build-macos-arm ]
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
@@ -203,4 +203,3 @@ jobs:
           GoOdf-${{env.release_version}}-windows.x86_64.zip
           GoOdf-${{env.release_version}}-macos.x86_x64.dmg
           GoOdf-${{env.release_version}}-macos.arm_x64.dmg
-
