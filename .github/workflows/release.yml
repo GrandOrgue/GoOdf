@@ -105,9 +105,61 @@ jobs:
         name: GoOdf-${{github.ref_name}}-windows
         path: ${{github.workspace}}/crossbuild/GoOdf*.zip
 
+  build-macos-x86:
+    runs-on: macos-13
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Get dependencies
+        run: ${{github.workspace}}/scripts/prepare-osx.sh
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build with CMake
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Package with CPack
+        working-directory: ${{github.workspace}}/build
+        run: cpack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GoOdf-${{github.ref_name}}-macos-x86
+          path: ${{ github.workspace }}/build/GoOdf*.dmg
+
+  build-macos-arm:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Get dependencies
+        run: ${{github.workspace}}/scripts/prepare-osx.sh
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build with CMake
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Package with CPack
+        working-directory: ${{github.workspace}}/build
+        run: cpack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GoOdf-${{github.ref_name}}-macos-arm
+          path: ${{ github.workspace }}/build/GoOdf*.dmg
+
   release:
     if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
-    needs: [ build-linux, build-appimage, build-cross-windows ]
+    needs: [ build-linux, build-appimage, build-cross-windows, build-macos-x86, build-macos-arm ]
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
@@ -125,6 +177,14 @@ jobs:
       with:
         name: GoOdf-${{github.ref_name}}-windows
 
+    - uses: actions/download-artifact@v4
+      with:
+        name: GoOdf-${{github.ref_name}}-macos-x86
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: GoOdf-${{github.ref_name}}-macos-arm
+
     - name: Remove Starting v From Tag
       id: remove_v
       run: |
@@ -141,3 +201,5 @@ jobs:
           GoOdf-${{env.release_version}}-linux.x86_64.tar.gz
           GoOdf-${{env.release_version}}.x86_64.AppImage
           GoOdf-${{env.release_version}}-windows.x86_64.zip
+          GoOdf-${{env.release_version}}-macOS.x86_64.dmg
+          GoOdf-${{env.release_version}}-macOS.arm64.dmg

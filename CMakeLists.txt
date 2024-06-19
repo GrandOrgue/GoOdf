@@ -215,7 +215,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
 
 # Strip binary for release builds
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  if(CMAKE_CROSSCOMPILING AND WIN32)
+  if(APPLE)
+    add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND strip ${CMAKE_PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  elseif(CMAKE_CROSSCOMPILING AND WIN32)
     add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND strip --strip-all ${CMAKE_PROJECT_NAME}.exe WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   else()
     add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND strip --strip-all ${CMAKE_PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -228,17 +230,25 @@ if(NOT EXISTS "${RESOURCE_DIR}/help")
 endif()
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND zip -r ${RESOURCE_DIR}/help/help.zip . WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/help)
 
-# installation rules
-install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/ DESTINATION share/icons FILES_MATCHING PATTERN "*.png")
-install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/help/help.zip DESTINATION share/${CMAKE_PROJECT_NAME}/help)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt DESTINATION .)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS DESTINATION .)
+# Installation rules
+if (APPLE)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.app DESTINATION .)
+  # Explicitly set the executable permission
+  install(PROGRAMS "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/MacOS/${CMAKE_PROJECT_NAME}"
+    DESTINATION "${PROJECT_NAME}.app/Contents/MacOS"
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+else()
+  install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/share/icons/ DESTINATION share/icons FILES_MATCHING PATTERN "*.png")
+  install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/help/help.zip DESTINATION share/${CMAKE_PROJECT_NAME}/help)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt DESTINATION .)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS DESTINATION .)
+endif()
 if(UNIX AND NOT APPLE)
   install(FILES ${CMAKE_BINARY_DIR}/share/${CMAKE_PROJECT_NAME}/applications/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/${CMAKE_PROJECT_NAME}/applications)
 endif()
 
-# packaging
+# Packaging
 set(CPACK_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR "${CMAKE_PROJECT_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CMAKE_PROJECT_DESCRIPTION}")
@@ -254,14 +264,47 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_PACKAGE_CONTACT "larspalo@yahoo.se")
 set(CPACK_PACKAGE_EXECUTABLES "${CMAKE_PROJECT_NAME}" "${CMAKE_PROJECT_NAME}")
 set(CPACK_SOURCE_IGNORE_FILES ".gitignore" "/build/")
-if(WIN32)
+
+if (APPLE)
+  # Configure and install Info.plist
+  configure_file(${CMAKE_SOURCE_DIR}/resources/Info.plist.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Info.plist)
+  INSTALL(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Info.plist DESTINATION "${PROJECT_NAME}.app/Contents/")
+
+  # Create the macOS application bundle
+  add_custom_target(
+    macOSApplication
+    ALL
+    DEPENDS ${CMAKE_PROJECT_NAME} resources
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/MacOS"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/share"
+    COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_BINARY_DIR}/bin/${CMAKE_PROJECT_NAME}"
+      "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/MacOS/${CMAKE_PROJECT_NAME}"
+    COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/resources/GoOdf.icns"
+      "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources/GoOdf.icns"
+    COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_BINARY_DIR}/share"
+      "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/share"
+    COMMAND "${CMAKE_COMMAND}" -DAPP_DIR="${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app" -P "${CMAKE_SOURCE_DIR}/scripts/SignMacOSApp.cmake"
+    COMMAND "${CMAKE_COMMAND}" -DAPP_DIR="${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app" -P "${CMAKE_SOURCE_DIR}/scripts/BundleWxWidgetLibraries.cmake"
+  )
+
+  # CPACK configuration
+  set(CPACK_SYSTEM_NAME "macOS")
+  set(CPACK_GENERATOR DragNDrop)
+  set(CPACK_DMG_FORMAT "UDZO")
+  set(CPACK_DMG_VOLUME_NAME "GoOdf")
+  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/resources/GoOdf.icns")
+
+elseif(WIN32)
   set(CPACK_SYSTEM_NAME "windows")
   set(CPACK_GENERATOR ZIP)
   set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(CPACK_SYSTEM_NAME "linux")
   set(CPACK_GENERATOR TGZ)
 endif()
+
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}.${CMAKE_SYSTEM_PROCESSOR}")
 include(CPack)
 
@@ -284,4 +327,3 @@ wxWidgets configuration    : ${wxWidgets_CONFIGURATION}
 ============================================================================
 
 ")
-
