@@ -203,3 +203,4 @@ jobs:
           GoOdf-${{env.release_version}}-windows.x86_64.zip
           GoOdf-${{env.release_version}}-macos.x86_x64.dmg
           GoOdf-${{env.release_version}}-macos.arm_x64.dmg
+
