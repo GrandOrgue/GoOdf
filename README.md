@@ -5,7 +5,7 @@
 
 GoOdf is a tool for creating and editing organ definition files for GrandOrgue. Opening large and complex .organ files can take a little while for the software to process, so please be patient if you try it.
 
-The software is currently mainly tested on Linux, but building for Windows is possible and crossbuilds are released here on GitHub.
+The software is currently mainly tested on Linux, but building for Mac and Windows is possible. The builds and crossbuilds that are released here are built on the Github-hosted runners.
 
 ## Current status
 GoOdf is hosted on Github. The repository can be found at [https://github.com/GrandOrgue/GoOdf](https://github.com/GrandOrgue/GoOdf).
@@ -27,7 +27,7 @@ Rendering of the GUI panels is now possible, but it likely needs more work befor
 - Improve log window usage for different messages/warnings that could be useful for users.
 
 ## Building from sources
-Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets.
+Normal development tools for c++ is needed as well as cmake, imagemagic and wxWidgets. The prepare shell scripts in the scripts directory can be used as reference.
 
 The source code can be obtained (if git is available) with:
 
@@ -35,7 +35,7 @@ The source code can be obtained (if git is available) with:
 git clone https://github.com/GrandOrgue/GoOdf.git
 ```
 
-The build process on Linux is simple. In the GoOdf base directory, just create and cd into a separate build directory
+The build process on Linux and Mac is simple. In the GoOdf base directory, just create and cd into a separate build directory
 
 ```
 mkdir build
@@ -48,7 +48,7 @@ and issue the command:
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
 
-(or change to -DCMAKE_BUILD_TYPE=Release) and when that's finished enter:
+(or change to -DCMAKE_BUILD_TYPE=Release for a release build) and when that's finished enter:
 
 ```
 make
