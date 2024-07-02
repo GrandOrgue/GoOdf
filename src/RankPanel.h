@@ -38,13 +38,14 @@ public:
 	void setIsFirstRemoval(bool value);
 	Rank* getCurrentRank();
 	void setTooltipsEnabled(bool isEnabled);
-	void SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder);
+	void SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder, bool loadAsTremOff);
 	wxString GetAttackFolderOption();
 	bool GetOneAttackOption();
 	bool GetLoadReleaseOption();
 	wxString GetReleaseFolderOption();
 	bool GetExtractTimeOption();
 	wxString GetTremFolderOption();
+	bool GetLoadPipesAsTremOffOption();
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -80,6 +81,7 @@ private:
 	wxTextCtrl *m_optionsTremulantField;
 	wxButton *m_addPipesFromFolderBtn;
 	wxButton *m_addTremulantPipesBtn;
+	wxCheckBox *m_loadPipesAsTremOffCheck;
 	wxButton *m_expandTreeBtn;
 	wxButton *m_addReleaseSamplesBtn;
 	wxButton *m_flexiblePipeLoadingBtn;
@@ -98,6 +100,7 @@ private:
 	wxString m_releaseFolder;
 	bool m_extractTime;
 	wxString m_tremFolder;
+	bool m_loadPipesAsTremOff;
 
 	void OnNameChange(wxCommandEvent& event);
 	void OnWindchestChoice(wxCommandEvent& event);
@@ -133,6 +136,7 @@ private:
 	void OnReleaseFolderText(wxCommandEvent& event);
 	void OnExtractTimeCheck(wxCommandEvent& event);
 	void OnTremulantFolderText(wxCommandEvent& event);
+	void OnLoadPipesAsTremOffCheck(wxCommandEvent& event);
 
 	void UpdatePipeTree();
 	void RebuildPipeTree();

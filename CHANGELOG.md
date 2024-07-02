@@ -11,7 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display. (TODO)
 - Option to duplicate an existing panel. (TODO)
-- Option to load pipe samples with Pipe999IsTremulant value set to be played, if the associated wave-based tremulant is off. (TODO)
+
+## [0.14.0] - 2024-07-02
+
+### Added
+
+- Option to load pipe samples with Pipe999IsTremulant value set to be played, if the associated wave-based tremulant is off.
+- Log warning if drawstop has other function than Input and doesn't have any referenced switches.
+- Log warning if no windchestgroups exist in organ when opening/saving/writing.
+- Log warning if no GUI Element exist on main panel when opening/saving.
+- Log warning if no windchestgroup is set for rank or internal rank of a stop when opening/saving.
+- Log warning if a switch has function Input but is not referenced anywhere.
+
+### Changed
+
+- The tooltip help text for some tremulant attributes and all drawstop Function choice.
+- State of drawstop type attributes of Default to engaged and GCState options to reflect Function choice.
 
 ## [0.13.0] - 2024-06-19
 

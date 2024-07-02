@@ -326,6 +326,10 @@ void OrganFileParser::parseOrganSection() {
 		}
 		m_organFile->SetPath("/Organ");
 	}
+	if (nbrWindchests == 0) {
+		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional until at least one windchestgroup exist!");
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+	}
 
 	// parse ranks
 	int nbrRanks = static_cast<int>(m_organFile->ReadLong("NumberOfRanks", 0));

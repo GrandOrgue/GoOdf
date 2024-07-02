@@ -38,6 +38,7 @@ BEGIN_EVENT_TABLE(PipeLoadingDialog, wxDialog)
 	EVT_TEXT(ID_RELEASE_SUBDIRECTORY_PREFIX_TEXT, PipeLoadingDialog::OnReleaseSubDirectoryText)
 	EVT_CHECKBOX(ID_EXTRACT_KEY_PRESS_TIME_CHECK, PipeLoadingDialog::OnExtractKeyPressTimeCheck)
 	EVT_TEXT(ID_TREMULANT_SUBDIRECTORY_PREFIX_TEXT, PipeLoadingDialog::OnTremSubDirectoryText)
+	EVT_CHECKBOX(ID_LOAD_PIPES_AS_TREMULANT_OFF_CHECK, PipeLoadingDialog::OnLoadPipesTremOffCheck)
 END_EVENT_TABLE()
 
 PipeLoadingDialog::PipeLoadingDialog(
@@ -49,8 +50,9 @@ PipeLoadingDialog::PipeLoadingDialog(
 	bool onlyOneAttack,
 	bool loadReleaseInAttack,
 	wxString releaseFolderPrefix,
-	bool extractKeyPressTime ,
-	wxString tremulantFolderPrefix) {
+	bool extractKeyPressTime,
+	wxString tremulantFolderPrefix,
+	bool loadPipesTremOff) {
 	Init(
 		nbrOfPipes,
 		startPipe,
@@ -61,7 +63,8 @@ PipeLoadingDialog::PipeLoadingDialog(
 		loadReleaseInAttack,
 		releaseFolderPrefix,
 		extractKeyPressTime ,
-		tremulantFolderPrefix
+		tremulantFolderPrefix,
+		loadPipesTremOff
 	);
 }
 
@@ -77,6 +80,7 @@ PipeLoadingDialog::PipeLoadingDialog(
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime ,
 	wxString tremulantFolderPrefix,
+	bool loadPipesTremOff,
 	wxWindowID id,
 	const wxString& caption,
 	const wxPoint& pos,
@@ -92,7 +96,8 @@ PipeLoadingDialog::PipeLoadingDialog(
 		loadReleaseInAttack,
 		releaseFolderPrefix,
 		extractKeyPressTime ,
-		tremulantFolderPrefix
+		tremulantFolderPrefix,
+		loadPipesTremOff
 	);
 	Create(parent, id, caption, pos, size, style);
 }
@@ -111,7 +116,8 @@ void PipeLoadingDialog::Init(
 	bool loadReleaseInAttack,
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime ,
-	wxString tremulantFolderPrefix) {
+	wxString tremulantFolderPrefix,
+	bool loadPipesTremOff) {
 	m_nbrPipesInRank = nbrOfPipes;
 	if (startPipe > 0)
 		m_startingPipe = startPipe;
@@ -147,6 +153,7 @@ void PipeLoadingDialog::Init(
 	m_pipeLoadingStrategies.Add(wxT("Add tremulant samples to pipe(s)"));
 	m_pipeLoadingStrategies.Add(wxT("Add release samples to pipe(s)"));
 	m_loadingStrategy = 0;
+	m_loadPipesTremOff = loadPipesTremOff;
 }
 
 bool PipeLoadingDialog::Create(
@@ -375,6 +382,18 @@ void PipeLoadingDialog::CreateControls() {
 	m_tremulantPrefixField->ChangeValue(m_tremulantFolderPrefix);
 	mainSizer->Add (eighthRow, 0, wxGROW);
 
+	wxBoxSizer *ninthRow = new wxBoxSizer(wxHORIZONTAL);
+	m_loadPipesTremulantOffCheck = new wxCheckBox(
+		this,
+		ID_LOAD_PIPES_AS_TREMULANT_OFF_CHECK,
+		wxT("Load pipes to play when wave tremulant is off"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_loadPipesTremulantOffCheck->SetValue(m_loadPipesTremOff);
+	ninthRow->Add(m_loadPipesTremulantOffCheck, 0, wxALL, 5);
+	mainSizer->Add(ninthRow, 0, wxGROW);
+
 	wxStaticLine *bottomDivider = new wxStaticLine(this);
 	mainSizer->Add(bottomDivider, 0, wxEXPAND);
 
@@ -444,6 +463,10 @@ int PipeLoadingDialog::GetSelectedStrategy() {
 	return m_loadingStrategy;
 }
 
+bool PipeLoadingDialog::GetLoadPipesTremOff() {
+	return m_loadPipesTremOff;
+}
+
 void PipeLoadingDialog::OnBrowseForPathBtn(wxCommandEvent& WXUNUSED(event)) {
 	wxDirDialog basePathDialog(
 		this,
@@ -507,6 +530,10 @@ void PipeLoadingDialog::OnTremSubDirectoryText(wxCommandEvent& WXUNUSED(event)) 
 
 void PipeLoadingDialog::OnLoadingStrategyChoice(wxCommandEvent& WXUNUSED(event)) {
 	m_loadingStrategy = m_loadingStrategyChoice->GetSelection();
+}
+
+void PipeLoadingDialog::OnLoadPipesTremOffCheck(wxCommandEvent& WXUNUSED(event)) {
+	m_loadPipesTremOff = m_loadPipesTremulantOffCheck->IsChecked();
 }
 
 void PipeLoadingDialog::DecideStateOfOkButton() {

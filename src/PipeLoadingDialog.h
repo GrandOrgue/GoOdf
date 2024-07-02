@@ -40,7 +40,8 @@ public:
 		bool loadReleaseInAttack = true,
 		wxString releaseFolderPrefix = wxT("rel"),
 		bool extractKeyPressTime = true,
-		wxString tremulantFolderPrefix = wxT("trem")
+		wxString tremulantFolderPrefix = wxT("trem"),
+		bool loadPipesTremOff = false
 	);
 	PipeLoadingDialog(
 		wxWindow* parent,
@@ -54,6 +55,7 @@ public:
 		wxString releaseFolderPrefix = wxT("rel"),
 		bool extractKeyPressTime = true,
 		wxString tremulantFolderPrefix = wxT("trem"),
+		bool loadPipesTremOff = false,
 		wxWindowID id = wxID_ANY,
 		const wxString& caption = wxT("Flexible Pipe Loading Options"),
 		const wxPoint& pos = wxDefaultPosition,
@@ -74,7 +76,8 @@ public:
 		bool loadReleaseInAttack,
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime ,
-		wxString tremulantFolderPrefix
+		wxString tremulantFolderPrefix,
+		bool loadPipesTremOff
 	);
 
 	// Creation
@@ -102,6 +105,7 @@ public:
 	wxString GetTremFolderPrefix();
 	bool GetExtractKeyPressTime();
 	int GetSelectedStrategy();
+	bool GetLoadPipesTremOff();
 
 private:
 	int m_nbrPipesInRank;
@@ -117,6 +121,7 @@ private:
 	wxString m_tremulantFolderPrefix;
 	wxArrayString m_pipeLoadingStrategies;
 	int m_loadingStrategy;
+	bool m_loadPipesTremOff;
 
 	wxTextCtrl *m_basePathField;
 	wxButton *m_browseForPathBtn;
@@ -129,6 +134,7 @@ private:
 	wxCheckBox *m_addOnlyOneAttack;
 	wxCheckBox *m_addReleaseInAttack;
 	wxCheckBox *m_tryForKeyPressTime;
+	wxCheckBox *m_loadPipesTremulantOffCheck;
 	wxChoice *m_loadingStrategyChoice;
 
 	// Event methods
@@ -143,6 +149,7 @@ private:
 	void OnExtractKeyPressTimeCheck(wxCommandEvent& event);
 	void OnTremSubDirectoryText(wxCommandEvent& event);
 	void OnLoadingStrategyChoice(wxCommandEvent& event);
+	void OnLoadPipesTremOffCheck(wxCommandEvent& event);
 
 	void DecideStateOfOkButton();
 };

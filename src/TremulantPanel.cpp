@@ -416,11 +416,17 @@ void TremulantPanel::setTremulant(Tremulant *tremulant) {
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
 		m_removeReferencedSwitch->Enable(false);
+		m_defaultToEngagedYes->Enable(true);
+		m_defaultToEngagedNo->Enable(true);
+		m_gcStateChoice->Enable(true);
 	} else {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
 		m_addReferencedSwitch->Enable(true);
 		m_removeReferencedSwitch->Enable(true);
+		m_defaultToEngagedYes->Enable(false);
+		m_defaultToEngagedNo->Enable(false);
+		m_gcStateChoice->Enable(false);
 	}
 	if (m_tremulant->isDefaultToEngaged())
 		m_defaultToEngagedYes->SetValue(true);
@@ -480,7 +486,7 @@ void TremulantPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
 		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
 		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
-		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, instead it's controlled indirectly by referenced switch(es)."));
+		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, nor can its state be directly changed by a combination, instead it's controlled indirectly by the referenced switch(es).\n\nThe logical function Not can only reference one switch and negates (inverts) the state of the input. And, Xor, Nand, Nor as well as Or has a variable number of inputs.\n\nSee for instance https://en.wikipedia.org/wiki/Logic_gate for further explanations about logical functions."));
 		m_defaultToEngagedYes->SetToolTip(wxT("The tremulant will be active by default. Only works if function is 'Input', otherwise the state is decided by switch(es)."));
 		m_defaultToEngagedNo->SetToolTip(wxT("The tremulant is not active by default."));
 		m_availableSwitches->SetToolTip(wxT("Switches available for referencing are listed here. If function is something else than 'Input' and there are switches available one or many can be selected for referencing."));
@@ -493,10 +499,10 @@ void TremulantPanel::setTooltipsEnabled(bool isEnabled) {
 		m_storeInGeneralYes->SetToolTip(wxT("This tremulant is possible to store in generals."));
 		m_storeInGeneralNo->SetToolTip(wxT("This tremulant is not stored in generals unless 'Full' is used to set it."));
 		m_tremTypeChoice->SetToolTip(wxT("The type of the tremulant is selected here. Synth (synthesized tremulant) and Wave (tremulant based on different wave samples that needs to be provided for the pipe(s))."));
-		m_periodSpin->SetToolTip(wxT("Period in ms. Only used for a 'Synth' tremulant."));
+		m_periodSpin->SetToolTip(wxT("Period in ms. Only used for a 'Synth' tremulant. Lower value means a faster tremulant speed."));
 		m_startRateSpin->SetToolTip(wxT("Startup time of the tremulant. Only used for a 'Synth' tremulant."));
 		m_stopRateSpin->SetToolTip(wxT("Stop time of the tremulant. Only used for a 'Synth' tremulant."));
-		m_ampModDepthSpin->SetToolTip(wxT("How much the amplitude will be modulated. Only used for a 'Synth' tremulant."));
+		m_ampModDepthSpin->SetToolTip(wxT("How much the amplitude will be modulated. Only used for a 'Synth' tremulant. A higher value means greater modulation."));
 	} else {
 		m_displayInvertedYes->SetToolTip(wxEmptyString);
 		m_displayInvertedNo->SetToolTip(wxEmptyString);
@@ -559,6 +565,9 @@ void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 		m_referencedSwitches->Enable(false);
 		m_addReferencedSwitch->Enable(false);
 		m_removeReferencedSwitch->Enable(false);
+		m_defaultToEngagedYes->Enable(true);
+		m_defaultToEngagedNo->Enable(true);
+		m_gcStateChoice->Enable(true);
 	} else {
 		m_availableSwitches->Enable(true);
 		m_referencedSwitches->Enable(true);
@@ -568,6 +577,9 @@ void TremulantPanel::OnFunctionChange(wxCommandEvent& WXUNUSED(event)) {
 				UpdateReferencedSwitches();
 			}
 		}
+		m_defaultToEngagedYes->Enable(false);
+		m_defaultToEngagedNo->Enable(false);
+		m_gcStateChoice->Enable(false);
 	}
 	::wxGetApp().m_frame->m_organ->setModified(true);
 }

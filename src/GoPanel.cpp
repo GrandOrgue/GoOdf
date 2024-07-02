@@ -78,6 +78,11 @@ void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
 		outFile->AddLine(wxT(""));
 		i++;
 	}
+
+	if (panelNbr == 0 && nbGUIElements < 1) {
+		wxLogWarning("Nothing is displayed as a GUI Element on the main panel! Is this really intentional?");
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+	}
 }
 
 void GoPanel::read(wxFileConfig *cfg, wxString panelId, Organ *readOrgan) {

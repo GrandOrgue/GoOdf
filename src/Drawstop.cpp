@@ -59,7 +59,11 @@ void Drawstop::write(wxTextFile *outFile) {
 			}
 		}
 	} else {
-		// TODO: somehow catch occation of function is set to other than Input but referenced switches is empty
+		// Issue a warning if function is set to something else than Input and referenced switches is empty
+		if (!function.IsSameAs(wxT("Input")) && m_switches.empty()) {
+			wxLogWarning("%s has function %s and should reference some switch(es) but doesn't! The function value will thus not be written to file!", getName(), getFunction());
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		}
 		if (defaultToEngaged)
 			outFile->AddLine(wxT("DefaultToEngaged=Y"));
 		else

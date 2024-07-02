@@ -77,7 +77,7 @@ public:
 	void PanelGUIPropertyIsChanged();
 	void GUIElementPositionIsChanged();
 	void UpdateFrameTitle();
-	void SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder);
+	void SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder, bool loadAsTremOff);
 	wxString GetDefaultOrganDirectory();
 	wxString GetDefaultCmbDirectory();
 	wxLogWindow* GetLogWindow();

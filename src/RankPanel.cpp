@@ -76,6 +76,7 @@ BEGIN_EVENT_TABLE(RankPanel, wxPanel)
 	EVT_CHECKBOX(ID_RANK_KEY_PRESS_TIME_OPTION, RankPanel::OnExtractTimeCheck)
 	EVT_CHECKBOX(ID_RANK_ONLY_ONE_ATK_OPTION, RankPanel::OnOnlyOneAttachCheck)
 	EVT_CHECKBOX(ID_RANK_LOAD_RELEASE_OPTION, RankPanel::OnLoadReleaseCheck)
+	EVT_CHECKBOX(ID_RANK_LOAD_PIPES_TREM_OFF_OPTION, RankPanel::OnLoadPipesAsTremOffCheck)
 END_EVENT_TABLE()
 
 RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
@@ -89,6 +90,7 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	m_releaseFolder = wxT("rel");
 	m_extractTime = true;
 	m_tremFolder = wxT("trem");
+	m_loadPipesAsTremOff = false;
 
 	wxBoxSizer *panelSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -533,6 +535,19 @@ RankPanel::RankPanel(wxWindow *parent) : wxPanel(parent) {
 	);
 	optionsRow4->Add(m_optionsTremulantField, 1, wxEXPAND|wxALL, 4);
 	readingOptions->Add(optionsRow4, 0, wxGROW);
+
+	wxBoxSizer *optionsRow4b = new wxBoxSizer(wxHORIZONTAL);
+	m_loadPipesAsTremOffCheck = new wxCheckBox(
+		readingOptions->GetStaticBox(),
+		ID_RANK_LOAD_PIPES_TREM_OFF_OPTION,
+		wxT("Load pipes to play when wave tremulant is off"),
+		wxDefaultPosition,
+		wxDefaultSize
+	);
+	m_loadPipesAsTremOffCheck->SetValue(m_loadPipesAsTremOff);
+	optionsRow4b->Add(m_loadPipesAsTremOffCheck, 0, wxALL, 2);
+	readingOptions->Add(optionsRow4b, 0, wxGROW);
+
 	wxBoxSizer *optionsRow5 = new wxBoxSizer(wxHORIZONTAL);
 	m_addPipesFromFolderBtn = new wxButton(
 		readingOptions->GetStaticBox(),
@@ -650,6 +665,7 @@ void RankPanel::setRank(Rank *rank) {
 	m_optionsReleaseField->ChangeValue(m_releaseFolder);
 	m_optionsKeyPressTime->SetValue(m_extractTime);
 	m_optionsTremulantField->ChangeValue(m_tremFolder);
+	m_loadPipesAsTremOffCheck->SetValue(m_loadPipesAsTremOff);
 
 	// Force updating layout
 	Layout();
@@ -685,6 +701,7 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_optionsReleaseField->SetToolTip(wxT("Set a string to match release sample folders here."));
 		m_optionsKeyPressTime->SetToolTip(wxT("If checked, try to set MaxKeyPressTime from numerical values in the release folder name."));
 		m_optionsTremulantField->SetToolTip(wxT("Set a string to match tremulant sample folders here."));
+		m_loadPipesAsTremOffCheck->SetToolTip(wxT("If checked loaded pipe attacks/releases will have IsTremulant=0 set, which means that they will play when the associated wave tremulant is off. This value is not used when loading tremulant samples specifically."));
 		m_addPipesFromFolderBtn->SetToolTip(wxT("Use this button to add more samples from selected folder to the rank. This operation only adds more samples, it doesn't remove existing samples."));
 		m_addTremulantPipesBtn->SetToolTip(wxT("Use this button to add separate tremulant samples to the rank. Especially useful if the tremulant samples for the rank is not a sub directory to the other samples."));
 		m_addReleaseSamplesBtn->SetToolTip(wxT("Use this button to add separate releases to the rank, it doesn't remove existing samples. This can be useful if the release samples are placed somewhere else than the other samples."));
@@ -715,6 +732,7 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_optionsReleaseField->SetToolTip(wxEmptyString);
 		m_optionsKeyPressTime->SetToolTip(wxEmptyString);
 		m_optionsTremulantField->SetToolTip(wxEmptyString);
+		m_loadPipesAsTremOffCheck->SetToolTip(wxEmptyString);
 		m_addPipesFromFolderBtn->SetToolTip(wxEmptyString);
 		m_addTremulantPipesBtn->SetToolTip(wxEmptyString);
 		m_addReleaseSamplesBtn->SetToolTip(wxEmptyString);
@@ -723,13 +741,14 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 	}
 }
 
-void RankPanel::SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder) {
+void RankPanel::SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder, bool loadAsTremOff) {
 	m_attackFolder = atkFolder;
 	m_loadOnlyOneAttack = oneAttack;
 	m_loadReleaseInAttack = loadRelease;
 	m_releaseFolder = releaseFolder;
 	m_extractTime = extractTime;
 	m_tremFolder = tremFolder;
+	m_loadPipesAsTremOff = loadAsTremOff;
 }
 
 wxString RankPanel::GetAttackFolderOption() {
@@ -754,6 +773,10 @@ bool RankPanel::GetExtractTimeOption() {
 
 wxString RankPanel::GetTremFolderOption() {
 	return m_tremFolder;
+}
+
+bool RankPanel::GetLoadPipesAsTremOffOption() {
+	return m_loadPipesAsTremOff;
 }
 
 void RankPanel::setNameFieldValue(wxString name) {
@@ -1100,6 +1123,7 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxString releaseFolderPrefix = m_optionsReleaseField->GetValue();
 		bool extractKeyPressTime = m_optionsKeyPressTime->GetValue();
 		wxString tremulantFolderPrefix = m_optionsTremulantField->GetValue();
+		bool loadPipesTremOff = m_loadPipesAsTremOffCheck->GetValue();
 
 		m_rank->readPipes(
 			extraAttackFolderPrefix,
@@ -1108,6 +1132,7 @@ void RankPanel::OnReadPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			releaseFolderPrefix,
 			extractKeyPressTime,
 			tremulantFolderPrefix,
+			loadPipesTremOff,
 			0,
 			m_rank->getFirstMidiNoteNumber(),
 			m_rank->getNumberOfLogicalPipes()
@@ -1824,6 +1849,7 @@ void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 		wxString releaseFolderPrefix = m_optionsReleaseField->GetValue();
 		bool extractKeyPressTime = m_optionsKeyPressTime->GetValue();
 		wxString tremulantFolderPrefix = m_optionsTremulantField->GetValue();
+		bool loadPipesTremOff = m_loadPipesAsTremOffCheck->GetValue();
 
 		m_rank->addToPipes(
 			extraAttackFolderPrefix,
@@ -1832,6 +1858,7 @@ void RankPanel::OnAddPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 			releaseFolderPrefix,
 			extractKeyPressTime,
 			tremulantFolderPrefix,
+			loadPipesTremOff,
 			0,
 			m_rank->getFirstMidiNoteNumber(),
 			m_rank->getNumberOfLogicalPipes()
@@ -1919,8 +1946,10 @@ void RankPanel::OnAddReleaseSamplesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 	if (rankPipesPathDialog.ShowModal() == wxID_OK) {
 		m_rank->setPipesRootPath(rankPipesPathDialog.GetPath());
+		bool loadPipesTremOff = m_loadPipesAsTremOffCheck->GetValue();
 
 		m_rank->addReleasesToPipes(
+			loadPipesTremOff,
 			0,
 			m_rank->getFirstMidiNoteNumber(),
 			m_rank->getNumberOfLogicalPipes()
@@ -1950,7 +1979,8 @@ void RankPanel::OnFlexiblePipeLoadingBtn(wxCommandEvent& WXUNUSED(event)) {
 		m_optionsLoadReleaseInAttack->IsChecked(),
 		m_optionsReleaseField->GetValue(),
 		m_optionsKeyPressTime->IsChecked(),
-		m_optionsTremulantField->GetValue()
+		m_optionsTremulantField->GetValue(),
+		m_loadPipesAsTremOffCheck->IsChecked()
 	);
 
 	if (loadingDialog.ShowModal() == wxID_OK) {
@@ -1965,6 +1995,7 @@ void RankPanel::OnFlexiblePipeLoadingBtn(wxCommandEvent& WXUNUSED(event)) {
 					loadingDialog.GetReleaseFolderPrefix(),
 					loadingDialog.GetExtractKeyPressTime(),
 					loadingDialog.GetTremFolderPrefix(),
+					loadingDialog.GetLoadPipesTremOff(),
 					loadingDialog.GetStartingPipeNumber() - 1,
 					loadingDialog.GetFirstMidiMatchingNbr(),
 					loadingDialog.GetNbrPipesToLoad()
@@ -1979,6 +2010,7 @@ void RankPanel::OnFlexiblePipeLoadingBtn(wxCommandEvent& WXUNUSED(event)) {
 					loadingDialog.GetReleaseFolderPrefix(),
 					loadingDialog.GetExtractKeyPressTime(),
 					loadingDialog.GetTremFolderPrefix(),
+					loadingDialog.GetLoadPipesTremOff(),
 					loadingDialog.GetStartingPipeNumber() - 1,
 					loadingDialog.GetFirstMidiMatchingNbr(),
 					loadingDialog.GetNbrPipesToLoad()
@@ -2000,6 +2032,7 @@ void RankPanel::OnFlexiblePipeLoadingBtn(wxCommandEvent& WXUNUSED(event)) {
 			case 3:
 				// Add release samples to pipe(s)
 				m_rank->addReleasesToPipes(
+					loadingDialog.GetLoadPipesTremOff(),
 					loadingDialog.GetStartingPipeNumber() - 1,
 					loadingDialog.GetFirstMidiMatchingNbr(),
 					loadingDialog.GetNbrPipesToLoad()
@@ -2148,6 +2181,11 @@ void RankPanel::OnTremulantFolderText(wxCommandEvent& WXUNUSED(event)) {
 	OnPipeReadingOptionsChanged();
 }
 
+void RankPanel::OnLoadPipesAsTremOffCheck(wxCommandEvent& WXUNUSED(event)) {
+	m_loadPipesAsTremOff = m_loadPipesAsTremOffCheck->GetValue();
+	OnPipeReadingOptionsChanged();
+}
+
 void RankPanel::OnPipeReadingOptionsChanged() {
 	::wxGetApp().m_frame->SynchronizePipeReadingOptions(
 		this,
@@ -2156,6 +2194,7 @@ void RankPanel::OnPipeReadingOptionsChanged() {
 		GetLoadReleaseOption(),
 		GetReleaseFolderOption(),
 		GetExtractTimeOption(),
-		GetTremFolderOption()
+		GetTremFolderOption(),
+		GetLoadPipesAsTremOffOption()
 	);
 }

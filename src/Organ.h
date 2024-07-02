@@ -185,6 +185,7 @@ public:
 	bool isModified();
 	void setModified(bool modified);
 	void doInheritLegacyXfades();
+	bool isElementReferenced(GoSwitch *sw);
 
 private:
 	wxString m_odfRoot;

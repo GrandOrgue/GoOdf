@@ -170,6 +170,10 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 		outFile->AddLine(wxT(""));
 		i++;
 	}
+	if (m_Windchestgroups.empty()) {
+		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional!");
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+	}
 
 	// Couplers
 	i = 1;
@@ -217,6 +221,10 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 	// Switches
 	i = 1;
 	for (auto& sw : m_Switches) {
+		if (sw.getFunction().IsSameAs(wxT("Input")) && !isElementReferenced(&sw)) {
+			wxLogWarning("Switch %s has function Input but is not referenced anywhere.", sw.getName());
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		}
 		wxString switchId = wxT("[Switch") + GOODF_functions::number_format(i) + wxT("]");
 		outFile->AddLine(switchId);
 		sw.write(outFile);
@@ -1984,4 +1992,73 @@ void Organ::doInheritLegacyXfades() {
 			}
 		}
 	}
+}
+
+bool Organ::isElementReferenced(GoSwitch *sw) {
+	bool isReferenced = false;
+
+	for (Stop &st : m_Stops) {
+		if (st.hasSwitchReference(sw)) {
+			isReferenced = true;
+			break;
+		}
+	}
+
+	if (!isReferenced) {
+		for (GoSwitch &gs : m_Switches) {
+			if (!gs.getFunction().IsSameAs(wxT("Input"))) {
+				if (gs.hasSwitchReference(sw)) {
+					isReferenced = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!isReferenced) {
+		for (Coupler &c : m_Couplers) {
+			if (c.hasSwitchReference(sw)) {
+				isReferenced = true;
+				break;
+			}
+		}
+	}
+
+	if (!isReferenced) {
+		for (Divisional &d : m_Divisionals) {
+			if (d.hasSwitch(sw)) {
+				isReferenced = true;
+				break;
+			}
+		}
+	}
+
+	if (!isReferenced) {
+		for (DivisionalCoupler &divC : m_DivisionalCouplers) {
+			if (divC.hasSwitchReference(sw)) {
+				isReferenced = true;
+				break;
+			}
+		}
+	}
+
+	if (!isReferenced) {
+		for (General &g : m_Generals) {
+			if (g.hasSwitch(sw)) {
+				isReferenced = true;
+				break;
+			}
+		}
+	}
+
+	if (!isReferenced) {
+		for (ReversiblePiston &r : m_ReversiblePistons) {
+			if (r.getSwitch() == sw) {
+				isReferenced = true;
+				break;
+			}
+		}
+	}
+
+	return isReferenced;
 }

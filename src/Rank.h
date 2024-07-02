@@ -80,6 +80,7 @@ public:
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime,
 		wxString tremulantFolderPrefix,
+		bool loadPipesAsTremOff,
 		int startPipeIdx,
 		int firstMatchingNumber,
 		int totalNbrOfPipes
@@ -91,6 +92,7 @@ public:
 		wxString releaseFolderPrefix,
 		bool extractKeyPressTime,
 		wxString tremulantFolderPrefix,
+		bool loadPipesAsTremOff,
 		int startPipeIdx,
 		int firstMatchingNumber,
 		int totalNbrOfPipes
@@ -106,6 +108,7 @@ public:
 		int totalNbrOfPipes
 	);
 	void addReleasesToPipes(
+		bool loadPipesAsTremOff,
 		int startPipeIdx,
 		int firstMatchingNumber,
 		int totalNbrOfPipes

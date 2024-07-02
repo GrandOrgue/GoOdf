@@ -105,6 +105,9 @@ void Rank::write(wxTextFile *outFile) {
 				outFile->AddLine(wxT("Percussive=N"));
 			}
 		}
+	} else {
+		wxLogWarning("No windchestgroup is set for rank %s! The .organ file won't be functional!", getName());
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -150,6 +153,9 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 				outFile->AddLine(wxT("Percussive=N"));
 			}
 		}
+	} else {
+		wxLogWarning("No windchestgroup is set for internal rank of stop %s! The .organ file won't be functional!", getName());
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -205,6 +211,9 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	int windchestRef = static_cast<int>(cfg->ReadLong("WindchestGroup", 0));
 	if (windchestRef > 0 && windchestRef <= (int) readOrgan->getNumberOfWindchestgroups()) {
 		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
+	} else {
+		wxLogWarning("No windchestgroup could be read for %s!", getName());
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
@@ -390,6 +399,7 @@ void Rank::readPipes(
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime,
 	wxString tremulantFolderPrefix,
+	bool loadPipesAsTremOff,
 	int startPipeIdx,
 	int firstMatchingNumber,
 	int totalNbrOfPipes
@@ -481,7 +491,7 @@ void Rank::readPipes(
 				a.fileName = relativeFileName;
 				a.fullPath = pipeAttacksToAdd.Item(j);
 				a.loadRelease = loadRelease;
-				if (hasTremulantFolders)
+				if (hasTremulantFolders || loadPipesAsTremOff)
 					a.isTremulant = 0;
 
 				p->m_attacks.push_back(a);
@@ -529,7 +539,7 @@ void Rank::readPipes(
 						Release rel;
 						rel.fileName = relativeFileName;
 						rel.fullPath = pipeReleasesToAdd.Item(k);
-						if (hasTremulantFolders)
+						if (hasTremulantFolders || loadPipesAsTremOff)
 							rel.isTremulant = 0;
 
 						if (extractKeyPressTime) {
@@ -709,6 +719,7 @@ void Rank::addToPipes(
 	wxString releaseFolderPrefix,
 	bool extractKeyPressTime,
 	wxString tremulantFolderPrefix,
+	bool loadPipesAsTremOff,
 	int startPipeIdx,
 	int firstMatchingNumber,
 	int totalNbrOfPipes
@@ -798,7 +809,7 @@ void Rank::addToPipes(
 				a.fileName = relativeFileName;
 				a.fullPath = pipeAttacksToAdd.Item(j);
 				a.loadRelease = loadRelease;
-				if (hasTremulantFolders)
+				if (hasTremulantFolders || loadPipesAsTremOff)
 					a.isTremulant = 0;
 
 				p->m_attacks.push_back(a);
@@ -846,7 +857,7 @@ void Rank::addToPipes(
 						Release rel;
 						rel.fileName = relativeFileName;
 						rel.fullPath = pipeReleasesToAdd.Item(k);
-						if (hasTremulantFolders)
+						if (hasTremulantFolders || loadPipesAsTremOff)
 							rel.isTremulant = 0;
 
 						if (extractKeyPressTime) {
@@ -1189,6 +1200,7 @@ void Rank::addTremulantToPipes(
 }
 
 void Rank::addReleasesToPipes(
+	bool loadPipesAsTremOff,
 	int startPipeIdx,
 	int firstMatchingNumber,
 	int totalNbrOfPipes
@@ -1240,6 +1252,8 @@ void Rank::addReleasesToPipes(
 				Release r;
 				r.fileName = relativeFileName;
 				r.fullPath = pipeReleasesToAdd.Item(j);
+				if (loadPipesAsTremOff)
+					r.isTremulant = 0;
 
 				p->m_releases.push_back(r);
 

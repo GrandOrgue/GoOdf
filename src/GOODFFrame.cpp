@@ -556,6 +556,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_config->Read(wxT("Rank/ExtractTimeOption"), &extractTime);
 	wxString tremFolder = wxT("trem");
 	m_config->Read(wxT("Rank/TremulantSubFolderOption"), &tremFolder);
+	bool loadPipesTremOff = false;
+	m_config->Read(wxT("Rank/LoadPipesAsTremulantOff"), &loadPipesTremOff);
 
 	m_rankPanel->SetPipeReadingOptions(
 		atkFolder,
@@ -563,7 +565,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 		loadRelease,
 		releaseFolder,
 		extractTime,
-		tremFolder
+		tremFolder,
+		loadPipesTremOff
 	);
 	m_stopPanel->GetInternalRankPanel()->SetPipeReadingOptions(
 		atkFolder,
@@ -571,7 +574,8 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 		loadRelease,
 		releaseFolder,
 		extractTime,
-		tremFolder
+		tremFolder,
+		loadPipesTremOff
 	);
 
 }
@@ -640,6 +644,7 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 	m_config->Write(wxT("Rank/ReleaseSubFolderOption"), m_rankPanel->GetReleaseFolderOption());
 	m_config->Write(wxT("Rank/ExtractTimeOption"), m_rankPanel->GetExtractTimeOption());
 	m_config->Write(wxT("Rank/TremulantSubFolderOption"), m_rankPanel->GetTremFolderOption());
+	m_config->Write(wxT("Rank/LoadPipesAsTremulantOff"), m_rankPanel->GetLoadPipesAsTremOffOption());
 	m_recentlyUsed->Save(*m_config);
 	m_config->Flush();
 	delete m_config;
@@ -3353,13 +3358,13 @@ void GOODFFrame::UpdateFrameTitle() {
 	}
 }
 
-void GOODFFrame::SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder) {
+void GOODFFrame::SynchronizePipeReadingOptions(RankPanel* rankPanel, wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder, bool loadAsTremOff) {
 	if (rankPanel == m_rankPanel) {
 		// The call comes from a stand alone rank so we should call the internal rank panel of the stop panel
-		m_stopPanel->GetInternalRankPanel()->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder);
+		m_stopPanel->GetInternalRankPanel()->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder, loadAsTremOff);
 	} else {
 		// The call comes from an internal rank of a stop
-		m_rankPanel->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder);
+		m_rankPanel->SetPipeReadingOptions(atkFolder, oneAttack, loadRelease, releaseFolder, extractTime, tremFolder, loadAsTremOff);
 	}
 }
 
