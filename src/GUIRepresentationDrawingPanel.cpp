@@ -748,18 +748,110 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 						textToDisplay = btnElement->getDispLabelText();
 					else
 						textToDisplay = btnElement->getElementName();
-					if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
-						wxString combinationNbr = textToDisplay.Mid(19);
-						long theNbr;
-						if (combinationNbr.ToLong(&theNbr)) {
-							theNbr += 1;
-							textToDisplay = wxString::Format(wxT("%ld"), theNbr);
-						}
-					} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
-						wxString combinationNbr = textToDisplay.Mid(7);
-						long theNbr;
-						if (combinationNbr.ToLong(&theNbr)) {
-							textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+					if (btnElement->getDispLabelText() == wxEmptyString) {
+						if (textToDisplay.Contains(wxT("Setter")) && textToDisplay.Contains(wxT("Divisional")) && textToDisplay.Len() == 22) {
+							wxString combinationNbr = textToDisplay.Mid(19);
+							long theNbr;
+							if (combinationNbr.ToLong(&theNbr)) {
+								theNbr += 1;
+								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+							}
+						} else if (textToDisplay.Contains(wxT("General")) && textToDisplay.Len() == 9) {
+							wxString combinationNbr = textToDisplay.Mid(7);
+							long theNbr;
+							if (combinationNbr.ToLong(&theNbr)) {
+								textToDisplay = wxString::Format(wxT("%ld"), theNbr);
+							}
+						} else if (textToDisplay.IsSameAs(wxT("SetterXXXDivisionalPrevBank"))) {
+							textToDisplay = wxT("-");
+						} else if (textToDisplay.IsSameAs(wxT("SetterXXXDivisionalNextBank"))) {
+							textToDisplay = wxT("+");
+						} else if (textToDisplay.IsSameAs(wxT("GeneralPrev"))) {
+							textToDisplay = wxT("Prev");
+						} else if (textToDisplay.IsSameAs(wxT("GeneralNext"))) {
+							textToDisplay = wxT("Next");
+						} else if (textToDisplay.IsSameAs(wxT("Home"))) {
+							textToDisplay = wxT("000");
+						} else if (textToDisplay.IsSameAs(wxT("LoadFile"))) {
+							textToDisplay = wxT("Load File");
+						} else if (textToDisplay.IsSameAs(wxT("PrevFile"))) {
+							textToDisplay = wxT("Prev File");
+						} else if (textToDisplay.IsSameAs(wxT("NextFile"))) {
+							textToDisplay = wxT("Next File");
+						} else if (textToDisplay.IsSameAs(wxT("SaveFile"))) {
+							textToDisplay = wxT("Save File");
+						} else if (textToDisplay.IsSameAs(wxT("RefreshFiles"))) {
+							textToDisplay = wxT("Refresh Files");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoA"))) {
+							textToDisplay = wxT("A");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoB"))) {
+							textToDisplay = wxT("B");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoC"))) {
+							textToDisplay = wxT("C");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoD"))) {
+							textToDisplay = wxT("D");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoPrev"))) {
+							textToDisplay = wxT("<");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoNext"))) {
+							textToDisplay = wxT(">");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoCurrent"))) {
+							textToDisplay = wxT("Current");
+						} else if (textToDisplay.IsSameAs(wxT("CrescendoOverride"))) {
+							textToDisplay = wxT("Override");
+						} else if (textToDisplay.IsSameAs(wxT("GC"))) {
+							textToDisplay = wxT("G.C.");
+						} else if (textToDisplay.IsSameAs(wxT("P1"))) {
+							textToDisplay = wxT("+1");
+						} else if (textToDisplay.IsSameAs(wxT("M1"))) {
+							textToDisplay = wxT("-1");
+						} else if (textToDisplay.IsSameAs(wxT("P10"))) {
+							textToDisplay = wxT("+10");
+						} else if (textToDisplay.IsSameAs(wxT("M10"))) {
+							textToDisplay = wxT("-10");
+						} else if (textToDisplay.IsSameAs(wxT("P100"))) {
+							textToDisplay = wxT("+100");
+						} else if (textToDisplay.IsSameAs(wxT("M100"))) {
+							textToDisplay = wxT("-100");
+						} else if (textToDisplay.IsSameAs(wxT("PitchP1"))) {
+							textToDisplay = wxT("+1");
+						} else if (textToDisplay.IsSameAs(wxT("PitchP10"))) {
+							textToDisplay = wxT("+10");
+						} else if (textToDisplay.IsSameAs(wxT("PitchP100"))) {
+							textToDisplay = wxT("+100");
+						} else if (textToDisplay.IsSameAs(wxT("PitchM1"))) {
+							textToDisplay = wxT("-1");
+						} else if (textToDisplay.IsSameAs(wxT("PitchM10"))) {
+							textToDisplay = wxT("-10");
+						} else if (textToDisplay.IsSameAs(wxT("PitchM100"))) {
+							textToDisplay = wxT("-100");
+						} else if (textToDisplay.IsSameAs(wxT("TemperamentPrev"))) {
+							textToDisplay = wxT("<");
+						} else if (textToDisplay.IsSameAs(wxT("TemperamentNext"))) {
+							textToDisplay = wxT(">");
+						} else if (textToDisplay.IsSameAs(wxT("TransposeUp"))) {
+							textToDisplay = wxT("+");
+						} else if (textToDisplay.IsSameAs(wxT("TransposeDown"))) {
+							textToDisplay = wxT("-");
+						} else if (textToDisplay.IsSameAs(wxT("L0"))) {
+							textToDisplay = wxT("__0");
+						} else if (textToDisplay.IsSameAs(wxT("L1"))) {
+							textToDisplay = wxT("__1");
+						} else if (textToDisplay.IsSameAs(wxT("L2"))) {
+							textToDisplay = wxT("__2");
+						} else if (textToDisplay.IsSameAs(wxT("L3"))) {
+							textToDisplay = wxT("__3");
+						} else if (textToDisplay.IsSameAs(wxT("L4"))) {
+							textToDisplay = wxT("__4");
+						} else if (textToDisplay.IsSameAs(wxT("L5"))) {
+							textToDisplay = wxT("__5");
+						} else if (textToDisplay.IsSameAs(wxT("L6"))) {
+							textToDisplay = wxT("__6");
+						} else if (textToDisplay.IsSameAs(wxT("L7"))) {
+							textToDisplay = wxT("__7");
+						} else if (textToDisplay.IsSameAs(wxT("L8"))) {
+							textToDisplay = wxT("__8");
+						} else if (textToDisplay.IsSameAs(wxT("L9"))) {
+							textToDisplay = wxT("__9");
 						}
 					}
 					dc.DrawLabel(BreakTextLine(textToDisplay, btnElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL);
@@ -820,6 +912,10 @@ void GUIRepresentationDrawingPanel::RenderPanel(wxDC& dc) {
 						textToDisplay = encElement->getDispLabelText();
 					else
 						textToDisplay = encElement->getElementName();
+					if (encElement->getDispLabelText() == wxEmptyString) {
+						if (textToDisplay.IsSameAs(wxT("Swell")))
+							textToDisplay = wxT("Crescendo");
+					}
 					dc.DrawLabel(BreakTextLine(textToDisplay, encElement->getTextBreakWidth(), dc), textRect, wxALIGN_CENTER_HORIZONTAL);
 				}
 				if (m_isFirstRender) {

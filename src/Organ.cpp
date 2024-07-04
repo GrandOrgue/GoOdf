@@ -1702,6 +1702,7 @@ void Organ::populateSetterElements() {
 		m_setterElements.Add(wxT("CrescendoNext"));
 		m_setterElements.Add(wxT("CrescendoCurrent"));
 		m_setterElements.Add(wxT("CrescendoLabel"));
+		m_setterElements.Add(wxT("CrescendoOverride"));
 		m_setterElements.Add(wxT("Current"));
 		m_setterElements.Add(wxT("CurrFileName"));
 		m_setterElements.Add(wxT("Delete"));
