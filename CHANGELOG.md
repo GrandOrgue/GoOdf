@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Display of correct default text on setter button elements.
+- Crash caused by trying to open recent file that doesn't exist anymore.
 
 ## [0.14.0] - 2024-07-02
 

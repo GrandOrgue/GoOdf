@@ -3213,9 +3213,17 @@ void GOODFFrame::OnEnableTooltipsMenu(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::OnRecentFileMenuChoice(wxCommandEvent& event) {
+	int fileIndex = event.GetId() - wxID_FILE1;
 	wxString fName(m_recentlyUsed->GetHistoryFile(event.GetId() - wxID_FILE1));
-	if (!fName.IsEmpty())
+	wxFileName f_name = wxFileName(fName);
+	if (f_name.Exists()) {
 		DoOpenOrgan(fName);
+	} else {
+		wxString errorMessage = wxString::Format(wxT("The file: %s doesn't exist!"), fName);
+		wxMessageDialog msg(this, errorMessage, wxT("File not found!"), wxOK|wxCENTRE|wxICON_ERROR);
+		msg.ShowModal();
+		m_recentlyUsed->RemoveFileFromHistory(fileIndex);
+	}
 }
 
 void GOODFFrame::OnClearHistory(wxCommandEvent& WXUNUSED(event)) {
