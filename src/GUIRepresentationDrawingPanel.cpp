@@ -299,6 +299,15 @@ void GUIRepresentationDrawingPanel::OnLeftRelease(wxMouseEvent& event) {
 				if (m_guiObjects[i].element) {
 					m_guiObjects[i].element->setPosX(finalXpos);
 					m_guiObjects[i].element->setPosY(finalYpos);
+					if (m_guiObjects[i].element->getType().IsSameAs(wxT("Label"))) {
+						GUILabel *labelElement = dynamic_cast<GUILabel*>(m_guiObjects[i].element);
+						if (labelElement) {
+							if (!labelElement->isFreeXPlacement())
+								labelElement->setFreeXPlacement(true);
+							if (!labelElement->isFreeYPlacement())
+								labelElement->setFreeYPlacement(true);
+						}
+					}
 				} else if (m_guiObjects[m_selectedObjectIndex].img) {
 					m_guiObjects[i].img->setPositionX(finalXpos);
 					m_guiObjects[i].img->setPositionY(finalYpos);
@@ -539,6 +548,15 @@ void GUIRepresentationDrawingPanel::OnKeyboardInput(wxKeyEvent& event) {
 					if (m_guiObjects[i].element) {
 						m_guiObjects[i].element->setPosX(xPos);
 						m_guiObjects[i].element->setPosY(yPos);
+						if (m_guiObjects[i].element->getType().IsSameAs(wxT("Label"))) {
+							GUILabel *labelElement = dynamic_cast<GUILabel*>(m_guiObjects[i].element);
+							if (labelElement) {
+								if (!labelElement->isFreeXPlacement())
+									labelElement->setFreeXPlacement(true);
+								if (!labelElement->isFreeYPlacement())
+									labelElement->setFreeYPlacement(true);
+							}
+						}
 					} else if (m_guiObjects[i].img) {
 						m_guiObjects[i].img->setPositionX(xPos);
 						m_guiObjects[i].img->setPositionY(yPos);
