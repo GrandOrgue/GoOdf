@@ -141,7 +141,7 @@ void GUILabel::read(wxFileConfig *cfg, Organ *readOrgan) {
 	cfgBoolValue = cfg->Read("DispAtTopOfDrawstopCol", wxEmptyString);
 	m_dispAtTopOfDrawstopCol = GOODF_functions::parseBoolean(cfgBoolValue, false);
 	int col = static_cast<int>(cfg->ReadLong("DispDrawstopCol", 1));
-	if (col > 0 && col < getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols) {
+	if (col > 0 && col <= getOwningPanel()->getDisplayMetrics()->m_dispDrawstopCols) {
 		m_dispDrawstopCol = col;
 	}
 	cfgBoolValue = cfg->Read("DispSpanDrawstopColToRight", wxEmptyString);
