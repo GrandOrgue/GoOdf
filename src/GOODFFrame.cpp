@@ -720,6 +720,7 @@ void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GOODFFrame::DoOpenOrgan(wxString filePath) {
+	m_organTreeCtrl->SetFocusedItem(tree_organ);
 	if (m_organ) {
 		delete m_organ;
 		m_organ = NULL;

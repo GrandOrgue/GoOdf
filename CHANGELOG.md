@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash caused by trying to open recent file that doesn't exist anymore.
 - Bug that prevented changing label position by dragging or keys if FreeXPlacement and FreeYPlacement was false.
 - Bug that caused a read label placement at the last column to be invalid.
+- Crash happening on windows port if organ tree had wrong focus when opening an .organ file.
 
 ## [0.14.0] - 2024-07-02
 
