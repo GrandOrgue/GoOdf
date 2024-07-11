@@ -1720,6 +1720,7 @@ void RankPanel::OnCopyPipeOffset() {
 				Pipe *target = m_rank->getPipeAt(targetIdx);
 
 				target->isPercussive = source->isPercussive;
+				target->hasIndependentRelease = source->hasIndependentRelease;
 				target->amplitudeLevel = source->amplitudeLevel;
 				target->gain = source->gain;
 				float newPitchTuning = source->pitchTuning + (offset * 100);

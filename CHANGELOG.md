@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bug that prevented changing label position by dragging or keys if FreeXPlacement and FreeYPlacement was false.
 - Bug that caused a read label placement at the last column to be invalid.
 - Crash happening on windows port if organ tree had wrong focus when opening an .organ file.
+- Copy pipe offset feature to also set HasIndependentRelease value from source pipe to target(s).
 
 ## [0.14.0] - 2024-07-02
 
