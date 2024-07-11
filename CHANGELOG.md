@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bug that caused a read label placement at the last column to be invalid.
 - Crash happening on windows port if organ tree had wrong focus when opening an .organ file.
 - Copy pipe offset feature to also set HasIndependentRelease value from source pipe to target(s).
+- Issue/Bug on the msw port in the PipeDialog that would cause forcing selection of IsPercussive=Y when navigating with "Next" button to the last pipe
 
 ## [0.14.0] - 2024-07-02
 

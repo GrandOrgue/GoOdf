@@ -624,12 +624,16 @@ Pipe* PipeDialog::GetPipePointer(unsigned index) {
 
 void PipeDialog::SetButtonState() {
 	if (m_selectedPipeIndex == 0) {
+		if (m_prevPipeBtn->HasFocus())
+			m_nextPipeBtn->SetFocus();
 		m_prevPipeBtn->Disable();
 	} else if (m_selectedPipeIndex > 0) {
 		m_prevPipeBtn->Enable();
 	}
 
 	if (m_selectedPipeIndex == (m_rank_pipelist.size() - 1)) {
+		if (m_nextPipeBtn->HasFocus())
+			m_prevPipeBtn->SetFocus();
 		m_nextPipeBtn->Disable();
 	} else if (m_selectedPipeIndex < (m_rank_pipelist.size() - 1)) {
 		m_nextPipeBtn->Enable();
@@ -645,11 +649,9 @@ void PipeDialog::TransferPipeValuesToWindow() {
 	}
 	if (m_currentPipe->isPercussive) {
 		m_isPercussiveYes->SetValue(true);
-		// m_isPercussiveNo->SetValue(false);
 		m_hasIndependentReleaseYes->Enable();
 		m_hasIndependentReleaseNo->Enable();
 	} else {
-		// m_isPercussiveYes->SetValue(false);
 		m_isPercussiveNo->SetValue(true);
 		m_hasIndependentReleaseYes->Enable(false);
 		m_hasIndependentReleaseNo->Enable(false);
