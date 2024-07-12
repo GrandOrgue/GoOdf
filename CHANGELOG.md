@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash happening on windows port if organ tree had wrong focus when opening an .organ file.
 - Copy pipe offset feature to also set HasIndependentRelease value from source pipe to target(s).
 - Issue/Bug on the msw port in the PipeDialog that would cause forcing selection of IsPercussive=Y when navigating with "Next" button to the last pipe
+- Direct right-click on a pipe in rank pipe tree that previously didn't create a true selection of a pipe in the msw port.
 
 ## [0.14.0] - 2024-07-02
 

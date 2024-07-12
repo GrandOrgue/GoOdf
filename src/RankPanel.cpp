@@ -1179,6 +1179,8 @@ void RankPanel::OnClearPipesBtn(wxCommandEvent& WXUNUSED(event)) {
 
 void RankPanel::OnPipeTreeItemRightClick(wxTreeEvent &evt) {
 	wxTreeItemId selectedItem = evt.GetItem();
+	if (m_pipeTreeCtrl->GetSelection() != selectedItem)
+		m_pipeTreeCtrl->SetFocusedItem(selectedItem);
 	wxMenu mnu;
 
 	bool showMenu = false;
