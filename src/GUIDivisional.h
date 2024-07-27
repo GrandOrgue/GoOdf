@@ -32,6 +32,7 @@ public:
 	~GUIDivisional();
 
 	void write(wxTextFile *outFile);
+	virtual GUIDivisional* clone();
 	bool isReferencing(Divisional *divisional);
 	void updateDisplayName();
 	wxString getElementName();

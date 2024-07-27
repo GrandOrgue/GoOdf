@@ -45,6 +45,10 @@ void GUICoupler::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUICoupler* GUICoupler::clone() {
+	return new GUICoupler(*this);
+}
+
 bool GUICoupler::isReferencing(Coupler *cplr) {
 	return m_coupler == cplr ? true : false;
 }

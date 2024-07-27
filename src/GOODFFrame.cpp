@@ -1402,6 +1402,56 @@ void GOODFFrame::OnOrganTreeRightClicked(wxTreeEvent& event) {
 		event.Skip();
 		return;
 	}
+
+	if (parentId == tree_panels) {
+		// A panel was right clicked, should it be duplicated?
+		if (m_organ->getNumberOfPanels() < 1000) {
+			wxMessageDialog dlg(this, wxT("Do you want to duplicate the right-clicked panel?"), wxT("Duplicate panel?"), wxYES_NO|wxCENTRE);
+			if (dlg.ShowModal() == wxID_YES) {
+				int selectedPanelIndex = 0;
+				int numPanels = m_organTreeCtrl->GetChildrenCount(tree_panels, false);
+				wxTreeItemIdValue cookie;
+				for (int i = 0; i < numPanels; i++) {
+					wxTreeItemId currentId;
+					if (i == 0)
+						currentId = m_organTreeCtrl->GetFirstChild(tree_panels, cookie);
+					else
+						currentId = m_organTreeCtrl->GetNextChild(tree_panels, cookie);
+					if (clickedId == currentId)
+						selectedPanelIndex = i;
+				}
+
+				GoPanel p = *(m_organ->getOrganPanelAt(selectedPanelIndex));
+				m_organ->addPanel(p);
+				wxTreeItemId thisPanel = m_organTreeCtrl->AppendItem(tree_panels, p.getName());
+				// create the subitems for Displaymetrics, Images and GUIElements
+				m_organTreeCtrl->AppendItem(thisPanel, wxT("Displaymetrics"));
+				wxTreeItemId panelImages = m_organTreeCtrl->AppendItem(thisPanel, wxT("Images"));
+				for (unsigned i = 0; i < p.getNumberOfImages(); i++) {
+					wxString displayName = p.getImageAt(i)->getImageNameOnly();
+					if (displayName == wxEmptyString)
+						displayName = wxT("New Image");
+					m_organTreeCtrl->AppendItem(panelImages, displayName);
+				}
+				wxTreeItemId panelGuiElements = m_organTreeCtrl->AppendItem(thisPanel, wxT("GUI Elements"));
+				for (int i = 0; i < p.getNumberOfGuiElements(); i++) {
+					m_organTreeCtrl->AppendItem(panelGuiElements, p.getGuiElementAt(i)->getDisplayName());
+				}
+				m_organ->setModified(true);
+				m_organTreeCtrl->SelectItem(thisPanel);
+
+			} else {
+				event.Skip();
+				return;
+			}
+		} else {
+			wxMessageDialog msg(this, wxT("Organ cannot have more than 1000 panels!"), wxT("Too many panels"), wxOK|wxCENTRE|wxICON_EXCLAMATION);
+			msg.ShowModal();
+			event.Skip();
+			return;
+		}
+	}
+
 	wxTreeItemId grandParentId = m_organTreeCtrl->GetItemParent(parentId);
 	if (grandParentId != tree_organ && m_organTreeCtrl->GetItemParent(grandParentId) == tree_panels) {
 		int selectedIndex = 0;

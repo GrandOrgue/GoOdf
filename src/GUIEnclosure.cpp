@@ -296,6 +296,10 @@ void GUIEnclosure::read(wxFileConfig *cfg, Organ *readOrgan) {
 		setTextBreakWidth(0);
 }
 
+GUIEnclosure* GUIEnclosure::clone() {
+	return new GUIEnclosure(*this);
+}
+
 bool GUIEnclosure::isReferencing(Enclosure *enclosure) {
 	return m_enclosure == enclosure ? true : false;
 }

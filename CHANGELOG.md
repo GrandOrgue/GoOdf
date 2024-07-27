@@ -10,7 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to create new panel from selection on existing panel display. (TODO)
-- Option to duplicate an existing panel. (TODO)
+
+## [0.15.0] - 2024-07-27
+
+### Added
+
+- Option to duplicate an existing panel by right-clicking on it in the organ tree.
 - Setter element CrescendoOverride.
 
 ### Fixed
@@ -24,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue/Bug on the msw port in the PipeDialog that would cause forcing selection of IsPercussive=Y when navigating with "Next" button to the last pipe
 - Direct right-click on a pipe in rank pipe tree that previously didn't create a true selection of a pipe in the msw port.
 - Restore focus to main window after opening an .organ file on the msw port (make sure it's raised).
+- Not writing Key999Width for sharps when not necessary (could potentially mess up the layout of keys).
+- Take tremulants into accound when checking if a switch is referenced anywhere.
 
 ## [0.14.0] - 2024-07-02
 

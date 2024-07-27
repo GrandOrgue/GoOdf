@@ -39,6 +39,7 @@ public:
 	virtual void write(wxTextFile *outFile);
 	virtual void read(wxFileConfig *cfg);
 
+	virtual GUIElement* clone();
 	virtual void updateDisplayName();
 	virtual void setDefaultFont(wxFont&);
 	virtual wxBitmap getBitmap();

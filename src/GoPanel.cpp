@@ -36,6 +36,25 @@ GoPanel::GoPanel() {
 	m_isGuiElementFirstRemoval = true;
 }
 
+GoPanel::GoPanel(const GoPanel& p) {
+	m_name = p.m_name;
+	m_group = p.m_group;
+	m_hasPedals = p.m_hasPedals;
+	m_isGuiElementFirstRemoval = true;
+	m_displayMetrics = p.m_displayMetrics;
+
+	for (GoImage img : p.m_images) {
+		addImage(img);
+	}
+
+	for (GUIElement *e : p.m_guiElements) {
+		addGuiElement(e->clone());
+	}
+
+	updateGuiManuals();
+	updateGuiEnclosures();
+}
+
 GoPanel::~GoPanel() {
 	m_guiElements.remove_if([](GUIElement *element){delete element; return true;});
 }

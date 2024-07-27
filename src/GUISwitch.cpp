@@ -48,6 +48,10 @@ void GUISwitch::read(wxFileConfig *cfg, Organ *readOrgan) {
 	GUIButton::read(cfg, false, readOrgan);
 }
 
+GUISwitch* GUISwitch::clone() {
+	return new GUISwitch(*this);
+}
+
 bool GUISwitch::isReferencing(GoSwitch *sw) {
 	return m_switch == sw ? true : false;
 }

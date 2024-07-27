@@ -32,6 +32,7 @@ public:
 	~GUIGeneral();
 
 	void write(wxTextFile *outFile);
+	virtual GUIGeneral* clone();
 	bool isReferencing(General *general);
 	void updateDisplayName();
 	wxString getElementName();

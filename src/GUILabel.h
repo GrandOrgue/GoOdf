@@ -38,6 +38,7 @@ public:
 
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
+	virtual GUILabel* clone();
 
 	void updateDisplayName();
 

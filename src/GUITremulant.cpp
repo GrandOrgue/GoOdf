@@ -46,6 +46,10 @@ void GUITremulant::read(wxFileConfig *cfg, Organ *readOrgan) {
 	GUIButton::read(cfg, false, readOrgan);
 }
 
+GUITremulant* GUITremulant::clone() {
+	return new GUITremulant(*this);
+}
+
 bool GUITremulant::isReferencing(Tremulant *tremulant) {
 	return m_tremulant == tremulant ? true : false;
 }

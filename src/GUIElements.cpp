@@ -40,6 +40,10 @@ void GUIElement::read(wxFileConfig *cfg) {
 	m_type = cfg->Read("Type", wxEmptyString);
 }
 
+GUIElement* GUIElement::clone() {
+	return nullptr;
+}
+
 void GUIElement::updateDisplayName() {
 
 }

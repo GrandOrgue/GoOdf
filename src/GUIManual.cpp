@@ -371,6 +371,10 @@ void GUIManual::read(wxFileConfig *cfg, Organ *readOrgan) {
 	updateKeyInfo();
 }
 
+GUIManual* GUIManual::clone() {
+	return new GUIManual(*this);
+}
+
 bool GUIManual::isReferencing(Manual *man) {
 	return m_manual == man ? true : false;
 }
@@ -668,7 +672,7 @@ int GUIManual::baseKeyTypeExistAtIndex(wxString keyNbrType) {
 
 bool GUIManual::keyNbrOverrideBaseKeyWidth(KEYTYPE *key) {
 	int possibleOverride = baseKeyTypeExistAtIndex(key->KeytypeIdentifier);
-	if (possibleOverride > -1 && possibleOverride < (int) m_keytypes.size()) {
+	if (possibleOverride > -1 && possibleOverride < (int) m_keytypes.size() && !key->IsSharp) {
 		if (key->Width != getKeytypeAt((unsigned) possibleOverride)->Width)
 			return true;
 		else

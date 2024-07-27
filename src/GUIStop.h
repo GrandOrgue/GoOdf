@@ -32,6 +32,7 @@ public:
 	virtual ~GUIStop();
 
 	void write(wxTextFile *outFile);
+	virtual GUIStop* clone();
 	bool isReferencing(Stop *stop);
 	void updateDisplayName();
 	wxString getElementName();

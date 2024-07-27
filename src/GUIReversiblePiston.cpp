@@ -43,6 +43,10 @@ void GUIReversiblePiston::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUIReversiblePiston* GUIReversiblePiston::clone() {
+	return new GUIReversiblePiston(*this);
+}
+
 bool GUIReversiblePiston::isReferencing(ReversiblePiston *reversiblePiston) {
 	return m_reversiblePiston == reversiblePiston ? true : false;
 }

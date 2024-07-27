@@ -36,6 +36,7 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
 
+	virtual GUITremulant* clone();
 	bool isReferencing(Tremulant *tremulant);
 	void updateDisplayName();
 	wxString getElementName();

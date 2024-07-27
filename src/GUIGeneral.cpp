@@ -45,6 +45,10 @@ void GUIGeneral::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUIGeneral* GUIGeneral::clone() {
+	return new GUIGeneral(*this);
+}
+
 bool GUIGeneral::isReferencing(General *general) {
 	return m_general == general ? true : false;
 }

@@ -45,6 +45,10 @@ void GUIStop::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUIStop* GUIStop::clone() {
+	return new GUIStop(*this);
+}
+
 bool GUIStop::isReferencing(Stop *stop) {
 	return m_stop == stop ? true : false;
 }

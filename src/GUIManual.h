@@ -75,6 +75,7 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
 
+	virtual GUIManual* clone();
 	bool isReferencing(Manual *man);
 	void updateDisplayName();
 

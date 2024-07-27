@@ -40,6 +40,7 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
 
+	virtual GUIEnclosure* clone();
 	bool isReferencing(Enclosure *enclosure);
 	void updateDisplayName();
 	virtual wxBitmap getBitmap();

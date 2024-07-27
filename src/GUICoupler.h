@@ -32,6 +32,7 @@ public:
 	~GUICoupler();
 
 	void write(wxTextFile *outFile);
+	virtual GUICoupler* clone();
 	bool isReferencing(Coupler *cplr);
 	void updateDisplayName();
 	wxString getElementName();

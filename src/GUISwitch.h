@@ -36,6 +36,7 @@ public:
 	void write(wxTextFile *outFile);
 	void read(wxFileConfig *cfg, Organ *readOrgan);
 
+	virtual GUISwitch* clone();
 	bool isReferencing(GoSwitch *sw);
 	void updateDisplayName();
 	wxString getElementName();

@@ -37,6 +37,7 @@ public:
 	virtual void write(wxTextFile *outFile);
 	virtual void read(wxFileConfig *cfg, bool isPiston, Organ *readOrgan);
 
+	virtual GUIButton* clone();
 	virtual void updateDisplayName();
 	virtual wxBitmap getBitmap();
 	virtual wxString getElementName();

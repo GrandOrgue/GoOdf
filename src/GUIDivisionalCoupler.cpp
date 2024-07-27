@@ -42,6 +42,10 @@ void GUIDivisionalCoupler::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUIDivisionalCoupler* GUIDivisionalCoupler::clone() {
+	return new GUIDivisionalCoupler(*this);
+}
+
 bool GUIDivisionalCoupler::isReferencing(DivisionalCoupler *divCplr) {
 	return m_divCoupler == divCplr ? true : false;
 }

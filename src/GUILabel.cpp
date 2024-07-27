@@ -265,6 +265,10 @@ void GUILabel::read(wxFileConfig *cfg, Organ *readOrgan) {
 	}
 }
 
+GUILabel* GUILabel::clone() {
+	return new GUILabel(*this);
+}
+
 void GUILabel::updateDisplayName() {
 	if (m_type.IsSameAs(wxT("Label"))) {
 		if (m_name != wxEmptyString) {

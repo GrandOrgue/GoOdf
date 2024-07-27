@@ -40,6 +40,7 @@ class Organ;
 class GoPanel {
 public:
 	GoPanel();
+	GoPanel(const GoPanel& p);
 	~GoPanel();
 
 	void write(wxTextFile *outFile, unsigned panelNbr);

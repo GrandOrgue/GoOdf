@@ -48,6 +48,10 @@ void GUIDivisional::write(wxTextFile *outFile) {
 	GUIButton::write(outFile);
 }
 
+GUIDivisional* GUIDivisional::clone() {
+	return new GUIDivisional(*this);
+}
+
 bool GUIDivisional::isReferencing(Divisional *divisional) {
 	return m_divisional == divisional ? true : false;
 }

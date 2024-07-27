@@ -32,6 +32,7 @@ public:
 	~GUIReversiblePiston();
 
 	void write(wxTextFile *outFile);
+	virtual GUIReversiblePiston* clone();
 	bool isReferencing(ReversiblePiston *reversiblePiston);
 	void updateDisplayName();
 	wxString getElementName();

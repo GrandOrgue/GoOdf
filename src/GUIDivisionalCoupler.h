@@ -32,6 +32,7 @@ public:
 	~GUIDivisionalCoupler();
 
 	void write(wxTextFile *outFile);
+	virtual GUIDivisionalCoupler* clone();
 	bool isReferencing(DivisionalCoupler *divisional);
 	void updateDisplayName();
 	wxString getElementName();

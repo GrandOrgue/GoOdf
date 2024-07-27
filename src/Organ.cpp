@@ -2017,6 +2017,17 @@ bool Organ::isElementReferenced(GoSwitch *sw) {
 	}
 
 	if (!isReferenced) {
+		for (Tremulant &trem : m_Tremulants) {
+			if (!trem.getFunction().IsSameAs(wxT("Input"))) {
+				if (trem.hasSwitchReference(sw)) {
+					isReferenced = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!isReferenced) {
 		for (Coupler &c : m_Couplers) {
 			if (c.hasSwitchReference(sw)) {
 				isReferenced = true;

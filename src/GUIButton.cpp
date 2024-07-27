@@ -311,6 +311,11 @@ void GUIButton::read(wxFileConfig *cfg, bool isPiston, Organ *readOrgan) {
 		setTextBreakWidth(0);
 }
 
+
+GUIButton* GUIButton::clone() {
+	return new GUIButton(*this);
+}
+
 void GUIButton::updateDisplayName() {
 
 }
