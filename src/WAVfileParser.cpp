@@ -144,7 +144,11 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 	wxFFileInputStream waveFile(file);
 
 	if (waveFile.IsOk()) {
-		char fourCBuffer[4];
+		// C-style string (array of chars) with fixed size must be zero-terminated explicitly.
+		// This is used by .IsSameAs() when a wxString is implicitly created at the call.
+		// For the fourCBuffer we're thus using five elements in the array and initializing them all to zero,
+		// even though we'll only ever read four characters into it.
+		char fourCBuffer[5] = {};
 		unsigned uBuffer;
 		m_dataSize = 0;
 		bool dataFound = false;
@@ -245,7 +249,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 	wxFFileInputStream wvFile(file);
 	
 	if (wvFile.IsOk()) {
-		char fourCBuffer[4];
+		char fourCBuffer[5] = {};
 		unsigned uBuffer;
 		unsigned char uChBuffer;
 		
@@ -775,7 +779,7 @@ bool WAVfileParser::parseCueChunk(wxFFileInputStream &wavFile) {
 
 bool WAVfileParser::parseInfoListChunk(wxFFileInputStream &wavFile) {
 	unsigned uBuffer;
-	char fourCBuffer[4];
+	char fourCBuffer[5] = {};
 	unsigned char uChBuffer;
 
 	wavFile.Read(&uBuffer, 4);

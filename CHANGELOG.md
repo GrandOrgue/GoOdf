@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display. (TODO)
 
+### Fixed
+
+- Reading of FourCC values in wave/wavpack files so that sample file details are correctly shown.
+
 ## [0.15.0] - 2024-07-27
 
 ### Added
