@@ -247,100 +247,13 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 
 bool WAVfileParser::tryParsingWvFile(wxString file) {
 	wxFFileInputStream wvFile(file);
-	
+
 	if (wvFile.IsOk()) {
 		char fourCBuffer[5] = {};
 		unsigned uBuffer;
 		unsigned char uChBuffer;
-		
-		wvFile.Read(fourCBuffer, 4);
-		if (wvFile.LastRead() != 4 || !WVPK_ID.IsSameAs(fourCBuffer)) {
-			m_errorMessage += wxT("File cannot be identified as a wavpack file.\n");
-			return false;
-		}
-		
-		unsigned blockSize;
-		wvFile.Read(&uBuffer, 4);
-		if (wvFile.LastRead() != 4) {
-			m_errorMessage += wxT("Wavpack block size couldn't be read.\n");
-			return false;
-		} else
-			blockSize = uBuffer;
-
-		unsigned totalBytesRead = 0;
-		// we're not interested in the wavpack version
-		wvFile.SeekI(2, wxFromCurrent);
-		totalBytesRead += 2;
-
-		// we're not really interested in upper block index bits
-		wvFile.SeekI(1, wxFromCurrent);
-		totalBytesRead += 1;
-
-		unsigned char upperTotalSamplesBits;
-		wvFile.Read(&uChBuffer, 1);
-		if (wvFile.LastRead() != 1) {
-			m_errorMessage += wxT("Upper total sample bits couldn't be read.\n");
-			return false;
-		} else
-			upperTotalSamplesBits = uChBuffer;
-		totalBytesRead += 1;
-
-		unsigned lowerTotalSamplesBits;
-		wvFile.Read(&uBuffer, 4);
-		if (wvFile.LastRead() != 4) {
-			m_errorMessage += wxT("Lower total sample bits couldn't be read.\n");
-			return false;
-		} else {
-			lowerTotalSamplesBits = uBuffer;
-		}
-		totalBytesRead += 4;
-
-		// we're not really interested in the lower block index bits either
-		wvFile.SeekI(4, wxFromCurrent);
-		totalBytesRead += 4;
-
-		// method to put together the 40 bit block index if we were interested...
-		// int64_t totalBlockIndex = (int64_t) lowerBlockIndexBits + ((int64_t) upperBlockIndexBits << 32);
-
-		// put together the 40 bit total samples, code adapted from Wavpack source include/wavpack.h macro
-		// note that for a wavpack files samples actually means frames, a complete sample for all channels
-		int64_t totalSamples;
-		if (lowerTotalSamplesBits == (uint32_t) -1) {
-			// all 1's in the lower 32 bits indicates "unknown" (regardless of upper 8 bits)
-			totalSamples = -1;
-		} else {
-			totalSamples = (int64_t) lowerTotalSamplesBits + ((int64_t) upperTotalSamplesBits << 32) - upperTotalSamplesBits;
-		}
-
-		if (totalSamples >= 0)
-			m_numberOfFrames = (unsigned) totalSamples;
-
-		// we're not really interested in number of samples in this block
-		wvFile.SeekI(4, wxFromCurrent);
-		totalBytesRead += 4;
-
-		unsigned variousFlags;
-		wvFile.Read(&uBuffer, 4);
-		if (wvFile.LastRead() != 4) {
-			m_errorMessage += wxT("Wavpack file various flags couldn't be read.\n");
-			return false;
-		} else {
-			variousFlags = uBuffer;
-		}
-		totalBytesRead += 4;
-		// from the flags available we could be interested in the following:
-		// bit 2 (stereo/mono option)
-		// bits 26-23 (samplerate)
-		unsigned bitNbr2 = (variousFlags & ( 1 << 2 )) >> 2;
-		if (bitNbr2 == 0)
-			m_NumChannels = 2;
-		else if (bitNbr2 == 1)
-			m_NumChannels = 1;
-		else
-			m_NumChannels = 0; // not known
-
-		unsigned mask = ((1 << 4) - 1) << 23;
-		unsigned bit23to26 = (variousFlags & mask) >> 23;
+		unsigned blockNumber = 0;
+		bool continueParsingFile = true;
 		unsigned wavpackSamplerates[16] = {
 			6000,
 			8000,
@@ -359,161 +272,267 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 			192000,
 			0
 		};
-		if (bit23to26 < 16)
-			m_SampleRate = wavpackSamplerates[bit23to26];
-		else
-			m_SampleRate = 0; // not known
+		bool fmtFound = false;
+		bool smplFound = false;
+		bool cueFound = false;
 
-		// wer're not really interested in the crc
-		wvFile.SeekI(4, wxFromCurrent);
-		totalBytesRead += 4;
+		while (!wvFile.Eof()) {
+			blockNumber++;
 
-		// The 32 byte wavpack header is now read, so here comes the rest of the block or sub-blocks.
-		while (totalBytesRead < blockSize && !wvFile.Eof()) {
-			// get next block id
-			wvFile.Read(&uChBuffer, 1);
-			if (wvFile.LastRead() != 1) {
-				m_errorMessage += wxT("Block ID couldn't be read.\n");
-				break;
+			// First in each block always comes a WavPack 32 byte sized header
+			wvFile.Read(fourCBuffer, 4);
+			if (wvFile.LastRead() != 4 || !WVPK_ID.IsSameAs(fourCBuffer)) {
+				if (blockNumber > 1) {
+					// If at least one block has already been successfully parsed we can just quit
+					break;
+				} else {
+					m_errorMessage += wxString::Format(wxT("WavPack block %d have wrong ckID or couldn't be read.\n"), blockNumber);
+					return false;
+				}
 			}
-			unsigned char blockId = uChBuffer;
+
+			// WavPack blocksize doesn't include the ckID or the (unsigned) blockSize itself which makes it equal total blocksize - 8
+			unsigned blockSize;
+			wvFile.Read(&uBuffer, 4);
+			if (wvFile.LastRead() != 4) {
+				m_errorMessage += wxT("Wavpack block size couldn't be read.\n");
+				return false;
+			} else
+				blockSize = uBuffer;
+
+			unsigned totalBytesRead = 0;
+			// we're not interested in the wavpack version
+			wvFile.SeekI(2, wxFromCurrent);
+			totalBytesRead += 2;
+
+			// we're not really interested in upper block index bits
+			wvFile.SeekI(1, wxFromCurrent);
 			totalBytesRead += 1;
 
-			// get size of sub-block
-			// wavpack word size is as unsigned short = 2 bytes
-			unsigned subBlockSize;
-			if (blockId & 0x80) {
-				// this is a large block
-				unsigned char byte1;
-				wvFile.Read(&uChBuffer, 1);
-				if (wvFile.LastRead() == 1) {
-					byte1 = uChBuffer;
-				} else {
-					m_errorMessage += wxT("Large block byte 1 couldn't be read.\n");
-					break;
-				}
-				unsigned char byte2;
-				wvFile.Read(&uChBuffer, 1);
-				if (wvFile.LastRead() == 1) {
-					byte2 = uChBuffer;
-				} else {
-					m_errorMessage += wxT("Large block byte 2 couldn't be read.\n");
-					break;
-				}
-				unsigned char byte3;
-				wvFile.Read(&uChBuffer, 1);
-				if (wvFile.LastRead() == 1) {
-					byte3 = uChBuffer;
-				} else {
-					m_errorMessage += wxT("Large block byte 3 couldn't be read.\n");
-					break;
-				}
-				subBlockSize = ((byte1 << 16) | (byte2 << 8) | (byte3)) * 2;
-				totalBytesRead += 3;
+			unsigned char upperTotalSamplesBits;
+			wvFile.Read(&uChBuffer, 1);
+			if (wvFile.LastRead() != 1) {
+				m_errorMessage += wxT("Upper total sample bits couldn't be read.\n");
+				return false;
+			} else
+				upperTotalSamplesBits = uChBuffer;
+			totalBytesRead += 1;
+
+			unsigned lowerTotalSamplesBits;
+			wvFile.Read(&uBuffer, 4);
+			if (wvFile.LastRead() != 4) {
+				m_errorMessage += wxT("Lower total sample bits couldn't be read.\n");
+				return false;
 			} else {
-				// this is a small block
+				lowerTotalSamplesBits = uBuffer;
+			}
+			totalBytesRead += 4;
+
+			// we're not really interested in the lower block index bits either
+			wvFile.SeekI(4, wxFromCurrent);
+			totalBytesRead += 4;
+
+			// method to put together the 40 bit block index if we were interested...
+			// int64_t totalBlockIndex = (int64_t) lowerBlockIndexBits + ((int64_t) upperBlockIndexBits << 32);
+
+			// put together the 40 bit total samples, code adapted from Wavpack source include/wavpack.h macro
+			// note that for a wavpack files samples actually means frames, a complete sample for all channels
+			int64_t totalSamples;
+			if (lowerTotalSamplesBits == (uint32_t) -1) {
+				// all 1's in the lower 32 bits indicates "unknown" (regardless of upper 8 bits)
+				totalSamples = -1;
+			} else {
+				totalSamples = (int64_t) lowerTotalSamplesBits + ((int64_t) upperTotalSamplesBits << 32) - upperTotalSamplesBits;
+			}
+
+			if (totalSamples >= 0 && blockNumber < 2)
+				m_numberOfFrames = (unsigned) totalSamples;
+
+			// we're not really interested in number of samples in this block
+			wvFile.SeekI(4, wxFromCurrent);
+			totalBytesRead += 4;
+
+			unsigned variousFlags;
+			wvFile.Read(&uBuffer, 4);
+			if (wvFile.LastRead() != 4) {
+				m_errorMessage += wxT("Wavpack file various flags couldn't be read.\n");
+				return false;
+			} else {
+				variousFlags = uBuffer;
+			}
+			totalBytesRead += 4;
+			// from the flags available we could be interested in the following if it's the first block:
+			// bit 2 (stereo/mono option)
+			// bits 26-23 (samplerate)
+			if (blockNumber < 2) {
+				unsigned bitNbr2 = (variousFlags & ( 1 << 2 )) >> 2;
+				if (bitNbr2 == 0)
+					m_NumChannels = 2;
+				else if (bitNbr2 == 1)
+					m_NumChannels = 1;
+				else
+					m_NumChannels = 0; // not known
+
+				unsigned mask = ((1 << 4) - 1) << 23;
+				unsigned bit23to26 = (variousFlags & mask) >> 23;
+
+				if (bit23to26 < 16)
+					m_SampleRate = wavpackSamplerates[bit23to26];
+				else
+					m_SampleRate = 0; // not known
+			}
+
+			// we're not really interested in the crc
+			wvFile.SeekI(4, wxFromCurrent);
+			totalBytesRead += 4;
+
+			// The whole 32 byte wavpack header is now read
+			// After the WavPack header comes (possibly a number of) sub-blocks
+			while (totalBytesRead < blockSize && !wvFile.Eof()) {
+				// get next block id
 				wvFile.Read(&uChBuffer, 1);
-				if (wvFile.LastRead() == 1) {
-					subBlockSize = (unsigned) uChBuffer * 2;
-				} else {
-					m_errorMessage += wxT("Small block size couldn't be read.\n");
+				if (wvFile.LastRead() != 1) {
+					m_errorMessage += wxT("Block ID couldn't be read.\n");
 					break;
 				}
+				unsigned char blockId = uChBuffer;
 				totalBytesRead += 1;
-			}
-			unsigned bytesRead = 0;
 
-			if ((blockId & 0x3f) == 0x21) {
-				// a RIFF header is present in this block, trust but verify and then parse it
-				wvFile.Read(fourCBuffer, 4);
-				if (wvFile.LastRead() != 4 || !WAVE_RIFF.IsSameAs(fourCBuffer)) {
-					m_errorMessage += wxT("Not a RIFF file in the wavpack file.\n");
-					return false;
-				}
-				wvFile.Read(&uBuffer, 4); // filesize - 8 bytes
-				if (wvFile.LastRead() != 4) {
-					m_errorMessage += wxT("Couldn't read filesize.\n");
-					return false;
-				}
-				wvFile.Read(fourCBuffer, 4);
-				if (wvFile.LastRead() != 4 || !WAVE_ID.IsSameAs(fourCBuffer)) {
-					m_errorMessage += wxT("Not a WAVE file.n");
-					return false;
-				}
-				bytesRead += 12;
-				totalBytesRead += 12;
-
-				bool fmtFound = false;
-				bool smplFound = false;
-				bool cueFound = false;
-				while (bytesRead < subBlockSize) {
-					// get next fourcc chunk
-					wvFile.Read(fourCBuffer, 4);
-					if (wvFile.LastRead() == 4) {
-						if (WAVE_FMT.IsSameAs(fourCBuffer) && !fmtFound) {
-							if (parseFmtChunk(wvFile)) {
-								fmtFound = true;
-								bytesRead += m_lastChunkSizeParsed;
-								totalBytesRead += m_lastChunkSizeParsed;
-								continue;
-							} else {
-								// if fmt chunk couldn't be parsed error message should already have been set
-								return false;
-							}
-						} else if (WAVE_SMPL.IsSameAs(fourCBuffer) && !smplFound) {
-							if (parseSmplChunk(wvFile)) {
-								smplFound = true;
-								bytesRead += m_lastChunkSizeParsed;
-								totalBytesRead += m_lastChunkSizeParsed;
-								continue;
-							} else {
-								// if chunk couldn't be parsed error message should already have been set
-								return false;
-							}
-						} else if (WAVE_CUE.IsSameAs(fourCBuffer) && !cueFound) {
-							if (parseCueChunk(wvFile)) {
-								cueFound = true;
-								bytesRead += m_lastChunkSizeParsed;
-								totalBytesRead += m_lastChunkSizeParsed;
-								continue;
-							} else {
-								// if chunk couldn't be parsed error message should already have been set
-								return false;
-							}
-						} else if (WAVE_LIST.IsSameAs(fourCBuffer)) {
-							if (parseInfoListChunk(wvFile)) {
-								bytesRead += m_lastChunkSizeParsed;
-								totalBytesRead += m_lastChunkSizeParsed;
-								continue;
-							} else {
-								// if chunk couldn't be parsed error message should already have been set
-								return false;
-							}
-						}
+				// get size of sub-block
+				// wavpack word size is as unsigned short = 2 bytes
+				unsigned subBlockSize;
+				if (blockId & 0x80) {
+					// this is a large block
+					unsigned char byte1;
+					wvFile.Read(&uChBuffer, 1);
+					if (wvFile.LastRead() == 1) {
+						byte1 = uChBuffer;
 					} else {
+						m_errorMessage += wxT("Large block byte 1 couldn't be read.\n");
 						break;
 					}
-
-					// get size of chunk so we know how far to skip until next chunk
-					wvFile.Read(&uBuffer, 4);
-					if (wvFile.LastRead() != 4) {
-						m_errorMessage += wxT("Size of chunk couldn't be read.\n");
+					unsigned char byte2;
+					wvFile.Read(&uChBuffer, 1);
+					if (wvFile.LastRead() == 1) {
+						byte2 = uChBuffer;
+					} else {
+						m_errorMessage += wxT("Large block byte 2 couldn't be read.\n");
 						break;
 					}
-					wvFile.SeekI(uBuffer + (uBuffer & 1), wxFromCurrent);
-					bytesRead += (uBuffer + (uBuffer & 1));
-					totalBytesRead += (uBuffer + (uBuffer & 1));
+					unsigned char byte3;
+					wvFile.Read(&uChBuffer, 1);
+					if (wvFile.LastRead() == 1) {
+						byte3 = uChBuffer;
+					} else {
+						m_errorMessage += wxT("Large block byte 3 couldn't be read.\n");
+						break;
+					}
+					subBlockSize = (byte1 | (byte2 << 8) | (byte3 << 16)) * 2;
+					totalBytesRead += 3;
+				} else {
+					// this is a small block
+					wvFile.Read(&uChBuffer, 1);
+					if (wvFile.LastRead() == 1) {
+						subBlockSize = (unsigned) uChBuffer * 2;
+					} else {
+						m_errorMessage += wxT("Small block size couldn't be read.\n");
+						break;
+					}
+					totalBytesRead += 1;
 				}
-			}
+				unsigned bytesRead = 0;
 
+				if (((blockId & 0x3f) == 0x21) || ((blockId & 0x3f) == 0x22)) {
+					if ((blockId & 0x3f) == 0x21) {
+						// a RIFF header is present in this block, trust but verify and then parse it
+						wvFile.Read(fourCBuffer, 4);
+						if (wvFile.LastRead() != 4 || !WAVE_RIFF.IsSameAs(fourCBuffer)) {
+							m_errorMessage += wxT("Not a RIFF file in the wavpack file.\n");
+							return false;
+						}
+						wvFile.Read(&uBuffer, 4); // filesize - 8 bytes
+						if (wvFile.LastRead() != 4) {
+							m_errorMessage += wxT("Couldn't read filesize.\n");
+							return false;
+						}
+						wvFile.Read(fourCBuffer, 4);
+						if (wvFile.LastRead() != 4 || !WAVE_ID.IsSameAs(fourCBuffer)) {
+							m_errorMessage += wxT("Not a WAVE file.\n");
+							return false;
+						}
+						bytesRead += 12;
+						totalBytesRead += 12;
+					}
 
-			// check if enough bytes was read
-			if (subBlockSize > bytesRead) {
-				unsigned bytesToSkip = subBlockSize - bytesRead;
-				wvFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
-				totalBytesRead += (bytesToSkip + (bytesToSkip & 1));
-			}
-		}
+					while (bytesRead < subBlockSize) {
+						// get next fourcc chunk
+						wvFile.Read(fourCBuffer, 4);
+						if (wvFile.LastRead() == 4) {
+							bytesRead += 4;
+							totalBytesRead += 4;
+							if (WAVE_FMT.IsSameAs(fourCBuffer) && !fmtFound) {
+								if (parseFmtChunk(wvFile)) {
+									fmtFound = true;
+									// the dword for chunk size itself won't be included in m_lastChunkSizeParsed but needs to be added
+									unsigned actualBytesRead = m_lastChunkSizeParsed + 4;
+									bytesRead += actualBytesRead;
+									totalBytesRead += actualBytesRead;
+									continue;
+								} else {
+									// if fmt chunk couldn't be parsed error message should already have been set
+									return false;
+								}
+							} else if (WAVE_SMPL.IsSameAs(fourCBuffer) && !smplFound) {
+								if (parseSmplChunk(wvFile)) {
+									smplFound = true;
+									unsigned actualBytesRead = m_lastChunkSizeParsed + 4;
+									bytesRead += actualBytesRead;
+									totalBytesRead += actualBytesRead;
+									continue;
+								} else {
+									// if smpl chunk couldn't be parsed error message should already have been set
+									return false;
+								}
+							} else if (WAVE_CUE.IsSameAs(fourCBuffer) && !cueFound) {
+								if (parseCueChunk(wvFile)) {
+									cueFound = true;
+									unsigned actualBytesRead = m_lastChunkSizeParsed + 4;
+									bytesRead += actualBytesRead;
+									totalBytesRead += actualBytesRead;
+									continue;
+								} else {
+									// if cue chunk couldn't be parsed error message should already have been set
+									return false;
+								}
+							} else if (WAVE_LIST.IsSameAs(fourCBuffer)) {
+								if (parseInfoListChunk(wvFile)) {
+									unsigned actualBytesRead = m_lastChunkSizeParsed + 4;
+									bytesRead += actualBytesRead;
+									totalBytesRead += actualBytesRead;
+									continue;
+								} else {
+									// if info list chunk couldn't be parsed error message should already have been set
+									return false;
+								}
+							} else {
+								// if the RIFF header or trailer contains any other chunks we just ignore them
+								break;
+							}
+						} else {
+							m_errorMessage += wxT("Couldn't read fourcc of sub-block.\n");
+							break;
+						}
+					} // end of while (bytesRead < subBlockSize)
+				} // end of if RIFF header or trailer
+
+				// check if enough bytes was read
+				if (subBlockSize > bytesRead) {
+					unsigned bytesToSkip = subBlockSize - bytesRead;
+					wvFile.SeekI(bytesToSkip + (bytesToSkip & 1), wxFromCurrent);
+					totalBytesRead += (bytesToSkip + (bytesToSkip & 1));
+				}
+			} // end of while (totalBytesRead < blockSize && !wvFile.Eof()) sub-block parsing
+		} // end of while !wvFile.Eof()
 
 		return true;
 	} else {

@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Reading of FourCC values in wave/wavpack files so that sample file details are correctly shown.
+- Reading of FourCC values in WAV/WavPack files so that sample file details are correctly shown on all platforms.
+- Reading of more than just the block in a WavPack file and a few related bugs.
 
 ## [0.15.0] - 2024-07-27
 
