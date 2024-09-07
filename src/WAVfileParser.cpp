@@ -161,7 +161,7 @@ bool WAVfileParser::tryParsingFile(wxString file) {
 			if (WVPK_ID.IsSameAs(fourCBuffer))
 				m_wavpackUsed = true;
 			else
-				m_errorMessage = wxT("Not a RIFF file or a wavpack file.\n");
+				m_errorMessage = wxT("Not a RIFF file or a WavPack file.\n");
 			return false;
 		}
 
@@ -283,7 +283,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 			wvFile.Read(fourCBuffer, 4);
 			if (wvFile.LastRead() != 4 || !WVPK_ID.IsSameAs(fourCBuffer)) {
 				if (blockNumber > 1) {
-					// If at least one block has already been successfully parsed we can just quit
+					// If at least one block has already been successfully parsed we can just quit at a failure
 					break;
 				} else {
 					m_errorMessage += wxString::Format(wxT("WavPack block %d have wrong ckID or couldn't be read.\n"), blockNumber);
@@ -291,17 +291,17 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 				}
 			}
 
-			// WavPack blocksize doesn't include the ckID or the (unsigned) blockSize itself which makes it equal total blocksize - 8
+			// WavPack block size doesn't include the ckID or the (unsigned) blockSize itself which makes it equal total blocksize - 8
 			unsigned blockSize;
 			wvFile.Read(&uBuffer, 4);
 			if (wvFile.LastRead() != 4) {
-				m_errorMessage += wxT("Wavpack block size couldn't be read.\n");
+				m_errorMessage += wxT("WavPack block size couldn't be read.\n");
 				return false;
 			} else
 				blockSize = uBuffer;
 
 			unsigned totalBytesRead = 0;
-			// we're not interested in the wavpack version
+			// we're not interested in the WavPack version
 			wvFile.SeekI(2, wxFromCurrent);
 			totalBytesRead += 2;
 
@@ -335,8 +335,8 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 			// method to put together the 40 bit block index if we were interested...
 			// int64_t totalBlockIndex = (int64_t) lowerBlockIndexBits + ((int64_t) upperBlockIndexBits << 32);
 
-			// put together the 40 bit total samples, code adapted from Wavpack source include/wavpack.h macro
-			// note that for a wavpack files samples actually means frames, a complete sample for all channels
+			// put together the 40 bit total samples, code adapted from WavPack source include/wavpack.h macro
+			// note that for a WavPack files samples actually means frames, a complete sample for all channels
 			int64_t totalSamples;
 			if (lowerTotalSamplesBits == (uint32_t) -1) {
 				// all 1's in the lower 32 bits indicates "unknown" (regardless of upper 8 bits)
@@ -355,7 +355,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 			unsigned variousFlags;
 			wvFile.Read(&uBuffer, 4);
 			if (wvFile.LastRead() != 4) {
-				m_errorMessage += wxT("Wavpack file various flags couldn't be read.\n");
+				m_errorMessage += wxT("WavPack file various flags couldn't be read.\n");
 				return false;
 			} else {
 				variousFlags = uBuffer;
@@ -386,7 +386,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 			wvFile.SeekI(4, wxFromCurrent);
 			totalBytesRead += 4;
 
-			// The whole 32 byte wavpack header is now read
+			// The whole 32 byte WavPack header is now read
 			// After the WavPack header comes (possibly a number of) sub-blocks
 			while (totalBytesRead < blockSize && !wvFile.Eof()) {
 				// get next block id
@@ -399,7 +399,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 				totalBytesRead += 1;
 
 				// get size of sub-block
-				// wavpack word size is as unsigned short = 2 bytes
+				// WavPack word size is as unsigned short = 2 bytes
 				unsigned subBlockSize;
 				if (blockId & 0x80) {
 					// this is a large block
@@ -447,7 +447,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 						// a RIFF header is present in this block, trust but verify and then parse it
 						wvFile.Read(fourCBuffer, 4);
 						if (wvFile.LastRead() != 4 || !WAVE_RIFF.IsSameAs(fourCBuffer)) {
-							m_errorMessage += wxT("Not a RIFF file in the wavpack file.\n");
+							m_errorMessage += wxT("Not a RIFF file in the WavPack file.\n");
 							return false;
 						}
 						wvFile.Read(&uBuffer, 4); // filesize - 8 bytes
@@ -465,7 +465,7 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 					}
 
 					while (bytesRead < subBlockSize) {
-						// get next fourcc chunk
+						// get next fourcc chunk id
 						wvFile.Read(fourCBuffer, 4);
 						if (wvFile.LastRead() == 4) {
 							bytesRead += 4;
@@ -516,10 +516,28 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 								}
 							} else {
 								// if the RIFF header or trailer contains any other chunks we just ignore them
-								break;
+								// first get the size that the chunk reports it has
+								wvFile.Read(&uBuffer, 4);
+								if (wvFile.LastRead() != 4) {
+									m_errorMessage += wxT("Couldn't read chunk size in sub-block.\n");
+									return false;
+								}
+								unsigned chunkSize = uBuffer;
+								bytesRead += 4;
+								totalBytesRead += 4;
+								// but as we're about to skip this chunk we just need to verify that the amount of bytes would make sense to jump
+								// as in some cases, like with a data chunk, the reported chunk size might be bigger than the size of this sub-block
+								unsigned bytesToSkip = chunkSize + (chunkSize & 1);
+								// after making sure there's padding to an even number for the chunk size we compare the bytes to skip and set it to the lower value
+								if ((bytesToSkip + bytesRead) > subBlockSize)
+									bytesToSkip = subBlockSize - bytesRead;
+								wvFile.SeekI(bytesToSkip, wxFromCurrent);
+								bytesRead += bytesToSkip;
+								totalBytesRead += bytesToSkip;
+								continue;
 							}
 						} else {
-							m_errorMessage += wxT("Couldn't read fourcc of sub-block.\n");
+							m_errorMessage += wxT("Couldn't read fourcc id of sub-block.\n");
 							break;
 						}
 					} // end of while (bytesRead < subBlockSize)
