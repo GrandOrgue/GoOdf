@@ -239,7 +239,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 			wxLogWarning("Separate releases found in %s %s that is percussive! Ignoring them.", parent->getName(), pipeNr);
 		else
 			wxLogWarning("Separate release found in %s %s that is percussive! Ignoring it.", parent->getName(), pipeNr);
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 
 	// finally a sanity check to see that there is at least one valid attack in the pipe
@@ -249,7 +249,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 		a.fullPath = wxT("DUMMY");
 		m_attacks.push_back(a);
 		wxLogWarning("No valid pipe could be added for %s %s! Setting it to DUMMY.", parent->getName(), pipeNr);
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	} else {
 		// update the pipes root path of parent rank from the main attack
 		wxFileName fileName = m_attacks.front().fullPath;

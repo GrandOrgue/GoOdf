@@ -172,7 +172,7 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 	}
 	if (m_Windchestgroups.empty()) {
 		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional!");
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 
 	// Couplers
@@ -223,7 +223,7 @@ void Organ::writeOrgan(wxTextFile *outFile) {
 	for (auto& sw : m_Switches) {
 		if (sw.getFunction().IsSameAs(wxT("Input")) && !isElementReferenced(&sw)) {
 			wxLogWarning("Switch %s has function Input but is not referenced anywhere.", sw.getName());
-			::wxGetApp().m_frame->GetLogWindow()->Show(true);
+			SHOWLOGWINDOW;
 		}
 		wxString switchId = wxT("[Switch") + GOODF_functions::number_format(i) + wxT("]");
 		outFile->AddLine(switchId);

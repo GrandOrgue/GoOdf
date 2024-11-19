@@ -146,7 +146,7 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 					}
 				} else {
 					wxLogError("%s value %s is out of range for divisional '%s' since manual '%s' only lists %u tremulants!", tremNbr, tremId, name, m_owningManual->getName(), m_owningManual->getNumberOfTremulants());
-					::wxGetApp().m_frame->GetLogWindow()->Show(true);
+					SHOWLOGWINDOW;
 				}
 			}
 		}
@@ -168,7 +168,7 @@ void Divisional::read(wxFileConfig *cfg, bool usingOldPanelFormat, Manual *ownin
 					}
 				} else {
 					wxLogError("%s value %s is out of range for divisional '%s' since manual '%s' only lists %u switches!", swNbr, swId, name, m_owningManual->getName(), m_owningManual->getNumberOfGoSwitches());
-					::wxGetApp().m_frame->GetLogWindow()->Show(true);
+					SHOWLOGWINDOW;
 				}
 			}
 		}

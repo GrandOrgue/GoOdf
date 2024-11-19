@@ -26,6 +26,12 @@
 #include <wx/filename.h>
 #include <vector>
 #include "GOODF.h"
+// macro to both show and raise the LogWindow
+#define SHOWLOGWINDOW do { \
+	wxLogWindow* w = ::wxGetApp().m_frame->GetLogWindow(); \
+	w->Show(true); \
+	w->GetFrame()->Raise(); \
+} while (0)
 
 class Organ;
 
@@ -62,7 +68,7 @@ namespace GOODF_functions {
 	inline wxString removeBaseOdfPath(wxString path) {
 		wxString stringToReturn = path;
 		wxFileName fName = wxFileName(path);
-		if (fName.FileExists()) {
+		if (fName.FileExists() && stringToReturn.StartsWith(wxFILE_SEP_PATH)) {
 			fName.MakeRelativeTo(::wxGetApp().m_frame->m_organ->getOdfRoot());
 			stringToReturn = fName.GetFullPath();
 			if (stringToReturn.StartsWith(wxFILE_SEP_PATH))
@@ -82,6 +88,8 @@ namespace GOODF_functions {
 			if (theFile.FileExists()) {
 				return theFile.GetFullPath();
 			}
+			wxLogWarning("%s does not exist.  Removed from .organ file", relativePath);
+			SHOWLOGWINDOW;
 		}
 		return wxEmptyString;
 	}

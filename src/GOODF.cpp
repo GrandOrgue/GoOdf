@@ -30,6 +30,9 @@
 IMPLEMENT_APP(GOODF)
 
 bool GOODF::OnInit() {
+	if (wxApp::argc > 1) {
+		fprintf(stderr, "arg[1]: %s\n", (const char *)(wxApp::argv[1].mb_str()));
+	}
 	// Create fullAppName with version from cmake
 	m_fullAppName = wxT("GoOdf ");
 	m_fullAppName.Append(wxT(GOODF_VERSION));

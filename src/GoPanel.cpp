@@ -100,7 +100,7 @@ void GoPanel::write(wxTextFile *outFile, unsigned panelNbr) {
 
 	if (panelNbr == 0 && nbGUIElements < 1) {
 		wxLogWarning("Nothing is displayed as a GUI Element on the main panel! Is this really intentional?");
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 }
 

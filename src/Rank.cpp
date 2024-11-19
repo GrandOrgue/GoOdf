@@ -107,7 +107,7 @@ void Rank::write(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for rank %s! The .organ file won't be functional!", getName());
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -155,7 +155,7 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for internal rank of stop %s! The .organ file won't be functional!", getName());
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -213,7 +213,7 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
 	} else {
 		wxLogWarning("No windchestgroup could be read for %s!", getName());
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
+		SHOWLOGWINDOW;
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
@@ -1100,6 +1100,29 @@ void Rank::addTremulantToPipes(
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
+			// warn if all previous attacks ignore wave tremulant
+			if (p->m_attacks.size() > 0) {
+				bool hasNonWave = false;
+				bool setSingle = true;		// modify the existing single attack from ignore to play when wave tremulant off
+				for (std::list<Attack>::iterator attack = p->m_attacks.begin(); attack != p->m_attacks.end(); attack++) {
+					if (attack->isTremulant == 0) {
+						hasNonWave = true;
+						break;
+					}
+				}
+				if (!hasNonWave && !setSingle) {
+					wxLogWarning("Adding a wave tremulant to Pipe%03d that only has attacks that ignore tremulant.", i+1);
+					SHOWLOGWINDOW;
+				}
+				if (!hasNonWave && p->m_attacks.size() == 1 && setSingle) {
+					Attack attack = p->m_attacks.back();
+					attack.isTremulant = 0;
+					wxLogWarning("Setting existing single Pipe%03d attack %s to play when wave tremulant off.", i+1, attack.fileName);
+					SHOWLOGWINDOW;
+					p->m_attacks.pop_back();
+					p->m_attacks.push_back(attack);
+				}
+			}
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
 				wxString relativeFileName;
 				if (organRootPathIsSet)
