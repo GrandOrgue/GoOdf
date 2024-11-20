@@ -4,7 +4,7 @@ PORTNAME=		goodf
 DISTVERSIONPREFIX=	v
 DISTVERSION=		0.15.0
 DISTVERSIONSUFFIX=	-3-g1353c46
-PORTREVISION=		15
+PORTREVISION=		16
 CATEGORIES=		audio
 
 MAINTAINER=		kwhite@uottawa.ca
@@ -24,6 +24,6 @@ USE_GITHUB=		yes
 GH_PROJECT=		GoOdf
 GH_ACCOUNT=		GrandOrgue
 GH_ACCOUNT=		kwhite-uottawa
-GH_TAGNAME=		3f1d122
+GH_TAGNAME=		28e51e0
 
 .include <bsd.port.mk>
