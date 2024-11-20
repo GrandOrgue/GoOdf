@@ -30,9 +30,6 @@
 IMPLEMENT_APP(GOODF)
 
 bool GOODF::OnInit() {
-	if (wxApp::argc > 1) {
-		fprintf(stderr, "arg[1]: %s\n", (const char *)(wxApp::argv[1].mb_str()));
-	}
 	// Create fullAppName with version from cmake
 	m_fullAppName = wxT("GoOdf ");
 	m_fullAppName.Append(wxT(GOODF_VERSION));
@@ -563,6 +560,14 @@ bool GOODF::OnInit() {
 
 	// Show the frame
 	m_frame->Show(true);
+
+	// if a <file.organ> command line argument exists, try opening it as an organ file
+	if (wxApp::argc > 1) {
+		wxFileName f_name(wxApp::argv[1]);
+		if (f_name.Exists() && f_name.GetExt().IsSameAs("organ", false)) { // ignore case
+			m_frame->DoOpenOrgan(f_name.GetAbsolutePath());
+		}
+	}
 
 	// Start the event loop
 	return true;
