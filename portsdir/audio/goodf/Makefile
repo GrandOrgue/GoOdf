@@ -18,7 +18,8 @@ BUILD_DEPENDS=		ImageMagick7>0:graphics/ImageMagick7 \
 			zip>0:archivers/zip
 
 USES=			cmake
-USE_WX=			3.2+
+USE_WX=			3.0+
+# use 3.0 to be compatible with ubuntu-20.04 builds on github
 
 USE_GITHUB=		yes
 GH_PROJECT=		GoOdf
