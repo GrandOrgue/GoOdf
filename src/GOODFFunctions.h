@@ -80,7 +80,7 @@ namespace GOODF_functions {
 	}
 
 	inline wxString checkIfFileExist(wxString relativePath, Organ *currentOrgan) {
-		if (relativePath != wxEmptyString) {
+		if (relativePath != wxEmptyString && !relativePath.IsSameAs("DUMMY") && !relativePath.StartsWith("REF:")) {  // don't need to check special "DUMMY" or "REF:" filenames
 			if (relativePath.StartsWith(wxT("./")) || relativePath.StartsWith(wxT(".\\")))
 				relativePath.erase(0, 2);
 			wxString fullFilePath = currentOrgan->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
