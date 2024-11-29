@@ -27,7 +27,7 @@
 #include <vector>
 #include "GOODF.h"
 // macro to both show and raise the LogWindow
-#define SHOWLOGWINDOW do { \
+#define SHOW_LOG_WINDOW do { \
 	wxLogWindow* w = ::wxGetApp().m_frame->GetLogWindow(); \
 	w->Show(true); \
 	w->GetFrame()->Raise(); \
