@@ -88,7 +88,7 @@ namespace GOODF_functions {
 			if (theFile.FileExists()) {
 				return theFile.GetFullPath();
 			}
-			wxLogWarning("%s does not exist.  Removed from .organ file", relativePath);
+			wxLogWarning("%s does not exist. Removed from .organ file", relativePath);
 			SHOWLOGWINDOW;
 		}
 		return wxEmptyString;
