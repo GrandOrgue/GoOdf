@@ -62,7 +62,7 @@ void Drawstop::write(wxTextFile *outFile) {
 		// Issue a warning if function is set to something else than Input and referenced switches is empty
 		if (!function.IsSameAs(wxT("Input")) && m_switches.empty()) {
 			wxLogWarning("%s has function %s and should reference some switch(es) but doesn't! The function value will thus not be written to file!", getName(), getFunction());
-			SHOWLOGWINDOW;
+			SHOW_LOG_WINDOW;
 		}
 		if (defaultToEngaged)
 			outFile->AddLine(wxT("DefaultToEngaged=Y"));
@@ -98,7 +98,7 @@ void Drawstop::read(wxFileConfig *cfg, bool usingOldPanelFormat, Organ *readOrga
 					addSwitchReference(readOrgan->getOrganSwitchAt(swRefNbr - 1));
 				else {
 					wxLogWarning("Switch%0.3d (%s) is already added to %s! This additional switch entry will be ignored!", swRefNbr, readOrgan->getOrganSwitchAt(swRefNbr - 1)->getName(), getName());
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 				}
 			}
 		}

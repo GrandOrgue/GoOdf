@@ -107,7 +107,7 @@ void Rank::write(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for rank %s! The .organ file won't be functional!", getName());
-		SHOWLOGWINDOW;
+		SHOW_LOG_WINDOW;
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -155,7 +155,7 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for internal rank of stop %s! The .organ file won't be functional!", getName());
-		SHOWLOGWINDOW;
+		SHOW_LOG_WINDOW;
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -213,7 +213,7 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
 	} else {
 		wxLogWarning("No windchestgroup could be read for %s!", getName());
-		SHOWLOGWINDOW;
+		SHOW_LOG_WINDOW;
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));
@@ -1112,13 +1112,13 @@ void Rank::addTremulantToPipes(
 				}
 				if (!hasNonWave && !setSingle) {
 					wxLogWarning("Adding a wave tremulant to Pipe%03d that only has attacks that ignore tremulant.", i+1);
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 				}
 				if (!hasNonWave && p->m_attacks.size() == 1 && setSingle) {
 					Attack attack = p->m_attacks.back();
 					attack.isTremulant = 0;
 					wxLogWarning("Setting existing single Pipe%03d attack %s to play when wave tremulant off.", i+1, attack.fileName);
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 					p->m_attacks.pop_back();
 					p->m_attacks.push_back(attack);
 				}

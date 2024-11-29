@@ -201,7 +201,7 @@ void OrganFileParser::parseOrganSection() {
 						m_organ->getOrganPanelAt(0)->addImage(img);
 					else {
 						wxLogWarning("%s is not possible to parse and use!", imgGroupName);
-						SHOWLOGWINDOW;
+						SHOW_LOG_WINDOW;
 					}
 				}
 			}
@@ -220,7 +220,7 @@ void OrganFileParser::parseOrganSection() {
 					createGUILabel(m_organ->getOrganPanelAt(0));
 				} else {
 					wxLogWarning("%s couldn't be found!", labelGroupName);
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 				}
 			}
 			m_organFile->SetPath("/Organ");
@@ -253,7 +253,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", enclosureGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -277,7 +277,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", switchGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -301,7 +301,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", tremGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -321,14 +321,14 @@ void OrganFileParser::parseOrganSection() {
 				m_organ->addWindchestgroup(windchest);
 			} else {
 				wxLogWarning("%s couldn't be found!", windchestGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
 	}
 	if (nbrWindchests == 0) {
 		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional until at least one windchestgroup exist!");
-		SHOWLOGWINDOW;
+		SHOW_LOG_WINDOW;
 	}
 
 	// parse ranks
@@ -351,13 +351,13 @@ void OrganFileParser::parseOrganSection() {
 						rankUsesLegacyXfades = true;
 					}
 					if (rankUsesLegacyXfades) {
-						SHOWLOGWINDOW;
+						SHOW_LOG_WINDOW;
 						break;
 					}
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", rankGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -394,7 +394,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", manGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 
@@ -446,7 +446,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", pistonGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -470,7 +470,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", divCplrGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -494,7 +494,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", generalGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -517,7 +517,7 @@ void OrganFileParser::parseOrganSection() {
 					}
 				} else {
 					wxLogWarning("%s couldn't be found!", setterGroupName);
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 				}
 			}
 		}
@@ -548,7 +548,7 @@ void OrganFileParser::parseOrganSection() {
 				parsePanelElements(m_organ->getOrganPanelAt(m_organ->getNumberOfPanels() - 1), panelGroupName);
 			} else {
 				wxLogWarning("%s couldn't be found!", panelGroupName);
-				SHOWLOGWINDOW;
+				SHOW_LOG_WINDOW;
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -876,13 +876,13 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 					}
 				} else {
 					wxLogWarning("%s%s couldn't be found!", panelId, elementGroupName);
-					SHOWLOGWINDOW;
+					SHOW_LOG_WINDOW;
 				}
 			}
 			m_organFile->SetPath(wxT("/") + panelId);
 		} else {
 			wxLogWarning("NumberOfGUIElements=%d is invalid in %s!", nbrGuiElements, panelId);
-			SHOWLOGWINDOW;
+			SHOW_LOG_WINDOW;
 		}
 	} else {
 		// old style panel elements are read in another way, but they will be converted to the new style

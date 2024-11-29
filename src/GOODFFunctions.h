@@ -89,7 +89,7 @@ namespace GOODF_functions {
 				return theFile.GetFullPath();
 			}
 			wxLogWarning("%s does not exist. Removed from .organ file", relativePath);
-			SHOWLOGWINDOW;
+			SHOW_LOG_WINDOW;
 		}
 		return wxEmptyString;
 	}
