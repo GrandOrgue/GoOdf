@@ -811,7 +811,9 @@ void GOODFFrame::DoOpenOrgan(wxString filePath) {
 	m_organ->organElementHasChanged(true);
 	m_organTreeCtrl->SelectItem(tree_organ);
 	SetImportXfadeMenuItemState();
-	// this->Raise();  should not be necessary
+	this->Raise();
+	if (m_logWindow->GetFrame()->IsShown())
+		m_logWindow->GetFrame()->Raise();
 }
 
 void GOODFFrame::OrganTreeChildItemLabelChanged(wxString label) {
