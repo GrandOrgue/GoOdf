@@ -23,6 +23,12 @@
 #include "GOODFFunctions.h"
 #include <wx/unichar.h>
 
+#define TREMULANT_MESSAGE do { \
+		wxMessageDialog msg(::wxGetApp().m_frame, wxT("Warning: A mix of tremulant and non-tremulant pipes in a rank."), wxT("Pipe Tremulants Warning"), wxOK|wxCENTRE|wxICON_EXCLAMATION); \
+                msg.ShowModal(); \
+		} while(0)
+#define MIXED_TREMULANTS(a, b) (((a) && (b) == -1) || (!(a) && (b) != -1))
+
 Rank::Rank() {
 	name = wxT("New Rank");
 	firstMidiNoteNumber = 36;
@@ -725,6 +731,7 @@ void Rank::addToPipes(
 	int totalNbrOfPipes
 ) {
 	bool organRootPathIsSet = false;
+	bool hadIgnoreTremulant = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -797,6 +804,17 @@ void Rank::addToPipes(
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
+
+			// set the warning flag if any previous attack is different than (hasTremulantFolders || loadPipesAsTremOff)
+			if (p->m_attacks.size() > 0) {
+				for (std::list<Attack>::iterator attack = p->m_attacks.begin(); attack != p->m_attacks.end(); attack++) {
+					if (MIXED_TREMULANTS(hasTremulantFolders || loadPipesAsTremOff, attack->isTremulant)) {
+						hadIgnoreTremulant = true;
+						break;
+					}
+				}
+			}
+
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
 				wxString relativeFileName;
 				if (organRootPathIsSet)
@@ -845,6 +863,16 @@ void Rank::addToPipes(
 
 				// if there are any matching releases we add them
 				if (!pipeReleasesToAdd.IsEmpty()) {
+
+					// set the warning flag if any previous release is different than (hasTremulantFolders || loadPipesAsTremOff)
+					if (p->m_releases.size() > 0) {
+						for (std::list<Release>::iterator release = p->m_releases.begin(); release != p->m_releases.end(); release++) {
+							if (MIXED_TREMULANTS(hasTremulantFolders || loadPipesAsTremOff, release->isTremulant)) {
+								hadIgnoreTremulant = true;
+								break;
+							}
+						}
+					}
 
 					for (unsigned k = 0; k < pipeReleasesToAdd.GetCount(); k++) {
 						wxString relativeFileName;
@@ -975,6 +1003,17 @@ void Rank::addToPipes(
 
 					// if there are any matching releases we add them
 					if (!pipeReleasesToAdd.IsEmpty()) {
+
+						// set the warning flag if any previous release is different than (hasTremulantFolders || loadPipesAsTremOff)
+						if (p->m_releases.size() > 0) {
+							for (std::list<Release>::iterator release = p->m_releases.begin(); release != p->m_releases.end(); release++) {
+								if (MIXED_TREMULANTS(true, release->isTremulant)) {
+									hadIgnoreTremulant = true;
+									break;
+								}
+							}
+						}
+
 						for (unsigned k = 0; k < pipeReleasesToAdd.GetCount(); k++) {
 							wxString relativeFileName;
 							if (organRootPathIsSet)
@@ -1020,6 +1059,9 @@ void Rank::addToPipes(
 		}
 		count++;
 	}
+	if (hadIgnoreTremulant) {
+		TREMULANT_MESSAGE;
+	}
 }
 
 void Rank::addTremulantToPipes(
@@ -1034,6 +1076,7 @@ void Rank::addTremulantToPipes(
 ) {
 	// This method is for adding additional attacks/releases as (wave) tremulants only
 	bool organRootPathIsSet = false;
+	bool hadIgnoreTremulant = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -1100,29 +1143,17 @@ void Rank::addTremulantToPipes(
 
 		// if there are any matching attacks we add them
 		if (!pipeAttacksToAdd.IsEmpty()) {
-			// warn if all previous attacks ignore wave tremulant
+
+			// set the warning flag if any previous attack ignores wave tremulant
 			if (p->m_attacks.size() > 0) {
-				bool hasNonWave = false;
-				bool setSingle = true;		// modify the existing single attack from ignore to play when wave tremulant off
 				for (std::list<Attack>::iterator attack = p->m_attacks.begin(); attack != p->m_attacks.end(); attack++) {
-					if (attack->isTremulant == 0) {
-						hasNonWave = true;
+					if (MIXED_TREMULANTS(true, attack->isTremulant)) {
+						hadIgnoreTremulant = true;
 						break;
 					}
 				}
-				if (!hasNonWave && !setSingle) {
-					wxLogWarning("Adding a wave tremulant to Pipe%03d that only has attacks that ignore tremulant.", i+1);
-					SHOW_LOG_WINDOW;
-				}
-				if (!hasNonWave && p->m_attacks.size() == 1 && setSingle) {
-					Attack attack = p->m_attacks.back();
-					attack.isTremulant = 0;
-					wxLogWarning("Setting existing single Pipe%03d attack %s to play when wave tremulant off.", i+1, attack.fileName);
-					SHOW_LOG_WINDOW;
-					p->m_attacks.pop_back();
-					p->m_attacks.push_back(attack);
-				}
 			}
+
 			for (unsigned j = 0; j < pipeAttacksToAdd.GetCount(); j++) {
 				wxString relativeFileName;
 				if (organRootPathIsSet)
@@ -1178,6 +1209,16 @@ void Rank::addTremulantToPipes(
 						else
 							relativeFileName = pipeReleasesToAdd.Item(k);
 
+						// set the warning flag if any previous release ignores wave tremulant
+						if (p->m_releases.size() > 0) {
+							for (std::list<Release>::iterator release = p->m_releases.begin(); release != p->m_releases.end(); release++) {
+								if (MIXED_TREMULANTS(true, release->isTremulant)) {
+									hadIgnoreTremulant = true;
+									break;
+								}
+							}
+						}
+
 						// create and add the release to the pipe
 						Release rel;
 						rel.fileName = relativeFileName;
@@ -1220,6 +1261,10 @@ void Rank::addTremulantToPipes(
 		}
 		count++;
 	}
+	
+	if (hadIgnoreTremulant) {
+		TREMULANT_MESSAGE;
+	}
 }
 
 void Rank::addReleasesToPipes(
@@ -1230,6 +1275,7 @@ void Rank::addReleasesToPipes(
 ) {
 	// This method is for adding releases only from a single folder
 	bool organRootPathIsSet = false;
+	bool hadIgnoreTremulant = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -1264,6 +1310,17 @@ void Rank::addReleasesToPipes(
 
 		// if there are any matching attacks we add them
 		if (!pipeReleasesToAdd.IsEmpty()) {
+
+			// set the warning flag if any previous release is different than loadPipeAsTremOff
+			if (p->m_releases.size() > 0) {
+				for (std::list<Release>::iterator release = p->m_releases.begin(); release != p->m_releases.end(); release++) {
+					if (MIXED_TREMULANTS(loadPipesAsTremOff, release->isTremulant)) {
+						hadIgnoreTremulant = true;
+						break;
+					}
+				}
+			}
+
 			for (unsigned j = 0; j < pipeReleasesToAdd.GetCount(); j++) {
 				wxString relativeFileName;
 				if (organRootPathIsSet)
@@ -1286,6 +1343,9 @@ void Rank::addReleasesToPipes(
 		pipeReleases.Empty();
 		pipeReleasesToAdd.Empty();
 		count++;
+	}
+	if (hadIgnoreTremulant) {
+		TREMULANT_MESSAGE;
 	}
 }
 
