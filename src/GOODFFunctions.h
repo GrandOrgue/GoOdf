@@ -30,7 +30,6 @@
 #define SHOW_LOG_WINDOW do { \
 	wxLogWindow* w = ::wxGetApp().m_frame->GetLogWindow(); \
 	w->Show(true); \
-	w->GetFrame()->Raise(); \
 } while (0)
 
 class Organ;
