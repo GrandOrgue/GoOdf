@@ -113,7 +113,7 @@ void Rank::write(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for rank %s! The .organ file won't be functional!", getName());
-		SHOW_LOG_WINDOW;
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -161,7 +161,7 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 		}
 	} else {
 		wxLogWarning("No windchestgroup is set for internal rank of stop %s! The .organ file won't be functional!", getName());
-		SHOW_LOG_WINDOW;
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	if (minVelocityVolume != 100)
 		outFile->AddLine(wxT("MinVelocityVolume=") + wxString::Format(wxT("%f"), minVelocityVolume));
@@ -219,7 +219,7 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 		setWindchest(readOrgan->getOrganWindchestgroupAt(windchestRef - 1));
 	} else {
 		wxLogWarning("No windchestgroup could be read for %s!", getName());
-		SHOW_LOG_WINDOW;
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 	wxString percussiveStr = cfg->Read("Percussive", wxEmptyString);
 	setPercussive(GOODF_functions::parseBoolean(percussiveStr, false));

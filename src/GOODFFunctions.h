@@ -26,11 +26,6 @@
 #include <wx/filename.h>
 #include <vector>
 #include "GOODF.h"
-// macro to both show and raise the LogWindow
-#define SHOW_LOG_WINDOW do { \
-	wxLogWindow* w = ::wxGetApp().m_frame->GetLogWindow(); \
-	w->Show(true); \
-} while (0)
 
 class Organ;
 
@@ -88,7 +83,7 @@ namespace GOODF_functions {
 				return theFile.GetFullPath();
 			}
 			wxLogWarning("%s does not exist. Removed from .organ file", relativePath);
-			SHOW_LOG_WINDOW;
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
 		}
 		return wxEmptyString;
 	}

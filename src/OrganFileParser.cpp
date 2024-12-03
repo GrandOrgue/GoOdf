@@ -201,7 +201,7 @@ void OrganFileParser::parseOrganSection() {
 						m_organ->getOrganPanelAt(0)->addImage(img);
 					else {
 						wxLogWarning("%s is not possible to parse and use!", imgGroupName);
-						SHOW_LOG_WINDOW;
+						::wxGetApp().m_frame->GetLogWindow()->Show(true);
 					}
 				}
 			}
@@ -220,7 +220,7 @@ void OrganFileParser::parseOrganSection() {
 					createGUILabel(m_organ->getOrganPanelAt(0));
 				} else {
 					wxLogWarning("%s couldn't be found!", labelGroupName);
-					SHOW_LOG_WINDOW;
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 			m_organFile->SetPath("/Organ");
@@ -253,7 +253,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", enclosureGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -277,7 +277,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", switchGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -301,7 +301,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", tremGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -321,14 +321,14 @@ void OrganFileParser::parseOrganSection() {
 				m_organ->addWindchestgroup(windchest);
 			} else {
 				wxLogWarning("%s couldn't be found!", windchestGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
 	}
 	if (nbrWindchests == 0) {
 		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional until at least one windchestgroup exist!");
-		SHOW_LOG_WINDOW;
+		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 
 	// parse ranks
@@ -351,13 +351,13 @@ void OrganFileParser::parseOrganSection() {
 						rankUsesLegacyXfades = true;
 					}
 					if (rankUsesLegacyXfades) {
-						SHOW_LOG_WINDOW;
+						::wxGetApp().m_frame->GetLogWindow()->Show(true);
 						break;
 					}
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", rankGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -394,7 +394,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", manGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 
@@ -446,7 +446,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", pistonGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -470,7 +470,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", divCplrGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -494,7 +494,7 @@ void OrganFileParser::parseOrganSection() {
 				}
 			} else {
 				wxLogWarning("%s couldn't be found!", generalGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -517,7 +517,7 @@ void OrganFileParser::parseOrganSection() {
 					}
 				} else {
 					wxLogWarning("%s couldn't be found!", setterGroupName);
-					SHOW_LOG_WINDOW;
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 		}
@@ -548,7 +548,7 @@ void OrganFileParser::parseOrganSection() {
 				parsePanelElements(m_organ->getOrganPanelAt(m_organ->getNumberOfPanels() - 1), panelGroupName);
 			} else {
 				wxLogWarning("%s couldn't be found!", panelGroupName);
-				SHOW_LOG_WINDOW;
+				::wxGetApp().m_frame->GetLogWindow()->Show(true);
 			}
 		}
 		m_organFile->SetPath("/Organ");
@@ -876,13 +876,13 @@ void OrganFileParser::parsePanelElements(GoPanel *targetPanel, wxString panelId)
 					}
 				} else {
 					wxLogWarning("%s%s couldn't be found!", panelId, elementGroupName);
-					SHOW_LOG_WINDOW;
+					::wxGetApp().m_frame->GetLogWindow()->Show(true);
 				}
 			}
 			m_organFile->SetPath(wxT("/") + panelId);
 		} else {
 			wxLogWarning("NumberOfGUIElements=%d is invalid in %s!", nbrGuiElements, panelId);
-			SHOW_LOG_WINDOW;
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
 		}
 	} else {
 		// old style panel elements are read in another way, but they will be converted to the new style
