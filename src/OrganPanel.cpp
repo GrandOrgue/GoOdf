@@ -1,6 +1,6 @@
 /*
  * OrganPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by
@@ -605,13 +605,13 @@ void OrganPanel::setTooltipsEnabled(bool isEnabled) {
 		wxButton *infoPath = (wxButton*) FindWindow(ID_BROWSE_FOR_INFO_PATH);
 		infoPath->SetToolTip(wxT("An organinfo file can be selected here but it is not necessary and not even supported for organ packages!"));
 		m_odfPathField->SetToolTip(wxT("The full path to where the .organ file will be written is shown here. Set it with the 'Browse' button."));
-		m_organNameField->SetToolTip(wxT("This is the file name of the .organ file. NOTE: Spaces in the filename will be removed! To 'Save as...' just change the name here and save."));
-		m_churchNameField->SetToolTip(wxT("The curch name is an important property as it's the name of the organ as shown in GrandOrgue. Make it unique for every different organ!"));
-		m_churchAddressField->SetToolTip(wxT("This value is shown in GrandOrgue."));
-		m_organBuilderField->SetToolTip(wxT("This value is shown in GrandOrgue."));
-		m_organBuildDateField->SetToolTip(wxT("This value is shown in GrandOrgue."));
-		m_organCommentsField->SetToolTip(wxT("This value is shown in GrandOrgue."));
-		m_recordingDetailsField->SetToolTip(wxT("This value is shown in GrandOrgue."));
+		m_organNameField->SetToolTip(wxT("This is the file name of the .organ file. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved! To 'Save as...' just change the name here and save."));
+		m_churchNameField->SetToolTip(wxT("The curch name is an important property as it's the name of the organ as shown in GrandOrgue. Make it unique for every different organ! NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
+		m_churchAddressField->SetToolTip(wxT("This value is shown in GrandOrgue. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
+		m_organBuilderField->SetToolTip(wxT("This value is shown in GrandOrgue. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
+		m_organBuildDateField->SetToolTip(wxT("This value is shown in GrandOrgue. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
+		m_organCommentsField->SetToolTip(wxT("This value is shown in GrandOrgue. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
+		m_recordingDetailsField->SetToolTip(wxT("This value is shown in GrandOrgue. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_infoPathField->SetToolTip(wxT("NOTE: This value is shown in GrandOrgue, but is not supported for the new organ package format! To clear any file here, click the 'Browse' button to the right and then 'Cancel'!"));
 		m_amplitudeLevelSpin->SetToolTip(wxT("Linear volume (expressed as a percentage). A value of 0 (zero) will mute sound output!"));
 		m_gainSpin->SetToolTip(wxT("Logarithmic volume. A value of 0 gain is equivalent to an amplitude level of 100."));
@@ -646,6 +646,15 @@ void OrganPanel::setTooltipsEnabled(bool isEnabled) {
 		m_isPercussiveYes->SetToolTip(wxEmptyString);
 		m_isPercussiveNo->SetToolTip(wxEmptyString);
 	}
+}
+
+void OrganPanel::fixTrailingSpacesInStrings() {
+	GOODF_functions::RemoveTrailingWhitespace(&m_odfName);
+}
+
+void OrganPanel::refreshData() {
+	m_organNameField->ChangeValue(m_odfName);
+	getDataFromOrgan();
 }
 
 void OrganPanel::getDataFromOrgan() {
@@ -737,12 +746,12 @@ wxString OrganPanel::GetDirectoryPath() {
 }
 
 void OrganPanel::OnOrganFileNameChange(wxCommandEvent& WXUNUSED(event)) {
-	m_odfName = m_organNameField->GetValue();
-	if (m_odfName.Contains(wxT(" "))) {
-		m_odfName.Replace(wxT(" "), wxT(""));
-		m_organNameField->SetValue(m_odfName);
+	wxString content = m_organNameField->GetValue();
+	GOODF_functions::CheckForStartingWhitespace(&content, m_organNameField);
+	if (!m_odfName.IsSameAs(m_organNameField->GetValue())) {
+		m_odfName = m_organNameField->GetValue();
+		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
-	::wxGetApp().m_frame->m_organ->setModified(true);
 }
 
 void OrganPanel::OnChurchNameChange(wxCommandEvent& WXUNUSED(event)) {

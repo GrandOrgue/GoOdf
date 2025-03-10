@@ -1,6 +1,6 @@
 /*
  * RankPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -677,6 +677,7 @@ Rank* RankPanel::getCurrentRank() {
 
 void RankPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_firstMidiNoteNumberSpin->SetToolTip(wxT("The MIDI note number for the first pipe decides the number matching when auto loading pipes with many of the buttons below."));
 		m_numberOfLogicalPipesSpin->SetToolTip(wxT("Set the desired number of pipes for the rank here."));
 		m_harmonicNumberSpin->SetToolTip(wxT("This value together with MIDI note and PitchFraction affects the automatic re-tuning in different temperaments."));
@@ -708,6 +709,7 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_flexiblePipeLoadingBtn->SetToolTip(wxT("Use this button to auto load samples for the rank with more fexibility than the other buttons allow."));
 		m_pipeTreeCtrl->SetToolTip(wxT("The pipe tree pipe(s), attacks and releases can be right clicked to bring up a pop-up menu."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_firstMidiNoteNumberSpin->SetToolTip(wxEmptyString);
 		m_numberOfLogicalPipesSpin->SetToolTip(wxEmptyString);
 		m_harmonicNumberSpin->SetToolTip(wxEmptyString);
@@ -739,6 +741,10 @@ void RankPanel::setTooltipsEnabled(bool isEnabled) {
 		m_flexiblePipeLoadingBtn->SetToolTip(wxEmptyString);
 		m_pipeTreeCtrl->SetToolTip(wxEmptyString);
 	}
+}
+
+void RankPanel::refreshData() {
+	m_nameField->ChangeValue(m_rank->getName());
 }
 
 void RankPanel::SetPipeReadingOptions(wxString atkFolder, bool oneAttack, bool loadRelease, wxString releaseFolder, bool extractTime, wxString tremFolder, bool loadAsTremOff) {

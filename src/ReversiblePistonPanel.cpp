@@ -1,6 +1,6 @@
 /*
  * ReversiblePistonPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,6 +300,7 @@ void ReversiblePistonPanel::setIsFirstRemoval(bool value) {
 
 void ReversiblePistonPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
 		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
 		m_availableStops->SetToolTip(wxT("Here all available elements are listed that the reversible piston can target. Select one element and click the button below to use it as target. NOTE: Only one element can be targeted and make sure that the target element can receive 'Input'! This is a legacy feature of GrandOrgue, the same result can be achieved with just creating another GUI Element for the target element and style it appropriately!"));
@@ -309,6 +310,7 @@ void ReversiblePistonPanel::setTooltipsEnabled(bool isEnabled) {
 		m_objecTypeField->SetToolTip(wxT("This textfield for object type is automatically populated depending on what element is chosen."));
 		m_manualField->SetToolTip(wxT("This textfield for manual is automatically populated depending on what element is chosen."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_displayInvertedYes->SetToolTip(wxEmptyString);
 		m_displayInvertedNo->SetToolTip(wxEmptyString);
 		m_availableStops->SetToolTip(wxEmptyString);
@@ -318,6 +320,10 @@ void ReversiblePistonPanel::setTooltipsEnabled(bool isEnabled) {
 		m_objecTypeField->SetToolTip(wxEmptyString);
 		m_manualField->SetToolTip(wxEmptyString);
 	}
+}
+
+void ReversiblePistonPanel::refreshData() {
+	m_nameField->ChangeValue(m_piston->getName());
 }
 
 void ReversiblePistonPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

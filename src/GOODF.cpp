@@ -1,6 +1,6 @@
 /* 
  * GOODF.cpp is a part of GOODF software
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

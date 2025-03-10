@@ -1,6 +1,6 @@
 /*
  * WindchestgroupPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,6 +423,7 @@ void WindchestgroupPanel::setIsFirstRemoval(bool value) {
 
 void WindchestgroupPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("The name of this windchest is used in listings so it's best to make it unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_availableEnclosures->SetToolTip(wxT("Here all available enclosures of the organ are listed."));
 		m_referencedEnclosures->SetToolTip(wxT("The enclosure(s) listed here will affect this windchestgroup and thus any rank/pipe placed on this windchest. Do note that it's possible that more than one enclosure can affect one winchest, and it's also possible that many windchests are affected by the same enclosure."));
 		m_availableTremulants->SetToolTip(wxT("Here all available tremulants of the organ are listed."));
@@ -437,6 +438,7 @@ void WindchestgroupPanel::setTooltipsEnabled(bool isEnabled) {
 		m_trackerDelaySpin->SetToolTip(wxT("Set overall tracker delay of the windhcestgroup here."));
 		m_pitchCorrectionSpin->SetToolTip(wxT("Set overall pitch adjustment for any other temperament than 'Original' for the windchestgroup here."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_availableEnclosures->SetToolTip(wxEmptyString);
 		m_referencedEnclosures->SetToolTip(wxEmptyString);
 		m_availableTremulants->SetToolTip(wxEmptyString);
@@ -451,6 +453,10 @@ void WindchestgroupPanel::setTooltipsEnabled(bool isEnabled) {
 		m_isPercussiveYes->SetToolTip(wxEmptyString);
 		m_isPercussiveNo->SetToolTip(wxEmptyString);
 	}
+}
+
+void WindchestgroupPanel::refreshData() {
+	m_nameField->ChangeValue(m_windchest->getName());
 }
 
 void WindchestgroupPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

@@ -1,6 +1,6 @@
 /*
  * Organ.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by
@@ -2073,4 +2073,121 @@ bool Organ::isElementReferenced(GoSwitch *sw) {
 	}
 
 	return isReferenced;
+}
+
+void Organ::fixTrailingSpacesInStrings() {
+	GOODF_functions::RemoveTrailingWhitespace(&m_churchName);
+	GOODF_functions::RemoveTrailingWhitespace(&m_churchAddress);
+	GOODF_functions::RemoveTrailingWhitespace(&m_organBuilder);
+	GOODF_functions::RemoveTrailingWhitespace(&m_organBuildDate);
+	GOODF_functions::RemoveTrailingWhitespace(&m_organComments);
+	GOODF_functions::RemoveTrailingWhitespace(&m_recordingDetails);
+
+	for (Enclosure &e : m_Enclosures) {
+		wxString name = e.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		e.setName(name);
+	}
+
+	for (Tremulant &t : m_Tremulants) {
+		wxString name = t.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		t.setName(name);
+	}
+
+	for (Windchestgroup &w : m_Windchestgroups) {
+		wxString name = w.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		w.setName(name);
+	}
+
+	for (GoSwitch &s : m_Switches) {
+		wxString name = s.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		s.setName(name);
+	}
+
+	for (Rank &r : m_Ranks) {
+		wxString name = r.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		r.setName(name);
+	}
+
+	for (Stop &s : m_Stops) {
+		wxString name = s.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		s.setName(name);
+	}
+
+	for (Manual &m : m_Manuals) {
+		wxString name = m.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		m.setName(name);
+	}
+
+	for (Coupler &c : m_Couplers) {
+		wxString name = c.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		c.setName(name);
+	}
+
+	for (Divisional &d : m_Divisionals) {
+		wxString name = d.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		d.setName(name);
+	}
+
+	for (DivisionalCoupler &dc : m_DivisionalCouplers) {
+		wxString name = dc.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		dc.setName(name);
+	}
+
+	for (General &g : m_Generals) {
+		wxString name = g.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		g.setName(name);
+	}
+
+	for (ReversiblePiston &rp : m_ReversiblePistons) {
+		wxString name = rp.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		rp.setName(name);
+	}
+
+	for (GoPanel &p : m_Panels) {
+		wxString name = p.getName();
+		GOODF_functions::RemoveTrailingWhitespace(&name);
+		p.setName(name);
+		wxString group = p.getGroup();
+		GOODF_functions::RemoveTrailingWhitespace(&group);
+		p.setGroup(group);
+		for (unsigned i = 0; i < (unsigned) p.getNumberOfGuiElements(); i++) {
+			GUIElement *guiElement = p.getGuiElementAt(i);
+			// Test if it's a button type
+			GUIButton *btnElement = dynamic_cast<GUIButton*>(guiElement);
+			if (btnElement) {
+				wxString label = btnElement->getDispLabelText();
+				GOODF_functions::RemoveTrailingWhitespace(&label);
+				btnElement->setDispLabelText(label);
+				continue;
+			}
+			GUIEnclosure *encElement = dynamic_cast<GUIEnclosure*>(guiElement);
+			if (encElement) {
+				wxString label = encElement->getDispLabelText();
+				GOODF_functions::RemoveTrailingWhitespace(&label);
+				encElement->setDispLabelText(label);
+				continue;
+			}
+			GUILabel *labelElement = dynamic_cast<GUILabel*>(guiElement);
+			if (labelElement) {
+				wxString label = labelElement->getName();
+				GOODF_functions::RemoveTrailingWhitespace(&label);
+				labelElement->setName(label);
+				continue;
+			}
+		}
+	}
+
+	updateOrganElements();
 }

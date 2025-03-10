@@ -1,6 +1,6 @@
 /*
  * Organ.h is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by
@@ -186,6 +186,7 @@ public:
 	void setModified(bool modified);
 	void doInheritLegacyXfades();
 	bool isElementReferenced(GoSwitch *sw);
+	void fixTrailingSpacesInStrings();
 
 private:
 	wxString m_odfRoot;

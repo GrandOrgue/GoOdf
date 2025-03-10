@@ -1,6 +1,6 @@
 /*
  * StopPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -644,6 +644,7 @@ void StopPanel::setTooltipsEnabled(bool isEnabled) {
 	m_internalRankPanel->setTooltipsEnabled(isEnabled);
 
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
 		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
 		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, nor can its state be directly changed by a combination, instead it's controlled indirectly by the referenced switch(es).\n\nThe logical function Not can only reference one switch and negates (inverts) the state of the input. And, Xor, Nand, Nor as well as Or has a variable number of inputs.\n\nSee for instance https://en.wikipedia.org/wiki/Logic_gate for further explanations about logical functions."));
@@ -671,6 +672,7 @@ void StopPanel::setTooltipsEnabled(bool isEnabled) {
 		m_pipeCountSpin->SetToolTip(wxT("Number of pipes to use from the rank."));
 		m_firstAccessibleKeyNumberSpin->SetToolTip(wxT("Key number offset (from FirstAccessiblePipeLogicalKeyNumber) for the pipe referenced by FirstPipeNumber."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_displayInvertedYes->SetToolTip(wxEmptyString);
 		m_displayInvertedNo->SetToolTip(wxEmptyString);
 		m_functionChoice->SetToolTip(wxEmptyString);
@@ -698,6 +700,10 @@ void StopPanel::setTooltipsEnabled(bool isEnabled) {
 		m_pipeCountSpin->SetToolTip(wxEmptyString);
 		m_firstAccessibleKeyNumberSpin->SetToolTip(wxEmptyString);
 	}
+}
+
+void StopPanel::refreshData() {
+	m_nameField->ChangeValue(m_stop->getName());
 }
 
 RankPanel* StopPanel::GetInternalRankPanel() {

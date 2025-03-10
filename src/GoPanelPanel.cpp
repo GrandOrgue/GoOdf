@@ -1,6 +1,6 @@
 /*
  * GoPanelPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -687,4 +687,9 @@ void GoPanelPanel::setTooltipsEnabled(bool isEnabled) {
 		m_combinationNumberSpin->SetToolTip(wxEmptyString);
 		m_showPanelBtn->SetToolTip(wxEmptyString);
 	}
+}
+
+void GoPanelPanel::refreshData() {
+	m_nameField->ChangeValue(m_panel->getName());
+	m_groupField->ChangeValue(m_panel->getGroup());
 }
