@@ -1,6 +1,6 @@
 /*
  * ManualPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -475,6 +475,7 @@ void ManualPanel::setIsFirstRemoval(bool value) {
 
 void ManualPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_thisIsThePedalCheckbox->SetToolTip(wxT("If checked this manual is written as [Manual000] and assumed to be the pedal. Only the very first manual can be set to be the pedal as [Manual000]."));
 		m_numberOfLogicalKeysSpin->SetToolTip(wxT("This is the total number of keys on a manual, including not directly playable ones (for instance not by physical keys - but reachable by octave couplers!). Normally, if you want 61 keys for a manual then the value for this property should also be set to 61."));
 		m_firstAccessibleKeyLogicalKeyNumberSpin->SetToolTip(wxT("The number of the first usable key."));
@@ -493,6 +494,7 @@ void ManualPanel::setTooltipsEnabled(bool isEnabled) {
 		m_midiKeyMapKeys->SetToolTip(wxT("Allows to map the MIDI note in MIDIKey999 to a different number. NOTE: If there's no special reason to change this, the mapping should be left 'as is' by default!"));
 		m_midiKeyMapValue->SetToolTip(wxT("This is the number that the chosen MIDIKey will map to. NOTE: If there's no special reason to change this, the mapping should be left 'as is' by default!"));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_thisIsThePedalCheckbox->SetToolTip(wxEmptyString);
 		m_numberOfLogicalKeysSpin->SetToolTip(wxEmptyString);
 		m_firstAccessibleKeyLogicalKeyNumberSpin->SetToolTip(wxEmptyString);
@@ -511,6 +513,10 @@ void ManualPanel::setTooltipsEnabled(bool isEnabled) {
 		m_midiKeyMapKeys->SetToolTip(wxEmptyString);
 		m_midiKeyMapValue->SetToolTip(wxEmptyString);
 	}
+}
+
+void ManualPanel::refreshData() {
+	m_nameField->ChangeValue(m_manual->getName());
 }
 
 void ManualPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

@@ -1,6 +1,6 @@
 /*
  * GeneralPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -706,16 +706,22 @@ void GeneralPanel::setIsFirstRemoval(bool value) {
 
 void GeneralPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_isProtectedYes->SetToolTip(wxT("Yes means that the content of the general cannot be modified by the user."));
 		m_isProtectedNo->SetToolTip(wxT("No means that the user can modify the state of added elements."));
 		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
 		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_isProtectedYes->SetToolTip(wxEmptyString);
 		m_isProtectedNo->SetToolTip(wxEmptyString);
 		m_displayInvertedYes->SetToolTip(wxEmptyString);
 		m_displayInvertedNo->SetToolTip(wxEmptyString);
 	}
+}
+
+void GeneralPanel::refreshData() {
+	m_nameField->ChangeValue(m_general->getName());
 }
 
 void GeneralPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

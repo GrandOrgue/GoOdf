@@ -1,6 +1,6 @@
 /*
  * GOODFFunctions.h is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,14 @@ namespace GOODF_functions {
 		if (str->StartsWith(wxT(" "))) {
 			str->Replace(wxT(" "), wxT(""), false);
 			ctrl->SetValue(*str);
+		} else if (str->Find(wxT(";")) != wxNOT_FOUND) {
+			str->Replace(wxT(";"), wxT(""), false);
+			ctrl->SetValue(*str);
 		}
+	}
+
+	inline void RemoveTrailingWhitespace(wxString *str) {
+		str->Trim();
 	}
 
 	inline wxString fixSeparator(wxString pathToCheck) {

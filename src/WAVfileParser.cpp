@@ -1,6 +1,6 @@
 /*
  * WAVfileParser.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,7 +253,6 @@ bool WAVfileParser::tryParsingWvFile(wxString file) {
 		unsigned uBuffer;
 		unsigned char uChBuffer;
 		unsigned blockNumber = 0;
-		bool continueParsingFile = true;
 		unsigned wavpackSamplerates[16] = {
 			6000,
 			8000,

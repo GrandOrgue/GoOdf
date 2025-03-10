@@ -1,6 +1,6 @@
 /*
  * GUILabelPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -694,7 +694,7 @@ void GUILabelPanel::updatePositionValues() {
 
 void GUILabelPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
-		m_labelTextField->SetToolTip(wxT("For a normal label the text written here is what will be shown on the label. NOTE: On some of the setter elements of GrandOrgue this property cannot be set!"));
+		m_labelTextField->SetToolTip(wxT("For a normal label the text written here is what will be shown on the label. NOTE: On some of the setter elements of GrandOrgue this property cannot be set! Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_labelFont->SetToolTip(wxT("Font face and size can be set here. The default value is derived from the display metrics control label font of the panel."));
 		m_labelColourChoice->SetToolTip(wxT("Colour of the font can be chosen here. If a custom value is chosen the picker will be activated."));
 		m_labelColourPick->SetToolTip(wxT("A custom colour can be picked here."));
@@ -758,6 +758,10 @@ void GUILabelPanel::setTooltipsEnabled(bool isEnabled) {
 		m_textRectHeightSpin->SetToolTip(wxEmptyString);
 		m_textBreakWidthSpin->SetToolTip(wxEmptyString);
 	}
+}
+
+void GUILabelPanel::refreshData() {
+	m_labelTextField->ChangeValue(m_label->getName());
 }
 
 void GUILabelPanel::OnLabelTextChange(wxCommandEvent& WXUNUSED(event)) {

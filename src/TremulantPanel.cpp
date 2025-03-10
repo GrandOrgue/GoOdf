@@ -1,6 +1,6 @@
 /*
  * TremulantPanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,6 +484,7 @@ void TremulantPanel::setIsFirstRemoval(bool value) {
 
 void TremulantPanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_displayInvertedYes->SetToolTip(wxT("Yes means that the on and off bitmaps are reversed."));
 		m_displayInvertedNo->SetToolTip(wxT("No is the standard on/off bitmap display."));
 		m_functionChoice->SetToolTip(wxT("Any other function than 'Input' means that the user no longer has direct control over the state of this element, nor can its state be directly changed by a combination, instead it's controlled indirectly by the referenced switch(es).\n\nThe logical function Not can only reference one switch and negates (inverts) the state of the input. And, Xor, Nand, Nor as well as Or has a variable number of inputs.\n\nSee for instance https://en.wikipedia.org/wiki/Logic_gate for further explanations about logical functions."));
@@ -504,6 +505,7 @@ void TremulantPanel::setTooltipsEnabled(bool isEnabled) {
 		m_stopRateSpin->SetToolTip(wxT("Stop time of the tremulant. Only used for a 'Synth' tremulant."));
 		m_ampModDepthSpin->SetToolTip(wxT("How much the amplitude will be modulated. Only used for a 'Synth' tremulant. A higher value means greater modulation."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_displayInvertedYes->SetToolTip(wxEmptyString);
 		m_displayInvertedNo->SetToolTip(wxEmptyString);
 		m_functionChoice->SetToolTip(wxEmptyString);
@@ -524,6 +526,10 @@ void TremulantPanel::setTooltipsEnabled(bool isEnabled) {
 		m_stopRateSpin->SetToolTip(wxEmptyString);
 		m_ampModDepthSpin->SetToolTip(wxEmptyString);
 	}
+}
+
+void TremulantPanel::refreshData() {
+	m_nameField->ChangeValue(m_tremulant->getName());
 }
 
 void TremulantPanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

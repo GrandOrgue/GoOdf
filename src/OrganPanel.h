@@ -1,6 +1,6 @@
 /*
  * OrganPanel.h is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General wxLicense as published by
@@ -37,6 +37,8 @@ public:
 	void setOdfPath(wxString path);
 	void setOdfName(wxString name);
 	void setTooltipsEnabled(bool isEnabled);
+	void fixTrailingSpacesInStrings();
+	void refreshData();
 
 private:
 	DECLARE_EVENT_TABLE()

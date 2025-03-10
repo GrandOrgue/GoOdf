@@ -1,6 +1,6 @@
 /* 
  * GOODFFrame.cpp is a part of GOODF software
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -592,7 +592,7 @@ void GOODFFrame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	info.SetName(wxT("GoOdf"));
 	info.SetVersion(wxT(GOODF_VERSION));
 	info.SetDescription(wxT("A software for creating and editing GrandOrgue ODFs"));
-	info.SetCopyright(wxT("Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)\nReleased under GNU GPLv3 licence"));
+	info.SetCopyright(wxT("Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)\nReleased under GNU GPLv3 licence"));
 	info.SetWebSite(wxT("https://github.com/GrandOrgue/GoOdf"));
 
 	wxAboutBox(info);
@@ -655,6 +655,7 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 }
 
 void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
+	FixAnyIllegalEntries();
 	if (m_organPanel->getOdfPath().IsEmpty() || m_organPanel->getOdfName().IsEmpty()) {
 		wxMessageDialog incomplete(this, wxT("Both path (location) and name for ODF must be set!"), wxT("Cannot write ODF"), wxOK|wxCENTRE);
 		incomplete.ShowModal();
@@ -3475,4 +3476,170 @@ void GOODFFrame::SetImportXfadeMenuItemState() {
 		m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, false);
 	else
 		m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, true);
+}
+
+void GOODFFrame::FixAnyIllegalEntries() {
+	m_organPanel->fixTrailingSpacesInStrings();
+	m_organ->fixTrailingSpacesInStrings();
+
+	if (m_Splitter->GetWindow2() == m_organPanel) {
+		m_organPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_enclosurePanel) {
+		m_enclosurePanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_tremulantPanel) {
+		m_tremulantPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_windchestPanel) {
+		m_windchestPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_switchPanel) {
+		m_switchPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_rankPanel) {
+		m_rankPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_stopPanel) {
+		m_stopPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_manualPanel) {
+		m_manualPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_couplerPanel) {
+		m_couplerPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_divisionalPanel) {
+		m_divisionalPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_divCplrPanel) {
+		m_divCplrPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_generalPanel) {
+		m_generalPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_reversiblePistonPanel) {
+		m_reversiblePistonPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_panelPanel) {
+		m_panelPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_guiButtonPanel) {
+		m_guiButtonPanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_guiEnclosurePanel) {
+		m_guiEnclosurePanel->refreshData();
+	} else if (m_Splitter->GetWindow2() == m_guiLabelPanel) {
+		m_guiLabelPanel->refreshData();
+	}
+
+	// Any name entries in the organ tree above the panels should be updated too
+	int count = (int) m_organTreeCtrl->GetChildrenCount(tree_manuals, false);
+	if (count > 0) {
+		wxTreeItemId currentMan = m_organTreeCtrl->GetLastChild(tree_manuals);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentMan, m_organ->getOrganManualAt(i)->getName());
+
+			// Each manual also can contain Stops, Couplers and Divisionals
+			wxTreeItemId manDivisionals = m_organTreeCtrl->GetLastChild(currentMan);
+			wxTreeItemId manCouplers = m_organTreeCtrl->GetPrevSibling(manDivisionals);
+			wxTreeItemId manStops = m_organTreeCtrl->GetPrevSibling(manCouplers);
+			int divCount = (int) m_organTreeCtrl->GetChildrenCount(manDivisionals);
+			if (divCount > 0) {
+				wxTreeItemId currentDiv = m_organTreeCtrl->GetLastChild(manDivisionals);
+				for (int j = divCount - 1; j >= 0; j--) {
+					m_organTreeCtrl->SetItemText(currentDiv, m_organ->getOrganManualAt(i)->getDivisionalAt(j)->getName());
+					if (j > 0)
+						currentDiv = m_organTreeCtrl->GetPrevSibling(currentDiv);
+				}
+			}
+			int cplrCount = (int) m_organTreeCtrl->GetChildrenCount(manCouplers);
+			if (cplrCount > 0) {
+				wxTreeItemId currentCplr = m_organTreeCtrl->GetLastChild(manCouplers);
+				for (int j = cplrCount - 1; j >= 0; j--) {
+					m_organTreeCtrl->SetItemText(currentCplr, m_organ->getOrganManualAt(i)->getCouplerAt(j)->getName());
+					if (j > 0)
+						currentCplr = m_organTreeCtrl->GetPrevSibling(currentCplr);
+				}
+			}
+			int stopCount = (int) m_organTreeCtrl->GetChildrenCount(manStops);
+			if (stopCount > 0) {
+				wxTreeItemId currentStop = m_organTreeCtrl->GetLastChild(manStops);
+				for (int j = stopCount - 1; j >= 0; j--) {
+					m_organTreeCtrl->SetItemText(currentStop, m_organ->getOrganManualAt(i)->getStopAt(j)->getName());
+					if (j > 0)
+						currentStop = m_organTreeCtrl->GetPrevSibling(currentStop);
+				}
+			}
+
+			if (i > 0)
+				currentMan = m_organTreeCtrl->GetPrevSibling(currentMan);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_windchestgrps);
+	if (count > 0) {
+		wxTreeItemId currentWc = m_organTreeCtrl->GetLastChild(tree_windchestgrps);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentWc, m_organ->getOrganWindchestgroupAt(i)->getName());
+			if (i > 0)
+				currentWc = m_organTreeCtrl->GetPrevSibling(currentWc);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_enclosures);
+	if (count > 0) {
+		wxTreeItemId currentEnc = m_organTreeCtrl->GetLastChild(tree_enclosures);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentEnc, m_organ->getOrganEnclosureAt(i)->getName());
+			if (i > 0)
+				currentEnc = m_organTreeCtrl->GetPrevSibling(currentEnc);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_tremulants);
+	if (count > 0) {
+		wxTreeItemId currentTr = m_organTreeCtrl->GetLastChild(tree_tremulants);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentTr, m_organ->getOrganTremulantAt(i)->getName());
+			if (i > 0)
+				currentTr = m_organTreeCtrl->GetPrevSibling(currentTr);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_ranks);
+	if (count > 0) {
+		wxTreeItemId currentRk = m_organTreeCtrl->GetLastChild(tree_ranks);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentRk, m_organ->getOrganRankAt(i)->getName());
+			if (i > 0)
+				currentRk = m_organTreeCtrl->GetPrevSibling(currentRk);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_switches);
+	if (count > 0) {
+		wxTreeItemId currentSw = m_organTreeCtrl->GetLastChild(tree_switches);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentSw, m_organ->getOrganSwitchAt(i)->getName());
+			if (i > 0)
+				currentSw = m_organTreeCtrl->GetPrevSibling(currentSw);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_reversiblePistons);
+	if (count > 0) {
+		wxTreeItemId currentP = m_organTreeCtrl->GetLastChild(tree_reversiblePistons);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentP, m_organ->getReversiblePistonAt(i)->getName());
+			if (i > 0)
+				currentP = m_organTreeCtrl->GetPrevSibling(currentP);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_divisionalCouplers);
+	if (count > 0) {
+		wxTreeItemId currentDc = m_organTreeCtrl->GetLastChild(tree_divisionalCouplers);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentDc, m_organ->getOrganDivisionalCouplerAt(i)->getName());
+			if (i > 0)
+				currentDc = m_organTreeCtrl->GetPrevSibling(currentDc);
+		}
+	}
+
+	count = (int) m_organTreeCtrl->GetChildrenCount(tree_generals);
+	if (count > 0) {
+		wxTreeItemId currentG = m_organTreeCtrl->GetLastChild(tree_generals);
+		for (int i = count - 1; i >= 0; i--) {
+			m_organTreeCtrl->SetItemText(currentG, m_organ->getOrganGeneralAt(i)->getName());
+			if (i > 0)
+				currentG = m_organTreeCtrl->GetPrevSibling(currentG);
+		}
+	}
+
 }

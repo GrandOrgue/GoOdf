@@ -1,6 +1,6 @@
 /*
  * EnclosurePanel.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,12 +134,18 @@ void EnclosurePanel::setIsFirstRemoval(bool value) {
 
 void EnclosurePanel::setTooltipsEnabled(bool isEnabled) {
 	if (isEnabled) {
+		m_nameField->SetToolTip(wxT("It's best to make the name unique. NOTE: Leading spaces and usage of semicolon (;) is prohibited and any trailing spaces will be removed when organ is saved!"));
 		m_ampMinLvlSpin->SetToolTip(wxT("Minimal amplitude when enclosure is fully closed (percentage scaling). NOTE: It's possible to set to 0, but if that level is reached any sound will be totally muted and attacks counted as released!"));
 		m_midiInputNumberSpin->SetToolTip(wxT("This number is used while building the initial MIDI configuration. 0 means no association. 1 maps to first enclosure, 2 to second enclosure and so on."));
 	} else {
+		m_nameField->SetToolTip(wxEmptyString);
 		m_ampMinLvlSpin->SetToolTip(wxEmptyString);
 		m_midiInputNumberSpin->SetToolTip(wxEmptyString);
 	}
+}
+
+void EnclosurePanel::refreshData() {
+	m_nameField->ChangeValue(m_enclosure->getName());
 }
 
 void EnclosurePanel::OnNameChange(wxCommandEvent& WXUNUSED(event)) {

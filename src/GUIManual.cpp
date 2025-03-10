@@ -1,6 +1,6 @@
 /*
  * GUIManual.cpp is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -774,7 +774,6 @@ void GUIManual::updateKeyInfo() {
 						// otherwise it should be displayed as C unless next key also would be a natural for any reason
 						bool nextIsNatural = false;
 						if (m_displayKeys > 1) {
-							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
 							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
 						}
 						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
@@ -822,7 +821,6 @@ void GUIManual::updateKeyInfo() {
 						// otherwise it should be displayed as C unless next key also would be a natural for any reason
 						bool nextIsNatural = false;
 						if (m_displayKeys > 1) {
-							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
 							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
 						}
 						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
@@ -869,7 +867,6 @@ void GUIManual::updateKeyInfo() {
 						// otherwise it should be displayed as C unless next key also would be a natural for any reason
 						bool nextIsNatural = false;
 						if (m_displayKeys > 1) {
-							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
 							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
 						}
 						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {
@@ -913,7 +910,6 @@ void GUIManual::updateKeyInfo() {
 						// otherwise it should be displayed as C unless next key also would be a natural for any reason
 						bool nextIsNatural = false;
 						if (m_displayKeys > 1) {
-							int nextKeyNbr = getDisplayKeyAt(i + 1)->second;
 							nextIsNatural = (((key_nb % 12) < 5 && !(key_nb & 1)) || ((key_nb % 12) >= 5 && (key_nb & 1))) ? true : false;
 						}
 						if (key_nb % 12 == 4 || key_nb % 12 == 11 || nextIsNatural) {

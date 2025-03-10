@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to create new panel from selection on existing panel display. (TODO)
 
+## [0.15.1] - 2025-03-10
+
 ### Fixed
 
 - Reading of FourCC values in WAV/WavPack files so that sample file details are correctly shown on all platforms.
 - Reading of all blocks and sub-blocks in a WavPack file and a few related bugs.
+- Unintentional entries of comments in textcontrols by prohibiting usage of semicolon (;).
+- Removed restriction that prevented using spaces in the ODF file name.
+- Trailing whitespaces in textctrls that should be removed when writing an ODF.
 
 ## [0.15.0] - 2024-07-27
 

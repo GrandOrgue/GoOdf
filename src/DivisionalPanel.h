@@ -1,6 +1,6 @@
 /*
  * DivisionalPanel.h is part of GoOdf.
- * Copyright (C) 2024 Lars Palo and contributors (see AUTHORS)
+ * Copyright (C) 2025 Lars Palo and contributors (see AUTHORS)
  *
  * GoOdf is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ public:
 	void setDivisional(Divisional *divisional);
 	void setIsFirstRemoval(bool value);
 	void setTooltipsEnabled(bool isEnabled);
+	void refreshData();
 
 private:
 	DECLARE_EVENT_TABLE()
