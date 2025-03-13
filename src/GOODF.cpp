@@ -561,6 +561,17 @@ bool GOODF::OnInit() {
 	// Show the frame
 	m_frame->Show(true);
 
+	// if a <file.organ> command line argument exists, try opening it as an organ file
+	if (wxApp::argc > 1) {
+		wxFileName f_name(wxApp::argv[1]);
+		if (f_name.Exists() && f_name.GetExt().IsSameAs("organ", false)) { // ignore case
+			// might like to use GetAbsolutePath() here, but it's only available in wx 3.1.6 or above
+			if (f_name.MakeAbsolute()) {
+				m_frame->DoOpenOrgan(f_name.GetFullPath());
+			}
+		}
+	}
+
 	// Start the event loop
 	return true;
 }
