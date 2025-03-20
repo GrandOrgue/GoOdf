@@ -84,6 +84,8 @@ public:
 
 	Organ *m_organ;
 
+	bool m_keepMissingFiles;
+
 private:
 	DECLARE_EVENT_TABLE()
 

@@ -75,6 +75,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_organ = new Organ();
 	m_organHasBeenSaved = false;
 	m_enableTooltips = false;
+	m_keepMissingFiles = false;
 	m_config = new wxFileConfig(wxT("GoOdf"));
 	m_defaultOrganDirectory = wxEmptyString;
 	m_defaultCmbDirectory = wxEmptyString;
@@ -511,6 +512,9 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 		wxCommandEvent evt(wxEVT_MENU, ID_GLOBAL_SHOW_TOOLTIPS_OPTION);
 		wxPostEvent(this, evt);
 	}
+	if (m_config->Read(wxT("General/KeepMissingFiles"), &b)) {
+		m_keepMissingFiles = b;
+	}
 
 	int readInt;
 	if (m_config->Read(wxT("General/FrameXPosition"), &readInt))
@@ -629,6 +633,7 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 
 	// Write config file (settings)
 	m_config->Write(wxT("General/EnableTooltips"), m_enableTooltips);
+	m_config->Write(wxT("General/KeepMissingFiles"), m_keepMissingFiles);
 	UpdateFrameSizeAndPos();
 	m_config->Write(wxT("General/FrameXPosition"), m_xPosition);
 	m_config->Write(wxT("General/FrameYPosition"), m_yPosition);
