@@ -233,11 +233,19 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	setAcceptsRetuning(GOODF_functions::parseBoolean(retuningStr, true));
 	if (!m_pipes.empty())
 		m_pipes.clear();
+
+	bool hadUnusualTremulants = false;
 	for (int i = 0; i < numberOfLogicalPipes; i++) {
 		Pipe p;
 		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);
 		p.read(cfg, pipeNbr, this, readOrgan);
 		m_pipes.push_back(p);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		GOODF_functions::logTremulantMessage(getName());
 	}
 }
 
@@ -405,6 +413,7 @@ void Rank::readPipes(
 	int totalNbrOfPipes
 ) {
 	bool organRootPathIsSet = false;
+	bool hadUnusualTremulants = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -708,7 +717,13 @@ void Rank::readPipes(
 		}
 
 		//m_pipes.push_back(p);
+		if (p->hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
 		count++;
+	}
+	if (hadUnusualTremulants) {
+		GOODF_functions::logTremulantMessage(getName());
 	}
 }
 
@@ -725,6 +740,7 @@ void Rank::addToPipes(
 	int totalNbrOfPipes
 ) {
 	bool organRootPathIsSet = false;
+	bool hadUnusualTremulants = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -1018,7 +1034,14 @@ void Rank::addToPipes(
 				}
 			}
 		}
+
+		if (p->hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
 		count++;
+	}
+	if (hadUnusualTremulants) {
+		GOODF_functions::logTremulantMessage(getName());
 	}
 }
 
@@ -1034,6 +1057,7 @@ void Rank::addTremulantToPipes(
 ) {
 	// This method is for adding additional attacks/releases as (wave) tremulants only
 	bool organRootPathIsSet = false;
+	bool hadUnusualTremulants = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -1195,7 +1219,14 @@ void Rank::addTremulantToPipes(
 				pipeReleasesToAdd.Empty();
 			}
 		}
+		if (p->hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
 		count++;
+	}
+
+	if (hadUnusualTremulants) {
+		GOODF_functions::logTremulantMessage(getName());
 	}
 }
 
@@ -1207,6 +1238,7 @@ void Rank::addReleasesToPipes(
 ) {
 	// This method is for adding releases only from a single folder
 	bool organRootPathIsSet = false;
+	bool hadUnusualTremulants = false;
 
 	if (::wxGetApp().m_frame->m_organ->getOdfRoot() != wxEmptyString)
 		organRootPathIsSet = true;
@@ -1262,7 +1294,13 @@ void Rank::addReleasesToPipes(
 
 		pipeReleases.Empty();
 		pipeReleasesToAdd.Empty();
+		if (p->hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
 		count++;
+	}
+	if (hadUnusualTremulants) {
+		GOODF_functions::logTremulantMessage(getName());
 	}
 }
 
