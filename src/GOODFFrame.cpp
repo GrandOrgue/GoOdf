@@ -654,6 +654,62 @@ void GOODFFrame::OnClose(wxCloseEvent& event) {
 	Destroy();
 }
 
+// iterate through wxTextFile checking that wxCSConv would work
+bool checkConversion(wxTextFile *odfFile, wxCSConv conv) {
+	bool isOk = true;
+	size_t unused=0;
+	int i;
+
+	wxString str;
+	if (!conv.IsOk()) {
+		return false;
+	}
+	for (i = 0, str = odfFile->GetFirstLine(); !odfFile->Eof(); str = odfFile->GetNextLine(), i++ ) {
+		size_t result = conv.FromWChar(NULL, unused, str);
+		if (result == wxCONV_FAILED) {
+			isOk = false;
+			break;
+		}
+	}
+	return isOk;
+}
+
+// output wxTextFile as UTF8 and include the BOM marker
+bool writeUTF8(wxTextFile *odfFile) {
+	bool isOk = true;
+	char buf[2048];
+	char eol[16];
+	wxCSConv conv = wxCSConv("UTF-8");
+
+	wxFile *outFile = new wxFile(odfFile->GetName(), wxFile::write);
+	eol[conv.FromWChar(eol, sizeof(eol), wxTextFile::GetEOL(wxTextFileType_Dos))] = '\0';
+	wxString str;
+
+	outFile->Write("\xef\xbb\xbf", 3);
+
+	if (!conv.IsOk()) {
+		return false;
+	}
+	for ( str = odfFile->GetFirstLine(); !odfFile->Eof(); str = odfFile->GetNextLine() ) {
+		size_t result = conv.FromWChar(buf, sizeof(buf) - sizeof(eol), str);
+		if (result == wxCONV_FAILED || result == 0) {
+			isOk = false;
+			break;
+		}
+		for (int i = 0; eol[i] && i < (int) sizeof(eol); i++, result++) {
+			buf[result-1] = eol[i];
+		}
+		result--;
+		if (outFile->Write(buf, result) != result) {
+			isOk = false;
+			break;
+		}
+	}
+	outFile->Flush();
+	delete outFile;
+	return isOk;
+}
+
 void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	FixAnyIllegalEntries();
 	if (m_organPanel->getOdfPath().IsEmpty() || m_organPanel->getOdfName().IsEmpty()) {
@@ -675,11 +731,18 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	} else {
 		odfFile->Create(fullFileName);
 	}
-	m_organ->writeOrgan(odfFile);
 
-	odfFile->Write(wxTextFileType_Dos, wxCSConv("ISO-8859-1"));
+	wxString tail = wxT("!");
+	m_organ->writeOrgan(odfFile);
+	if (checkConversion(odfFile, wxCSConv("ISO-8859-1"))) {
+		odfFile->Write(wxTextFileType_Dos, wxCSConv("ISO-8859-1"));
+	} else {
+		writeUTF8(odfFile);
+		tail = wxT(" as UTF-8") + tail;
+	}
+
 	if (!m_organHasBeenSaved) {
-		wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ has been written!"), wxT("ODF file written"), wxOK|wxCENTRE);
+		wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ has been written") + tail, wxT("ODF file written"), wxOK|wxCENTRE);
 		msg.ShowModal();
 	}
 	odfFile->Close();
