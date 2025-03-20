@@ -39,6 +39,7 @@ OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_organIsReady = false;
 	m_isUsingOldPanelFormat = false;
 	m_errorMessage = wxEmptyString;
+	m_progressDlg = NULL;
 
 	readIniFile();
 	if (m_fileIsOk) {
