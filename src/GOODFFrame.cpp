@@ -664,7 +664,7 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	wxString fullFileName = m_organPanel->getOdfPath() + wxFILE_SEP_PATH + m_organPanel->getOdfName() + wxT(".organ");
 	wxTextFile *odfFile = new wxTextFile(fullFileName);
 	if (odfFile->Exists() && !m_organHasBeenSaved) {
-		wxMessageDialog dlg(this, wxT("ODF file already exist. Do you want to overwrite it?"), wxT("Existing ODF file"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
+		wxMessageDialog dlg(this, wxT("ODF file already exists. Do you want to overwrite it?"), wxT("Existing ODF file"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 		if (dlg.ShowModal() == wxID_YES) {
 			odfFile->Open(fullFileName);
 			odfFile->Clear();
