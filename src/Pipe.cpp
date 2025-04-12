@@ -218,7 +218,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 				int relEnd = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseEnd"), -1));
 				int relXfade = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseCrossfadeLength"), 0));
 				Release r;
-				r.fileName = relPath;
+				r.fileName = GOODF_functions::removeBaseOdfPath(fullRelPath);
 				r.fullPath = fullRelPath;
 				if (isTrem > -2 && isTrem < 2)
 					r.isTremulant = isTrem;
