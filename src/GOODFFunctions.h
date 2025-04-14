@@ -81,7 +81,7 @@ namespace GOODF_functions {
 	}
 
 	inline wxString checkIfFileExist(wxString relativePath, Organ *currentOrgan) {
-		if (relativePath != wxEmptyString) {
+		if (relativePath != wxEmptyString && !relativePath.IsSameAs("DUMMY") && !relativePath.StartsWith("REF:")) {  // don't need to check special "DUMMY" or "REF:" filenames
 			if (relativePath.StartsWith(wxT("./")) || relativePath.StartsWith(wxT(".\\")))
 				relativePath.erase(0, 2);
 			wxString fullFilePath = currentOrgan->getOdfRoot() + wxFILE_SEP_PATH + relativePath;
@@ -89,6 +89,8 @@ namespace GOODF_functions {
 			if (theFile.FileExists()) {
 				return theFile.GetFullPath();
 			}
+			wxLogWarning("%s does not exist. Removed from .organ file", relativePath);
+			::wxGetApp().m_frame->GetLogWindow()->Show(true);
 		}
 		return wxEmptyString;
 	}
