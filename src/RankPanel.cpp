@@ -1568,6 +1568,8 @@ void RankPanel::OnEditAttack() {
 		// attacks in the same directory
 		auto sourceAttack = std::next(atk_dlg.m_attacklist.begin(), atk_dlg.m_selectedAttackIndex);
 		wxString sourceDir = sourceAttack->fullPath.BeforeLast(wxFILE_SEP_PATH);
+		bool hadUnusualTremulants = false;
+
 		for (Pipe &p : m_rank->m_pipes) {
 			for (std::list<Attack>::iterator atk = p.m_attacks.begin(); atk != p.m_attacks.end(); ++atk) {
 				if (atk->fullPath.BeforeLast(wxFILE_SEP_PATH).IsSameAs(sourceDir) && atk != sourceAttack) {
@@ -1600,6 +1602,12 @@ void RankPanel::OnEditAttack() {
 					}
 				}
 			}
+			if (p.hasUnusualTremulants()) {
+				hadUnusualTremulants = true;
+			}
+		}
+		if (hadUnusualTremulants) {
+			GOODF_functions::logTremulantMessage(m_rank->getName());
 		}
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
@@ -1626,6 +1634,7 @@ void RankPanel::OnEditRelease() {
 	int selectedPipeIndex = GetItemIndexRelativeParent(selectedPipe);
 	Pipe *currentPipe = m_rank->getPipeAt(selectedPipeIndex);
 	ReleaseDialog dlg(currentPipe->m_releases, (unsigned) GetSelectedItemIndexRelativeParent(), this);
+	bool hadUnusualTremulants = false;
 
 	if (dlg.ShowModal() == wxID_OK) {
 		// the user wants to copy properties of the selected release to other
@@ -1642,6 +1651,12 @@ void RankPanel::OnEditRelease() {
 					rel->releaseCrossfadeLength = sourceRelease->releaseCrossfadeLength;
 				}
 			}
+			if (p.hasUnusualTremulants()) {
+				hadUnusualTremulants = true;
+			}
+		}
+		if (hadUnusualTremulants) {
+			GOODF_functions::logTremulantMessage(m_rank->getName());
 		}
 		::wxGetApp().m_frame->m_organ->setModified(true);
 	}
