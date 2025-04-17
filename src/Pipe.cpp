@@ -533,6 +533,19 @@ bool Pipe::hasUnusualTremulants() {
 		}
 	}
 
+	// don't forget to also count releases loaded in attack samples
+	for (Attack atk : this->m_attacks) {
+		if (atk.loadRelease) {
+			if (atk.isTremulant == -1) {
+				nrelnulls++;
+			} else if (atk.isTremulant == 1) {
+				nrelwavs++;
+			} else {
+				nrelnonwavs++;
+			}
+		}
+	}
+
 	if (EXPECTED_TREMULANT(natnulls, natwavs, natnonwavs) && EXPECTED_TREMULANT(nrelnulls, nrelwavs, nrelnonwavs)) {
 		return false;
 	} else {
