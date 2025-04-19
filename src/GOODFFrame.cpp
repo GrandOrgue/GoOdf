@@ -47,6 +47,7 @@ BEGIN_EVENT_TABLE(GOODFFrame, wxFrame)
 	EVT_MENU(ID_IMPORT_VOICING_DATA, GOODFFrame::OnImportCMB)
 	EVT_MENU(ID_IMPORT_STOP_RANK, GOODFFrame::OnImportStopRank)
 	EVT_MENU(ID_GLOBAL_SHOW_TOOLTIPS_OPTION, GOODFFrame::OnEnableTooltipsMenu)
+	EVT_MENU(ID_GLOBAL_KEEPFILES_OPTION, GOODFFrame::OnEnableKeepfilesMenu)
 	EVT_MENU(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, GOODFFrame::OnImportLegacyXfadesMenu)
 	EVT_MENU(ID_CLEAR_HISTORY, GOODFFrame::OnClearHistory)
 	EVT_MENU(ID_DEFAULT_PATHS_MENU, GOODFFrame::OnDefaultPathMenuChoice)
@@ -105,6 +106,7 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	m_toolsMenu->Append(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, wxT("Import Legacy X-fades"), wxT("Make extra attacks/releases inherit LoopCrossfadeLength & ReleaseCrossfadeLength values like pre GO v3.14.0"));
 	m_toolsMenu->Append(ID_CLEAR_HISTORY, wxT("Clear File History"), wxT("Remove all the entries in the recent file history"));
 	m_toolsMenu->Append(ID_DEFAULT_PATHS_MENU, wxT("Default paths\tCtrl+P"), wxT("Set the default paths used by the application here"));
+	m_toolsMenu->AppendCheckItem(ID_GLOBAL_KEEPFILES_OPTION, wxT("Keep missing files"), wxT("Keep missing files in ODF file"));
 
 	m_toolsMenu->Enable(ID_GLOBAL_PARSE_LEGACY_XFADES_OPTION, false);
 
@@ -514,6 +516,10 @@ GOODFFrame::GOODFFrame(const wxString& title) : wxFrame(NULL, wxID_ANY, title) {
 	}
 	if (m_config->Read(wxT("General/KeepMissingFiles"), &b)) {
 		m_keepMissingFiles = b;
+		if (m_keepMissingFiles)
+			m_toolsMenu->Check(ID_GLOBAL_KEEPFILES_OPTION, true);
+		else
+			m_toolsMenu->Check(ID_GLOBAL_KEEPFILES_OPTION, false);
 	}
 
 	int readInt;
@@ -3268,6 +3274,14 @@ void GOODFFrame::OnEnableTooltipsMenu(wxCommandEvent& WXUNUSED(event)) {
 	m_guiEnclosurePanel->setTooltipsEnabled(m_enableTooltips);
 	m_guiLabelPanel->setTooltipsEnabled(m_enableTooltips);
 	m_guiManualPanel->setTooltipsEnabled(m_enableTooltips);
+}
+
+void GOODFFrame::OnEnableKeepfilesMenu(wxCommandEvent& WXUNUSED(event)) {
+	if (m_toolsMenu->IsChecked(ID_GLOBAL_KEEPFILES_OPTION)) {
+		m_keepMissingFiles = true;
+	} else {
+		m_keepMissingFiles = false;
+	}
 }
 
 void GOODFFrame::OnRecentFileMenuChoice(wxCommandEvent& event) {
