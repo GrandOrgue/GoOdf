@@ -84,6 +84,8 @@ public:
 
 	Organ *m_organ;
 
+	bool m_keepMissingFiles;
+
 private:
 	DECLARE_EVENT_TABLE()
 
@@ -179,6 +181,7 @@ private:
 	void OnAddNewPanel(wxCommandEvent& event);
 	void OnImportCMB(wxCommandEvent& event);
 	void OnEnableTooltipsMenu(wxCommandEvent& event);
+	void OnEnableKeepfilesMenu(wxCommandEvent& event);
 	void OnRecentFileMenuChoice(wxCommandEvent& event);
 	void OnClearHistory(wxCommandEvent& event);
 	void OnSizeChange(wxSizeEvent& event);
