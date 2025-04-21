@@ -130,11 +130,6 @@ namespace GOODF_functions {
 			}
 		}
 	}
-
-	inline void logTremulantMessage(wxString rankName) {
-		wxLogError("An unusual use of pipe tremulant settings in %s.  See help for common Tremulant examples", rankName);
-		::wxGetApp().m_frame->GetLogWindow()->Show(true);
-	}
 }
 
 #endif
