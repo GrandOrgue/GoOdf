@@ -5,7 +5,7 @@ set -e
 sudo apt update
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ pkg-config \
-  libwxgtk3.0-gtk3-dev libudev-dev patchelf libtool wget \
+  libwxgtk3.0-gtk3-dev libudev-dev patchelf libtool wget libfuse2 \
   libgtk-3-dev librsvg2-dev autoconf autogen automake build-essential \
 
 # linuxdeploy, linuxdeploy-plugin-gtk and appimagetool must be downloaded
