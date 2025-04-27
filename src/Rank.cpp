@@ -119,11 +119,18 @@ void Rank::write(wxTextFile *outFile) {
 
 	// pipes of the rank
 	unsigned pipeCounter = 0;
+	bool hadUnusualTremulants = false;
 	for (Pipe &p : m_pipes) {
 		pipeCounter++;
 		wxString formattedPipe = wxT("Pipe") + GOODF_functions::number_format(pipeCounter);
 
 		p.write(outFile, formattedPipe, this);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -167,11 +174,18 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 
 	// pipes of the rank
 	unsigned pipeCounter = 0;
+	bool hadUnusualTremulants = false;
 	for (Pipe &p : m_pipes) {
 		pipeCounter++;
 		wxString formattedPipe = wxT("Pipe") + GOODF_functions::number_format(pipeCounter);
 
 		p.write(outFile, formattedPipe, this);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -234,11 +248,19 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	setAcceptsRetuning(GOODF_functions::parseBoolean(retuningStr, true));
 	if (!m_pipes.empty())
 		m_pipes.clear();
+
+	bool hadUnusualTremulants = false;
 	for (int i = 0; i < numberOfLogicalPipes; i++) {
 		Pipe p;
 		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);
 		p.read(cfg, pipeNbr, this, readOrgan);
 		m_pipes.push_back(p);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -1498,4 +1520,9 @@ void Rank::updatePipeRelativePaths() {
 	for (Pipe& p : m_pipes) {
 		p.updateRelativePaths();
 	}
+}
+
+void Rank::logTremulantMessage() {
+	wxLogError("An unusual use of pipe tremulant settings in %s.  See help for common Tremulant examples", getName());
+	::wxGetApp().m_frame->GetLogWindow()->Show(true);
 }

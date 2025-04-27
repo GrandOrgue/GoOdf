@@ -154,6 +154,7 @@ protected:
 	wxString getOnlyFileName(wxString path);
 	void setupPipeProperties(Pipe &pipe);
 	void exactlyMatchMidiNumber(wxArrayString &fileList, int midiNbr);
+	void logTremulantMessage();
 };
 
 #endif
