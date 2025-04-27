@@ -677,6 +677,11 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 		m_organHasBeenSaved = false;
 	}
 	wxTextFile *odfFile = new wxTextFile(fullFileName);
+	if (odfFile->Exists() && !wxFileName::IsFileWritable(fullFileName)) {
+		wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ not writable!"), wxT("ODF file not writable!"), wxOK|wxCENTRE);
+		msg.ShowModal();
+		return;
+	}
 	if (odfFile->Exists() && !m_organHasBeenSaved) {
 		wxMessageDialog dlg(this, wxT("ODF file already exists. Do you want to overwrite it?"), wxT("Existing ODF file"), wxYES_NO|wxCENTRE|wxICON_EXCLAMATION);
 		if (dlg.ShowModal() == wxID_YES) {
@@ -686,8 +691,13 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 			delete odfFile;
 			return;
 		}
-	} else {
-		odfFile->Create(fullFileName);
+	} else if (!odfFile->Exists()) {
+		if (!odfFile->Create(fullFileName)) {
+			wxMessageDialog msg(this, wxT("ODF file ") + m_organPanel->getOdfName() + wxT(".organ failed to create!"), wxT("ODF file not created!"), wxOK|wxCENTRE);
+			msg.ShowModal();
+			return;
+		}
+
 	}
 	m_organ->writeOrgan(odfFile);
 
