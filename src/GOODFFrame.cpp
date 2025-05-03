@@ -751,6 +751,10 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	}
 	odfFile->Close();
 	delete odfFile;
+	m_organHasBeenSaved = true;
+	m_organ->setModified(false);
+	UpdateFrameTitle();
+	m_recentlyUsed->AddFileToHistory(fullFileName);
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
