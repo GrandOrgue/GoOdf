@@ -675,7 +675,7 @@ bool GOODFFrame::IsEncodingOk(wxTextFile *odfFile, wxCSConv conv) {
 
 // output wxTextFile as UTF8 and include the BOM marker
 bool GOODFFrame::WriteUTF8(wxTextFile *odfFile) {
-	bool isOk = true;
+	bool isOk;
 	wxString str;
 
 	wxCSConv conv = wxCSConv("UTF-8");
@@ -685,7 +685,7 @@ bool GOODFFrame::WriteUTF8(wxTextFile *odfFile) {
 
 	wxFile *outFile = new wxFile(odfFile->GetName(), wxFile::write);
 	outFile->Write("\xef\xbb\xbf", 3);
-	for (str = odfFile->GetFirstLine(); !odfFile->Eof(); str = odfFile->GetNextLine()) {
+	for (str = odfFile->GetFirstLine(), isOk = true; !odfFile->Eof() && isOk; str = odfFile->GetNextLine()) {
 		isOk = outFile->Write(str, conv);
 		outFile->Write(wxTextFile::GetEOL(wxTextFileType_Dos));
 	}
@@ -751,10 +751,6 @@ void GOODFFrame::OnWriteODF(wxCommandEvent& WXUNUSED(event)) {
 	}
 	odfFile->Close();
 	delete odfFile;
-	m_organHasBeenSaved = true;
-	m_organ->setModified(false);
-	UpdateFrameTitle();
-	m_recentlyUsed->AddFileToHistory(fullFileName);
 }
 
 void GOODFFrame::OnReadOrganFile(wxCommandEvent& WXUNUSED(event)) {
