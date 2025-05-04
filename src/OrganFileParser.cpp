@@ -39,6 +39,7 @@ OrganFileParser::OrganFileParser(wxString filePath, Organ *organ) {
 	m_organIsReady = false;
 	m_isUsingOldPanelFormat = false;
 	m_errorMessage = wxEmptyString;
+	m_progressDlg = NULL;
 
 	readIniFile();
 	if (m_fileIsOk) {
@@ -327,7 +328,7 @@ void OrganFileParser::parseOrganSection() {
 		m_organFile->SetPath("/Organ");
 	}
 	if (nbrWindchests == 0) {
-		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional until at least one windchestgroup exist!");
+		wxLogWarning("There are no windchestgroups in the organ! The .organ file won't be functional until at least one windchestgroup exists!");
 		::wxGetApp().m_frame->GetLogWindow()->Show(true);
 	}
 

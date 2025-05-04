@@ -22,6 +22,7 @@
 #include "GOODF.h"
 #include "GOODFFunctions.h"
 #include <wx/unichar.h>
+#include <wx/regex.h>
 
 Rank::Rank() {
 	name = wxT("New Rank");
@@ -118,11 +119,18 @@ void Rank::write(wxTextFile *outFile) {
 
 	// pipes of the rank
 	unsigned pipeCounter = 0;
+	bool hadUnusualTremulants = false;
 	for (Pipe &p : m_pipes) {
 		pipeCounter++;
 		wxString formattedPipe = wxT("Pipe") + GOODF_functions::number_format(pipeCounter);
 
 		p.write(outFile, formattedPipe, this);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -166,11 +174,18 @@ void Rank::writeFromStop(wxTextFile *outFile) {
 
 	// pipes of the rank
 	unsigned pipeCounter = 0;
+	bool hadUnusualTremulants = false;
 	for (Pipe &p : m_pipes) {
 		pipeCounter++;
 		wxString formattedPipe = wxT("Pipe") + GOODF_functions::number_format(pipeCounter);
 
 		p.write(outFile, formattedPipe, this);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -233,11 +248,19 @@ void Rank::read(wxFileConfig *cfg, Organ *readOrgan) {
 	setAcceptsRetuning(GOODF_functions::parseBoolean(retuningStr, true));
 	if (!m_pipes.empty())
 		m_pipes.clear();
+
+	bool hadUnusualTremulants = false;
 	for (int i = 0; i < numberOfLogicalPipes; i++) {
 		Pipe p;
 		wxString pipeNbr = wxT("Pipe") + GOODF_functions::number_format(i + 1);
 		p.read(cfg, pipeNbr, this, readOrgan);
 		m_pipes.push_back(p);
+		if (p.hasUnusualTremulants()) {
+			hadUnusualTremulants = true;
+		}
+	}
+	if (hadUnusualTremulants) {
+		logTremulantMessage();
 	}
 }
 
@@ -1480,44 +1503,13 @@ void Rank::exactlyMatchMidiNumber(wxArrayString &fileList, int midiNbr) {
 	// incoming fileList contains full paths to candidate files
 	// but in this function we're interested only in the file name
 	// we get it by converting path to wxFileName and then extracting the name part
+	// and matching against this regular expression
+	wxRegEx midiRegEx = wxRegEx(wxString::Format(wxT("^([0[:alpha:]]*)(%i)([^[:digit:]]*[-._])"), midiNbr));
+
 	if (!fileList.IsEmpty()) {
 		for (int i = fileList.size() - 1; i >= 0; i--) {
 			wxFileName whole_path(fileList[i]);
-			wxString file_name = whole_path.GetFullName();
-			bool isAnExactMatch = true;
-			wxString nbrStr = wxString::Format(wxT("%i"), midiNbr);
-			int matching_position = file_name.Find(nbrStr);
-
-			if (matching_position > 0) {
-				// the number is not in the beginning, the only valid number occuring before this is a 0
-				for (int currentIndex = matching_position - 1; currentIndex >= 0; currentIndex--) {
-					wxUniChar currentChar = file_name.GetChar(currentIndex);
-					if (currentChar == '0' || wxIsalpha(currentChar)) {
-						continue;
-					} else {
-						isAnExactMatch = false;
-					}
-				}
-			} else if (matching_position != 0) {
-				// if matching position is negative (wxNOT_FOUND) then this file is not a match
-				isAnExactMatch = false;
-			}
-
-			if (isAnExactMatch && matching_position + nbrStr.Len() < file_name.Len() - 1) {
-				int posAfterMatch = matching_position + nbrStr.Len();
-				// we need to check what is after this matching number too
-				for (int currentIndex = posAfterMatch; currentIndex < (int) file_name.Len(); currentIndex++) {
-					wxUniChar currentChar = file_name.GetChar(currentIndex);
-					if (currentChar == '-' || currentChar == '_' || currentChar == '.') {
-						break;
-					}
-					if (wxIsdigit(currentChar)) {
-						isAnExactMatch = false;
-					}
-				}
-			}
-
-			if (!isAnExactMatch) {
+			if (!midiRegEx.Matches(whole_path.GetFullName())) {
 				fileList.RemoveAt(i);
 			}
 		}
@@ -1528,4 +1520,9 @@ void Rank::updatePipeRelativePaths() {
 	for (Pipe& p : m_pipes) {
 		p.updateRelativePaths();
 	}
+}
+
+void Rank::logTremulantMessage() {
+	wxLogError("An unusual use of pipe tremulant settings in %s.  See help for common Tremulant examples", getName());
+	::wxGetApp().m_frame->GetLogWindow()->Show(true);
 }

@@ -218,7 +218,7 @@ void Pipe::read(wxFileConfig *cfg, wxString pipeNr, Rank *parent, Organ *readOrg
 				int relEnd = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseEnd"), -1));
 				int relXfade = static_cast<int>(cfg->ReadLong(relStr + wxT("ReleaseCrossfadeLength"), 0));
 				Release r;
-				r.fileName = relPath;
+				r.fileName = GOODF_functions::removeBaseOdfPath(fullRelPath);
 				r.fullPath = fullRelPath;
 				if (isTrem > -2 && isTrem < 2)
 					r.isTremulant = isTrem;
@@ -492,5 +492,63 @@ void Pipe::setIndependentRelease(bool independent) {
 	if (!independent && isPercussive) {
 		if (!m_releases.empty())
 			m_releases.clear();
+	}
+}
+
+// An attack or release is expected to have either no samples,
+//   only samples with no tremulant specfified (without Pipe999IsTremulant=),
+//   or only samples with tremulant specified (with both Pipe999IsTremulant=0 and Pipe999IsTremulant=1)
+
+#define EXPECTED_TREMULANT(nulls, wavs, nonwavs) ( \
+	(((nulls) + (wavs) + (nonwavs)) == 0) || \
+	((nulls) > 0 && (wavs) == 0 && (nonwavs) == 0) || \
+	((nulls) == 0 && (wavs) > 0 && (nonwavs) > 0) \
+	)
+
+bool Pipe::hasUnusualTremulants() {
+	int natnulls = 0;		// attacks with no isTremulant
+	int natwavs = 0;		// attacks with wave isTremulant=1
+	int natnonwavs = 0;		// attacks with wave isTremulant=0
+	int nrelnulls = 0;
+	int nrelwavs = 0;
+	int nrelnonwavs = 0;
+
+	for (Attack atk : this->m_attacks) {
+		if (atk.isTremulant == -1) {
+			natnulls++;
+		} else if (atk.isTremulant == 1) {
+			natwavs++;
+		} else {
+			natnonwavs++;
+		}
+	}
+
+	for (Release rel : this->m_releases) {
+		if (rel.isTremulant == -1) {
+			nrelnulls++;
+		} else if (rel.isTremulant == 1) {
+			nrelwavs++;
+		} else {
+			nrelnonwavs++;
+		}
+	}
+
+	// don't forget to also count releases loaded in attack samples
+	for (Attack atk : this->m_attacks) {
+		if (atk.loadRelease) {
+			if (atk.isTremulant == -1) {
+				nrelnulls++;
+			} else if (atk.isTremulant == 1) {
+				nrelwavs++;
+			} else {
+				nrelnonwavs++;
+			}
+		}
+	}
+
+	if (EXPECTED_TREMULANT(natnulls, natwavs, natnonwavs) && EXPECTED_TREMULANT(nrelnulls, nrelwavs, nrelnonwavs)) {
+		return false;
+	} else {
+		return true;
 	}
 }

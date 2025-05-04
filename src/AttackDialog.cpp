@@ -382,13 +382,13 @@ void AttackDialog::CreateControls() {
 		ID_ATK_DIALOG_ADD_LOOP_BTN,
 		wxT("Create a new loop")
 	);
-	loopBtnContainer->Add(m_addNewLoopBtn, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	loopBtnContainer->Add(m_addNewLoopBtn, 0, wxGROW|wxALL, 5);
 	m_deleteLoopBtn = new wxButton(
 		this,
 		ID_ATK_DIALOG_DELETE_LOOP_BTN,
 		wxT("Delete selected loop")
 	);
-	loopBtnContainer->Add(m_deleteLoopBtn, 0, wxGROW|wxALIGN_CENTER|wxALL, 5);
+	loopBtnContainer->Add(m_deleteLoopBtn, 0, wxGROW|wxALL, 5);
 	loopBtnContainer->AddStretchSpacer();
 	sixthRow->Add(loopBtnContainer, 0, wxGROW);
 	wxStaticBoxSizer *loopPropertiesContainer = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Selected loop properties"));
