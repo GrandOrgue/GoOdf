@@ -33,6 +33,30 @@ jobs:
         name: GoOdf-${{github.ref_name}}-linux
         path: ${{github.workspace}}/build/GoOdf*.tar.gz
 
+  build-linux-arm64:
+    runs-on: ubuntu-22.04-arm
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get dependencies
+      run: ${{github.workspace}}/scripts/prepare-ubuntu.sh
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Package
+      working-directory: ${{github.workspace}}/build
+      run: cpack
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: GoOdf-${{github.ref_name}}-linux-arm64
+        path: ${{github.workspace}}/build/GoOdf*.tar.gz
+
   build-appimage:
     runs-on: ubuntu-22.04
 

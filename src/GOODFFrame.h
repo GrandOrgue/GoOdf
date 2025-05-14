@@ -195,6 +195,8 @@ private:
 	void RecreateLogWindow();
 	void SetImportXfadeMenuItemState();
 	void FixAnyIllegalEntries();
+	bool IsEncodingOk(wxTextFile *odfFile, wxCSConv conv);
+	bool WriteUTF8(wxTextFile *odfFile);
 
 };
 
