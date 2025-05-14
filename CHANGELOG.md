@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to create new panel from selection on existing panel display. (TODO)
+- Option to open an .organ file supplied as argument to starting the program on the command line.
+- Log warning that missing files will be removed when opening an .organ file.
+- Option to keep missing files.
+- Checking of ranks/pipes with wave tremulant samples and warn if unusual configurations appear.
+- Test of character encoding when writing ODF and try writing as UTF-8 if ISO-8859-1 fail.
+- A warning that a file will be overwritten when the .organ file name has been changed (if needed).
+
+### Fixed
+
+- Showing the log window on all platforms after load/save if necessary.
+- Consistent usage of file separator also on separate releases.
+- Some expressions to be more natural in english.
+
+### Changed
+
+- Reading of a corrupt .organ file to be more robust on all platforms.
 
 ## [0.15.1] - 2025-03-10
 
