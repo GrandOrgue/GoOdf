@@ -11,7 +11,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ pkg-config \
 # linuxdeploy, linuxdeploy-plugin-gtk and appimagetool must be downloaded
 sudo wget -P /usr/local/bin https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
 sudo wget -P /usr/local/bin https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-sudo wget -P /usr/local/bin https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+sudo wget -P /usr/local/bin https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 
 # make them executable
 sudo chmod +x /usr/local/bin/linuxdeploy-plugin-gtk.sh

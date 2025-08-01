@@ -1495,6 +1495,13 @@ void Rank::setupPipeProperties(Pipe &pipe) {
 	pipe.harmonicNumber = this->harmonicNumber;
 	pipe.acceptsRetuning = this->acceptsRetuning;
 	pipe.windchest = this->windchest;
+	pipe.amplitudeLevel = 100;
+	pipe.gain = 0;
+	pipe.pitchTuning = 0;
+	pipe.trackerDelay = 0;
+	pipe.midiKeyNumber = -1;
+	pipe.midiPitchFraction = -1.0f;
+	pipe.pitchCorrection = 0;
 	pipe.minVelocityVolume = this->minVelocityVolume;
 	pipe.maxVelocityVolume = this->maxVelocityVolume;
 }

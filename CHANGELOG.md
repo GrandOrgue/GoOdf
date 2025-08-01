@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Showing the log window on all platforms after load/save if necessary.
 - Consistent usage of file separator also on separate releases.
 - Some expressions to be more natural in english.
+- Resetting individual pipe to actually remove any previous custom adjustments.
+- Appimage build to use a current appimagetool.
 
 ### Changed
 
