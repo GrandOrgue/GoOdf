@@ -1080,8 +1080,8 @@ void GUILabelPanel::OnRemoveLabelBtn(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void GUILabelPanel::UpdateSpinRanges() {
-	m_dispXposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
-	m_dispYposSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
+	m_dispXposSpin->SetRange(0, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
+	m_dispYposSpin->SetRange(0, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	m_elementPosXSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue());
 	m_elementPosYSpin->SetRange(-1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeVert.getNumericalValue());
 	m_widthSpin->SetRange(1, m_label->getOwningPanel()->getDisplayMetrics()->m_dispScreenSizeHoriz.getNumericalValue()); // panel width!

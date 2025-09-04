@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some expressions to be more natural in english.
 - Resetting individual pipe to actually remove any previous custom adjustments.
 - Appimage build to use a current appimagetool.
+- DispXpos and DispYpos spinctrl values of a GUILabel to not have invalid range.
 
 ### Changed
 

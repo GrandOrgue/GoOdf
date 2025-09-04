@@ -60,9 +60,9 @@ void GUILabel::write(wxTextFile *outFile) {
 		outFile->AddLine(wxT("FreeXPlacement=N"));
 	if (!m_freeYPlacement)
 		outFile->AddLine(wxT("FreeYPlacement=N"));
-	if (m_dispXpos != 0 && m_freeXPlacement)
+	if (m_dispXpos > 0 && m_freeXPlacement)
 		outFile->AddLine(wxT("DispXpos=") + wxString::Format(wxT("%i"), m_dispXpos));
-	if (m_dispYpos != 0 && m_freeYPlacement)
+	if (m_dispYpos > 0 && m_freeYPlacement)
 		outFile->AddLine(wxT("DispYpos=") + wxString::Format(wxT("%i"), m_dispYpos));
 	if (m_positionX != -1 && m_freeXPlacement)
 		outFile->AddLine(wxT("PositionX=") + wxString::Format(wxT("%i"), m_positionX));
